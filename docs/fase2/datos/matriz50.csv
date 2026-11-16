@@ -1,0 +1,51 @@
+juego,estrato,subgenero,modelo,meta,social,pase,sin_anuncios,oferta_fallo,suscripcion,azar_pago,moneda_pago,edad_ES,riesgo_DFA,GP,RET,MON,VIS,PRO,VIR,EQU,S/P,total
+Royal Match,1,Match-3,Compras,Decoración,Equipos,Sí,-,No,No,No,Sí,13+,Medio,5,5,5,5,5,3,5,5,38
+Royal Kingdom,1,Match-3,Compras,Decoración,Equipos,Sí,-,No,No,No,Sí,13+,Medio,5,4,5,5,5,3,5,5,37
+Toon Blast,1,Tap-blast,Compras,Episodios,Equipos,No,-,No,No,No,Sí,4+,Medio,4,5,4,4,4,3,4,4,32
+Match Factory!,1,Triple match 3D,Compras,Episodios,Equipos,Sí,-,No,No,No,Sí,4+,Medio,4,4,4,4,4,4,4,4,32
+Gardenscapes,1,Match-3,Compras,Decoración+narrativa,Equipos,Sí,-,No,No,No,Sí,13+,Medio,4,4,5,5,4,3,4,3,32
+Township,1,Granja/ciudad,Compras,Construcción,Cooperativas,Sí,-,No,No,No,Sí,13+,Medio,4,5,5,4,5,2,4,3,32
+Gossip Harbor,1,Merge-2,Compras,Narrativa,Mínimo,Sí,-,No,No,No,Sí,13+,Medio,3,5,5,4,4,2,4,3,30
+Travel Town,1,Merge-2,Compras,Restauración,Amigos,No,-,No,No,No,Sí,16+,Medio,3,4,4,3,4,2,3,3,26
+Tasty Travels,1,Merge-2,Compras,Viajes/cocina,Mínimo,No,-,No,No,No,Sí,9+,Medio,3,4,4,4,4,2,4,3,28
+Disney Solitaire,1,Solitario TriPeaks,Compras,Colección (licencia),Mínimo,No,-,No,No,No,Sí,13+,Medio,4,4,5,5,4,3,4,4,33
+Jelly Busters,1,Ordenar/romper,Híbrido,Mínimo,Mínimo,No,-,No,No,No,Sí,16+,Medio,4,3,3,4,3,4,3,4,28
+Screwdom,1,Tornillos 3D,Híbrido,Mínimo,Mínimo,No,-,No,No,No,Sí,9+,Medio,4,3,3,3,3,4,3,4,27
+Solitaire Associations Journey,1,Solitario+palabras,Híbrido,Mínimo,Mínimo,No,"9,99",Sí,No,No,Sí,4+,Alto,4,3,3,3,3,3,3,4,26
+Block Out!,2,Bloques de color,Híbrido,Mínimo,Mínimo,Sí,-,No,No,No,Sí,4+,Medio,4,3,4,4,3,4,3,4,29
+Magic Sort!,2,Ordenar líquidos,Híbrido,Mínimo,Mínimo,No,-,Sí,No,No,Sí,13+,Alto,4,3,5,4,3,4,3,4,30
+Meowdoku!,2,Lógica (Star Battle),Anuncios+suscripción,Ninguno,Ninguno,No,-,No,Sí,No,No,13+,Bajo,5,4,3,4,3,5,2,5,31
+Amaze GO!,2,Flechas,Anuncios,Ninguno,Ninguno,No,-,No,No,No,No,13+,Bajo,3,2,2,3,2,3,2,4,21
+Bus Traffic Fever!,2,Tráfico/colores,Híbrido,Mínimo,Mínimo,Sí,"14,99",Sí,No,No,Sí,13+,Alto,4,3,3,3,3,4,3,4,27
+CubeAway,2,Desmontar 3D,Híbrido,Mínimo,Mínimo,No,"8,99",No,No,No,Sí,13+,Medio,4,3,3,3,3,4,3,4,27
+Pixel Flow!,2,Shooter de colores,Híbrido,Imagen a completar,Mínimo,Sí,"8,99",Sí,No,No,Sí,13+,Alto,5,4,5,4,4,5,3,5,35
+Colony Flow!,2,Shooter de colores,Híbrido,Mínimo,Mínimo,Sí,"8,99",Sí,No,No,Sí,13+,Alto,3,3,4,3,3,4,3,3,26
+Sand Blocks,2,Bloques de arena,Híbrido,Mínimo,Mínimo,Sí,"8,99",Sí,No,No,Sí,4+,Alto,4,3,3,4,3,5,3,4,29
+Yarn Loop,2,Ordenar lana,Híbrido,Mínimo,Mínimo,No,-,No,No,No,Sí,4+,Medio,4,3,4,4,3,4,3,4,29
+Parking Loop,2,Tráfico,Híbrido,Mínimo,Mínimo,No,"0,99",Sí,No,No,Sí,13+,Alto,3,2,3,3,2,3,2,3,21
+Cube Smash,2,Romper cubos,Híbrido,Mínimo,Mínimo,No,-,No,No,No,Sí,4+,Medio,3,2,3,3,2,3,3,3,22
+Vita Mahjong,3,Mahjong,Híbrido+suscripción,Mínimo,Mínimo,No,"6,99",No,Sí,No,Sí,13+,Medio,3,4,4,3,3,2,3,4,26
+Word Tiles,3,Palabras,Híbrido,Mínimo,Mínimo,No,"9,99",No,No,No,Sí,4+,Medio,3,3,3,3,3,2,3,3,23
+Brain Puzzle 3,3,Acertijos,Anuncios,Ninguno,Ninguno,No,"6,99",No,No,No,No,13+,Bajo,3,2,2,2,2,4,2,3,20
+Magic Tiles 3,3,Ritmo,Híbrido+suscripción,Canciones,Mínimo,No,"9,99",No,Sí,No,Sí,4+,Medio,4,3,4,3,3,4,3,4,28
+Paper.io 2,3,IO territorial,Anuncios+cosmética,Skins,PvP con bots,No,"9,99",No,No,No,Sí,9+,Medio,4,3,3,3,2,4,2,4,25
+Mob Control,3,Casual híbrido,Híbrido,Cartas/mejoras,PvP,Sí,-,No,No,Sí,Sí,13+,Alto,4,3,4,4,4,4,3,3,29
+Subway Surfers,3,Endless runner,Híbrido,Colección+World Tour,Mínimo,Sí,-,No,No,No,Sí,9+,Medio,4,4,4,4,3,5,4,4,32
+Geometry Dash Lite,3,Plataformas rítmico,Demo+premium,Iconos,Contenido de usuarios,No,-,No,No,No,No,13+,Bajo,5,4,3,4,4,5,4,5,34
+MONOPOLY GO!,4,Tablero de dados,Compras,Construcción+álbum,Intercambio,No,-,No,No,Sí,Sí,9+,Alto,3,5,5,4,4,4,4,3,32
+Coin Master,4,Tragaperras+aldea,Compras,Construcción+cartas,Ataques/amigos,No,-,No,No,Sí,Sí,18+,Alto,2,4,5,3,3,4,3,2,26
+Pokémon GO,4,Geolocalización,Compras,Colección,Presencial,Sí,-,No,No,No,Sí,9+,Medio,4,5,5,4,5,5,4,4,36
+Pokémon TCG Pocket,4,Cartas,Compras,Colección,Intercambio/PvP,Sí,-,No,No,Sí,Sí,9+,Alto,4,3,5,5,4,4,4,4,33
+BitLife,4,Simulador de vida,Pago único+expansiones,Vidas,Compartir historias,No,"8,99",No,No,No,No,18+,Bajo,4,4,4,2,3,5,3,4,29
+Parchisi STAR,4,Parchís online,Compras,Cosmética,PvP con amigos,Sí,-,No,No,Sí,Sí,4+,Alto,3,4,3,3,3,3,3,4,26
+8 Ball Pool,4,Billar,Compras,Tacos/ligas,PvP,Sí,-,No,Sí,Sí,Sí,13+,Alto,4,4,4,3,4,3,3,4,29
+Among Us!,4,Deducción social,Cosmética,Cosmética,Multijugador,No,"1,99",No,No,No,Sí,9+,Medio,4,3,2,4,2,5,4,4,28
+NYT Games,5,Pasatiempos diarios,Suscripción,Rachas/archivo,Conversación diaria,No,-,No,Sí,No,No,13+,Bajo,5,5,4,4,3,5,5,5,36
+Chess.com,5,Ajedrez,Suscripción por niveles,Rating/lecciones,PvP,No,-,No,Sí,No,No,4+,Bajo,5,5,4,3,5,4,4,5,35
+Clash Royale,5,Estrategia con cartas,Compras,Mazo/trofeos,PvP+clanes,Sí,-,No,No,No,Sí,9+,Medio,5,5,5,5,5,4,5,5,39
+Brawl Stars,5,Acción por equipos,Compras,Personajes,PvP+clubes,Sí,-,No,No,No,Sí,13+,Medio,5,4,4,5,5,4,5,4,36
+Whiteout Survival,5,4X,Compras,Ciudad/héroes,Alianzas,Sí,-,No,No,No,Sí,9+,Medio,3,5,5,4,5,2,4,2,30
+Roblox,5,Plataforma de contenido de usuarios,Suscripción+moneda,Plataforma,Contenido de usuarios,No,-,No,Sí,No,Sí,13+,Medio,4,5,5,3,4,5,4,4,34
+Balatro,6,Roguelike de póker,Premium,Desbloqueos,Ninguno,No,-,No,No,No,No,13+,Bajo,5,5,3,5,4,5,5,5,37
+Mini Metro,6,Diseño de redes,Premium,Ciudades,Ninguno,No,-,No,No,No,No,4+,Bajo,5,3,2,5,3,3,5,5,31
+Bloons TD 6,6,Tower defense,Premium+compras,Héroes/mapas,Cooperativo+contenido de usuarios,No,-,No,No,No,Sí,9+,Medio,5,5,4,4,5,3,5,4,35

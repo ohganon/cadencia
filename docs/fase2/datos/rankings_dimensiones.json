@@ -1,0 +1,470 @@
+{
+ "GP": [
+  [
+   "Clash Royale",
+   5,
+   39
+  ],
+  [
+   "Royal Match",
+   5,
+   38
+  ],
+  [
+   "Balatro",
+   5,
+   37
+  ],
+  [
+   "Royal Kingdom",
+   5,
+   37
+  ],
+  [
+   "Brawl Stars",
+   5,
+   36
+  ],
+  [
+   "NYT Games",
+   5,
+   36
+  ],
+  [
+   "Bloons TD 6",
+   5,
+   35
+  ],
+  [
+   "Chess.com",
+   5,
+   35
+  ],
+  [
+   "Pixel Flow!",
+   5,
+   35
+  ],
+  [
+   "Geometry Dash Lite",
+   5,
+   34
+  ]
+ ],
+ "RET": [
+  [
+   "Clash Royale",
+   5,
+   39
+  ],
+  [
+   "Royal Match",
+   5,
+   38
+  ],
+  [
+   "Balatro",
+   5,
+   37
+  ],
+  [
+   "NYT Games",
+   5,
+   36
+  ],
+  [
+   "Pokémon GO",
+   5,
+   36
+  ],
+  [
+   "Bloons TD 6",
+   5,
+   35
+  ],
+  [
+   "Chess.com",
+   5,
+   35
+  ],
+  [
+   "Roblox",
+   5,
+   34
+  ],
+  [
+   "MONOPOLY GO!",
+   5,
+   32
+  ],
+  [
+   "Toon Blast",
+   5,
+   32
+  ]
+ ],
+ "MON": [
+  [
+   "Clash Royale",
+   5,
+   39
+  ],
+  [
+   "Royal Match",
+   5,
+   38
+  ],
+  [
+   "Royal Kingdom",
+   5,
+   37
+  ],
+  [
+   "Pokémon GO",
+   5,
+   36
+  ],
+  [
+   "Pixel Flow!",
+   5,
+   35
+  ],
+  [
+   "Roblox",
+   5,
+   34
+  ],
+  [
+   "Disney Solitaire",
+   5,
+   33
+  ],
+  [
+   "Pokémon TCG Pocket",
+   5,
+   33
+  ],
+  [
+   "Gardenscapes",
+   5,
+   32
+  ],
+  [
+   "MONOPOLY GO!",
+   5,
+   32
+  ]
+ ],
+ "VIS": [
+  [
+   "Clash Royale",
+   5,
+   39
+  ],
+  [
+   "Royal Match",
+   5,
+   38
+  ],
+  [
+   "Balatro",
+   5,
+   37
+  ],
+  [
+   "Royal Kingdom",
+   5,
+   37
+  ],
+  [
+   "Brawl Stars",
+   5,
+   36
+  ],
+  [
+   "Disney Solitaire",
+   5,
+   33
+  ],
+  [
+   "Pokémon TCG Pocket",
+   5,
+   33
+  ],
+  [
+   "Gardenscapes",
+   5,
+   32
+  ],
+  [
+   "Mini Metro",
+   5,
+   31
+  ],
+  [
+   "NYT Games",
+   4,
+   36
+  ]
+ ],
+ "PRO": [
+  [
+   "Clash Royale",
+   5,
+   39
+  ],
+  [
+   "Royal Match",
+   5,
+   38
+  ],
+  [
+   "Royal Kingdom",
+   5,
+   37
+  ],
+  [
+   "Brawl Stars",
+   5,
+   36
+  ],
+  [
+   "Pokémon GO",
+   5,
+   36
+  ],
+  [
+   "Bloons TD 6",
+   5,
+   35
+  ],
+  [
+   "Chess.com",
+   5,
+   35
+  ],
+  [
+   "Township",
+   5,
+   32
+  ],
+  [
+   "Whiteout Survival",
+   5,
+   30
+  ],
+  [
+   "Balatro",
+   4,
+   37
+  ]
+ ],
+ "VIR": [
+  [
+   "Balatro",
+   5,
+   37
+  ],
+  [
+   "NYT Games",
+   5,
+   36
+  ],
+  [
+   "Pokémon GO",
+   5,
+   36
+  ],
+  [
+   "Pixel Flow!",
+   5,
+   35
+  ],
+  [
+   "Geometry Dash Lite",
+   5,
+   34
+  ],
+  [
+   "Roblox",
+   5,
+   34
+  ],
+  [
+   "Subway Surfers",
+   5,
+   32
+  ],
+  [
+   "Meowdoku!",
+   5,
+   31
+  ],
+  [
+   "BitLife",
+   5,
+   29
+  ],
+  [
+   "Sand Blocks",
+   5,
+   29
+  ]
+ ],
+ "EQU": [
+  [
+   "Clash Royale",
+   5,
+   39
+  ],
+  [
+   "Royal Match",
+   5,
+   38
+  ],
+  [
+   "Balatro",
+   5,
+   37
+  ],
+  [
+   "Royal Kingdom",
+   5,
+   37
+  ],
+  [
+   "Brawl Stars",
+   5,
+   36
+  ],
+  [
+   "NYT Games",
+   5,
+   36
+  ],
+  [
+   "Bloons TD 6",
+   5,
+   35
+  ],
+  [
+   "Mini Metro",
+   5,
+   31
+  ],
+  [
+   "Pokémon GO",
+   4,
+   36
+  ],
+  [
+   "Chess.com",
+   4,
+   35
+  ]
+ ],
+ "S/P": [
+  [
+   "Clash Royale",
+   5,
+   39
+  ],
+  [
+   "Royal Match",
+   5,
+   38
+  ],
+  [
+   "Balatro",
+   5,
+   37
+  ],
+  [
+   "Royal Kingdom",
+   5,
+   37
+  ],
+  [
+   "NYT Games",
+   5,
+   36
+  ],
+  [
+   "Chess.com",
+   5,
+   35
+  ],
+  [
+   "Pixel Flow!",
+   5,
+   35
+  ],
+  [
+   "Geometry Dash Lite",
+   5,
+   34
+  ],
+  [
+   "Meowdoku!",
+   5,
+   31
+  ],
+  [
+   "Mini Metro",
+   5,
+   31
+  ]
+ ],
+ "total": [
+  [
+   "Clash Royale",
+   39,
+   39
+  ],
+  [
+   "Royal Match",
+   38,
+   38
+  ],
+  [
+   "Balatro",
+   37,
+   37
+  ],
+  [
+   "Royal Kingdom",
+   37,
+   37
+  ],
+  [
+   "Brawl Stars",
+   36,
+   36
+  ],
+  [
+   "NYT Games",
+   36,
+   36
+  ],
+  [
+   "Pokémon GO",
+   36,
+   36
+  ],
+  [
+   "Bloons TD 6",
+   35,
+   35
+  ],
+  [
+   "Chess.com",
+   35,
+   35
+  ],
+  [
+   "Pixel Flow!",
+   35,
+   35
+  ]
+ ]
+}

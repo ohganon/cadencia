@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadencia · Tablero de estilo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700;6..96,900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --escarlata:#ef4655; --escarlata-pano:#b51c2a; --escarlata-osc:#8e1420; --marino:#16213f; --marino-prof:#0e1630; --marino-claro:#24315a;
+  --laton:#d9a93b; --laton-claro:#f1cf7a; --tiza:#f4f1ea; --tiza-tenue:rgba(244,241,234,.16); --tinta:#1d1d1b;
+  --display:"Bodoni Moda", "Didot", serif; --ui:"Atkinson Hyperlegible", system-ui, sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{background:var(--marino);color:var(--tiza);font-family:var(--ui);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--marino);font-size:17px;line-height:1.5}
+::selection{background:var(--laton);color:var(--marino-prof)}
+:focus-visible{outline:3px solid var(--laton);outline-offset:3px;border-radius:4px}
+html{scrollbar-color:var(--laton) var(--marino-prof)}
+a{color:var(--laton-claro);text-underline-offset:.2em}
+
+/* ===== Campo de ensayo: la página es el gráfico de desfile ===== */
+.campo{
+  position:relative;
+  background-color:var(--marino);
+  background-image:
+    linear-gradient(var(--tiza-tenue) 1px, transparent 1px),
+    linear-gradient(90deg, var(--tiza-tenue) 1px, transparent 1px),
+    linear-gradient(rgba(244,241,234,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244,241,234,.06) 1px, transparent 1px);
+  background-size:96px 96px,96px 96px,24px 24px,24px 24px;
+  background-position:-1px -1px;
+}
+.cabecera{padding:40px 6vw 0;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.titulo{font-family:var(--display);font-weight:900;font-size:clamp(2.4rem,11vw,6rem);letter-spacing:.05em;line-height:.9;margin:0;font-variation-settings:"opsz" 96}
+.titulo span{color:var(--escarlata);text-shadow:0 2px 0 var(--marino-prof)}
+.programa{font-family:var(--display);font-weight:500;font-size:1.05rem;letter-spacing:.02em;max-width:34ch;margin:12px 0 0;color:var(--laton-claro)}
+.figura-num{font-family:var(--display);font-weight:700;color:var(--laton);font-size:.95rem;letter-spacing:.12em;text-transform:uppercase;margin:0;align-self:flex-start;padding-top:12px}
+
+/* ===== Primer viewport ===== */
+.escena{display:grid;grid-template-columns:1fr auto 1fr;gap:28px;align-items:center;padding:24px 6vw 72px}
+.anot{display:flex;flex-direction:column;gap:42px}
+.anot.izq{align-items:flex-end;text-align:right}
+.nota{max-width:26ch;position:relative}
+.nota b{display:block;font-family:var(--display);font-weight:700;font-size:1.25rem;color:var(--tiza);line-height:1.15;margin-bottom:6px}
+.nota p{margin:0;color:#cfd4e4;font-size:.98rem}
+.nota .compas{font-family:var(--display);color:var(--laton);font-weight:700;font-variant-numeric:lining-nums}
+.anot.izq .nota::after,.anot.der .nota::before{content:"";position:absolute;top:.8em;width:min(4vw,56px);height:1px;background:var(--laton)}
+.anot.izq .nota::after{right:calc(-1 * min(4vw,56px) - 12px)}
+.anot.der .nota::before{left:calc(-1 * min(4vw,56px) - 12px)}
+
+/* ===== Teléfono ===== */
+.telefono{position:relative;height:min(calc(100vh - 210px),800px);min-height:560px;aspect-ratio:390/800;margin:0 auto;border-radius:46px;background:var(--tinta);padding:12px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6),0 8px 18px rgba(0,0,0,.35)}
+.pantalla{position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;background:var(--marino-prof);display:flex;flex-direction:column}
+.barra{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 10px;gap:8px}
+.barra .nivel{font-family:var(--display);font-weight:900;font-size:1.35rem;letter-spacing:.04em;line-height:1}
+.barra .nivel small{display:block;font-family:var(--ui);font-weight:400;font-size:.78rem;letter-spacing:0;color:#aeb6cf;margin-top:4px}
+.fichas{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;font-size:1.25rem;color:var(--laton-claro);font-variant-numeric:tabular-nums lining-nums}
+.fichas svg{width:16px;height:26px}
+.lienzo-wrap{position:relative;flex:1;margin:0 12px;border-radius:18px;overflow:hidden;background:var(--marino)}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.pista{position:absolute;left:12px;right:12px;top:10px;font-size:.82rem;color:#c3c9dc;pointer-events:none;text-align:center}
+.mandos{display:grid;grid-template-columns:52px 1fr 52px;gap:12px;align-items:center;padding:14px 16px 22px}
+.boton{font:inherit;border:0;cursor:pointer}
+.circ{width:52px;height:52px;border-radius:50%;background:var(--marino-claro);color:var(--tiza);display:grid;place-items:center;transition:background .2s var(--ease)}
+.circ:hover{background:#2f3e70}
+.circ svg{width:22px;height:22px}
+.batuta{height:56px;border-radius:28px;background:linear-gradient(180deg,#c42232,var(--escarlata-pano) 60%,#9c1824);color:var(--tiza);font-family:var(--display);font-weight:900;font-size:1.45rem;letter-spacing:.06em;box-shadow:0 8px 18px -8px rgba(0,0,0,.7);transition:transform .15s var(--ease),filter .2s}
+.batuta:hover{filter:brightness(1.08)}
+.batuta:active{transform:translateY(2px);box-shadow:0 4px 10px -6px rgba(0,0,0,.7)}
+.batuta[disabled]{filter:grayscale(.6) brightness(.8);cursor:default}
+
+/* ===== Secciones ===== */
+.seccion{padding:72px 6vw;border-top:1px solid rgba(217,169,59,.35)}
+.seccion h2{font-family:var(--display);font-weight:900;font-size:clamp(2rem,4.6vw,3.4rem);letter-spacing:.03em;line-height:1;margin:0 0 12px}
+.seccion .lead{max-width:62ch;color:#cfd4e4;margin:0 0 40px}
+.uniforme{display:grid;grid-template-columns:2.2fr 2.2fr 1.3fr 1fr .8fr;min-height:260px;border-radius:14px;overflow:hidden;box-shadow:0 20px 40px -24px rgba(0,0,0,.7)}
+.tela{padding:20px;display:flex;flex-direction:column;justify-content:flex-end;position:relative}
+.tela b{font-family:var(--display);font-weight:700;font-size:1.2rem;line-height:1.1}
+.tela span{font-size:.85rem;opacity:.85;font-variant-numeric:tabular-nums}
+.tela em{font-style:normal;font-size:.85rem;margin-top:6px;opacity:.9;max-width:24ch}
+.t-esc{background:var(--escarlata-pano);color:var(--tiza)}
+.t-esc::before{content:"";position:absolute;left:0;right:0;top:0;height:10px;background:repeating-linear-gradient(90deg,var(--laton) 0 18px,var(--laton-claro) 18px 22px)}
+.t-mar{background:var(--marino-prof);color:var(--tiza);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0 2px,transparent 2px 6px)}
+.t-lat{background:var(--laton);color:var(--marino-prof)}
+.t-tiz{background:var(--tiza);color:var(--marino-prof)}
+.t-tin{background:var(--tinta);color:var(--tiza)}
+
+.tipos{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:start}
+.espec-display{font-family:var(--display);font-weight:900;font-size:clamp(2.6rem,7vw,5.6rem);line-height:.92;letter-spacing:.04em;margin:0;color:var(--tiza)}
+.espec-display .r{color:var(--escarlata)}
+.espec-meta{margin-top:16px;color:var(--laton-claro);font-size:.95rem}
+.espec-ui p{margin:0 0 14px;max-width:44ch}
+.espec-ui .grande{font-size:1.4rem;font-weight:700}
+.cifras{font-family:var(--display);font-weight:700;font-size:2.4rem;color:var(--laton);letter-spacing:.03em;font-variant-numeric:lining-nums;margin:8px 0 4px}
+
+.piezas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px}
+.pieza{padding:8px 6px 14px;text-align:center;border-top:1px solid rgba(244,241,234,.35)}
+.pieza svg{width:100%;height:110px}
+.pieza b{display:block;font-family:var(--display);font-weight:700;font-size:1.05rem;margin-top:8px}
+.pieza span{font-size:.85rem;color:#b9c0d6}
+.subt{font-family:var(--display);font-weight:700;font-size:1.5rem;margin:48px 0 18px;color:var(--laton-claro)}
+
+.pantallas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px;align-items:start}
+.pantallas figure{margin:0}
+.pantallas figcaption{margin-top:16px;color:#cfd4e4;font-size:.95rem;max-width:36ch}
+.pantallas figcaption b{display:block;font-family:var(--display);font-size:1.25rem;color:var(--tiza);margin-bottom:4px}
+.mini{height:auto;min-height:0;width:100%;max-width:330px;aspect-ratio:390/720}
+.pie-pantalla{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:#c3c9dc;border-top:1px solid rgba(244,241,234,.2);padding-top:12px}
+.cuerdas{display:flex;gap:5px}
+.cuerdas i{width:12px;height:12px;border-radius:50%;border:2px solid var(--laton)}
+.cuerdas i.llena{background:var(--laton)}
+.mini .pantalla{padding:22px 18px;gap:12px}
+.repertorio h3,.sincuerda h3{font-family:var(--display);font-weight:900;font-size:1.6rem;letter-spacing:.04em;margin:6px 0 2px}
+.pauta{border-top:1px solid rgba(244,241,234,.35);border-bottom:1px solid rgba(244,241,234,.35);height:44px;background:repeating-linear-gradient(transparent 0 10px,rgba(244,241,234,.35) 10px 11px);position:relative;margin:4px 0}
+.pauta i{position:absolute;top:50%;width:26px;height:26px;margin-top:-13px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-family:var(--display);font-weight:700;font-size:.8rem;background:var(--marino-claro);color:#c9cfe2}
+.pauta i.hecho{background:var(--laton);color:var(--marino-prof)}
+.pauta i.ahora{background:var(--escarlata-pano);color:var(--tiza);box-shadow:0 0 0 4px rgba(200,32,47,.35)}
+.barrio{font-size:.8rem;color:#aeb6cf;margin-top:8px}
+.compartir{background:var(--tiza);color:var(--marino-prof);border-radius:16px;padding:18px;font-family:var(--display)}
+.compartir .ln{font-weight:900;font-size:1.3rem;letter-spacing:.03em}
+.compartir .res{font-family:var(--ui);font-size:1.05rem;margin:8px 0;letter-spacing:.04em}
+.compartir small{font-family:var(--ui);font-size:.8rem;color:#4b5375}
+.opciones{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.op{background:var(--marino-claro);border-radius:14px;padding:14px 12px;font-size:.88rem;line-height:1.3;color:var(--tiza);text-align:left;min-height:96px;display:flex;flex-direction:column;gap:6px}
+.op b{font-family:var(--display);font-size:1.05rem}
+.op.club{background:var(--escarlata-pano)}
+.reloj{font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums lining-nums;color:var(--laton-claro)}
+
+.reglas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}
+.reglas h3{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:0 0 8px}
+.reglas p{margin:0 0 10px;color:#cfd4e4;max-width:40ch}
+.reglas ul{margin:0;padding-left:1.1em;color:#cfd4e4}
+.reglas li{margin-bottom:6px}
+.pie{padding:40px 6vw 56px;color:#9aa3c0;font-size:.85rem;border-top:1px solid rgba(217,169,59,.35)}
+
+@media (max-width:1080px){
+  .escena{grid-template-columns:1fr;}
+  .anot{flex-direction:row;flex-wrap:wrap;gap:20px;justify-content:center}
+  .anot.izq{align-items:flex-start;text-align:left;order:2}
+  .anot.der{order:3}
+  .anot .nota::after,.anot .nota::before{display:none}
+  .uniforme{grid-template-columns:1fr 1fr;}
+  .tela{min-height:140px}
+  .piezas{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .pantallas,.reglas,.tipos{grid-template-columns:1fr}
+  .mini{margin:0 auto}
+}
+@media (max-width:520px){
+  .cabecera{padding:28px 16px 0}
+  .escena,.seccion{padding-left:16px;padding-right:16px}
+  .piezas{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .uniforme{grid-template-columns:1fr}
+  .telefono{border-radius:38px;padding:9px;height:auto;min-height:0;width:100%}
+  .pantalla{border-radius:30px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main class="campo">
+  <header class="cabecera">
+    <div>
+      <h1 class="titulo">CADEN<span>CIA</span></h1>
+      <p class="programa">Programa de la Banda de Villa Cadencia. Tablero de estilo, primera figura.</p>
+    </div>
+    <p class="figura-num">Figura 1 · Tempo 120</p>
+  </header>
+
+  <section class="escena" aria-label="Nivel de demostración jugable">
+    <div class="anot izq">
+      <div class="nota"><b>El largo es el tiempo</b><p>Cada ficha es un tiempo de compás. Las cifras de latón cuentan <span class="compas">1, 2, 3…</span> a lo largo del camino.</p></div>
+      <div class="nota"><b>La batuta</b><p>«¡Ya!» empuja la primera ficha. Es la única acción principal de la pantalla.</p></div>
+    </div>
+
+    <div class="telefono">
+      <div class="pantalla">
+        <div class="barra">
+          <div class="nivel">LA PLAZA · 5<small>Haz sonar la campana doble a la vez</small></div>
+          <div class="fichas" aria-label="Fichas restantes">
+            <svg viewBox="0 0 16 26" aria-hidden="true"><rect x="1" y="1" width="14" height="24" rx="3" fill="#ef4655"/><rect x="1" y="1" width="14" height="5" rx="2" fill="#d9a93b"/></svg>
+            <span id="contador">60</span>
+          </div>
+        </div>
+        <div class="lienzo-wrap">
+          <canvas id="campo" aria-label="Campo de juego: arrastra desde el empujador para dibujar fichas"></canvas>
+          <div class="pista" id="pista">Arrastra desde el empujador. Pulsa «Ejemplo» para ver una solución.</div>
+        </div>
+        <div class="mandos">
+          <button class="boton circ" id="deshacer" aria-label="Borrar el trazo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>
+          </button>
+          <button class="boton batuta" id="ya">¡YA!</button>
+          <button class="boton circ" id="ejemplo" aria-label="Ver una solución de ejemplo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="anot der">
+      <div class="nota"><b>La campana doble</b><p>Solo suena si dos ramas llegan en el mismo tiempo. Mismo largo, mismo instante.</p></div>
+      <div class="nota"><b>Un solo brillo</b><p>La ficha que cae ahora es lo único que brilla. Todo lo demás espera en tiza y paño.</p></div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="h-paleta">
+    <h2 id="h-paleta">El uniforme</h2>
+    <p class="lead">La paleta sale del uniforme de gala de la banda. El azul de lana es el suelo de todas las pantallas; el escarlata es la cadena y la acción; el latón son las campanas y las cifras. La tiza dibuja la rejilla de tiempos. La tinta queda para las fichas rotas y los textos sobre papel.</p>
+    <div class="uniforme">
+      <div class="tela t-mar"><b>Azul de lana</b><span>#16213F · #0E1630</span><em>Suelo del campo y de la interfaz. Nunca blanco de fondo.</em></div>
+      <div class="tela t-esc"><b>Escarlata de gala</b><span>Paño #B51C2A · Pieza #EF4655</span><em>Dos tonos por accesibilidad: el paño lleva texto encima (5,9:1); el vivo dibuja fichas y texto sobre azul (4,3:1).</em></div>
+      <div class="tela t-lat"><b>Latón</b><span>#D9A93B · #F1CF7A</span><em>Campanas, cifras de compás y el brillo único.</em></div>
+      <div class="tela t-tiz"><b>Tiza</b><span>#F4F1EA</span><em>Rejilla y texto.</em></div>
+      <div class="tela t-tin"><b>Tinta</b><span>#1D1D1B</span><em>Roto, bordes.</em></div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="h-tipos">
+    <h2 id="h-tipos">El programa de mano</h2>
+    <p class="lead">Dos voces, como un programa de concierto de pueblo. Bodoni Moda en mayúsculas es la voz de la banda: títulos, barrios y cifras de compás, como en una partitura grabada. Atkinson Hyperlegible es la voz de servicio, diseñada para leerse bien con poca vista: botones, ayudas y ajustes. Las dos tienen licencia SIL Open Font License.</p>
+    <div class="tipos">
+      <div>
+        <p class="espec-display">LA GRAN<br><span class="r">CADENA</span></p>
+        <p class="espec-meta">Bodoni Moda 900, mayúsculas, interletraje +0,04 em. Solo para títulos y cifras.</p>
+        <p class="cifras">1 2 3 4 · 120 · 17/20</p>
+        <p class="espec-meta">Cifras de compás: Bodoni Moda 700, numerales alineados.</p>
+      </div>
+      <div class="espec-ui">
+        <p class="grande">Arrastra desde el empujador para dibujar fichas.</p>
+        <p>Te quedan 3 cuerdas. Se recarga una cada 30 minutos, o puedes ver un anuncio para conseguir 3 más.</p>
+        <p class="espec-meta">Atkinson Hyperlegible 400 y 700. Tamaño mínimo 15 px en juego; interfaz escalable para la opción de texto grande.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="h-piezas">
+    <h2 id="h-piezas">Las piezas</h2>
+    <p class="lead">Cada estado de la cadena se distingue por forma y color a la vez, para que funcione con daltonismo y con el modo de alto contraste.</p>
+    <h3 class="subt">Estados de la ficha</h3>
+    <div class="piezas">
+      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><rect x="28" y="20" width="24" height="70" rx="5" fill="none" stroke="#ef4655" stroke-width="3" stroke-dasharray="6 5"/></svg><b>Dibujada</b><span>Trazo provisional</span></div>
+      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><rect x="28" y="20" width="24" height="70" rx="5" fill="#ef4655"/><rect x="28" y="20" width="24" height="12" rx="4" fill="#d9a93b"/></svg><b>Armada</b><span>Lista para caer</span></div>
+      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><g transform="rotate(38 40 90)"><rect x="28" y="20" width="24" height="70" rx="5" fill="#f1cf7a"/><rect x="28" y="20" width="24" height="12" rx="4" fill="#fff6dc"/></g></svg><b>Cayendo</b><span>El único brillo</span></div>
+      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><rect x="8" y="70" width="64" height="22" rx="5" fill="#8e1420"/><rect x="8" y="70" width="12" height="22" rx="4" fill="#a87a1d"/><path d="M58 40l6 6 12-14" fill="none" stroke="#d9a93b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Sincronizada</b><span>Llegó a tiempo</span></div>
+      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><rect x="28" y="20" width="24" height="70" rx="5" fill="#1d1d1b" stroke="#ef4655" stroke-width="2"/><path d="M30 46l20 18M50 46 30 64" stroke="#f4f1ea" stroke-width="4" stroke-linecap="round"/></svg><b>Rota</b><span>Aquí se paró</span></div>
+    </div>
+    <h3 class="subt">Campanas y mecanismos</h3>
+    <div class="piezas">
+      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><ellipse cx="34" cy="74" rx="16" ry="12" transform="rotate(-20 34 74)" fill="#d9a93b"/><rect x="47" y="18" width="4" height="56" fill="#d9a93b"/></svg><b>Campana</b><span>Una nota negra</span></div>
+      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><ellipse cx="34" cy="74" rx="16" ry="12" transform="rotate(-20 34 74)" fill="#d9a93b"/><rect x="47" y="18" width="4" height="56" fill="#d9a93b"/><text x="34" y="80" text-anchor="middle" font-family="Bodoni Moda" font-weight="700" font-size="16" fill="#0e1630">2</text></svg><b>Numerada</b><span>Suena en su orden</span></div>
+      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><ellipse cx="26" cy="78" rx="13" ry="10" transform="rotate(-20 26 78)" fill="#d9a93b"/><ellipse cx="52" cy="66" rx="13" ry="10" transform="rotate(-20 52 66)" fill="#d9a93b"/><rect x="36" y="22" width="4" height="56" fill="#d9a93b"/><rect x="62" y="12" width="4" height="54" fill="#d9a93b"/><rect x="38" y="12" width="28" height="7" fill="#d9a93b"/></svg><b>Doble</b><span>Dos ramas, mismo tiempo</span></div>
+      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><path d="M40 92V54" stroke="#ef4655" stroke-width="10" stroke-linecap="round"/><path d="M40 56 18 22M40 56l22-34" stroke="#ef4655" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="40" cy="56" r="9" fill="#d9a93b"/></svg><b>Bifurcador</b><span>Abre dos ramas</span></div>
+      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><rect x="12" y="30" width="8" height="62" fill="#d9a93b"/><rect x="60" y="30" width="8" height="62" fill="#d9a93b"/><rect x="20" y="40" width="40" height="8" fill="#f4f1ea" opacity=".9"/><path d="M24 58h32" stroke="#f4f1ea" stroke-width="3" stroke-dasharray="4 4"/><circle cx="16" cy="26" r="6" fill="#d9a93b"/><circle cx="64" cy="26" r="6" fill="#d9a93b"/></svg><b>Puerta de vaivén</b><span>Abierta a su compás</span></div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="h-pantallas">
+    <h2 id="h-pantallas">Tres pantallas</h2>
+    <p class="lead">Las pantallas de servicio usan la misma tela y la misma voz. Nada de marcos dorados ni botones de caramelo: la banda no los necesita.</p>
+    <div class="pantallas">
+      <figure>
+        <div class="telefono mini"><div class="pantalla repertorio">
+          <h3>REPERTORIO</h3>
+          <div class="barrio">Barrio 1 · La Plaza</div>
+          <div class="pauta" aria-hidden="true"><i class="hecho" style="left:4%">1</i><i class="hecho" style="left:22%">2</i><i class="hecho" style="left:40%">3</i><i class="hecho" style="left:58%">4</i><i class="ahora" style="left:76%">5</i></div>
+          <div class="pauta" aria-hidden="true"><i style="left:4%">6</i><i style="left:22%">7</i><i style="left:40%">8</i><i style="left:58%">9</i><i style="left:76%">10</i></div>
+          <div class="barrio">Barrio 2 · El Mercado. Se abre al terminar La Plaza.</div>
+          <div class="pauta" aria-hidden="true" style="opacity:.45"><i style="left:4%">1</i><i style="left:22%">2</i><i style="left:40%">3</i><i style="left:58%">4</i><i style="left:76%">5</i></div>
+          <div class="pie-pantalla"><span>Cuerda</span><span class="cuerdas" aria-label="3 de 5 cuerdas"><i class="llena"></i><i class="llena"></i><i class="llena"></i><i></i><i></i></span></div>
+        </div></div>
+        <figcaption><b>Repertorio</b>Los niveles son notas sobre un pentagrama. El nivel en curso es escarlata y los superados, latón.</figcaption>
+      </figure>
+      <figure>
+        <div class="telefono mini"><div class="pantalla">
+          <h3 style="font-family:var(--display);font-weight:900;font-size:1.6rem;letter-spacing:.04em;margin:6px 0 2px">LA CAÍDA DEL DÍA</h3>
+          <div class="barrio">16 de noviembre · El mismo nivel para todos</div>
+          <div class="compartir">
+            <div class="ln">Cadencia · Caída 214</div>
+            <div class="res" aria-label="Resultado: 37 fichas, 3 campanas a tiempo">▮▮▮▮▮▮▮ 37<br>● ● ●  a tiempo</div>
+            <small>Sin desvelar la solución. Se comparte como texto.</small>
+          </div>
+          <div class="pie-pantalla" style="border:0;padding:0"><span>Racha: 4 días</span><span>Mejor marca: 34 fichas</span></div>
+          <button class="boton batuta">COMPARTIR</button>
+        </div></div>
+        <figcaption><b>La Caída del Día</b>El resultado cabe en un mensaje, como Wordle. En el juego final, los símbolos se diseñarán como un juego propio de caracteres.</figcaption>
+      </figure>
+      <figure>
+        <div class="telefono mini"><div class="pantalla sincuerda">
+          <h3>SIN CUERDA</h3>
+          <div class="barrio">Se recarga una cada 30 minutos. Siguiente en <span class="reloj">12:40</span></div>
+          <div class="opciones">
+            <div class="op"><b>Ver anuncio</b>+3 cuerdas, ahora. Te quedan 9 hoy.</div>
+            <div class="op"><b>Esperar</b>Te avisamos si quieres.</div>
+            <div class="op"><b>Jugar gratis</b>Caída del Día, Modo Libre o Taller.</div>
+            <div class="op club"><b>Club Cadencia</b>Cuerda ilimitada y sin anuncios. 4,99 €/mes.</div>
+          </div>
+          <div class="pie-pantalla"><span>Si no ves el anuncio, no pierdes nada.</span></div>
+        </div></div>
+        <figcaption><b>Sin cuerda</b>Cuatro salidas del mismo tamaño. Rechazar no se presenta como un error y no hay cuentas atrás falsas.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="h-mov">
+    <h2 id="h-mov">Movimiento y sonido</h2>
+    <p class="lead">La caída es el único momento escénico del juego. Todo lo demás se mueve poco y rápido para no competir con ella.</p>
+    <div class="reglas">
+      <div><h3>La caída</h3><p>Un tempo fijo por ficha (en la demo, 90 ms). La ficha que cae se ilumina en latón claro y se tumba con una curva de salida rápida. Las ya caídas se quedan en escarlata oscuro, tumbadas: el rastro cuenta lo que pasó.</p><p>La cámara lenta reduce el tempo a la mitad. Con «reducir movimiento» activado, las fichas se tumban sin rotación.</p></div>
+      <div><h3>El final del capítulo</h3><p>La Gran Cadena recorre el pueblo entero en un plano continuo. Es el único momento con cámara en movimiento y música completa: el vídeo que la gente comparte.</p></div>
+      <div><h3>Sonido</h3><ul><li>Clic de madera por ficha, afinado según el material (haya, nogal, cristal…).</li><li>Campanas afinadas en una escala: una cadena bien sincronizada suena como un acorde.</li><li>Música de banda de pueblo: metales y caja, con licencia CC0 o compuesta a medida.</li><li>Todo el juego se puede jugar sin sonido. El ritmo también se ve en las cifras de compás.</li></ul></div>
+    </div>
+  </section>
+
+  <footer class="pie">Cadencia (nombre provisional) · Tablero de estilo v1 · 16/11/2026. Fuentes Bodoni Moda y Atkinson Hyperlegible (SIL OFL 1.1). Todos los gráficos de esta página están dibujados en código; no se usan recursos de terceros. El nivel de demostración es ilustrativo.</footer>
+</main>
+
+<script>
+(() => {
+  const cv = document.getElementById('campo');
+  const ctx = cv.getContext('2d');
+  const pista = document.getElementById('pista');
+  const contador = document.getElementById('contador');
+  const btnYa = document.getElementById('ya');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const C = {esc:'#ef4655', escO:'#8e1420', lat:'#d9a93b', latC:'#f1cf7a', tiza:'rgba(244,241,234,', marino:'#16213f', tinta:'#1d1d1b'};
+  const PASO = 15, TEMPO = 90, MAX = 60;
+  let W, H, dpr;
+  let trazo = [], ramas = [], estado = 'dibujo', t0 = 0, dibujando = false, ejemplo = false;
+
+  // Puntos del nivel en coordenadas relativas (0..1)
+  const L = { empuja:{x:.14,y:.86}, campanas:[{x:.82,y:.20,doble:true}] };
+
+  function resize(){
+    const r = cv.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1);
+    W = r.width; H = r.height; cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); draw(performance.now());
+  }
+  const P = p => ({x:p.x*W, y:p.y*H});
+
+  function muestrear(pts){ // remuestreo a paso fijo: cada ficha, un tiempo
+    if (pts.length < 2) return pts.slice();
+    const out=[pts[0]]; let acc=0;
+    for (let i=1;i<pts.length;i++){
+      let a=out[out.length-1], b=pts[i]; let d=Math.hypot(b.x-a.x,b.y-a.y);
+      while (d>=PASO){ const k=PASO/d; const n={x:a.x+(b.x-a.x)*k, y:a.y+(b.y-a.y)*k}; out.push(n); a=n; d=Math.hypot(b.x-a.x,b.y-a.y); }
+    }
+    return out;
+  }
+
+  function largo(g){ let s=0; for (let i=1;i<g.length;i++) s+=Math.hypot(g[i].x-g[i-1].x,g[i].y-g[i-1].y); return s; }
+  function repartir(g,n){ // n puntos equiespaciados a lo largo de la poligonal
+    const L=largo(g), out=[]; let seg=1, acum=0;
+    for (let k=0;k<n;k++){
+      const objetivo=L*k/(n-1);
+      while (seg<g.length-1 && acum+Math.hypot(g[seg].x-g[seg-1].x,g[seg].y-g[seg-1].y)<objetivo){ acum+=Math.hypot(g[seg].x-g[seg-1].x,g[seg].y-g[seg-1].y); seg++; }
+      const a=g[seg-1], b=g[seg], d=Math.hypot(b.x-a.x,b.y-a.y)||1, t=Math.min(1,(objetivo-acum)/d);
+      out.push({x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t});
+    }
+    return out;
+  }
+  function ejemploNivel(){ // tronco + bifurcador + dos ramas del mismo largo hasta la campana doble
+    const e=P(L.empuja), c=P(L.campanas[0]);
+    const bif={x:e.x+ (c.x-e.x)*.38, y:e.y+(c.y-e.y)*.42};
+    const tronco = muestrear([e,{x:e.x+W*.08,y:e.y-H*.06},bif]);
+    const izqG = [bif,{x:bif.x-W*.10,y:bif.y-H*.22},{x:c.x-W*.24,y:c.y-H*.02},{x:c.x-W*.035,y:c.y+H*.005}];
+    const derG = [bif,{x:bif.x+W*.30,y:bif.y-H*.02},{x:c.x+W*.02,y:c.y+H*.20},{x:c.x+W*.01,y:c.y+H*.035}];
+    // igualar largos: el mismo número de fichas en cada rama => llegan en el mismo instante
+    const n = Math.round((largo(izqG)+largo(derG))/2/PASO)+1;
+    return [{pts:tronco, inicio:0},{pts:repartir(izqG,n), inicio:tronco.length-1},{pts:repartir(derG,n), inicio:tronco.length-1}];
+  }
+
+  function totalFichas(){ return ramas.reduce((s,r)=>s+r.pts.length,0) + (estado==='dibujo'?trazo.length:0); }
+
+  function grid(){
+    ctx.fillStyle=C.marino; ctx.fillRect(0,0,W,H);
+    for (let x=0;x<=W;x+=24){ ctx.strokeStyle=C.tiza+(x%96===0?'.20)':'.07)'); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x+.5,0); ctx.lineTo(x+.5,H); ctx.stroke(); }
+    for (let y=0;y<=H;y+=24){ ctx.strokeStyle=C.tiza+(y%96===0?'.20)':'.07)'); ctx.beginPath(); ctx.moveTo(0,y+.5); ctx.lineTo(W,y+.5); ctx.stroke(); }
+  }
+
+  function campana(c, sonando, parcial){
+    const p=P(c); ctx.save(); ctx.translate(p.x,p.y);
+    const glow = sonando ? 1 : 0;
+    if (glow){ ctx.fillStyle='rgba(241,207,122,.22)'; ctx.beginPath(); ctx.arc(0,0,34,0,7); ctx.fill(); }
+    const col = sonando ? C.latC : C.lat;
+    ctx.fillStyle=col;
+    [[-11,8],[11,-2]].forEach(([dx,dy],i)=>{ ctx.save(); ctx.translate(dx,dy); ctx.rotate(-.35); ctx.beginPath(); ctx.ellipse(0,0,10,7.5,0,0,7); ctx.fill(); ctx.restore(); });
+    ctx.fillRect(-2,-28,3,34); ctx.fillRect(20,-38,3,34); ctx.fillRect(-2,-38,25,5);
+    if (parcial){ ctx.strokeStyle=C.esc; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,28,0,7); ctx.stroke(); }
+    ctx.restore();
+  }
+
+  function ficha(p, ang, modo, k){ // modo: borrador|armada|cayendo|caida
+    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(ang);
+    const w=5, h=13;
+    if (modo==='borrador'){ ctx.strokeStyle=C.esc; ctx.setLineDash([3,3]); ctx.lineWidth=1.6; ctx.strokeRect(-w/2,-h/2,w,h); }
+    else if (modo==='armada'){ ctx.fillStyle=C.esc; ctx.fillRect(-w/2,-h/2,w,h); ctx.fillStyle=C.lat; ctx.fillRect(-w/2,-h/2,w,3); }
+    else if (modo==='cayendo'){ const s=1-k*.7; ctx.fillStyle=C.latC; ctx.fillRect(-w/2 - (1-s)*4,-h/2*s,w+(1-s)*8,h*s); }
+    else { ctx.fillStyle=C.escO; ctx.fillRect(-w*1.4,-h/2*.45,w*2.8,h*.45); }
+    ctx.restore();
+  }
+
+  function dirAng(pts,i){ const a=pts[Math.max(0,i-1)], b=pts[Math.min(pts.length-1,i+1)]; return Math.atan2(b.y-a.y,b.x-a.x)+Math.PI/2; }
+
+  function empujador(){
+    const p=P(L.empuja); ctx.save(); ctx.translate(p.x,p.y);
+    ctx.fillStyle=C.tinta; ctx.beginPath(); ctx.arc(0,0,15,0,7); ctx.fill();
+    ctx.strokeStyle=C.lat; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,15,0,7); ctx.stroke();
+    ctx.fillStyle=C.lat; ctx.beginPath(); ctx.moveTo(-5,-7); ctx.lineTo(8,0); ctx.lineTo(-5,7); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  function cifras(pts, inicio){
+    ctx.fillStyle=C.lat; ctx.font='700 11px "Bodoni Moda", serif'; ctx.textAlign='center';
+    for (let i=4;i<pts.length;i+=4){
+      const p=pts[i], a=dirAng(pts,i); const ox=Math.cos(a)*14, oy=Math.sin(a)*14;
+      ctx.fillText(String(inicio+i), p.x+ox, p.y+oy+4);
+    }
+  }
+
+  function draw(now){
+    if (!W) return;
+    grid();
+    const todas = estado==='dibujo' && trazo.length ? [{pts:trazo,inicio:0}] : ramas;
+    const tiempo = estado==='cayendo' ? (now-t0)/(reduce?TEMPO*.5:TEMPO) : -1;
+    let llegadas=[];
+    todas.forEach(r=>{
+      r.pts.forEach((p,i)=>{
+        const beat=r.inicio+i; let modo = estado==='dibujo' && !ejemplo ? 'borrador' : 'armada', k=0;
+        if (tiempo>=0){ if (tiempo>beat+1) modo='caida'; else if (tiempo>beat){ modo='cayendo'; k=tiempo-beat; } }
+        ficha(p,dirAng(r.pts,i),modo,k);
+      });
+      cifras(r.pts, r.inicio);
+      const fin=r.pts[r.pts.length-1]; const c=P(L.campanas[0]);
+      if (fin && Math.hypot(fin.x-c.x,fin.y-c.y)<30) llegadas.push(r.inicio+r.pts.length-1);
+    });
+    empujador();
+    let sonando=false, parcial=false;
+    if (tiempo>=0 && llegadas.length){
+      const hechas=llegadas.filter(b=>tiempo>b);
+      if (hechas.length>=2 && Math.abs(llegadas[0]-llegadas[1])<=1) sonando=true;
+      else if (hechas.length>=1) parcial=true;
+    }
+    campana(L.campanas[0], sonando, parcial && !sonando);
+    contador.textContent = Math.max(0, MAX-totalFichas());
+    if (estado==='cayendo'){
+      const fin = Math.max(...todas.map(r=>r.inicio+r.pts.length))+2;
+      if (tiempo>fin){
+        estado='fin';
+        if (sonando){ pista.textContent='¡A tiempo! Las dos ramas llegaron en el mismo compás.'; }
+        else if (llegadas.length===1){ pista.textContent='Solo llegó una rama. La campana doble necesita dos a la vez.'; }
+        else { pista.textContent='La cadena no llegó a la campana. Mira dónde se paró y prueba otra vez.'; }
+        btnYa.disabled=false;
+      } else requestAnimationFrame(draw);
+      if (sonando && !draw.sonado){ draw.sonado=true; acorde(); }
+    }
+  }
+
+  let audio;
+  function acorde(){
+    try{
+      audio = audio || new (window.AudioContext||window.webkitAudioContext)();
+      const t=audio.currentTime; [523.25,659.25,783.99].forEach((f,i)=>{
+        const o=audio.createOscillator(), g=audio.createGain(); o.type='sine'; o.frequency.value=f;
+        g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.12,t+.01+i*.01); g.gain.exponentialRampToValueAtTime(.0001,t+1.6);
+        o.connect(g).connect(audio.destination); o.start(t); o.stop(t+1.7);
+      });
+    }catch(e){}
+  }
+
+  function pos(ev){ const r=cv.getBoundingClientRect(); return {x:ev.clientX-r.left, y:ev.clientY-r.top}; }
+  cv.addEventListener('pointerdown', ev=>{
+    if (estado==='cayendo') return;
+    const p=pos(ev), e=P(L.empuja);
+    if (Math.hypot(p.x-e.x,p.y-e.y)>40){ pista.textContent='Empieza el trazo sobre el empujador (el círculo con flecha).'; return; }
+    ejemplo=false; ramas=[]; estado='dibujo'; draw.sonado=false; dibujando=true; trazo=[e];
+    cv.setPointerCapture(ev.pointerId); pista.textContent='Dibuja hasta la campana doble…'; draw(performance.now());
+  });
+  cv.addEventListener('pointermove', ev=>{
+    if (!dibujando) return; const p=pos(ev); const last=trazo[trazo.length-1];
+    if (Math.hypot(p.x-last.x,p.y-last.y)>=PASO && trazo.length<MAX){ trazo=muestrear([...trazo,p]); trazo=trazo.slice(0,MAX); draw(performance.now()); }
+  });
+  const soltar=()=>{ if (!dibujando) return; dibujando=false; ramas=[{pts:trazo,inicio:0}]; trazo=[]; estado='armado'; pista.textContent='Pulsa «¡Ya!». Una sola rama no basta para la campana doble: prueba el ejemplo.'; draw(performance.now()); };
+  cv.addEventListener('pointerup', soltar); cv.addEventListener('pointercancel', soltar);
+
+  btnYa.addEventListener('click', ()=>{
+    if (!ramas.length){ pista.textContent='Primero dibuja una cadena desde el empujador.'; return; }
+    estado='cayendo'; draw.sonado=false; btnYa.disabled=true; t0=performance.now(); pista.textContent='Contad: uno, dos, tres…'; requestAnimationFrame(draw);
+  });
+  document.getElementById('ejemplo').addEventListener('click', ()=>{
+    ejemplo=true; ramas=ejemploNivel(); trazo=[]; estado='armado'; draw.sonado=false; btnYa.disabled=false;
+    pista.textContent='Dos ramas con el mismo número de fichas: llegarán en el mismo tiempo. Pulsa «¡Ya!».'; draw(performance.now());
+  });
+  document.getElementById('deshacer').addEventListener('click', ()=>{
+    ramas=[]; trazo=[]; estado='dibujo'; ejemplo=false; btnYa.disabled=false; pista.textContent='Arrastra desde el empujador.'; draw(performance.now());
+  });
+  addEventListener('resize', resize);
+  document.fonts && document.fonts.ready.then(resize);
+  resize();
+})();
+</script>
+</body>
+</html>

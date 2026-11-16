@@ -1,0 +1,33 @@
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Godot (para cuando empiece el desarrollo)
+.godot/
+*.import
+export_presets.cfg
+android/build/
+
+# Secretos: NUNCA se suben
+.env
+*.env
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+
+# impeccable: solo se versionan las decisiones duraderas (surfaces/, config.json, design.json)
+.impeccable/questions/
+.impeccable/mocks/
+.impeccable/review/
+.impeccable/build/
+.impeccable/config.local.json
+.impeccable/serve.log
+.impeccable/decision-direction.json
+.impeccable/brief-tablero.md

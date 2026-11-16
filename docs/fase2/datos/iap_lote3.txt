@@ -1,0 +1,173 @@
+
+## Vita Mahjong  hasIAP=['true']
+  - Mahjong Ads Remove — 6,99 €
+  - 2.99 — 2,99 €
+  - 1.99 — 1,99 €
+  - Yearly Subscription — 22,99 €
+  - 0.99 — 0,99 €
+  - 4.99 — 5,99 €
+  - Weekly Subscription — 2,99 €
+  - Ads Remove — 9,99 €
+  - 54.99 — 59,99 €
+  - 39.99 — 44,99 €
+
+## Word Tiles  hasIAP=['true']
+  - WT Super Bundle — 6,99 €
+  - WT Starter Pack Bundle — 1,99 €
+  - WT Coin Pack 2 — 5,99 €
+  - WT No Ads — 9,99 €
+  - WT Elite Bundle — 12,99 €
+  - WT Coin Pack 1 — 2,99 €
+  - WT Coin Pack 3 — 9,99 €
+  - WT Diamond Bundle — 59,99 €
+  - WT Legendary Bundle — 29,99 €
+  - WT Coin Pack 5 — 59,99 €
+
+## Brain Puzzle 3  hasIAP=['false']
+  - Remove ads — 6,99 €
+
+## Magic Tiles 3  hasIAP=['true']
+  - VIP subscription 1 week — 3,99 €
+  - VIP subscription weekly 2025 — 9,99 €
+  - VIP subscription 1 Month — 9,99 €
+  - VIP subscription weekly  — 6,99 €
+  - VIP subscription 1 week — 8,99 €
+  - Remove Ads — 9,99 €
+  - VIP Sub Monthly $16.99 — 16,99 €
+  - VIP subscription 1 year — 49,99 €
+  - Starter Pack — 2,99 €
+  - VIP subscription 1 Year — 42,99 €
+
+## Paper.io 2  hasIAP=['true']
+  - Fistful of Gems — 0,99 €
+  - No Ads — 9,99 €
+  - No Ads (Offer) — 9,99 €
+  - Bucket of Gems — 5,99 €
+  - Special Offer — 5,99 €
+  - Wagon of Gems — 9,99 €
+  - Mountain of Gems — 22,99 €
+  - Skin Bundle — 5,99 €
+  - No Ads Trial — 0,99 €
+  - Special Offer — 9,99 €
+
+## Mob Control  hasIAP=['true']
+  - Medium Pack of Skip Tickets — 2,99 €
+  - ¡Pase de Temporada! — 7,99 €
+  - Endless Loot — 2,99 €
+  - Medium Card Pack Bundle — 1,99 €
+  - Save the loots — 0,99 €
+  - Club VIP — 6,99 €
+  - Personal offer for $1.99 — 1,99 €
+  - Large Pack of Skip Tickets — 7,99 €
+  - Weeklong Wealth — 1,99 €
+  - Premium Gifts — 5,99 €
+
+## Subway Surfers  hasIAP=['true']
+  - 7,500 Coins — 0,99 €
+  - 25 Keys — 5,99 €
+  - Coin Pack 1 — 0,99 €
+  - 45,000 Coins — 5,99 €
+  - 40 Keys — 5,99 €
+  - 180,000 Coins — 22,99 €
+  - Starter Pack — 0,99 €
+  - 65 000 Coins — 5,99 €
+  - Double Coins — 5,99 €
+  - 12 500 Coins — 0,99 €
+
+## Geometry Dash Lite  hasIAP=['false']
+
+## MONOPOLY GO!  hasIAP=['true']
+  - Offer 2 — 2,99 €
+  - Offer 8 Type 1 — 9,99 €
+  - Offer 1 — 1,99 €
+  - Offer 4 — 5,99 €
+  - Offer 3 — 3,99 €
+  - Offer 18 Type 1 — 22,99 €
+  - Offer 5 — 8,99 €
+  - Offer 43 Type 1 — 6,99 €
+  - Offer 7 — 17,99 €
+  - Offer 5 Type 1 — 7,99 €
+
+## Coin Master  hasIAP=['true']
+  - Sofi Pack_4.99 — 4,99 €
+  - Sofi Pack_3.99 — 3,99 €
+  - Sofi Pack_2.99 — 2,99 €
+  - Sofi Pack_1.99 — 1,99 €
+  - Sofi Pack_0.99 — 0,99 €
+  - Sofi Pack_14.99 — 14,99 €
+  - Sofi Pack_7.99 — 7,99 €
+  - Sofi Pack_9.99 — 9,99 €
+  - Sofi Pack_19.99 — 19,99 €
+  - Sofi Pack_6.99 — 6,99 €
+
+## Pokémon GO  hasIAP=['true']
+  - 100 Pokémonedas — 1,09 €
+  - 550 Pokémonedas — 5,49 €
+  - 1,200 Pokémonedas — 10,99 €
+  - 2,500 Pokémonedas — 21,99 €
+  - Event Bonus — 1,09 €
+  - Event Ticket — 12,99 €
+  - GOWA 2026 Pass Unlock — 16,49 €
+  - Event Pass 3 Deluxe — 8,99 €
+  - 5,200 Pokémonedas — 43,99 €
+  - Event Ticket — 5,49 €
+
+## Pokémon TCG Pocket  hasIAP=['true']
+  - Pase prémium — 9,99 €
+  - 50 Pokélingotes (de pago) — 9,99 €
+  - 5 Pokélingotes (de pago) — 0,99 €
+  - 100 Pokélingotes (de pago) — 19,99 €
+  - 25 Pokélingotes (de pago) — 4,99 €
+  - 5 Pokélingotes (pago)-rebaja — 0,99 €
+  - 15 Pokélingotes (pago)-rebaja — 2,99 €
+  - 50 Pokélingotes (pago)-rebaja — 9,99 €
+  - 200 Pokélingotes (de pago) — 39,99 €
+  - Pokéling. ×5 + Pokéling. extra — 0,99 €
+
+## BitLife  hasIAP=['true']
+  - Time Machine Use — 0,99 €
+  - Bitizenship + God Mode — 14,99 €
+  - Bitizenship — 8,99 €
+  - Boss Mode — 22,99 €
+  - God Mode — 9,99 €
+  - Bitizenship — 9,99 €
+  - Landlord Expansion Pack — 7,99 €
+  - Pro Athlete Job Pack — 6,99 €
+  - Investor Expansion Pack — 7,99 €
+  - Luxury Lifestyle — 11,99 €
+
+## Parchisi STAR  hasIAP=['true']
+  - Gems Starter Pack — 1,19 €
+  - Gems Big Pack — 3,49 €
+  - Some Sale Pack  — 0,99 €
+  - Gems Mega Pack — 11,99 €
+  - Coins Starter Pack — 1,19 €
+  - Gems Super Pack — 5,99 €
+  - Season Pass — 5,99 €
+  - Coins Big Pack — 3,49 €
+  - Some Sale Pack  — 2,99 €
+  - Pick a Golden Card — 0,99 €
+
+## 8 Ball Pool  hasIAP=['true']
+  - Giro dorado — 0,99 €
+  - Montón de monedas — 1,99 €
+  - 3 Tiros Dorados — 1,99 €
+  - Pool Pass — 4,99 €
+  - Special Pack 1 — 1,99 €
+  - Special Pack 2 — 4,99 €
+  - Special Pack — 0,99 €
+  - Montón de dinero — 1,99 €
+  - 5 Rasca y gana — 1,99 €
+  - Elite Membership — 7,99 €
+
+## Among Us!  hasIAP=['false']
+  - Mini Crewmate Bundle — 2,99 €
+  - Hamster Pet Bundle — 2,99 €
+  - 30 Star Bundle — 2,99 €
+  - MIRA HQ Skin Bundle — 1,99 €
+  - 20 Star Bundle — 1,99 €
+  - 1M Download Hat Bundle — 2,99 €
+  - Police — 1,99 €
+  - Polus Map Skins — 1,99 €
+  - 110 Star Bundle — 9,99 €
+  - Remove All Ads — 1,99 €

@@ -1,0 +1,242 @@
+
+== es_topfreeapplications.json 2026-11-16T11:43:16-07:00
+1 playus: Minijuegos Arena | Dapps Pte. Ltd. | 2025-12
+2 Fortnite | Epic Games Inc. | 2026-05
+3 Block Out! - Color Sort Puzzle | Grand Games A.Ş. | 2026-03
+4 Meowdoku! | Oakever Games | 2026-05
+5 Gardenscapes | Playrix | 2016-08
+6 Magic Sort! | Grand Games A.Ş. | 2024-06
+7 Bus Traffic Fever! | GOODROID,Inc. | 2026-03
+8 Block Blast! | Hungry Studio | 2022-04
+9 City Transport Manager | PeDePe GbR | 2026-10
+10 Roblox | Roblox Corporation | 2011-05
+11 Bus Fever Party! Juego Atasco | Lumi Games | 2025-06
+12 Among Us! | InnerSloth LLC | 2018-07
+13 Amaze GO!® Flecha Rompecabezas | Oakever Games | 2026-02
+14 Ajedrez - Jugar y Aprender | Chess.com | 2009-10
+15 Brain Puzzle 3: Crazy Mind | SmallStep Dev Team | 2025-12
+16 Parking Loop | Loop Games Oyun Teknolojiler | 2026-09
+17 Gossip Harbor: Merge & Story | Microfun Limited | 2022-06
+18 8 Ball Pool™ | Miniclip.com | 2013-02
+19 Food Hunt: Pixel Puzzle | FUNFINITY PTE. LTD | 2026-05
+20 Magic Tiles 3™: Piano Game | Amanotes Pte. Ltd. | 2018-12
+21 Subway Surfers | Sybo Games ApS | 2012-05
+22 Word Tiles - Juego de Palabras | Agave Games | 2026-07
+23 Parchisi STAR | Gameberry Labs | 2017-03
+24 Township | Playrix | 2013-10
+25 Solitaire Associations Journey | Hitapps Games LTD | 2025-09
+26 Juegos sin Internet : sin wifi | Moreno Maio | 2023-08
+27 Glow Fashion Idol | Crazy Labs | 2024-10
+28 Coin Master - Board Adventure | Moon Active | 2026-03
+29 Kingshot | Century Games Pte. Ltd. | 2025-02
+30 CubeAway - 3DPuzzle | GOODROID,Inc. | 2026-03
+31 Royal Kingdom | Dream Games | 2024-11
+32 BitLife - Simula tu Vida | Candywriter, LLC | 2018-09
+33 Tasty Travels: Merge Game | Century Games Pte. Ltd. | 2024-08
+34 Impostor - Juego de Palabras | Cosmicode Lda | 2025-09
+35 Search It - Hidden Objects | LEAP BILISIM TEKNOLOJILERI V | 2025-12
+36 Paper.io 2 | Voodoo | 2018-09
+37 Pokémon GO | Scopely Explore, Inc. | 2016-07
+38 Cube Smash - Puzzle Game | Combo Games | 2026-07
+39 Hotel Legacy | Century Games Innovation Pte | 2026-01
+40 Sand Blocks: Drop Puzzle | Rollic Games | 2026-02
+41 Cookingo: Perfect Meal | Higame Global Limited | 2025-12
+42 Candy Crush Saga | King | 2012-10
+43 Sort Streak: Color Puzzle | Oakever Games | 2026-10
+44 2 Player Games : the Challenge | Moreno Maio | 2019-05
+45 Call of Duty®: Mobile | Activision Publishing, Inc. | 2019-09
+46 Clash Royale | Supercell | 2016-03
+47 Family Farm Merge | Century Games Innovation Pte | 2026-05
+48 Vita Mahjong | Vita Studio | 2023-12
+49 Geometry Dash Lite | RobTop Games AB | 2013-09
+50 Volcaryn | Shawn Spencer | 2026-06
+
+== es_topgrossingapplications.json 2026-11-16T11:43:17-07:00
+1 Pokémon GO | Scopely Explore, Inc. | 2016-07
+2 Gossip Harbor: Merge & Story | Microfun Limited | 2022-06
+3 Coin Master | Moon Active | 2010-12
+4 Candy Crush Saga | King | 2012-10
+5 Clash of Clans | Supercell | 2012-08
+6 Royal Match | Dream Games | 2021-02
+7 Roblox | Roblox Corporation | 2011-05
+8 Free Fire x NARUTO SHIPPUDEN | GARENA INTERNATIONAL I PRIVA | 2017-12
+9 Gardenscapes | Playrix | 2016-08
+10 eFootball™ | KONAMI | 2017-05
+11 PUBG MOBILE | Tencent Mobile International | 2018-03
+12 Total Battle－Estrategia Guerra | Scorewarrior | 2018-10
+13 Clash Royale | Supercell | 2016-03
+14 Township | Playrix | 2013-10
+15 Kingshot | Century Games Pte. Ltd. | 2025-02
+16 Homescapes: Match 3 Games | Playrix | 2017-09
+17 Tasty Travels: Merge Game | Century Games Pte. Ltd. | 2024-08
+18 Travel Town: Odisea combinada | Moon Active | 2022-02
+19 Royal Kingdom | Dream Games | 2024-11
+20 Parchisi STAR | Gameberry Labs | 2017-03
+21 MONOPOLY GO! | Scopely, Inc. | 2023-04
+22 Brawl Stars | Supercell | 2018-12
+23 Fishdom | Playrix | 2015-12
+24 Call of Duty®: Mobile | Activision Publishing, Inc. | 2019-09
+25 Toon Blast | Peak Games | 2017-08
+26 Last War:Survival | FUNFLY PTE. LTD. | 2023-12
+27 EA SPORTS FC™ Fútbol Mobile 27 | Electronic Arts | 2016-10
+28 Last Z: Survival Shooter | Omnilojo Pte Ltd | 2025-05
+29 EA SPORTS FC™ 27 Companion | Electronic Arts | 2016-09
+30 Whiteout Survival | Century Games Pte. Ltd. | 2022-12
+31 Disney Solitaire | SuperPlay | 2025-04
+32 Domino Dreams™ | SuperPlay | 2023-01
+33 Free Fire MAX x NARUTO | GARENA INTERNATIONAL I PRIVA | 2021-09
+34 Last Asylum: Plague | WISENESS GAME ONLINE INTERNA | 2026-02
+35 Coin Master - Board Adventure | Moon Active | 2026-03
+36 JCC Pokémon Pocket | The Pokemon Company | 2024-10
+37 Hotel Legacy | Century Games Innovation Pte | 2026-01
+38 Honor of Kings | Level Infinite | 2024-06
+39 Dice Dreams™ | SuperPlay | 2020-02
+40 Flambé®: Merge and Cook | Microfun Limited | 2024-12
+41 League of Legends: Wild Rift | Riot Games | 2020-12
+42 Top Goal: Football Champion | Nordeus LLC | 2026-09
+43 Mystery Town: Merge Games | Cedar Games Studio | 2025-05
+44 Top Tycoon: Coin Theme Empire | Topzest Games Limited | 2025-06
+45 OneState RP: Juego de Rol | CHILLBASE LTD | 2022-04
+46 Baloncesto de Kuroko: SR | Quick Magic | 2026-11
+47 Ajedrez - Jugar y Aprender | Chess.com | 2009-10
+48 Mobile Legends: Bang Bang | MOONTON | 2016-11
+49 Fortnite | Epic Games Inc. | 2026-05
+50 Seaside Escape®: Merge & Story | Microfun Limited | 2022-10
+
+== es_toppaidapplications.json 2026-11-16T11:43:19-07:00
+1 Minecraft | Mojang | 2011-11
+2 Pou | Zakeh Limited | 2012-11
+3 Plague Inc. | Ndemic Creations | 2012-05
+4 Grand Theft Auto: San Andreas | Rockstar Games | 2013-12
+5 Geometry Dash | RobTop Games AB | 2013-08
+6 Earn to Die 2 | Not Doppler | 2014-11
+7 Warhammer Survivors | Auroch Digital Ltd | 2026-11
+8 MONOPOLY | Marmalade Game Studio | 2019-12
+9 Stardew Valley | ConcernedApe | 2018-10
+10 Balatro | Playstack Ltd | 2024-09
+11 Mini Metro | Dinosaur Polo Club | 2015-12
+12 Papers, Please | 3909 | 2014-12
+13 Scritchy Scratchy | Funday Games ApS | 2026-03
+14 GTA: San Andreas – Definitive | Rockstar Games | 2023-12
+15 RFS - Real Flight Simulator | RORTOS SRL | 2019-07
+
+== us_topfreeapplications.json 2026-11-16T11:43:21-07:00
+1 Meowdoku! | Oakever Games | 2026-05
+2 Block Out! - Color Sort Puzzle | Grand Games A.Ş. | 2025-10
+3 Magic Sort! | Grand Games A.Ş. | 2024-05
+4 Fortnite | Epic Games Inc. | 2025-05
+5 Bus Fever Party! | Lumi Games | 2025-06
+6 Bus Traffic Fever! | GOODROID,Inc. | 2026-03
+7 Roblox | Roblox Corporation | 2011-05
+8 Block Blast！ | Hungry Studio | 2022-04
+9 Chess.com - Play and Learn | Chess.com | 2009-10
+10 Township | Playrix | 2013-10
+11 Warline: Sniper Squad | Powerfantasy | 2026-07
+12 Amaze GO!™ | Oakever Games | 2026-02
+13 Word Tiles - Relaxing Puzzle | Agave Games | 2026-07
+14 Vita Mahjong | Vita Studio | 2023-12
+15 Rotate Rings | Nebula Studio | 2026-08
+16 Brain Puzzle 3: Crazy Mind | SmallStep Dev Team | 2025-12
+17 Gossip Harbor®: Merge & Story | Microfun Limited | 2022-07
+18 CubeAway - 3DPuzzle | GOODROID,Inc. | 2026-03
+19 82-0.com | Vaulty Studios Inc. | 2026-06
+20 Parking Loop | Loop Games Oyun Teknolojiler | 2026-09
+21 Disney Solitaire | SuperPlay | 2025-04
+22 Magic Tiles 3™: Piano Game | Amanotes Pte. Ltd. | 2018-12
+23 Sand Blocks: Drop Puzzle | Rollic Games | 2026-02
+24 Paper.io 2 | Voodoo | 2018-08
+25 Call of Duty®: Mobile | Activision Publishing, Inc. | 2019-09
+26 Colony Flow! | ABI GLOBAL LTD. | 2026-06
+27 MONOPOLY GO! | Scopely, Inc. | 2023-04
+28 Sled Surfers | Crazy Labs | 2025-04
+29 Whiteout Survival | Century Games Pte. Ltd. | 2023-02
+30 PUBG MOBILE FLASH | Tencent Mobile International | 2026-11
+31 Sort Streak: Color Puzzle | Oakever Games | 2026-10
+32 Mahjong Clash: Win Real Cash | Aviagames Inc. | 2026-04
+33 Triumph Arcade | Triumph Arcade | 2022-02
+34 Just a Rock | Heseri Games Inc | 2026-09
+35 Mahjong Blast | Nebula Studio | 2025-06
+36 Tasty Travels: Merge Game | Century Games Pte. Ltd. | 2024-04
+37 Solitaire Associations Journey | Hitapps Games LTD | 2025-09
+38 Packz | Packz | 2026-03
+39 Merge Bubbles - Word Game | Cheer Games | 2026-05
+40 Subway Surfers | Sybo Games ApS | 2012-05
+41 Tang Luck: Casino Slots | SpinShift Limited | 2025-07
+42 Mob Control | Voodoo | 2021-04
+43 Kingshot | Century Games Pte. Ltd. | 2025-02
+44 Cube Smash - Puzzle Game | Combo Games | 2026-07
+45 Royal Kingdom | Dream Games | 2024-11
+46 Mahjong Rumble: Win Real Cash | Aviagames Inc. | 2026-04
+47 Royal Smash! - Physics Puzzle | Cypher Games | 2026-06
+48 Castle Busters | Voodoo | 2025-05
+49 Jigsaw Drop: Solitaire Puzzle | Runyou Game | 2026-05
+50 8 Ball Pool™ | Miniclip.com | 2013-02
+
+== us_topgrossingapplications.json 2026-11-16T11:43:22-07:00
+1 Pokémon GO | Scopely Explore, Inc. | 2016-07
+2 MONOPOLY GO! | Scopely, Inc. | 2023-04
+3 Roblox | Roblox Corporation | 2011-05
+4 Gossip Harbor®: Merge & Story | Microfun Limited | 2022-07
+5 Royal Match | Dream Games | 2021-02
+6 Candy Crush Saga | King | 2012-11
+7 Royal Kingdom | Dream Games | 2024-11
+8 Whiteout Survival | Century Games Pte. Ltd. | 2023-02
+9 Kingshot | Century Games Pte. Ltd. | 2025-02
+10 Toon Blast | Peak Games | 2017-08
+11 Township | Playrix | 2013-10
+12 Free Fire x NARUTO SHIPPUDEN | GARENA INTERNATIONAL I PRIVA | 2017-12
+13 Clash of Clans | Supercell | 2012-08
+14 Total Battle: War Strategy | Scorewarrior | 2018-10
+15 Gardenscapes | Playrix | 2016-08
+16 Tasty Travels: Merge Game | Century Games Pte. Ltd. | 2024-04
+17 Last War:Survival | FUNFLY PTE. LTD. | 2023-08
+18 Coin Master | Moon Active | 2010-12
+19 Match Factory! | Peak Games | 2023-11
+20 Colony Flow! | ABI GLOBAL LTD. | 2026-06
+21 Last Z: Survival Shooter | Omnilojo Pte Ltd | 2025-04
+22 Pixel Flow! | Loom Games Oyun Yazilim ve P | 2025-08
+23 Homescapes | Playrix | 2017-09
+24 Call of Duty®: Mobile | Activision Publishing, Inc. | 2019-09
+25 Block Out! - Color Sort Puzzle | Grand Games A.Ş. | 2025-10
+26 PUBG MOBILE | Tencent Mobile International | 2018-03
+27 Fishdom | Playrix | 2015-12
+28 Bus Traffic Fever! | GOODROID,Inc. | 2026-03
+29 Magic Sort! | Grand Games A.Ş. | 2024-05
+30 Disney Solitaire | SuperPlay | 2025-04
+31 Evony | TOP GAMES INC. | 2016-04
+32 Jelly Busters: Puzzle Game | Moon Active | 2026-01
+33 Screwdom | Zego Global Pte Ltd | 2025-01
+34 Merge Cooking® | Happibits | 2022-09
+35 Lightning Link Casino Slots | Product Madness | 2018-05
+36 Dark War:Survival | Omnilojo Pte Ltd | 2024-09
+37 NYT Games: Wordle & Crossword | The New York Times Company | 2009-03
+38 EA SPORTS FC Soccer Mobile 27 | Electronic Arts | 2016-10
+39 Solitaire Associations Journey | Hitapps Games LTD | 2025-09
+40 Jackpot Party - Casino Slots | Phantom EFX, Inc. | 2012-12
+41 Yarn Loop: Knit Puzzle | Combo Games | 2025-11
+42 Dice Dreams™ | SuperPlay | 2020-02
+43 Cashman Casino Slots Games | Product Madness | 2017-07
+44 Sand Blocks: Drop Puzzle | Rollic Games | 2026-02
+45 Golf Clash - Golfing Simulator | Electronic Arts | 2017-01
+46 Fortnite | Epic Games Inc. | 2025-05
+47 Pokémon TCG Pocket | The Pokemon Company | 2024-10
+48 Travel Town - Merge Adventure | Moon Active | 2021-02
+49 Flambé®: Merge and Cook | Microfun Limited | 2025-05
+50 Candy Crush Soda Saga | King | 2014-11
+
+== us_toppaidapplications.json 2026-11-16T11:43:23-07:00
+1 Minecraft: Play with Friends! | Mojang | 2011-11
+2 Heads Up! | Warner Bros. | 2013-05
+3 Geometry Dash | RobTop Games AB | 2013-08
+4 Plague Inc. | Ndemic Creations | 2012-05
+5 Warhammer Survivors | Auroch Digital Ltd | 2026-11
+6 Bloons TD 6 | Ninja Kiwi | 2018-06
+7 Stardew Valley | ConcernedApe | 2018-10
+8 Balatro | Playstack Ltd | 2024-09
+9 Grand Theft Auto: San Andreas | Rockstar Games | 2013-12
+10 MONOPOLY: The Board Game | Marmalade Game Studio | 2019-12
+11 Poppy Playtime Chapter 5 | Mob Entertainment, Inc | 2026-11
+12 Papa's Freezeria To Go! | Flipline Studios | 2014-02
+13 Slay the Spire | Balor Games | 2020-06
+14 Five Nights at Freddy's | CLICKTEAM LLC USA | 2014-09
+15 Terraria | 505 Games (US), Inc. | 2013-08
