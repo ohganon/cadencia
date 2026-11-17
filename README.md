@@ -13,8 +13,9 @@ Juego móvil de puzles de dominós para iOS y Android, hecho con **Godot 4**.
 
 Abre `docs/fase6/tablero/index.html` en el navegador (doble clic en el archivo).
 
-1. Pulsa la **bombilla** («Ejemplo») y después **«¡YA!»**: dos ramas con el mismo número de fichas llegan a la vez y suena la campana doble.
-2. Pulsa la flecha para borrar y **arrastra desde el empujador** (el círculo con la flecha) para dibujar tu propia cadena.
+1. Al abrirlo, la pantalla central ya tumba un ejemplo: dos ramas con el mismo número de fichas llegan a la vez y suena la campana doble.
+2. Pulsa la **bombilla** para cargar otra vez el ejemplo y **«¡A TUMBAR!»** para repetirlo.
+3. Pulsa la flecha azul para borrar y **arrastra desde el botón verde** para dibujar tu propia cadena.
 
 Si las fuentes no cargan con doble clic, sírvelo en local:
 
@@ -36,6 +37,7 @@ Y abre http://127.0.0.1:8765
 
 ```
 PRODUCT.md                      Ficha del producto (la usa la skill de diseño impeccable)
+DESIGN.md                       Sistema visual: colores, tipografías, componentes y reglas
 docs/
   00_DOCUMENTO_MAESTRO.md       Estado, decisiones, tareas
   fase1/                        Candy Crush y Block Blast: técnica, psicología, negocio
@@ -43,7 +45,7 @@ docs/
   fase3/                        Biblioteca de mecanismos psicológicos (con semáforo ético)
   fase4/                        Concepto: Cadencia, niveles y generador procedural
   fase5/                        Monetización: Cuerda, Club, anuncios, modelo financiero
-  fase6/                        Dirección de arte «La Banda del Pueblo», tablero y auditoría
+  fase6/                        Dirección de arte «Dominó Pop», tablero jugable e inspiración de Pinterest
   legal/                        Marco legal y registro de recursos y licencias
 .impeccable/surfaces/           Contrato de dirección visual (skill impeccable)
 ```
@@ -57,7 +59,7 @@ docs/
 | 3. Psicología, retención y monetización | ✅ |
 | 4. Concepto original (Cadencia) | ✅ |
 | 5. Modelo de negocio | ✅ |
-| 6. Dirección de arte | 🔄 Faltan dos correcciones de la auditoría y DESIGN.md |
+| 6. Dirección de arte | 🔄 Rediseño «Dominó Pop» pendiente de aprobación (DESIGN.md incluido) |
 | 7. Viralidad y marketing | ⏸ |
 | 8. Arquitectura y desarrollo en Godot | ⏸ |
 | 9. Pruebas y optimización | ⏸ |

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-17T00:00:00Z",
+  "title": "Design System: Cadencia",
+  "extensions": {
+    "colorMeta": {
+      "pool-blue": { "role": "neutral", "displayName": "Azul piscina", "canonical": "#1f63d8" },
+      "ink": { "role": "neutral", "displayName": "Tinta", "canonical": "#142554" },
+      "play-green": { "role": "primary", "displayName": "Verde jugar", "canonical": "#3ddc6b" },
+      "star-yellow": { "role": "secondary", "displayName": "Amarillo estrella", "canonical": "#ffc83d" },
+      "bell-coral": { "role": "tertiary", "displayName": "Coral campana", "canonical": "#ff5470" },
+      "helper-cyan": { "role": "secondary", "displayName": "Cian ayuda", "canonical": "#29d3f5" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Titles and the logo, always white with an ink outline and shadow." },
+      "button": { "displayName": "Button", "purpose": "Button labels, white with a 5px ink outline." },
+      "body": { "displayName": "Body", "purpose": "Service copy, help text and prices." }
+    },
+    "shadows": [
+      { "name": "ink-drop", "value": "0 4px 0 #142554", "purpose": "The world's cartoon depth: a solid shadow under buttons and panels." },
+      { "name": "button-lip", "value": "inset 0 -7px 0 <lip-color>, inset 0 3px 0 rgba(255,255,255,.35)", "purpose": "Lower lip and top highlight on the pressable button." }
+    ],
+    "motion": [
+      { "name": "spring-press", "value": "cubic-bezier(.34,1.56,.64,1) 120ms", "purpose": "Button press and release." },
+      { "name": "tile-tempo", "value": "85ms per tile", "purpose": "Fixed falling tempo: path length = time." }
+    ],
+    "breakpoints": [
+      { "name": "stack", "value": "1080px", "purpose": "The phone showcase stacks into a column." },
+      { "name": "phone", "value": "520px", "purpose": "Compact padding and grids." }
+    ],
+    "narrative": {
+      "northStar": "Dominó Pop",
+      "rules": ["One primary action per screen, in green.", "Yellow = falling or won, never spending money.", "Options of equal size in decision popups."]
+    }
+  }
+}

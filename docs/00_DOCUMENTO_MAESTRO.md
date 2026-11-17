@@ -59,7 +59,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 | 3. Psicología, retención y monetización | ✅ Aprobada (16/11/2026) | [fase3/INFORME_FASE3_Biblioteca_Mecanismos.md](fase3/INFORME_FASE3_Biblioteca_Mecanismos.md) |
 | 4. Concepto original | ✅ Aprobada (16/11/2026): Cadencia | [fase4/INFORME_FASE4_Concepto.md](fase4/INFORME_FASE4_Concepto.md) |
 | 5. Modelo de negocio | ✅ Entregada, esperando aprobación | [fase5/INFORME_FASE5_Monetizacion.md](fase5/INFORME_FASE5_Monetizacion.md) |
-| 6. Dirección de arte | 🔄 Entregada; faltan tus decisiones sobre la auditoría, la revisión final y DESIGN.md | [fase6/INFORME_FASE6_Direccion_Arte.md](fase6/INFORME_FASE6_Direccion_Arte.md) |
+| 6. Dirección de arte | 🔄 Rediseño «Dominó Pop» (17/11/2026) pendiente de aprobación | [fase6/rediseno/INFORME_REDISENO.md](fase6/rediseno/INFORME_REDISENO.md) · [DESIGN.md](../DESIGN.md) |
 | 7. Viralidad y marketing | ⏸ Pendiente | — |
 | 8. Arquitectura y desarrollo | ⏸ Pendiente | — |
 | 9. Pruebas y optimización | ⏸ Pendiente | — |
@@ -150,7 +150,9 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 5: Cuerda (5 como máximo, 1 cada 30 minutos, +3 por anuncio), Club a 4,99 €/mes o 29,99 €/año, Sin anuncios a 7,99 €, AdMob y luego MAX, modelo financiero
 - [x] Aprobación de la Fase 5
 - [x] Fase 6: mundo visual «La Banda del Pueblo» (elegido por el cliente), tablero de estilo jugable, auditoría (5/100) y registro de recursos
-- [ ] Fase 6: tus decisiones sobre los hallazgos 1 y 2 de la auditoría; después, revisión final y DESIGN.md
+- [x] Fase 6: «La Banda del Pueblo» rechazada por el cliente (17/11/2026)
+- [x] Fase 6: rediseño «Dominó Pop» a partir de 222 pines de Pinterest, tablero jugable rehecho y DESIGN.md
+- [ ] **Aprobación del rediseño** (Pull Request en GitHub)
 - [ ] Verificar la licencia de godot-iap (MIT o AGPLv3) y la alternativa para iOS
 - [ ] Búsqueda de marca del nombre "Cadencia" (EUIPO, OEPM, tiendas)
 - [ ] Verificar con enlace Nunes y Drèze (2006) y McIntosh y Schmeichel (2004)

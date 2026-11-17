@@ -3,502 +3,551 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cadencia · Tablero de estilo</title>
+<title>Cadencia · Dominó Pop</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700;6..96,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --escarlata:#ef4655; --escarlata-pano:#b51c2a; --escarlata-osc:#8e1420; --marino:#16213f; --marino-prof:#0e1630; --marino-claro:#24315a;
-  --laton:#d9a93b; --laton-claro:#f1cf7a; --tiza:#f4f1ea; --tiza-tenue:rgba(244,241,234,.16); --tinta:#1d1d1b;
-  --display:"Bodoni Moda", "Didot", serif; --ui:"Atkinson Hyperlegible", system-ui, sans-serif;
-  --ease:cubic-bezier(.16,1,.3,1);
+  --tinta:#142554; --tinta-2:#22366e;
+  --azul-1:#1149b8; --azul-2:#1f63d8; --azul-3:#3b7df0;
+  --hielo:#eaf3ff; --hielo-2:#cfe0ff; --marfil:#fffdf6;
+  --verde:#3ddc6b; --verde-c:#1e9e48;
+  --amarillo:#ffc83d; --amarillo-c:#d9921a;
+  --coral:#ff5470; --coral-c:#c42a48;
+  --cian:#29d3f5; --cian-c:#0d8fb5;
+  --blanco:#ffffff;
+  --display:"Lilita One", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --ui:"Nunito", system-ui, sans-serif;
+  --muelle:cubic-bezier(.34,1.56,.64,1);
 }
 *{box-sizing:border-box}
-html{background:var(--marino);color:var(--tiza);font-family:var(--ui);-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--marino);font-size:17px;line-height:1.5}
-::selection{background:var(--laton);color:var(--marino-prof)}
-:focus-visible{outline:3px solid var(--laton);outline-offset:3px;border-radius:4px}
-html{scrollbar-color:var(--laton) var(--marino-prof)}
-a{color:var(--laton-claro);text-underline-offset:.2em}
+html{background:var(--azul-1);-webkit-text-size-adjust:100%;scrollbar-color:var(--amarillo) var(--azul-1)}
+body{margin:0;font-family:var(--ui);color:var(--blanco);font-size:17px;line-height:1.45;
+  background:linear-gradient(180deg,var(--azul-2),var(--azul-1) 85%);background-attachment:fixed}
+::selection{background:var(--amarillo);color:var(--tinta)}
+:focus-visible{outline:4px solid var(--amarillo);outline-offset:3px;border-radius:12px}
 
-/* ===== Campo de ensayo: la página es el gráfico de desfile ===== */
-.campo{
-  position:relative;
-  background-color:var(--marino);
-  background-image:
-    linear-gradient(var(--tiza-tenue) 1px, transparent 1px),
-    linear-gradient(90deg, var(--tiza-tenue) 1px, transparent 1px),
-    linear-gradient(rgba(244,241,234,.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(244,241,234,.06) 1px, transparent 1px);
-  background-size:96px 96px,96px 96px,24px 24px,24px 24px;
-  background-position:-1px -1px;
-}
-.cabecera{padding:40px 6vw 0;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
-.titulo{font-family:var(--display);font-weight:900;font-size:clamp(2.4rem,11vw,6rem);letter-spacing:.05em;line-height:.9;margin:0;font-variation-settings:"opsz" 96}
-.titulo span{color:var(--escarlata);text-shadow:0 2px 0 var(--marino-prof)}
-.programa{font-family:var(--display);font-weight:500;font-size:1.05rem;letter-spacing:.02em;max-width:34ch;margin:12px 0 0;color:var(--laton-claro)}
-.figura-num{font-family:var(--display);font-weight:700;color:var(--laton);font-size:.95rem;letter-spacing:.12em;text-transform:uppercase;margin:0;align-self:flex-start;padding-top:12px}
+/* Titulares con contorno, el sello de la UI casual */
+.rot{font-family:var(--display);font-weight:400;color:var(--blanco);paint-order:stroke fill;-webkit-text-stroke:.16em var(--tinta);text-shadow:0 .09em 0 var(--tinta);letter-spacing:.01em;line-height:1.05}
 
-/* ===== Primer viewport ===== */
-.escena{display:grid;grid-template-columns:1fr auto 1fr;gap:28px;align-items:center;padding:24px 6vw 72px}
-.anot{display:flex;flex-direction:column;gap:42px}
-.anot.izq{align-items:flex-end;text-align:right}
-.nota{max-width:26ch;position:relative}
-.nota b{display:block;font-family:var(--display);font-weight:700;font-size:1.25rem;color:var(--tiza);line-height:1.15;margin-bottom:6px}
-.nota p{margin:0;color:#cfd4e4;font-size:.98rem}
-.nota .compas{font-family:var(--display);color:var(--laton);font-weight:700;font-variant-numeric:lining-nums}
-.anot.izq .nota::after,.anot.der .nota::before{content:"";position:absolute;top:.8em;width:min(4vw,56px);height:1px;background:var(--laton)}
-.anot.izq .nota::after{right:calc(-1 * min(4vw,56px) - 12px)}
-.anot.der .nota::before{left:calc(-1 * min(4vw,56px) - 12px)}
+/* ===== Logotipo: cada letra es una ficha que cae ===== */
+.cabecera{padding:28px 5vw 0;text-align:center}
+.logo{display:inline-flex;gap:.18em;font-size:clamp(1.7rem,7.2vw,5.4rem);margin:0;padding-top:.2em}
+.logo span{-webkit-text-stroke:0;text-shadow:none;display:grid;place-items:center;width:1.05em;height:1.42em;background:var(--marfil);color:var(--tinta);border:.07em solid var(--tinta);border-radius:.18em;box-shadow:0 .08em 0 var(--tinta);font-family:var(--display);transform-origin:50% 100%;position:relative}
+.logo span::after{content:"";position:absolute;left:12%;right:12%;top:50%;height:.04em;background:var(--hielo-2)}
+.logo span:nth-child(1){transform:rotate(0)}
+.logo span:nth-child(2){transform:rotate(2deg)}
+.logo span:nth-child(3){transform:rotate(4deg)}
+.logo span:nth-child(4){transform:rotate(7deg)}
+.logo span:nth-child(5){transform:rotate(11deg)}
+.logo span:nth-child(6){transform:rotate(17deg)}
+.logo span:nth-child(7){transform:rotate(26deg)}
+.logo span:nth-child(8){transform:rotate(38deg);background:var(--amarillo)}
+.lema{font-family:var(--display);font-size:clamp(1.2rem,2.4vw,1.7rem);margin:.6em 0 0}
+.sub{color:#e6f0ff;max-width:56ch;margin:.5em auto 0;font-weight:700}
 
-/* ===== Teléfono ===== */
-.telefono{position:relative;height:min(calc(100vh - 210px),800px);min-height:560px;aspect-ratio:390/800;margin:0 auto;border-radius:46px;background:var(--tinta);padding:12px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6),0 8px 18px rgba(0,0,0,.35)}
-.pantalla{position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;background:var(--marino-prof);display:flex;flex-direction:column}
-.barra{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 10px;gap:8px}
-.barra .nivel{font-family:var(--display);font-weight:900;font-size:1.35rem;letter-spacing:.04em;line-height:1}
-.barra .nivel small{display:block;font-family:var(--ui);font-weight:400;font-size:.78rem;letter-spacing:0;color:#aeb6cf;margin-top:4px}
-.fichas{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;font-size:1.25rem;color:var(--laton-claro);font-variant-numeric:tabular-nums lining-nums}
-.fichas svg{width:16px;height:26px}
-.lienzo-wrap{position:relative;flex:1;margin:0 12px;border-radius:18px;overflow:hidden;background:var(--marino)}
+/* ===== Escaparate de pantallas ===== */
+.escaparate{display:grid;grid-template-columns:1fr 1.18fr 1fr;gap:clamp(16px,3vw,44px);align-items:end;padding:24px 5vw 24px;max-width:1360px;margin:0 auto}
+.fig{margin:0;display:flex;flex-direction:column;align-items:center;gap:14px}
+.fig figcaption{text-align:center;max-width:32ch;color:#e6f0ff;font-weight:700;font-size:.95rem}
+.fig figcaption b{display:block;font-family:var(--display);font-weight:400;font-size:1.3rem;color:var(--blanco)}
+
+.movil{width:100%;max-width:300px;aspect-ratio:390/800;background:var(--tinta);border-radius:44px;padding:10px;box-shadow:0 22px 40px -16px rgba(4,14,48,.55)}
+.movil.grande{max-width:360px}
+.pant{position:relative;height:100%;border-radius:35px;overflow:hidden;display:flex;flex-direction:column;
+  background:linear-gradient(180deg,#1f63d8,#1149b8)}
+
+/* HUD superior */
+.hud{display:flex;align-items:center;gap:8px;padding:16px 14px 8px}
+.pild{display:flex;align-items:center;gap:6px;background:rgba(8,22,70,.5);border:2.5px solid var(--tinta);border-radius:999px;padding:3px 10px 3px 4px;font-weight:900;font-size:.95rem;line-height:1}
+.pild .ico{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:2.5px solid var(--tinta)}
+.pild .ico svg{width:16px;height:16px}
+.pild small{font-weight:800;color:#e6f0ff;font-size:.78rem}
+.ico.am{background:var(--amarillo)} .ico.ci{background:var(--cian)} .ico.co{background:var(--coral)}
+.mas{margin-left:2px;width:20px;height:20px;border-radius:50%;background:var(--verde);border:2.5px solid var(--tinta);display:grid;place-items:center;font-weight:900;color:var(--tinta);font-size:.9rem;line-height:1}
+.hueco{flex:1}
+
+/* Botones pulsables */
+.btn{font:inherit;cursor:pointer;border:3px solid var(--tinta);border-radius:20px;color:var(--blanco);font-family:var(--display);letter-spacing:.02em;
+  background:var(--b,var(--verde));box-shadow:inset 0 -7px 0 var(--bc,var(--verde-c)),inset 0 3px 0 rgba(255,255,255,.35),0 4px 0 var(--tinta);
+  padding:12px 22px 16px;font-size:1.35rem;paint-order:stroke fill;-webkit-text-stroke:5px var(--tinta);transition:transform .12s var(--muelle),box-shadow .12s}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(4px);box-shadow:inset 0 -3px 0 var(--bc,var(--verde-c)),inset 0 3px 0 rgba(255,255,255,.3),0 0 0 var(--tinta)}
+.btn[disabled]{--b:#a7b6d6;--bc:#7d8fb8;cursor:default}
+.btn.am{--b:var(--amarillo);--bc:var(--amarillo-c)}
+.btn.co{--b:var(--coral);--bc:var(--coral-c)}
+.btn.ci{--b:var(--cian);--bc:var(--cian-c)}
+.btn.redondo{width:58px;height:58px;padding:0;border-radius:50%;display:grid;place-items:center;-webkit-text-stroke:0}
+.btn.redondo svg{width:26px;height:26px;filter:drop-shadow(0 2px 0 var(--tinta))}
+.btn.ancho{width:100%}
+
+/* Inicio: mapa */
+.cinta{align-self:center;margin:4px 0 6px;font-size:1.55rem;position:relative;padding:4px 26px 8px;background:var(--coral);border:3px solid var(--tinta);border-radius:12px;box-shadow:inset 0 -5px 0 var(--coral-c),0 4px 0 var(--tinta)}
+.mapa{flex:1;position:relative}
+.mapa > #camino{position:absolute;inset:0;width:100%;height:100%}
+.nodo{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:1.35rem;border:3px solid var(--tinta);box-shadow:inset 0 -5px 0 rgba(0,0,0,.2),0 4px 0 var(--tinta)}
+.nodo.hecho{background:var(--amarillo);color:var(--tinta)}
+.nodo.ahora{width:66px;height:66px;margin:-33px 0 0 -33px;background:var(--verde);color:var(--blanco);paint-order:stroke fill;-webkit-text-stroke:5px var(--tinta);font-size:1.7rem}
+.nodo.cerrado{background:#9db4e6;color:#142554}
+.estrellitas{position:absolute;top:-16px;left:50%;transform:translateX(-50%);display:flex;gap:1px}
+.estrellitas svg{width:14px;height:14px}
+.pio{position:absolute;width:58px;height:58px}
+.abajo{padding:10px 16px 6px}
+.nav{display:flex;justify-content:space-around;align-items:flex-end;padding:8px 10px 16px;background:rgba(8,22,70,.4);border-top:3px solid var(--tinta)}
+.nav span{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.72rem;font-weight:900;color:#e6f0ff}
+.nav span svg{width:24px;height:24px}
+.nav span.activo{color:var(--blanco)}
+.nav span.activo i{display:grid;place-items:center;width:46px;height:46px;margin-top:-22px;border-radius:14px;background:var(--amarillo);border:3px solid var(--tinta);box-shadow:inset 0 -5px 0 var(--amarillo-c),0 3px 0 var(--tinta)}
+
+/* Partida */
+.objetivo{margin:2px 14px 8px;background:var(--marfil);color:var(--tinta);border:3px solid var(--tinta);border-radius:16px;padding:8px 12px;font-weight:800;font-size:.92rem;display:flex;align-items:center;gap:10px;box-shadow:0 4px 0 var(--tinta)}
+.objetivo svg{flex:none;width:30px;height:30px}
+.tablero{position:relative;flex:1;margin:4px 14px 0;border-radius:22px;border:3px solid var(--tinta);overflow:hidden;background:var(--hielo);box-shadow:0 4px 0 var(--tinta)}
 canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
-.pista{position:absolute;left:12px;right:12px;top:10px;font-size:.82rem;color:#c3c9dc;pointer-events:none;text-align:center}
-.mandos{display:grid;grid-template-columns:52px 1fr 52px;gap:12px;align-items:center;padding:14px 16px 22px}
-.boton{font:inherit;border:0;cursor:pointer}
-.circ{width:52px;height:52px;border-radius:50%;background:var(--marino-claro);color:var(--tiza);display:grid;place-items:center;transition:background .2s var(--ease)}
-.circ:hover{background:#2f3e70}
-.circ svg{width:22px;height:22px}
-.batuta{height:56px;border-radius:28px;background:linear-gradient(180deg,#c42232,var(--escarlata-pano) 60%,#9c1824);color:var(--tiza);font-family:var(--display);font-weight:900;font-size:1.45rem;letter-spacing:.06em;box-shadow:0 8px 18px -8px rgba(0,0,0,.7);transition:transform .15s var(--ease),filter .2s}
-.batuta:hover{filter:brightness(1.08)}
-.batuta:active{transform:translateY(2px);box-shadow:0 4px 10px -6px rgba(0,0,0,.7)}
-.batuta[disabled]{filter:grayscale(.6) brightness(.8);cursor:default}
+.aviso{position:absolute;left:10px;right:10px;top:10px;background:rgba(20,37,84,.92);color:var(--blanco);font-weight:800;font-size:.85rem;border-radius:12px;padding:7px 10px;text-align:center;pointer-events:none}
+.mandos{display:grid;grid-template-columns:58px 1fr 58px;gap:12px;align-items:center;padding:14px 14px 18px}
 
-/* ===== Secciones ===== */
-.seccion{padding:72px 6vw;border-top:1px solid rgba(217,169,59,.35)}
-.seccion h2{font-family:var(--display);font-weight:900;font-size:clamp(2rem,4.6vw,3.4rem);letter-spacing:.03em;line-height:1;margin:0 0 12px}
-.seccion .lead{max-width:62ch;color:#cfd4e4;margin:0 0 40px}
-.uniforme{display:grid;grid-template-columns:2.2fr 2.2fr 1.3fr 1fr .8fr;min-height:260px;border-radius:14px;overflow:hidden;box-shadow:0 20px 40px -24px rgba(0,0,0,.7)}
-.tela{padding:20px;display:flex;flex-direction:column;justify-content:flex-end;position:relative}
-.tela b{font-family:var(--display);font-weight:700;font-size:1.2rem;line-height:1.1}
-.tela span{font-size:.85rem;opacity:.85;font-variant-numeric:tabular-nums}
-.tela em{font-style:normal;font-size:.85rem;margin-top:6px;opacity:.9;max-width:24ch}
-.t-esc{background:var(--escarlata-pano);color:var(--tiza)}
-.t-esc::before{content:"";position:absolute;left:0;right:0;top:0;height:10px;background:repeating-linear-gradient(90deg,var(--laton) 0 18px,var(--laton-claro) 18px 22px)}
-.t-mar{background:var(--marino-prof);color:var(--tiza);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0 2px,transparent 2px 6px)}
-.t-lat{background:var(--laton);color:var(--marino-prof)}
-.t-tiz{background:var(--tiza);color:var(--marino-prof)}
-.t-tin{background:var(--tinta);color:var(--tiza)}
+/* Ventana emergente */
+.velo{position:absolute;inset:0;background:rgba(6,20,64,.62);display:flex;align-items:center;justify-content:center;padding:18px}
+.ventana{position:relative;width:100%;background:var(--marfil);color:var(--tinta);border:3px solid var(--tinta);border-radius:26px;padding:56px 16px 18px;box-shadow:0 6px 0 var(--tinta);text-align:center}
+.ventana .cinta{position:absolute;top:-24px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:1.45rem;margin:0}
+.estrellas{display:flex;justify-content:center;align-items:flex-end;gap:4px;margin:-6px 0 6px}
+.estrellas svg{width:58px;height:58px}
+.estrellas svg.c{width:80px;height:80px;margin-bottom:12px}
+.dato{font-weight:900;font-size:1.05rem}
+.dato small{display:block;font-weight:800;color:#3d5590;font-size:.82rem}
+.premio{display:inline-flex;align-items:center;gap:8px;margin:10px 0 14px;background:var(--hielo);border:2.5px solid var(--tinta);border-radius:14px;padding:6px 12px;font-weight:900}
+.premio svg{width:24px;height:24px}
+.fila{display:flex;gap:10px}
+.fila .btn{flex:1}
+.ventana h3{margin:0 0 6px;font-family:var(--display);font-weight:400;font-size:1.25rem;color:var(--tinta)}
+.ventana p{margin:0 0 12px;font-weight:700;color:#2e467f;font-size:.92rem}
+.opciones{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left}
+.op{border:3px solid var(--tinta);border-radius:16px;padding:8px;background:var(--hielo);box-shadow:0 4px 0 var(--tinta);font-weight:800;font-size:.76rem;line-height:1.3;color:#2e467f;display:flex;flex-direction:column;gap:3px;min-height:92px}
+.op b{font-family:var(--display);font-weight:400;font-size:.98rem;color:var(--tinta);line-height:1.1}
+.op.club{background:var(--amarillo)}
+.op.club,.op.club b{color:var(--tinta)}
+.reloj{font-weight:900;font-variant-numeric:tabular-nums;color:var(--coral-c)}
 
-.tipos{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:start}
-.espec-display{font-family:var(--display);font-weight:900;font-size:clamp(2.6rem,7vw,5.6rem);line-height:.92;letter-spacing:.04em;margin:0;color:var(--tiza)}
-.espec-display .r{color:var(--escarlata)}
-.espec-meta{margin-top:16px;color:var(--laton-claro);font-size:.95rem}
-.espec-ui p{margin:0 0 14px;max-width:44ch}
-.espec-ui .grande{font-size:1.4rem;font-weight:700}
-.cifras{font-family:var(--display);font-weight:700;font-size:2.4rem;color:var(--laton);letter-spacing:.03em;font-variant-numeric:lining-nums;margin:8px 0 4px}
+/* Reto del día */
+.tarjeta{margin:4px 16px;background:var(--marfil);color:var(--tinta);border:3px solid var(--tinta);border-radius:22px;padding:16px;box-shadow:0 5px 0 var(--tinta)}
+.tarjeta .dia{font-family:var(--display);font-size:1.4rem}
+.tarjeta .res{font-weight:900;font-size:1.05rem;margin:8px 0;letter-spacing:.02em}
+.racha{display:flex;gap:6px;margin:12px 16px}
+.racha i{flex:1;height:34px;border-radius:10px;border:2.5px solid var(--tinta);background:#9db4e6;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:.75rem;color:#142554}
+.racha i.si{background:var(--verde);color:var(--tinta)}
+.racha i.hoy{background:var(--amarillo);color:var(--tinta)}
 
-.piezas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px}
-.pieza{padding:8px 6px 14px;text-align:center;border-top:1px solid rgba(244,241,234,.35)}
-.pieza svg{width:100%;height:110px}
-.pieza b{display:block;font-family:var(--display);font-weight:700;font-size:1.05rem;margin-top:8px}
-.pieza span{font-size:.85rem;color:#b9c0d6}
-.subt{font-family:var(--display);font-weight:700;font-size:1.5rem;margin:48px 0 18px;color:var(--laton-claro)}
+/* Club */
+.club-cab{text-align:center;padding:8px 16px 4px}
+.club-cab .rot{font-size:2rem}
+.ventajas{list-style:none;margin:6px 16px;padding:0;display:flex;flex-direction:column;gap:6px}
+.ventajas li{display:flex;align-items:center;gap:10px;background:rgba(8,22,70,.4);border:2.5px solid var(--tinta);border-radius:14px;padding:6px 10px;font-weight:800;font-size:.86rem}
+.ventajas svg{flex:none;width:26px;height:26px}
+.planes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 16px}
+.plan{background:var(--marfil);color:var(--tinta);border:3px solid var(--tinta);border-radius:16px;padding:10px;text-align:center;font-weight:800;font-size:.82rem;box-shadow:0 4px 0 var(--tinta)}
+.plan b{display:block;font-family:var(--display);font-weight:400;font-size:1.25rem}
+.plan.elegido{background:var(--amarillo)}
+.ahora-no{font:inherit;font-weight:900;font-size:.95rem;color:#fff;background:none;border:0;text-decoration:underline;text-underline-offset:3px;margin:8px auto 0;cursor:pointer;display:block}
+.legal{font-size:.72rem;color:#e6f0ff;font-weight:700;text-align:center;margin:8px 16px 0}
 
-.pantallas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px;align-items:start}
-.pantallas figure{margin:0}
-.pantallas figcaption{margin-top:16px;color:#cfd4e4;font-size:.95rem;max-width:36ch}
-.pantallas figcaption b{display:block;font-family:var(--display);font-size:1.25rem;color:var(--tiza);margin-bottom:4px}
-.mini{height:auto;min-height:0;width:100%;max-width:330px;aspect-ratio:390/720}
-.pie-pantalla{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:#c3c9dc;border-top:1px solid rgba(244,241,234,.2);padding-top:12px}
-.cuerdas{display:flex;gap:5px}
-.cuerdas i{width:12px;height:12px;border-radius:50%;border:2px solid var(--laton)}
-.cuerdas i.llena{background:var(--laton)}
-.mini .pantalla{padding:22px 18px;gap:12px}
-.repertorio h3,.sincuerda h3{font-family:var(--display);font-weight:900;font-size:1.6rem;letter-spacing:.04em;margin:6px 0 2px}
-.pauta{border-top:1px solid rgba(244,241,234,.35);border-bottom:1px solid rgba(244,241,234,.35);height:44px;background:repeating-linear-gradient(transparent 0 10px,rgba(244,241,234,.35) 10px 11px);position:relative;margin:4px 0}
-.pauta i{position:absolute;top:50%;width:26px;height:26px;margin-top:-13px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-family:var(--display);font-weight:700;font-size:.8rem;background:var(--marino-claro);color:#c9cfe2}
-.pauta i.hecho{background:var(--laton);color:var(--marino-prof)}
-.pauta i.ahora{background:var(--escarlata-pano);color:var(--tiza);box-shadow:0 0 0 4px rgba(200,32,47,.35)}
-.barrio{font-size:.8rem;color:#aeb6cf;margin-top:8px}
-.compartir{background:var(--tiza);color:var(--marino-prof);border-radius:16px;padding:18px;font-family:var(--display)}
-.compartir .ln{font-weight:900;font-size:1.3rem;letter-spacing:.03em}
-.compartir .res{font-family:var(--ui);font-size:1.05rem;margin:8px 0;letter-spacing:.04em}
-.compartir small{font-family:var(--ui);font-size:.8rem;color:#4b5375}
-.opciones{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
-.op{background:var(--marino-claro);border-radius:14px;padding:14px 12px;font-size:.88rem;line-height:1.3;color:var(--tiza);text-align:left;min-height:96px;display:flex;flex-direction:column;gap:6px}
-.op b{font-family:var(--display);font-size:1.05rem}
-.op.club{background:var(--escarlata-pano)}
-.reloj{font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums lining-nums;color:var(--laton-claro)}
-
-.reglas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}
-.reglas h3{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:0 0 8px}
-.reglas p{margin:0 0 10px;color:#cfd4e4;max-width:40ch}
-.reglas ul{margin:0;padding-left:1.1em;color:#cfd4e4}
-.reglas li{margin-bottom:6px}
-.pie{padding:40px 6vw 56px;color:#9aa3c0;font-size:.85rem;border-top:1px solid rgba(217,169,59,.35)}
+/* ===== Secciones del sistema ===== */
+.seccion{max-width:1240px;margin:0 auto;padding:64px 5vw 8px}
+.seccion > h2{font-size:clamp(2rem,4.6vw,3.2rem);margin:0 0 10px}
+.seccion > p.lead{max-width:62ch;color:#e6f0ff;font-weight:700;margin:0 0 30px}
+.tres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,3vw,40px);align-items:end}
+.paleta{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}
+.chip{border:3px solid var(--tinta);border-radius:20px;overflow:hidden;background:var(--marfil);color:var(--tinta);box-shadow:0 5px 0 var(--tinta)}
+.chip i{display:block;height:92px;border-bottom:3px solid var(--tinta)}
+.chip div{padding:10px 12px;font-weight:800;font-size:.85rem}
+.chip b{display:block;font-family:var(--display);font-weight:400;font-size:1.1rem}
+.tipos{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:start}
+.muestra{background:rgba(8,22,70,.35);border:3px solid var(--tinta);border-radius:24px;padding:24px}
+.muestra .grande{font-size:clamp(2.6rem,6vw,4.4rem);margin:0}
+.muestra p{margin:.4em 0 0;font-weight:700;color:#e6f0ff}
+.muestra .ui-1{font-weight:900;font-size:1.35rem;color:var(--blanco);margin:0}
+.muestra .ui-2{font-weight:700;font-size:1rem}
+.botonera{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.piezas{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.pieza{background:var(--hielo);border:3px solid var(--tinta);border-radius:18px;padding:10px 8px;text-align:center;color:var(--tinta);box-shadow:0 4px 0 var(--tinta)}
+.pieza svg{width:100%;height:84px}
+.pieza b{display:block;font-family:var(--display);font-weight:400;font-size:1.02rem}
+.pieza span{font-weight:700;font-size:.8rem;color:#2e467f}
+.subt{font-size:1.5rem;margin:36px 0 14px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--marfil);color:var(--tinta);border:3px solid var(--tinta);border-radius:20px;overflow:hidden;box-shadow:0 5px 0 var(--tinta)}
+th,td{text-align:left;padding:12px 16px;border-bottom:2px solid var(--hielo-2);font-weight:700;vertical-align:top}
+th{font-family:var(--display);font-weight:400;font-size:1.1rem;background:var(--hielo)}
+tr:last-child td{border-bottom:0}
+td.nuevo{font-weight:900}
+.pie{max-width:1240px;margin:56px auto 0;padding:24px 5vw 48px;color:#e6f0ff;font-weight:700;font-size:.85rem}
 
 @media (max-width:1080px){
-  .escena{grid-template-columns:1fr;}
-  .anot{flex-direction:row;flex-wrap:wrap;gap:20px;justify-content:center}
-  .anot.izq{align-items:flex-start;text-align:left;order:2}
-  .anot.der{order:3}
-  .anot .nota::after,.anot .nota::before{display:none}
-  .uniforme{grid-template-columns:1fr 1fr;}
-  .tela{min-height:140px}
+  .escaparate,.tres{grid-template-columns:1fr;justify-items:center}
+  .escaparate .fig:nth-child(2){order:-1}
+  .paleta{grid-template-columns:repeat(3,minmax(0,1fr))}
   .piezas{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .pantallas,.reglas,.tipos{grid-template-columns:1fr}
-  .mini{margin:0 auto}
+  .tipos{grid-template-columns:1fr}
 }
 @media (max-width:520px){
-  .cabecera{padding:28px 16px 0}
-  .escena,.seccion{padding-left:16px;padding-right:16px}
-  .piezas{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .uniforme{grid-template-columns:1fr}
-  .telefono{border-radius:38px;padding:9px;height:auto;min-height:0;width:100%}
-  .pantalla{border-radius:30px}
+  .cabecera,.escaparate,.seccion{padding-left:16px;padding-right:16px}
+  .paleta,.piezas{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .logo{gap:.1em;font-size:8.2vw}
+  th,td{padding:10px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-<main class="campo">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="estrella" viewBox="0 0 40 40"><path d="M20 3.5l5.1 10.4 11.4 1.7-8.3 8 2 11.3L20 29.5l-10.2 5.4 2-11.3-8.3-8 11.4-1.7z" fill="#ffc83d" stroke="#142554" stroke-width="3" stroke-linejoin="round"/><path d="M14 15.5l4.2-.6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".8"/></symbol>
+    <symbol id="estrella-vacia" viewBox="0 0 40 40"><path d="M20 3.5l5.1 10.4 11.4 1.7-8.3 8 2 11.3L20 29.5l-10.2 5.4 2-11.3-8.3-8 11.4-1.7z" fill="#c9d6f2" stroke="#142554" stroke-width="3" stroke-linejoin="round"/></symbol>
+    <symbol id="llave" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4.5" fill="none" stroke="#142554" stroke-width="3"/><path d="M11.5 11.5l8 8M16 16l2.5-2.5M18.5 18.5l2-2" stroke="#142554" stroke-width="3" stroke-linecap="round"/></symbol>
+    <symbol id="campana" viewBox="0 0 40 40"><path d="M20 5c-6.5 0-10.5 5-10.5 11v7.5L6 28.5h28l-3.5-5V16C30.5 10 26.5 5 20 5z" fill="#ffc83d" stroke="#142554" stroke-width="3" stroke-linejoin="round"/><circle cx="20" cy="32" r="3.5" fill="#ff5470" stroke="#142554" stroke-width="3"/><path d="M14 12c1-2 2.5-3 4-3.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".85"/></symbol>
+    <symbol id="ficha" viewBox="0 0 24 40"><rect x="2" y="2" width="20" height="36" rx="5" fill="#fffdf6" stroke="#142554" stroke-width="3"/><path d="M5 20h14" stroke="#ddd1ff" stroke-width="2"/><circle cx="12" cy="11" r="2.6" fill="#142554"/><circle cx="12" cy="29" r="2.6" fill="#142554"/></symbol>
+    <symbol id="pio" viewBox="0 0 60 60"><ellipse cx="30" cy="36" rx="18" ry="16" fill="#29d3f5" stroke="#142554" stroke-width="3"/><circle cx="30" cy="20" r="12" fill="#29d3f5" stroke="#142554" stroke-width="3"/><circle cx="26" cy="18" r="3.2" fill="#142554"/><circle cx="25" cy="17" r="1" fill="#fff"/><path d="M33 21l9 3-9 3z" fill="#ffc83d" stroke="#142554" stroke-width="2.5" stroke-linejoin="round"/><path d="M16 34c-6 0-9 4-8 9 5 0 9-3 10-6" fill="#0d8fb5" stroke="#142554" stroke-width="3" stroke-linejoin="round"/><path d="M47 30l7-4M47 34l8 0" stroke="#142554" stroke-width="3" stroke-linecap="round"/><circle cx="52" cy="23" r="4" fill="#ffc83d" stroke="#142554" stroke-width="2.5"/></symbol>
+  </defs>
+</svg>
+
+<main>
   <header class="cabecera">
-    <div>
-      <h1 class="titulo">CADEN<span>CIA</span></h1>
-      <p class="programa">Programa de la Banda de Villa Cadencia. Tablero de estilo, primera figura.</p>
-    </div>
-    <p class="figura-num">Figura 1 · Tempo 120</p>
+    <h1 class="logo rot" aria-label="Cadencia"><span>C</span><span>A</span><span>D</span><span>E</span><span>N</span><span>C</span><span>I</span><span>A</span></h1>
+    <p class="lema rot">Dibuja. Empuja. ¡Que suene!</p>
+    <p class="sub">Tablero de estilo «Dominó Pop»: rediseño completo a partir de 222 diseños de interfaz de juegos móviles. Juega con la pantalla del centro.</p>
   </header>
 
-  <section class="escena" aria-label="Nivel de demostración jugable">
-    <div class="anot izq">
-      <div class="nota"><b>El largo es el tiempo</b><p>Cada ficha es un tiempo de compás. Las cifras de latón cuentan <span class="compas">1, 2, 3…</span> a lo largo del camino.</p></div>
-      <div class="nota"><b>La batuta</b><p>«¡Ya!» empuja la primera ficha. Es la única acción principal de la pantalla.</p></div>
-    </div>
-
-    <div class="telefono">
-      <div class="pantalla">
-        <div class="barra">
-          <div class="nivel">LA PLAZA · 5<small>Haz sonar la campana doble a la vez</small></div>
-          <div class="fichas" aria-label="Fichas restantes">
-            <svg viewBox="0 0 16 26" aria-hidden="true"><rect x="1" y="1" width="14" height="24" rx="3" fill="#ef4655"/><rect x="1" y="1" width="14" height="5" rx="2" fill="#d9a93b"/></svg>
-            <span id="contador">60</span>
-          </div>
+  <section class="escaparate" aria-label="Pantallas principales">
+    <!-- INICIO -->
+    <figure class="fig">
+      <div class="movil"><div class="pant">
+        <div class="hud">
+          <div class="pild" aria-label="Cuerda: 3 de 5, la siguiente en 12 minutos"><span class="ico am"><svg><use href="#llave"/></svg></span>3/5 <small>12:40</small><span class="mas">+</span></div>
+          <div class="hueco"></div>
+          <div class="pild" aria-label="41 estrellas"><span class="ico am"><svg viewBox="0 0 40 40"><use href="#estrella"/></svg></span>41</div>
         </div>
-        <div class="lienzo-wrap">
-          <canvas id="campo" aria-label="Campo de juego: arrastra desde el empujador para dibujar fichas"></canvas>
-          <div class="pista" id="pista">Arrastra desde el empujador. Pulsa «Ejemplo» para ver una solución.</div>
+        <div class="cinta rot">LA PLAZA</div>
+        <div class="mapa" aria-hidden="true">
+          <svg viewBox="0 0 300 420" preserveAspectRatio="none" id="camino"></svg>
+          <div class="nodo hecho" style="left:28%;top:88%"><span class="estrellitas"><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg></span>1</div>
+          <div class="nodo hecho" style="left:68%;top:72%"><span class="estrellitas"><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella-vacia"/></svg></span>2</div>
+          <div class="nodo hecho" style="left:32%;top:54%"><span class="estrellitas"><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg></span>3</div>
+          <div class="nodo hecho" style="left:70%;top:37%"><span class="estrellitas"><svg><use href="#estrella"/></svg><svg><use href="#estrella-vacia"/></svg><svg><use href="#estrella-vacia"/></svg></span>4</div>
+          <div class="nodo ahora" style="left:36%;top:20%">5</div>
+          <div class="nodo cerrado" style="left:72%;top:6%">6</div>
+          <svg class="pio" style="left:46%;top:9%" viewBox="0 0 60 60"><use href="#pio"/></svg>
+        </div>
+        <div class="abajo"><button class="btn ancho" style="font-size:1.6rem">JUGAR · 5</button></div>
+        <nav class="nav" aria-label="Navegación">
+          <span class="activo"><i><svg viewBox="0 0 24 24" fill="none" stroke="#142554" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></i>Inicio</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Reto</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-9 9H5v-6z"/><path d="M12 6l6 6"/></svg>Taller</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l4 3 4-7 4 7 4-3-2 10H6z"/></svg>Club</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>Ajustes</span>
+        </nav>
+      </div></div>
+      <figcaption><b>Inicio</b>El mapa del barrio es un camino de fichas entre niveles. Pío señala el siguiente y la cuerda vive arriba, siempre visible.</figcaption>
+    </figure>
+
+    <!-- PARTIDA -->
+    <figure class="fig">
+      <div class="movil grande"><div class="pant">
+        <div class="hud">
+          <button class="btn redondo ci" style="width:44px;height:44px;border-radius:14px" aria-label="Volver al mapa"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="hueco" style="text-align:center"><span class="rot" style="font-size:1.6rem">NIVEL 5</span></div>
+          <div class="pild" aria-label="Fichas disponibles"><span class="ico co" style="background:var(--marfil)"><svg viewBox="0 0 24 40" style="width:12px;height:20px"><use href="#ficha"/></svg></span><span id="contador">60</span></div>
+        </div>
+        <div class="objetivo"><svg viewBox="0 0 40 40"><use href="#campana"/></svg><span>Haz sonar la <b>campana doble</b>: las dos ramas tienen que llegar a la vez.</span></div>
+        <div class="tablero">
+          <canvas id="campo" aria-label="Tablero: arrastra desde el empujador verde para dibujar fichas"></canvas>
+          <div class="aviso" id="aviso">Toca la bombilla para ver un ejemplo, o arrastra desde el botón verde.</div>
         </div>
         <div class="mandos">
-          <button class="boton circ" id="deshacer" aria-label="Borrar el trazo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>
-          </button>
-          <button class="boton batuta" id="ya">¡YA!</button>
-          <button class="boton circ" id="ejemplo" aria-label="Ver una solución de ejemplo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></svg>
-          </button>
+          <button class="btn redondo ci" id="borrar" aria-label="Borrar el dibujo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+          <button class="btn" id="ya">¡A TUMBAR!</button>
+          <button class="btn redondo am" id="ejemplo" aria-label="Ver un ejemplo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></svg></button>
         </div>
-      </div>
-    </div>
+      </div></div>
+      <figcaption><b>Partida (jugable)</b>Bombilla y después «¡A tumbar!»: dos ramas del mismo largo llegan a la vez y la campana doble suena.</figcaption>
+    </figure>
 
-    <div class="anot der">
-      <div class="nota"><b>La campana doble</b><p>Solo suena si dos ramas llegan en el mismo tiempo. Mismo largo, mismo instante.</p></div>
-      <div class="nota"><b>Un solo brillo</b><p>La ficha que cae ahora es lo único que brilla. Todo lo demás espera en tiza y paño.</p></div>
+    <!-- NIVEL SUPERADO -->
+    <figure class="fig">
+      <div class="movil"><div class="pant">
+        <div class="hud"><div class="pild"><span class="ico am"><svg><use href="#llave"/></svg></span>3/5</div><div class="hueco"></div><div class="pild"><span class="ico am"><svg viewBox="0 0 40 40"><use href="#estrella"/></svg></span>44</div></div>
+        <div class="velo">
+          <div class="ventana">
+            <div class="cinta rot">¡NIVEL SUPERADO!</div>
+            <div class="estrellas" aria-label="3 de 3 estrellas"><svg viewBox="0 0 40 40"><use href="#estrella"/></svg><svg class="c" viewBox="0 0 40 40"><use href="#estrella"/></svg><svg viewBox="0 0 40 40"><use href="#estrella"/></svg></div>
+            <div class="dato">37 fichas <small>Tu mejor marca. La marca del nivel es 38.</small></div>
+            <div class="premio"><svg viewBox="0 0 40 40"><use href="#estrella"/></svg>+3 estrellas para La Plaza</div>
+            <div class="fila"><button class="btn ci" style="font-size:1.05rem;padding:10px 8px 14px">REPETIR</button><button class="btn" style="font-size:1.25rem">SIGUIENTE</button></div>
+          </div>
+        </div>
+      </div></div>
+      <figcaption><b>¡Nivel superado!</b>Tres estrellas con la central más grande, el dato que importa (tus fichas) y un botón para seguir. Nada que comprar aquí.</figcaption>
+    </figure>
+  </section>
+
+  <section class="seccion" aria-labelledby="h-mas">
+    <h2 id="h-mas" class="rot">Más pantallas</h2>
+    <p class="lead">Las pantallas de decisión siguen las reglas del proyecto: opciones del mismo tamaño, precio a la vista y nada de cuentas atrás falsas.</p>
+    <div class="tres">
+      <figure class="fig">
+        <div class="movil"><div class="pant">
+          <div class="hud"><div class="pild"><span class="ico co"><svg><use href="#llave"/></svg></span>0/5 <small>12:40</small></div><div class="hueco"></div></div>
+          <div class="velo">
+            <div class="ventana" style="padding-top:44px">
+              <div class="cinta rot" style="background:var(--cian);box-shadow:inset 0 -5px 0 var(--cian-c),0 4px 0 var(--tinta)">¡SIN CUERDA!</div>
+              <h3>Pío necesita un respiro</h3>
+              <p>Recuperas 1 cuerda cada 30 min. La siguiente llega en <span class="reloj">12:40</span>.</p>
+              <div class="opciones">
+                <div class="op"><b>Ver anuncio</b>+3 cuerdas ya. Te quedan 9 hoy.</div>
+                <div class="op"><b>Esperar</b>Te avisamos si quieres.</div>
+                <div class="op"><b>Jugar gratis</b>Reto del día, Taller o Modo libre.</div>
+                <div class="op club"><b>Club Cadencia</b>Cuerda sin límite. 4,99 €/mes.</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption><b>Sin cuerda</b>Cuatro salidas del mismo tamaño. Si no ves el anuncio, no pierdes nada.</figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="movil"><div class="pant">
+          <div class="hud"><div class="hueco"></div><span class="rot" style="font-size:1.5rem">RETO DEL DÍA</span><div class="hueco"></div></div>
+          <div class="tarjeta">
+            <div class="dia">Caída n.º 214</div>
+            <div style="font-weight:800;color:#3d5590">17 de noviembre · el mismo nivel para todo el mundo</div>
+            <div class="res" aria-label="Resultado: 37 fichas y 3 campanas a tiempo">Cadencia 214 · 37 fichas · 3/3 campanas a tiempo</div>
+            <div style="font-weight:700;font-size:.85rem;color:#2e467f">Se comparte como texto, sin desvelar la solución.</div>
+          </div>
+          <div class="racha" aria-label="Racha de 4 días"><i class="si">L</i><i class="si">M</i><i class="si">X</i><i class="hoy">J</i><i>V</i><i>S</i><i>D</i></div>
+          <p style="margin:0 16px;font-weight:800;color:#e6f0ff;font-size:.88rem">Racha de 4 días. Si un día no juegas, no pierdes lo conseguido.</p>
+          <div style="margin-top:auto;padding:16px"><button class="btn am ancho">COMPARTIR</button></div>
+        </div></div>
+        <figcaption><b>Reto del día</b>Un nivel diario igual para todos, con resultado para presumir en el grupo de amigos.</figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="movil"><div class="pant">
+          <div class="club-cab"><div class="rot">CLUB CADENCIA</div><div style="font-weight:800;color:#e6f0ff">Juega a tu ritmo</div></div>
+          <ul class="ventajas">
+            <li><svg viewBox="0 0 24 24"><use href="#llave"/></svg>Cuerda sin límite</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg>Sin anuncios</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></svg>Pistas ilimitadas</li>
+            <li><svg viewBox="0 0 24 40" style="width:16px"><use href="#ficha"/></svg>Una ficha exclusiva cada mes</li>
+          </ul>
+          <div class="planes"><div class="plan"><b>4,99 €</b>al mes</div><div class="plan elegido"><b>29,99 €</b>al año (2,50 €/mes)</div></div>
+          <div style="padding:10px 16px 0"><button class="btn ancho" style="font-size:1.15rem">PROBAR 7 DÍAS GRATIS</button></div>
+          <button class="ahora-no">Ahora no</button>
+          <p class="legal">Prueba solo en el plan anual. Te avisamos 24 h antes del primer cobro. Cancela cuando quieras desde la tienda.</p>
+        </div></div>
+        <figcaption><b>Club Cadencia</b>Ventajas claras, precio grande y la renovación explicada. «Ahora no» siempre a la vista.</figcaption>
+      </figure>
     </div>
   </section>
 
-  <section class="seccion" aria-labelledby="h-paleta">
-    <h2 id="h-paleta">El uniforme</h2>
-    <p class="lead">La paleta sale del uniforme de gala de la banda. El azul de lana es el suelo de todas las pantallas; el escarlata es la cadena y la acción; el latón son las campanas y las cifras. La tiza dibuja la rejilla de tiempos. La tinta queda para las fichas rotas y los textos sobre papel.</p>
-    <div class="uniforme">
-      <div class="tela t-mar"><b>Azul de lana</b><span>#16213F · #0E1630</span><em>Suelo del campo y de la interfaz. Nunca blanco de fondo.</em></div>
-      <div class="tela t-esc"><b>Escarlata de gala</b><span>Paño #B51C2A · Pieza #EF4655</span><em>Dos tonos por accesibilidad: el paño lleva texto encima (5,9:1); el vivo dibuja fichas y texto sobre azul (4,3:1).</em></div>
-      <div class="tela t-lat"><b>Latón</b><span>#D9A93B · #F1CF7A</span><em>Campanas, cifras de compás y el brillo único.</em></div>
-      <div class="tela t-tiz"><b>Tiza</b><span>#F4F1EA</span><em>Rejilla y texto.</em></div>
-      <div class="tela t-tin"><b>Tinta</b><span>#1D1D1B</span><em>Roto, bordes.</em></div>
+  <section class="seccion" aria-labelledby="h-sis">
+    <h2 id="h-sis" class="rot">El sistema</h2>
+    <p class="lead">Fondo azul intenso, piezas de colores con contorno de tinta y botones que se hunden al pulsar. Cada color tiene un trabajo y no se usa para otra cosa.</p>
+    <div class="paleta">
+      <div class="chip"><i style="background:linear-gradient(180deg,#1f63d8,#1149b8)"></i><div><b>Azul piscina</b>#1F63D8 → #1149B8 · fondo de todo</div></div>
+      <div class="chip"><i style="background:#3ddc6b;box-shadow:inset 0 -12px 0 #1e9e48"></i><div><b>Verde</b>#3DDC6B · jugar y avanzar</div></div>
+      <div class="chip"><i style="background:#ffc83d;box-shadow:inset 0 -12px 0 #d9921a"></i><div><b>Amarillo</b>#FFC83D · estrellas, premios, cuerda</div></div>
+      <div class="chip"><i style="background:#ff5470;box-shadow:inset 0 -12px 0 #c42a48"></i><div><b>Coral</b>#FF5470 · campanas y títulos</div></div>
+      <div class="chip"><i style="background:#29d3f5;box-shadow:inset 0 -12px 0 #0d8fb5"></i><div><b>Cian</b>#29D3F5 · acciones secundarias</div></div>
+      <div class="chip"><i style="background:#fffdf6;background-image:radial-gradient(#142554 0 5px,transparent 6px);background-size:46px 46px;background-position:center"></i><div><b>Marfil y tinta</b>#FFFDF6 / #26124D · fichas y contornos</div></div>
     </div>
-  </section>
 
-  <section class="seccion" aria-labelledby="h-tipos">
-    <h2 id="h-tipos">El programa de mano</h2>
-    <p class="lead">Dos voces, como un programa de concierto de pueblo. Bodoni Moda en mayúsculas es la voz de la banda: títulos, barrios y cifras de compás, como en una partitura grabada. Atkinson Hyperlegible es la voz de servicio, diseñada para leerse bien con poca vista: botones, ayudas y ajustes. Las dos tienen licencia SIL Open Font License.</p>
+    <h3 class="subt rot">Letras</h3>
     <div class="tipos">
-      <div>
-        <p class="espec-display">LA GRAN<br><span class="r">CADENA</span></p>
-        <p class="espec-meta">Bodoni Moda 900, mayúsculas, interletraje +0,04 em. Solo para títulos y cifras.</p>
-        <p class="cifras">1 2 3 4 · 120 · 17/20</p>
-        <p class="espec-meta">Cifras de compás: Bodoni Moda 700, numerales alineados.</p>
+      <div class="muestra">
+        <p class="grande rot">¡NIVEL SUPERADO!</p>
+        <p>Lilita One: títulos, botones y cifras grandes. Siempre en blanco con contorno de tinta y sombra, como en los mejores juegos casuales. Licencia SIL OFL.</p>
       </div>
-      <div class="espec-ui">
-        <p class="grande">Arrastra desde el empujador para dibujar fichas.</p>
-        <p>Te quedan 3 cuerdas. Se recarga una cada 30 minutos, o puedes ver un anuncio para conseguir 3 más.</p>
-        <p class="espec-meta">Atkinson Hyperlegible 400 y 700. Tamaño mínimo 15 px en juego; interfaz escalable para la opción de texto grande.</p>
+      <div class="muestra">
+        <p class="ui-1">Recuperas 1 cuerda cada 30 minutos.</p>
+        <p class="ui-2" style="color:#fff;margin-top:.5em">Nunito, de 600 a 900: textos de servicio, ayudas y precios. Redondeada como los títulos, pero muy legible en tamaño pequeño. Licencia SIL OFL.</p>
       </div>
     </div>
-  </section>
 
-  <section class="seccion" aria-labelledby="h-piezas">
-    <h2 id="h-piezas">Las piezas</h2>
-    <p class="lead">Cada estado de la cadena se distingue por forma y color a la vez, para que funcione con daltonismo y con el modo de alto contraste.</p>
-    <h3 class="subt">Estados de la ficha</h3>
+    <h3 class="subt rot">Botones</h3>
+    <div class="botonera">
+      <button class="btn">JUGAR</button>
+      <button class="btn am">COMPARTIR</button>
+      <button class="btn co">¡DING!</button>
+      <button class="btn ci">REPETIR</button>
+      <button class="btn" disabled>BLOQUEADO</button>
+      <button class="btn redondo am" aria-label="Pista"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></svg></button>
+    </div>
+    <p style="color:#e6f0ff;font-weight:700;max-width:62ch">Pulsa cualquiera: el botón se hunde 4 px y su canto oscuro se estrecha. Un único gesto de respuesta para toda la interfaz.</p>
+
+    <h3 class="subt rot">Piezas del tablero</h3>
     <div class="piezas">
-      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><rect x="28" y="20" width="24" height="70" rx="5" fill="none" stroke="#ef4655" stroke-width="3" stroke-dasharray="6 5"/></svg><b>Dibujada</b><span>Trazo provisional</span></div>
-      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><rect x="28" y="20" width="24" height="70" rx="5" fill="#ef4655"/><rect x="28" y="20" width="24" height="12" rx="4" fill="#d9a93b"/></svg><b>Armada</b><span>Lista para caer</span></div>
-      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><g transform="rotate(38 40 90)"><rect x="28" y="20" width="24" height="70" rx="5" fill="#f1cf7a"/><rect x="28" y="20" width="24" height="12" rx="4" fill="#fff6dc"/></g></svg><b>Cayendo</b><span>El único brillo</span></div>
-      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><rect x="8" y="70" width="64" height="22" rx="5" fill="#8e1420"/><rect x="8" y="70" width="12" height="22" rx="4" fill="#a87a1d"/><path d="M58 40l6 6 12-14" fill="none" stroke="#d9a93b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Sincronizada</b><span>Llegó a tiempo</span></div>
-      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><rect x="28" y="20" width="24" height="70" rx="5" fill="#1d1d1b" stroke="#ef4655" stroke-width="2"/><path d="M30 46l20 18M50 46 30 64" stroke="#f4f1ea" stroke-width="4" stroke-linecap="round"/></svg><b>Rota</b><span>Aquí se paró</span></div>
-    </div>
-    <h3 class="subt">Campanas y mecanismos</h3>
-    <div class="piezas">
-      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><ellipse cx="34" cy="74" rx="16" ry="12" transform="rotate(-20 34 74)" fill="#d9a93b"/><rect x="47" y="18" width="4" height="56" fill="#d9a93b"/></svg><b>Campana</b><span>Una nota negra</span></div>
-      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><ellipse cx="34" cy="74" rx="16" ry="12" transform="rotate(-20 34 74)" fill="#d9a93b"/><rect x="47" y="18" width="4" height="56" fill="#d9a93b"/><text x="34" y="80" text-anchor="middle" font-family="Bodoni Moda" font-weight="700" font-size="16" fill="#0e1630">2</text></svg><b>Numerada</b><span>Suena en su orden</span></div>
-      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><ellipse cx="26" cy="78" rx="13" ry="10" transform="rotate(-20 26 78)" fill="#d9a93b"/><ellipse cx="52" cy="66" rx="13" ry="10" transform="rotate(-20 52 66)" fill="#d9a93b"/><rect x="36" y="22" width="4" height="56" fill="#d9a93b"/><rect x="62" y="12" width="4" height="54" fill="#d9a93b"/><rect x="38" y="12" width="28" height="7" fill="#d9a93b"/></svg><b>Doble</b><span>Dos ramas, mismo tiempo</span></div>
-      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><path d="M40 92V54" stroke="#ef4655" stroke-width="10" stroke-linecap="round"/><path d="M40 56 18 22M40 56l22-34" stroke="#ef4655" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="40" cy="56" r="9" fill="#d9a93b"/></svg><b>Bifurcador</b><span>Abre dos ramas</span></div>
-      <div class="pieza"><svg viewBox="0 0 80 110" aria-hidden="true"><rect x="12" y="30" width="8" height="62" fill="#d9a93b"/><rect x="60" y="30" width="8" height="62" fill="#d9a93b"/><rect x="20" y="40" width="40" height="8" fill="#f4f1ea" opacity=".9"/><path d="M24 58h32" stroke="#f4f1ea" stroke-width="3" stroke-dasharray="4 4"/><circle cx="16" cy="26" r="6" fill="#d9a93b"/><circle cx="64" cy="26" r="6" fill="#d9a93b"/></svg><b>Puerta de vaivén</b><span>Abierta a su compás</span></div>
+      <div class="pieza"><svg viewBox="0 0 60 84"><g transform="translate(18 8)"><use href="#ficha" width="24" height="40" transform="scale(1)"/></g></svg><b>Ficha</b><span>Marfil con dos puntos</span></div>
+      <div class="pieza"><svg viewBox="0 0 60 84"><g transform="rotate(35 30 60) translate(18 12)"><rect x="2" y="2" width="20" height="36" rx="5" fill="#ffc83d" stroke="#142554" stroke-width="3"/><circle cx="12" cy="11" r="2.6" fill="#142554"/><circle cx="12" cy="29" r="2.6" fill="#142554"/></g></svg><b>Cayendo</b><span>La única amarilla</span></div>
+      <div class="pieza"><svg viewBox="0 0 60 84"><rect x="6" y="46" width="48" height="20" rx="5" fill="#c9d6f2" stroke="#142554" stroke-width="3"/><circle cx="18" cy="56" r="2.6" fill="#142554"/><circle cx="42" cy="56" r="2.6" fill="#142554"/></svg><b>Tumbada</b><span>Ya cayó</span></div>
+      <div class="pieza"><svg viewBox="0 0 60 84"><rect x="18" y="10" width="24" height="40" rx="5" fill="#ff5470" stroke="#142554" stroke-width="3"/><path d="M23 22l14 16M37 22 23 38" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg><b>Rota</b><span>Aquí se paró</span></div>
+      <div class="pieza"><svg viewBox="0 0 60 84"><g transform="translate(10 6)"><use href="#campana" width="40" height="40"/></g></svg><b>Campana</b><span>¡Ding!</span></div>
+      <div class="pieza"><svg viewBox="0 0 60 84"><g transform="translate(-2 8) scale(.8)"><use href="#campana" width="40" height="40"/></g><g transform="translate(26 8) scale(.8)"><use href="#campana" width="40" height="40"/></g><path d="M14 46h32" stroke="#142554" stroke-width="4" stroke-linecap="round"/></svg><b>Doble</b><span>Dos ramas a la vez</span></div>
     </div>
   </section>
 
-  <section class="seccion" aria-labelledby="h-pantallas">
-    <h2 id="h-pantallas">Tres pantallas</h2>
-    <p class="lead">Las pantallas de servicio usan la misma tela y la misma voz. Nada de marcos dorados ni botones de caramelo: la banda no los necesita.</p>
-    <div class="pantallas">
-      <figure>
-        <div class="telefono mini"><div class="pantalla repertorio">
-          <h3>REPERTORIO</h3>
-          <div class="barrio">Barrio 1 · La Plaza</div>
-          <div class="pauta" aria-hidden="true"><i class="hecho" style="left:4%">1</i><i class="hecho" style="left:22%">2</i><i class="hecho" style="left:40%">3</i><i class="hecho" style="left:58%">4</i><i class="ahora" style="left:76%">5</i></div>
-          <div class="pauta" aria-hidden="true"><i style="left:4%">6</i><i style="left:22%">7</i><i style="left:40%">8</i><i style="left:58%">9</i><i style="left:76%">10</i></div>
-          <div class="barrio">Barrio 2 · El Mercado. Se abre al terminar La Plaza.</div>
-          <div class="pauta" aria-hidden="true" style="opacity:.45"><i style="left:4%">1</i><i style="left:22%">2</i><i style="left:40%">3</i><i style="left:58%">4</i><i style="left:76%">5</i></div>
-          <div class="pie-pantalla"><span>Cuerda</span><span class="cuerdas" aria-label="3 de 5 cuerdas"><i class="llena"></i><i class="llena"></i><i class="llena"></i><i></i><i></i></span></div>
-        </div></div>
-        <figcaption><b>Repertorio</b>Los niveles son notas sobre un pentagrama. El nivel en curso es escarlata y los superados, latón.</figcaption>
-      </figure>
-      <figure>
-        <div class="telefono mini"><div class="pantalla">
-          <h3 style="font-family:var(--display);font-weight:900;font-size:1.6rem;letter-spacing:.04em;margin:6px 0 2px">LA CAÍDA DEL DÍA</h3>
-          <div class="barrio">16 de noviembre · El mismo nivel para todos</div>
-          <div class="compartir">
-            <div class="ln">Cadencia · Caída 214</div>
-            <div class="res" aria-label="Resultado: 37 fichas, 3 campanas a tiempo">▮▮▮▮▮▮▮ 37<br>● ● ●  a tiempo</div>
-            <small>Sin desvelar la solución. Se comparte como texto.</small>
-          </div>
-          <div class="pie-pantalla" style="border:0;padding:0"><span>Racha: 4 días</span><span>Mejor marca: 34 fichas</span></div>
-          <button class="boton batuta">COMPARTIR</button>
-        </div></div>
-        <figcaption><b>La Caída del Día</b>El resultado cabe en un mensaje, como Wordle. En el juego final, los símbolos se diseñarán como un juego propio de caracteres.</figcaption>
-      </figure>
-      <figure>
-        <div class="telefono mini"><div class="pantalla sincuerda">
-          <h3>SIN CUERDA</h3>
-          <div class="barrio">Se recarga una cada 30 minutos. Siguiente en <span class="reloj">12:40</span></div>
-          <div class="opciones">
-            <div class="op"><b>Ver anuncio</b>+3 cuerdas, ahora. Te quedan 9 hoy.</div>
-            <div class="op"><b>Esperar</b>Te avisamos si quieres.</div>
-            <div class="op"><b>Jugar gratis</b>Caída del Día, Modo Libre o Taller.</div>
-            <div class="op club"><b>Club Cadencia</b>Cuerda ilimitada y sin anuncios. 4,99 €/mes.</div>
-          </div>
-          <div class="pie-pantalla"><span>Si no ves el anuncio, no pierdes nada.</span></div>
-        </div></div>
-        <figcaption><b>Sin cuerda</b>Cuatro salidas del mismo tamaño. Rechazar no se presenta como un error y no hay cuentas atrás falsas.</figcaption>
-      </figure>
-    </div>
+  <section class="seccion" aria-labelledby="h-tono">
+    <h2 id="h-tono" class="rot">Cómo hablamos</h2>
+    <p class="lead">Frases cortas, verbos de acción y alegría de juego. Siempre claras sobre precios y nunca con prisa falsa.</p>
+    <table>
+      <thead><tr><th>Momento</th><th>Antes</th><th>Ahora</th></tr></thead>
+      <tbody>
+        <tr><td>Botón principal</td><td>¡YA!</td><td class="nuevo">¡A TUMBAR!</td></tr>
+        <tr><td>Nivel completado</td><td>¡A tiempo! Las dos ramas llegaron en el mismo compás.</td><td class="nuevo">¡NIVEL SUPERADO! · 37 fichas, tu mejor marca.</td></tr>
+        <tr><td>Fallo</td><td>La cadena no llegó a la campana.</td><td class="nuevo">¡Casi! Se paró aquí. Prueba otra vez, es gratis.</td></tr>
+        <tr><td>Sin energía</td><td>Sin cuerda</td><td class="nuevo">¡SIN CUERDA! Pío necesita un respiro.</td></tr>
+        <tr><td>Selección de niveles</td><td>Repertorio</td><td class="nuevo">Mapa · La Plaza</td></tr>
+        <tr><td>Reto diario</td><td>La Caída del Día</td><td class="nuevo">Reto del día · Caída n.º 214</td></tr>
+        <tr><td>Suscripción</td><td>Club Cadencia · Cuerda ilimitada</td><td class="nuevo">Club Cadencia · Juega a tu ritmo</td></tr>
+      </tbody>
+    </table>
   </section>
 
-  <section class="seccion" aria-labelledby="h-mov">
-    <h2 id="h-mov">Movimiento y sonido</h2>
-    <p class="lead">La caída es el único momento escénico del juego. Todo lo demás se mueve poco y rápido para no competir con ella.</p>
-    <div class="reglas">
-      <div><h3>La caída</h3><p>Un tempo fijo por ficha (en la demo, 90 ms). La ficha que cae se ilumina en latón claro y se tumba con una curva de salida rápida. Las ya caídas se quedan en escarlata oscuro, tumbadas: el rastro cuenta lo que pasó.</p><p>La cámara lenta reduce el tempo a la mitad. Con «reducir movimiento» activado, las fichas se tumban sin rotación.</p></div>
-      <div><h3>El final del capítulo</h3><p>La Gran Cadena recorre el pueblo entero en un plano continuo. Es el único momento con cámara en movimiento y música completa: el vídeo que la gente comparte.</p></div>
-      <div><h3>Sonido</h3><ul><li>Clic de madera por ficha, afinado según el material (haya, nogal, cristal…).</li><li>Campanas afinadas en una escala: una cadena bien sincronizada suena como un acorde.</li><li>Música de banda de pueblo: metales y caja, con licencia CC0 o compuesta a medida.</li><li>Todo el juego se puede jugar sin sonido. El ritmo también se ve en las cifras de compás.</li></ul></div>
-    </div>
-  </section>
-
-  <footer class="pie">Cadencia (nombre provisional) · Tablero de estilo v1 · 16/11/2026. Fuentes Bodoni Moda y Atkinson Hyperlegible (SIL OFL 1.1). Todos los gráficos de esta página están dibujados en código; no se usan recursos de terceros. El nivel de demostración es ilustrativo.</footer>
+  <footer class="pie">Cadencia (nombre provisional) · Tablero de estilo «Dominó Pop» · 17/11/2026 · Fuentes Lilita One y Nunito (SIL OFL 1.1). Todos los gráficos están dibujados en código para este proyecto; la inspiración de Pinterest se usó solo como referencia de patrones, sin copiar ningún diseño. Los datos de las pantallas son ilustrativos.</footer>
 </main>
 
 <script>
+/* Camino de fichas del mapa */
 (() => {
-  const cv = document.getElementById('campo');
-  const ctx = cv.getContext('2d');
-  const pista = document.getElementById('pista');
-  const contador = document.getElementById('contador');
-  const btnYa = document.getElementById('ya');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const C = {esc:'#ef4655', escO:'#8e1420', lat:'#d9a93b', latC:'#f1cf7a', tiza:'rgba(244,241,234,', marino:'#16213f', tinta:'#1d1d1b'};
-  const PASO = 15, TEMPO = 90, MAX = 60;
-  let W, H, dpr;
-  let trazo = [], ramas = [], estado = 'dibujo', t0 = 0, dibujando = false, ejemplo = false;
-
-  // Puntos del nivel en coordenadas relativas (0..1)
-  const L = { empuja:{x:.14,y:.86}, campanas:[{x:.82,y:.20,doble:true}] };
-
-  function resize(){
-    const r = cv.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1);
-    W = r.width; H = r.height; cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); draw(performance.now());
+  const svg = document.getElementById('camino');
+  const pts = [[84,370],[204,302],[96,227],[210,155],[108,84],[216,25]];
+  let html = '';
+  for (let i=0;i<pts.length-1;i++){
+    const [x1,y1]=pts[i],[x2,y2]=pts[i+1]; const n=9;
+    for (let k=1;k<n;k++){
+      const t=k/n, x=x1+(x2-x1)*t, y=y1+(y2-y1)*t + Math.sin(t*Math.PI)*18*(i%2?1:-1);
+      const ang=Math.atan2(y2-y1,x2-x1)*180/Math.PI+90; const hecho=i<4;
+      html += `<rect x="${x-3.5}" y="${y-7}" width="7" height="14" rx="2" fill="${hecho?'#fffdf6':'#9db4e6'}" stroke="#142554" stroke-width="2" transform="rotate(${ang} ${x} ${y})"/>`;
+    }
   }
+  svg.innerHTML = html;
+})();
+
+/* Demo jugable */
+(() => {
+  const cv = document.getElementById('campo'), ctx = cv.getContext('2d');
+  const aviso = document.getElementById('aviso'), contador = document.getElementById('contador'), btnYa = document.getElementById('ya');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const K = {tinta:'#142554', marfil:'#fffdf6', amarillo:'#ffc83d', coral:'#ff5470', verde:'#3ddc6b', verdeC:'#1e9e48', tumbada:'#c9d6f2', lila:'#eaf3ff', punto:'#cfe0ff'};
+  const PASO = 16, TEMPO = 85, MAX = 60;
+  let W, H, ramas = [], trazo = [], estado = 'dibujo', t0 = 0, dibujando = false;
+  const L = { empuja:{x:.15,y:.86}, campana:{x:.80,y:.18} };
   const P = p => ({x:p.x*W, y:p.y*H});
 
-  function muestrear(pts){ // remuestreo a paso fijo: cada ficha, un tiempo
-    if (pts.length < 2) return pts.slice();
-    const out=[pts[0]]; let acc=0;
-    for (let i=1;i<pts.length;i++){
-      let a=out[out.length-1], b=pts[i]; let d=Math.hypot(b.x-a.x,b.y-a.y);
-      while (d>=PASO){ const k=PASO/d; const n={x:a.x+(b.x-a.x)*k, y:a.y+(b.y-a.y)*k}; out.push(n); a=n; d=Math.hypot(b.x-a.x,b.y-a.y); }
-    }
-    return out;
-  }
-
+  function resize(){ const r=cv.getBoundingClientRect(), d=Math.min(2,devicePixelRatio||1); W=r.width; H=r.height; cv.width=W*d; cv.height=H*d; ctx.setTransform(d,0,0,d,0,0); draw(performance.now()); }
   function largo(g){ let s=0; for (let i=1;i<g.length;i++) s+=Math.hypot(g[i].x-g[i-1].x,g[i].y-g[i-1].y); return s; }
-  function repartir(g,n){ // n puntos equiespaciados a lo largo de la poligonal
-    const L=largo(g), out=[]; let seg=1, acum=0;
-    for (let k=0;k<n;k++){
-      const objetivo=L*k/(n-1);
-      while (seg<g.length-1 && acum+Math.hypot(g[seg].x-g[seg-1].x,g[seg].y-g[seg-1].y)<objetivo){ acum+=Math.hypot(g[seg].x-g[seg-1].x,g[seg].y-g[seg-1].y); seg++; }
-      const a=g[seg-1], b=g[seg], d=Math.hypot(b.x-a.x,b.y-a.y)||1, t=Math.min(1,(objetivo-acum)/d);
-      out.push({x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t});
-    }
-    return out;
-  }
-  function ejemploNivel(){ // tronco + bifurcador + dos ramas del mismo largo hasta la campana doble
-    const e=P(L.empuja), c=P(L.campanas[0]);
-    const bif={x:e.x+ (c.x-e.x)*.38, y:e.y+(c.y-e.y)*.42};
-    const tronco = muestrear([e,{x:e.x+W*.08,y:e.y-H*.06},bif]);
-    const izqG = [bif,{x:bif.x-W*.10,y:bif.y-H*.22},{x:c.x-W*.24,y:c.y-H*.02},{x:c.x-W*.035,y:c.y+H*.005}];
-    const derG = [bif,{x:bif.x+W*.30,y:bif.y-H*.02},{x:c.x+W*.02,y:c.y+H*.20},{x:c.x+W*.01,y:c.y+H*.035}];
-    // igualar largos: el mismo número de fichas en cada rama => llegan en el mismo instante
-    const n = Math.round((largo(izqG)+largo(derG))/2/PASO)+1;
-    return [{pts:tronco, inicio:0},{pts:repartir(izqG,n), inicio:tronco.length-1},{pts:repartir(derG,n), inicio:tronco.length-1}];
-  }
+  function repartir(g,n){ const Lg=largo(g), out=[]; let seg=1, acum=0;
+    for (let k=0;k<n;k++){ const obj=Lg*k/(n-1);
+      while (seg<g.length-1 && acum+Math.hypot(g[seg].x-g[seg-1].x,g[seg].y-g[seg-1].y)<obj){ acum+=Math.hypot(g[seg].x-g[seg-1].x,g[seg].y-g[seg-1].y); seg++; }
+      const a=g[seg-1], b=g[seg], d=Math.hypot(b.x-a.x,b.y-a.y)||1, t=Math.min(1,(obj-acum)/d); out.push({x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t}); }
+    return out; }
+  function muestrear(g){ return g.length<2 ? g.slice() : repartir(g, Math.max(2, Math.round(largo(g)/PASO)+1)); }
 
-  function totalFichas(){ return ramas.reduce((s,r)=>s+r.pts.length,0) + (estado==='dibujo'?trazo.length:0); }
-
-  function grid(){
-    ctx.fillStyle=C.marino; ctx.fillRect(0,0,W,H);
-    for (let x=0;x<=W;x+=24){ ctx.strokeStyle=C.tiza+(x%96===0?'.20)':'.07)'); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x+.5,0); ctx.lineTo(x+.5,H); ctx.stroke(); }
-    for (let y=0;y<=H;y+=24){ ctx.strokeStyle=C.tiza+(y%96===0?'.20)':'.07)'); ctx.beginPath(); ctx.moveTo(0,y+.5); ctx.lineTo(W,y+.5); ctx.stroke(); }
+  function ejemplo(){
+    const e=P(L.empuja), c=P(L.campana); const bif={x:e.x+(c.x-e.x)*.36, y:e.y+(c.y-e.y)*.42};
+    const tronco = muestrear([e,{x:e.x+W*.07,y:e.y-H*.07},bif]);
+    const izq=[bif,{x:bif.x-W*.10,y:bif.y-H*.22},{x:c.x-W*.25,y:c.y-H*.01},{x:c.x-W*.05,y:c.y+H*.01}];
+    const der=[bif,{x:bif.x+W*.32,y:bif.y-H*.01},{x:c.x+W*.03,y:c.y+H*.22},{x:c.x+W*.012,y:c.y+H*.05}];
+    const n=Math.round((largo(izq)+largo(der))/2/PASO)+1;
+    return [{pts:tronco,inicio:0},{pts:repartir(izq,n),inicio:tronco.length-1},{pts:repartir(der,n),inicio:tronco.length-1}];
   }
+  function ang(pts,i){ const a=pts[Math.max(0,i-1)], b=pts[Math.min(pts.length-1,i+1)]; return Math.atan2(b.y-a.y,b.x-a.x)+Math.PI/2; }
 
-  function campana(c, sonando, parcial){
-    const p=P(c); ctx.save(); ctx.translate(p.x,p.y);
-    const glow = sonando ? 1 : 0;
-    if (glow){ ctx.fillStyle='rgba(241,207,122,.22)'; ctx.beginPath(); ctx.arc(0,0,34,0,7); ctx.fill(); }
-    const col = sonando ? C.latC : C.lat;
-    ctx.fillStyle=col;
-    [[-11,8],[11,-2]].forEach(([dx,dy],i)=>{ ctx.save(); ctx.translate(dx,dy); ctx.rotate(-.35); ctx.beginPath(); ctx.ellipse(0,0,10,7.5,0,0,7); ctx.fill(); ctx.restore(); });
-    ctx.fillRect(-2,-28,3,34); ctx.fillRect(20,-38,3,34); ctx.fillRect(-2,-38,25,5);
-    if (parcial){ ctx.strokeStyle=C.esc; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,28,0,7); ctx.stroke(); }
+  function fondo(){
+    ctx.fillStyle=K.lila; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle=K.punto; for (let x=12;x<W;x+=24) for (let y=12;y<H;y+=24){ ctx.beginPath(); ctx.arc(x,y,1.8,0,7); ctx.fill(); }
+  }
+  function rrect(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function ficha(p,a,modo,k){
+    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(a);
+    if (modo==='tumbada'){ ctx.rotate(Math.PI/2); }
+    const w=7, h=16, s = modo==='cayendo' ? 1-k*.55 : 1;
+    ctx.fillStyle = modo==='cayendo' ? K.amarillo : modo==='tumbada' ? K.tumbada : K.marfil;
+    ctx.strokeStyle=K.tinta; ctx.lineWidth = modo==='borrador'?1.2:2;
+    if (modo==='borrador') ctx.setLineDash([3,2]);
+    if (modo==='tumbada'){ rrect(-h/2,-w/2*0.9,h,w*0.9,2.5); } else { rrect(-w/2,-h/2*s,w,h*s,2.5); }
+    ctx.fill(); ctx.stroke(); ctx.setLineDash([]);
+    if (modo!=='borrador' && modo!=='tumbada'){ ctx.fillStyle=K.tinta; ctx.beginPath(); ctx.arc(0,-h*.22*s,1.4,0,7); ctx.arc(0,h*.22*s,1.4,0,7); ctx.fill(); }
     ctx.restore();
   }
-
-  function ficha(p, ang, modo, k){ // modo: borrador|armada|cayendo|caida
-    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(ang);
-    const w=5, h=13;
-    if (modo==='borrador'){ ctx.strokeStyle=C.esc; ctx.setLineDash([3,3]); ctx.lineWidth=1.6; ctx.strokeRect(-w/2,-h/2,w,h); }
-    else if (modo==='armada'){ ctx.fillStyle=C.esc; ctx.fillRect(-w/2,-h/2,w,h); ctx.fillStyle=C.lat; ctx.fillRect(-w/2,-h/2,w,3); }
-    else if (modo==='cayendo'){ const s=1-k*.7; ctx.fillStyle=C.latC; ctx.fillRect(-w/2 - (1-s)*4,-h/2*s,w+(1-s)*8,h*s); }
-    else { ctx.fillStyle=C.escO; ctx.fillRect(-w*1.4,-h/2*.45,w*2.8,h*.45); }
+  function campana(suena, parcial){
+    const c=P(L.campana); ctx.save(); ctx.translate(c.x,c.y);
+    if (suena){ ctx.fillStyle='rgba(255,200,61,.35)'; ctx.beginPath(); ctx.arc(0,0,40,0,7); ctx.fill(); }
+    [[-13,0],[13,0]].forEach(([dx])=>{
+      ctx.save(); ctx.translate(dx,0); if (suena) ctx.rotate(dx<0?-.25:.25);
+      ctx.fillStyle=K.amarillo; ctx.strokeStyle=K.tinta; ctx.lineWidth=2.5; ctx.lineJoin='round';
+      ctx.beginPath(); ctx.moveTo(0,-15); ctx.bezierCurveTo(-9,-15,-11,-6,-11,0); ctx.lineTo(-11,6); ctx.lineTo(-14,10); ctx.lineTo(14,10); ctx.lineTo(11,6); ctx.lineTo(11,0); ctx.bezierCurveTo(11,-6,9,-15,0,-15); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle=K.coral; ctx.beginPath(); ctx.arc(0,13,3.2,0,7); ctx.fill(); ctx.stroke();
+      ctx.restore(); });
+    ctx.strokeStyle=K.tinta; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-13,-17); ctx.lineTo(13,-17); ctx.stroke();
+    if (parcial){ ctx.strokeStyle=K.coral; ctx.lineWidth=3; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.arc(0,0,30,0,7); ctx.stroke(); ctx.setLineDash([]); }
     ctx.restore();
   }
-
-  function dirAng(pts,i){ const a=pts[Math.max(0,i-1)], b=pts[Math.min(pts.length-1,i+1)]; return Math.atan2(b.y-a.y,b.x-a.x)+Math.PI/2; }
-
   function empujador(){
     const p=P(L.empuja); ctx.save(); ctx.translate(p.x,p.y);
-    ctx.fillStyle=C.tinta; ctx.beginPath(); ctx.arc(0,0,15,0,7); ctx.fill();
-    ctx.strokeStyle=C.lat; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,15,0,7); ctx.stroke();
-    ctx.fillStyle=C.lat; ctx.beginPath(); ctx.moveTo(-5,-7); ctx.lineTo(8,0); ctx.lineTo(-5,7); ctx.closePath(); ctx.fill();
+    ctx.fillStyle=K.tinta; ctx.beginPath(); ctx.arc(0,3,17,0,7); ctx.fill();
+    ctx.fillStyle=K.verde; ctx.strokeStyle=K.tinta; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,16,0,7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.moveTo(-5,-7); ctx.lineTo(8,0); ctx.lineTo(-5,7); ctx.closePath(); ctx.fill();
     ctx.restore();
   }
-
-  function cifras(pts, inicio){
-    ctx.fillStyle=C.lat; ctx.font='700 11px "Bodoni Moda", serif'; ctx.textAlign='center';
-    for (let i=4;i<pts.length;i+=4){
-      const p=pts[i], a=dirAng(pts,i); const ox=Math.cos(a)*14, oy=Math.sin(a)*14;
-      ctx.fillText(String(inicio+i), p.x+ox, p.y+oy+4);
-    }
+  function cifras(pts,inicio){
+    ctx.font='900 10px Nunito, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    for (let i=4;i<pts.length;i+=4){ const p=pts[i], a=ang(pts,i), x=p.x+Math.cos(a)*16, y=p.y+Math.sin(a)*16;
+      ctx.fillStyle=K.tinta; ctx.beginPath(); ctx.arc(x,y,8,0,7); ctx.fill(); ctx.fillStyle='#fff'; ctx.fillText(String(inicio+i),x,y+.5); }
   }
 
   function draw(now){
-    if (!W) return;
-    grid();
+    if (!W) return; fondo();
     const todas = estado==='dibujo' && trazo.length ? [{pts:trazo,inicio:0}] : ramas;
-    const tiempo = estado==='cayendo' ? (now-t0)/(reduce?TEMPO*.5:TEMPO) : -1;
-    let llegadas=[];
+    const t = estado==='cayendo' ? (now-t0)/(reduce?TEMPO*.5:TEMPO) : -1;
+    const llegadas=[];
     todas.forEach(r=>{
-      r.pts.forEach((p,i)=>{
-        const beat=r.inicio+i; let modo = estado==='dibujo' && !ejemplo ? 'borrador' : 'armada', k=0;
-        if (tiempo>=0){ if (tiempo>beat+1) modo='caida'; else if (tiempo>beat){ modo='cayendo'; k=tiempo-beat; } }
-        ficha(p,dirAng(r.pts,i),modo,k);
-      });
-      cifras(r.pts, r.inicio);
-      const fin=r.pts[r.pts.length-1]; const c=P(L.campanas[0]);
-      if (fin && Math.hypot(fin.x-c.x,fin.y-c.y)<30) llegadas.push(r.inicio+r.pts.length-1);
+      r.pts.forEach((p,i)=>{ const beat=r.inicio+i; let modo = estado==='dibujo' && dibujando ? 'borrador' : 'armada', k=0;
+        if (t>=0){ if (t>beat+1) modo='tumbada'; else if (t>beat){ modo='cayendo'; k=t-beat; } }
+        ficha(p,ang(r.pts,i),modo,k); });
+      cifras(r.pts,r.inicio);
+      const fin=r.pts[r.pts.length-1], c=P(L.campana); if (fin && Math.hypot(fin.x-c.x,fin.y-c.y)<34) llegadas.push(r.inicio+r.pts.length-1);
     });
     empujador();
-    let sonando=false, parcial=false;
-    if (tiempo>=0 && llegadas.length){
-      const hechas=llegadas.filter(b=>tiempo>b);
-      if (hechas.length>=2 && Math.abs(llegadas[0]-llegadas[1])<=1) sonando=true;
-      else if (hechas.length>=1) parcial=true;
-    }
-    campana(L.campanas[0], sonando, parcial && !sonando);
-    contador.textContent = Math.max(0, MAX-totalFichas());
+    let suena=false, parcial=false;
+    if (t>=0 && llegadas.length){ const hechas=llegadas.filter(b=>t>b); if (hechas.length>=2 && Math.abs(llegadas[0]-llegadas[1])<=1) suena=true; else if (hechas.length) parcial=true; }
+    campana(suena, parcial && !suena);
+    contador.textContent = Math.max(0, MAX - todas.reduce((s,r)=>s+r.pts.length,0));
     if (estado==='cayendo'){
-      const fin = Math.max(...todas.map(r=>r.inicio+r.pts.length))+2;
-      if (tiempo>fin){
-        estado='fin';
-        if (sonando){ pista.textContent='¡A tiempo! Las dos ramas llegaron en el mismo compás.'; }
-        else if (llegadas.length===1){ pista.textContent='Solo llegó una rama. La campana doble necesita dos a la vez.'; }
-        else { pista.textContent='La cadena no llegó a la campana. Mira dónde se paró y prueba otra vez.'; }
-        btnYa.disabled=false;
-      } else requestAnimationFrame(draw);
-      if (sonando && !draw.sonado){ draw.sonado=true; acorde(); }
+      const fin=Math.max(...todas.map(r=>r.inicio+r.pts.length))+2;
+      if (suena && !draw.sono){ draw.sono=true; ding(); }
+      if (t>fin){ estado='fin'; btnYa.disabled=false;
+        aviso.textContent = suena ? '¡DING DONG! Las dos ramas llegaron a la vez.' : llegadas.length===1 ? '¡Casi! Solo llegó una rama. La doble necesita dos a la vez.' : '¡Casi! Se paró antes de la campana. Prueba otra vez, es gratis.'; }
+      else requestAnimationFrame(draw);
     }
   }
+  let audio; function ding(){ try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); const t=audio.currentTime;
+    [659.25,783.99,1046.5].forEach((f,i)=>{ const o=audio.createOscillator(), g=audio.createGain(); o.type='triangle'; o.frequency.value=f; g.gain.setValueAtTime(0,t+i*.04); g.gain.linearRampToValueAtTime(.1,t+.02+i*.04); g.gain.exponentialRampToValueAtTime(.0001,t+1.4); o.connect(g).connect(audio.destination); o.start(t+i*.04); o.stop(t+1.5); }); }catch(e){} }
 
-  let audio;
-  function acorde(){
-    try{
-      audio = audio || new (window.AudioContext||window.webkitAudioContext)();
-      const t=audio.currentTime; [523.25,659.25,783.99].forEach((f,i)=>{
-        const o=audio.createOscillator(), g=audio.createGain(); o.type='sine'; o.frequency.value=f;
-        g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.12,t+.01+i*.01); g.gain.exponentialRampToValueAtTime(.0001,t+1.6);
-        o.connect(g).connect(audio.destination); o.start(t); o.stop(t+1.7);
-      });
-    }catch(e){}
-  }
-
-  function pos(ev){ const r=cv.getBoundingClientRect(); return {x:ev.clientX-r.left, y:ev.clientY-r.top}; }
-  cv.addEventListener('pointerdown', ev=>{
-    if (estado==='cayendo') return;
-    const p=pos(ev), e=P(L.empuja);
-    if (Math.hypot(p.x-e.x,p.y-e.y)>40){ pista.textContent='Empieza el trazo sobre el empujador (el círculo con flecha).'; return; }
-    ejemplo=false; ramas=[]; estado='dibujo'; draw.sonado=false; dibujando=true; trazo=[e];
-    cv.setPointerCapture(ev.pointerId); pista.textContent='Dibuja hasta la campana doble…'; draw(performance.now());
-  });
-  cv.addEventListener('pointermove', ev=>{
-    if (!dibujando) return; const p=pos(ev); const last=trazo[trazo.length-1];
-    if (Math.hypot(p.x-last.x,p.y-last.y)>=PASO && trazo.length<MAX){ trazo=muestrear([...trazo,p]); trazo=trazo.slice(0,MAX); draw(performance.now()); }
-  });
-  const soltar=()=>{ if (!dibujando) return; dibujando=false; ramas=[{pts:trazo,inicio:0}]; trazo=[]; estado='armado'; pista.textContent='Pulsa «¡Ya!». Una sola rama no basta para la campana doble: prueba el ejemplo.'; draw(performance.now()); };
-  cv.addEventListener('pointerup', soltar); cv.addEventListener('pointercancel', soltar);
-
-  btnYa.addEventListener('click', ()=>{
-    if (!ramas.length){ pista.textContent='Primero dibuja una cadena desde el empujador.'; return; }
-    estado='cayendo'; draw.sonado=false; btnYa.disabled=true; t0=performance.now(); pista.textContent='Contad: uno, dos, tres…'; requestAnimationFrame(draw);
-  });
-  document.getElementById('ejemplo').addEventListener('click', ()=>{
-    ejemplo=true; ramas=ejemploNivel(); trazo=[]; estado='armado'; draw.sonado=false; btnYa.disabled=false;
-    pista.textContent='Dos ramas con el mismo número de fichas: llegarán en el mismo tiempo. Pulsa «¡Ya!».'; draw(performance.now());
-  });
-  document.getElementById('deshacer').addEventListener('click', ()=>{
-    ramas=[]; trazo=[]; estado='dibujo'; ejemplo=false; btnYa.disabled=false; pista.textContent='Arrastra desde el empujador.'; draw(performance.now());
-  });
+  const pos = ev => { const r=cv.getBoundingClientRect(); return {x:ev.clientX-r.left, y:ev.clientY-r.top}; };
+  cv.addEventListener('pointerdown', ev=>{ if (estado==='cayendo') return; const p=pos(ev), e=P(L.empuja);
+    if (Math.hypot(p.x-e.x,p.y-e.y)>42){ aviso.textContent='Empieza a dibujar desde el botón verde.'; return; }
+    ramas=[]; estado='dibujo'; draw.sono=false; dibujando=true; trazo=[e]; cv.setPointerCapture(ev.pointerId); aviso.textContent='Dibuja hasta la campana…'; draw(performance.now()); });
+  cv.addEventListener('pointermove', ev=>{ if (!dibujando) return; const p=pos(ev), u=trazo[trazo.length-1];
+    if (Math.hypot(p.x-u.x,p.y-u.y)>=PASO/2){ trazo.push(p); const m=muestrear(trazo); if (m.length<=MAX) draw(performance.now()); } });
+  const soltar=()=>{ if (!dibujando) return; dibujando=false; ramas=[{pts:muestrear(trazo).slice(0,MAX),inicio:0}]; trazo=[]; estado='listo'; aviso.textContent='¡A tumbar! (La campana doble necesita dos ramas: mira el ejemplo.)'; draw(performance.now()); };
+  cv.addEventListener('pointerup',soltar); cv.addEventListener('pointercancel',soltar);
+  btnYa.addEventListener('click', ()=>{ if (!ramas.length){ aviso.textContent='Primero dibuja una cadena desde el botón verde.'; return; } estado='cayendo'; draw.sono=false; btnYa.disabled=true; t0=performance.now(); aviso.textContent='Clac, clac, clac…'; requestAnimationFrame(draw); });
+  const cargarEjemplo = () => { ramas=ejemplo(); trazo=[]; estado='listo'; draw.sono=false; btnYa.disabled=false; aviso.textContent='Dos ramas con las mismas fichas = llegan a la vez. ¡A tumbar!'; draw(performance.now()); };
+  document.getElementById('ejemplo').addEventListener('click', cargarEjemplo);
+  document.getElementById('borrar').addEventListener('click', ()=>{ ramas=[]; trazo=[]; estado='dibujo'; btnYa.disabled=false; aviso.textContent='Arrastra desde el botón verde para dibujar.'; draw(performance.now()); });
   addEventListener('resize', resize);
-  document.fonts && document.fonts.ready.then(resize);
-  resize();
+  // La demo arranca con el ejemplo armado para que el mecanismo se vea desde el primer segundo (hallazgo 1 de la auditoría anterior)
+  const iniciar = () => { resize(); cargarEjemplo(); if (!reduce) setTimeout(()=>{ if (estado==='listo'){ estado='cayendo'; btnYa.disabled=true; t0=performance.now(); aviso.textContent='Clac, clac, clac…'; requestAnimationFrame(draw); } }, 900); };
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(iniciar);
 })();
 </script>
 </body>

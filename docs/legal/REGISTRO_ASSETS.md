@@ -15,8 +15,9 @@
 
 | Recurso | Tipo | Autor u origen | Licencia | Atribución | Enlace | Uso |
 |---|---|---|---|---|---|---|
-| Bodoni Moda | Fuente | Owen Earl (indestructible type*) | SIL OFL 1.1 | No obligatoria (incluir el texto de la licencia con la app) | [Google Fonts](https://fonts.google.com/specimen/Bodoni+Moda) | Títulos, barrios y cifras de compás |
-| Atkinson Hyperlegible | Fuente | Braille Institute of America | SIL OFL 1.1 | No obligatoria (incluir la licencia) | [Google Fonts](https://fonts.google.com/specimen/Atkinson+Hyperlegible) | Interfaz y textos de servicio |
+| Lilita One | Fuente | Juan Montoreano* | SIL OFL 1.1 | No obligatoria (incluir el texto de la licencia con la app) | [Google Fonts](https://fonts.google.com/specimen/Lilita+One) | Títulos, botones y cifras grandes (dirección «Dominó Pop») |
+| Nunito | Fuente | Vernon Adams y colaboradores* | SIL OFL 1.1 | No obligatoria (incluir la licencia) | [Google Fonts](https://fonts.google.com/specimen/Nunito) | Textos de servicio, ayudas y precios |
+| ~~Bodoni Moda / Atkinson Hyperlegible~~ | Fuentes | — | SIL OFL 1.1 | — | — | **Retiradas** con la dirección «La Banda del Pueblo» (17/11/2026) |
 | Godot Engine | Motor | Godot Foundation y colaboradores | MIT | **Sí**: el aviso de licencia en los créditos o la pantalla legal | [godotengine.org/license](https://godotengine.org/license/) | Motor del juego |
 | Gráficos del tablero de estilo | Vectores | Hechos en código para este proyecto | Propios | — | docs/fase6/tablero/index.html | Referencia de diseño |
 
@@ -29,7 +30,7 @@
 | Freesound (filtro CC0) | Clics de madera y campanas | CC0 (solo los marcados así) | Filtrar por CC0 y guardar el enlace de cada sonido |
 | Música de banda propia | Metales y caja | Propia | Componerla con herramientas gratuitas (por ejemplo, LMMS o MuseScore) e instrumentos de bancos CC0 |
 
-\* *Autoría de Bodoni Moda: verificar el nombre exacto del diseñador en la ficha de Google Fonts al descargarla.*
+\* *Autoría de cada fuente: confirmarla en su ficha de Google Fonts al descargarla e incluir el archivo OFL.txt en el juego.*
 
 ## Reglas
 
