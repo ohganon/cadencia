@@ -74,6 +74,6 @@ Si **no** se pasa el primer umbral, no se avanza a la entrega 2: se revisan los 
 
 - [x] Los 10 niveles, con sus soluciones comprobadas.
 - [x] Pantalla de juego, sonido, cámara lenta y registro local.
-- [ ] APK instalable en Android (plantillas de exportación y SDK: requieren permiso para descargarse).
+- [x] APK instalable en Android (`godot/exportaciones/dingfall-prueba.apk`, 18/11/2026).
 - [ ] Un móvil Android de gama media para las pruebas.
 - [ ] Imprimir o copiar 15 hojas de observación.

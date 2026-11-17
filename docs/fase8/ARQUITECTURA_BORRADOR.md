@@ -122,6 +122,8 @@ godot/
 | GUT (pruebas en Godot) | MIT, según [la documentación](https://gut.readthedocs.io/) y la Asset Library (repositorio bitwes/Gut, versión 9.6.0 para Godot 4.6) | 0 € | Confirmar el archivo LICENSE y la compatibilidad con Godot 4.7 al instalarlo |
 | AdMob (plugin de Poing Studios) | MIT (Fase 5) | 0 € | — |
 | godot-iap | MIT (verificado el 17/11/2026) | 0 € | — |
+| Temurin 17 (OpenJDK) | GPLv2 con excepción Classpath | 0 € | Instalado el 18/11/2026, solo como herramienta de compilación (no va dentro del juego) |
+| Android SDK (Platform-Tools, Build-Tools 35.0.1, Platform 35) | Licencia del Android SDK (aceptada por el cliente el 18/11/2026) | 0 € | Instalado el 18/11/2026 |
 | Analítica | Por decidir | **Comprobar el precio, los límites gratuitos y las condiciones antes de elegir** (regla del presupuesto) | Fase 9 |
 
 ## 7. Pendiente
@@ -131,5 +133,7 @@ godot/
 - ~~Port de `sim.py` a GDScript~~ **Hecho**: pasa los 30 casos compartidos. Falta portar el reto diario y los códigos del Taller (entregas 3 y 4).
 - ~~Escena de partida de la entrega 1~~ **Hecha** (18/11/2026): dibujar con el dedo, ramas desde cualquier ficha, límite de fichas, aviso de curva cerrada, caída animada, campanas que suenan (visualmente), resultado con estrellas, X donde se para la cadena con su explicación, pista en fantasma, deshacer, lista de niveles y progreso guardado. 77 pruebas sin pantalla y capturas automáticas revisadas.
 - ~~Sonido~~ **Hecho** (18/11/2026): sonidos propios por síntesis (sin licencias de terceros), vibración en las campanas, cámara lenta (destacada tras 5 fallos), ajustes de sonido y vibración, registro local de intentos y resumen para quien dirige la prueba. Protocolo de la prueba en [PRUEBA_PUERTA_0.md](PRUEBA_PUERTA_0.md).
-- **Para cerrar la entrega 1:** fuentes Lilita One y Nunito (SIL OFL; descargarlas requiere permiso) y generar el APK para probarlo en un Android (plantillas de exportación de 1,2 GB y SDK de Android: requieren permiso). La vibración necesitará el permiso VIBRATE en la exportación de Android.
+- ~~Fuentes y APK~~ **Hecho** (18/11/2026), con permiso del cliente para las descargas: fuentes Lilita One y Nunito (OFL), plantillas de Android de Godot 4.7.2, Java 17 y Android SDK (el cliente aceptó la licencia del SDK). APK de depuración comprobado con aapt2 y apksigner: `com.dingfall.prueba`, arm64, solo el permiso VIBRATE, objetivo Android 16 (API 36), icono provisional propio.
+- **Para la puerta 0:** instalar el APK en un Android de gama media y hacer la prueba con 10–15 personas ([PRUEBA_PUERTA_0.md](PRUEBA_PUERTA_0.md)).
+- **Para Google Play (más adelante):** AAB con compilación Gradle (requiere el NDK r28b y CMake, unos 1–2 GB más), identificador definitivo de la app y clave de firma de publicación guardada fuera del repositorio.
 - **Ajustar en el prototipo** los valores de la simulación (PASO, GIRO_MAXIMO, RADIO_CAMPANA, TOLERANCIA_DOBLE): ahora son una hipótesis razonable, no un dato.
