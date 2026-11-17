@@ -5,6 +5,10 @@ INFORME_FASE5_Monetizacion.md. No son datos reales del juego (todavía no existe
 
 Uso:  python -I -X utf8 modelo_financiero.py  [carpeta_salida]
 Genera resultados.md y resultados.csv en la carpeta de salida (por defecto, la del script).
+
+Revisión del 17/11/2026 (decisión del cliente): se elimina el pago único «Sin anuncios» y los 10 temas
+pasan al Club. Las compras únicas son ahora solo packs de fichas (1,99–3,99 €, ticket medio 2,5 €).
+La conversión al Club se deja igual que antes, sin sumar el efecto de los temas: es la lectura prudente.
 """
 import csv
 import os
@@ -21,11 +25,11 @@ PRICE_ANNUAL = 29.99    # € suscripción anual (propuesta)
 SCEN = {
     #             DAU/MAU, D1,  D7,   D30,  inter/DAU, rew/DAU, eCPM_int$, eCPM_rew$, %subs_MAU, %anual, %compra_unica_MAU/mes, ticket€, %DAU_premium
     "Conservador": dict(stick=0.15, d1=0.30, d7=0.08, d30=0.03, inter=2.0, rew=1.0, ecpm_i=4.0, ecpm_r=6.0,
-                        subs=0.005, annual=0.5, one=0.003, ticket=4.0),
+                        subs=0.005, annual=0.5, one=0.002, ticket=2.5),
     "Intermedio": dict(stick=0.20, d1=0.38, d7=0.14, d30=0.06, inter=3.0, rew=1.5, ecpm_i=6.0, ecpm_r=9.0,
-                       subs=0.010, annual=0.5, one=0.006, ticket=4.0),
+                       subs=0.010, annual=0.5, one=0.004, ticket=2.5),
     "Optimista": dict(stick=0.25, d1=0.45, d7=0.20, d30=0.10, inter=4.0, rew=2.0, ecpm_i=8.0, ecpm_r=12.0,
-                      subs=0.020, annual=0.5, one=0.010, ticket=4.0),
+                      subs=0.020, annual=0.5, one=0.006, ticket=2.5),
 }
 DAUS = [1_000, 10_000, 50_000, 100_000]
 

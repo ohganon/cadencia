@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadencia · Diez direcciones más</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;700&family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Marcellus+SC&family=Josefin+Sans:wght@400;600;700&family=League+Spartan:wght@400;600;800&family=Familjen+Grotesk:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Red+Hat+Display:wght@400;700;900&family=Red+Hat+Text:wght@400;500;700&family=Gloock&family=Mulish:wght@400;600;800&family=Figtree:wght@400;600;800&family=Caveat:wght@600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#d9d8d4;color:#1a1a1a;font-family:"Figtree",system-ui,sans-serif}
+:focus-visible{outline:3px solid #1f4fd1;outline-offset:3px}
+.indice{position:sticky;top:0;z-index:5;display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;padding:10px 12px;background:rgba(217,216,212,.95);border-bottom:1px solid #bdbbb5}
+.indice strong{font-weight:800;margin-right:6px}
+.indice a{text-decoration:none;color:#1a1a1a;font-weight:600;font-size:.82rem;padding:6px 11px;border-radius:999px;border:1px solid #9a978f;white-space:nowrap}
+.indice a:hover{background:#1a1a1a;color:#fff}
+.intro{max-width:760px;margin:0 auto;padding:32px 16px 8px;text-align:center}
+.intro h1{font-size:clamp(1.7rem,4vw,2.5rem);margin:0 0 8px}
+.intro p{margin:0;color:#4a4842}
+
+/* Valores por defecto; cada dirección los sobrescribe desde su ficha */
+.dir{--rpanel:12px;--rventana:16px;--rb:10px;--rredondo:10px;--rnodo:999px;--rchip:999px;--wb:700;--lsb:.02em;--ttb:none;--wd:700;--ttd:none;--lsd:0;--prim-sombra:none;--sombra-ventana:0 20px 40px -18px rgba(0,0,0,.45);--sombra-tablero:none;--borde-panel:1px solid var(--linea);--borde-chip:1px solid var(--linea);--borde-tablero:1px solid var(--linea);--borde-ventana:0;--borde-op:0;--borde-op-club:0;--nodo-borde:0;--nodo-sombra:none;--sec-borde:1px solid var(--linea);--prim-borde:0;
+  padding:56px 4vw 64px;background:var(--fondo);color:var(--texto);font-family:var(--fu);border-top:1px solid rgba(0,0,0,.12);scroll-margin-top:56px}
+.cab{max-width:1200px;margin:0 auto 32px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:end}
+.cab .num{display:block;font-family:var(--fu);font-weight:700;font-size:.8rem;letter-spacing:.12em;color:var(--acento);margin-bottom:8px}
+.cab h2{margin:0;font-family:var(--fd);font-weight:var(--wd);font-size:clamp(2.1rem,5vw,3.6rem);letter-spacing:var(--lsd);text-transform:var(--ttd);line-height:1}
+.cab p{margin:0;max-width:62ch;color:var(--suave)}
+.fila{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.15fr 1fr 1fr;gap:clamp(14px,2.4vw,32px);align-items:end}
+.fig{margin:0;display:flex;flex-direction:column;align-items:center;gap:12px}
+.fig figcaption{font-size:.86rem;color:var(--suave);text-align:center}
+.movil{width:100%;max-width:265px;aspect-ratio:390/800;border-radius:40px;padding:9px;background:var(--marco);box-shadow:0 24px 44px -20px rgba(0,0,0,.45)}
+.movil.g{max-width:315px}
+.pant{position:relative;height:100%;border-radius:32px;overflow:hidden;display:flex;flex-direction:column;background:var(--pantalla);color:var(--texto)}
+.hud{display:flex;align-items:center;gap:8px;padding:16px 14px 6px;font-size:.8rem;font-weight:700}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--rchip);background:var(--chip);border:var(--borde-chip);font-variant-numeric:tabular-nums}
+.chip svg{width:14px;height:14px}
+.hueco{flex:1}
+.titulo{font-family:var(--fd);font-weight:var(--wd);text-transform:var(--ttd);letter-spacing:var(--lsd);line-height:1.05}
+.b{font:inherit;cursor:pointer;font-family:var(--fu);font-weight:var(--wb);letter-spacing:var(--lsb);text-transform:var(--ttb);border-radius:var(--rb);padding:13px 18px;font-size:.95rem;transition:transform .15s ease,filter .2s}
+.b:active{transform:translateY(1px)}
+.b.p{background:var(--prim);color:var(--prim-t);border:var(--prim-borde);box-shadow:var(--prim-sombra)}
+.b.s{background:var(--sec);color:var(--sec-t);border:var(--sec-borde)}
+.b.ancho{width:100%}
+.b:hover{filter:brightness(1.06)}
+.b[disabled]{opacity:.55;cursor:default}
+.barrio{padding:6px 16px 0}
+.barrio small{display:block;color:var(--suave);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.barrio .titulo{font-size:1.5rem}
+.mapa{flex:1;position:relative;margin:4px 0}
+.mapa svg.camino{position:absolute;inset:0;width:100%;height:100%}
+.nodo{position:absolute;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:var(--rnodo);display:grid;place-items:center;font-weight:800;font-size:.95rem;font-variant-numeric:tabular-nums;font-family:var(--fu)}
+.nodo.h{background:var(--nodo-h);color:var(--nodo-h-t);border:var(--nodo-borde)}
+.nodo.a{width:54px;height:54px;background:var(--prim);color:var(--prim-t);border:var(--prim-borde);box-shadow:var(--nodo-sombra)}
+.nodo.c{background:var(--nodo-c);color:var(--nodo-c-t);border:var(--nodo-borde)}
+.abajo{padding:8px 14px 16px}
+.meta{margin:4px 14px 8px;padding:9px 12px;border-radius:var(--rpanel);background:var(--panel);border:var(--borde-panel);font-size:.8rem;font-weight:600;line-height:1.35}
+.tablero{position:relative;flex:1;margin:0 14px;border-radius:var(--rpanel);overflow:hidden;border:var(--borde-tablero);box-shadow:var(--sombra-tablero)}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.aviso{position:absolute;left:10px;right:10px;top:10px;padding:7px 10px;border-radius:calc(var(--rpanel) - 4px);background:var(--aviso);color:var(--aviso-t);font-size:.76rem;font-weight:700;text-align:center;pointer-events:none}
+.mandos{display:grid;grid-template-columns:46px 1fr 46px;gap:10px;align-items:center;padding:12px 14px 16px}
+.redondo{width:46px;height:46px;padding:0;display:grid;place-items:center;border-radius:var(--rredondo)}
+.redondo svg{width:20px;height:20px}
+.velo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--velo)}
+.ventana{width:100%;border-radius:var(--rventana);background:var(--ventana);color:var(--ventana-t);border:var(--borde-ventana);padding:22px 16px 16px;text-align:center;box-shadow:var(--sombra-ventana)}
+.ventana .titulo{font-size:1.45rem;margin:0 0 4px}
+.ventana p{margin:0 0 12px;font-size:.82rem;color:var(--ventana-s)}
+.estrellas{display:flex;justify-content:center;gap:8px;margin:10px 0 8px}
+.estrellas svg{width:30px;height:30px}
+.estrellas .c svg{width:38px;height:38px;margin-top:-6px}
+.cifra{font-family:var(--fd);font-weight:var(--wd);font-size:2.3rem;line-height:1;font-variant-numeric:tabular-nums;margin:6px 0 2px}
+.dos{display:flex;gap:8px;margin-top:12px}
+.dos .b{flex:1;padding:11px 8px;font-size:.85rem}
+.ventana .b.s{background:var(--sec-v,transparent);color:var(--ventana-t);border-color:var(--ventana-t)}
+.ops{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left}
+.op{padding:10px;border-radius:calc(var(--rventana) - 6px);background:var(--op);border:var(--borde-op);font-size:.72rem;line-height:1.3;color:var(--ventana-s);min-height:86px;display:flex;flex-direction:column;gap:3px}
+.op b{font-size:.86rem;color:var(--ventana-t);font-weight:800}
+.op.club{background:var(--op-club);border:var(--borde-op-club)}
+.op.club,.op.club b{color:var(--op-club-t)}
+.muestras{max-width:1200px;margin:32px auto 0;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start}
+.paleta{display:flex;gap:10px;flex-wrap:wrap}
+.paleta div{flex:1;min-width:88px;border-radius:12px;overflow:hidden;border:1px solid var(--linea);background:var(--panel)}
+.paleta i{display:block;height:56px}
+.paleta span{display:block;padding:7px 9px;font-size:.72rem;font-weight:700;color:var(--texto)}
+.paleta span em{display:block;font-style:normal;font-weight:400;color:var(--suave);font-variant-numeric:tabular-nums}
+.tipo{padding:16px 18px;border-radius:14px;border:1px solid var(--linea);background:var(--panel)}
+.tipo .grande{font-family:var(--fd);font-weight:var(--wd);text-transform:var(--ttd);letter-spacing:var(--lsd);font-size:2rem;line-height:1.05;margin:0 0 6px}
+.tipo p{margin:0;font-size:.85rem;color:var(--suave)}
+.tono{max-width:1200px;margin:18px auto 0;display:flex;flex-wrap:wrap;gap:8px}
+.tono span{font-size:.8rem;font-weight:700;padding:6px 12px;border-radius:999px;border:1px solid var(--linea);background:var(--panel)}
+
+/* Texturas propias de algunas direcciones */
+.d-cuaderno .pant{background-image:linear-gradient(transparent 23px,#c9d8ef 24px),linear-gradient(90deg,transparent 30px,#f1a7a7 31px,transparent 32px);background-size:100% 24px,100% 100%}
+.d-riso .pant{background-image:radial-gradient(rgba(0,0,0,.06) 1px,transparent 1.2px);background-size:5px 5px}
+.d-deco .pant{background-image:repeating-linear-gradient(45deg,rgba(212,175,55,.06) 0 1px,transparent 1px 18px),repeating-linear-gradient(-45deg,rgba(212,175,55,.06) 0 1px,transparent 1px 18px),linear-gradient(180deg,#0f3a32,#0a2621)}
+.d-nocturno .pant{background-image:radial-gradient(#fff 0.7px,transparent 1px),radial-gradient(rgba(255,255,255,.6) 0.5px,transparent .8px),linear-gradient(180deg,#121a3d,#0a0f24);background-size:83px 97px,47px 61px,100% 100%;background-position:0 0,20px 30px,0 0}
+.d-bauhaus .cab h2::after{content:"";display:inline-block;width:.55em;height:.55em;margin-left:.2em;background:#e1251b;border-radius:50%}
+
+@media (max-width:1100px){ .fila{grid-template-columns:1fr 1fr} .fila .fig.g{grid-column:1/-1;order:-1} .muestras,.cab{grid-template-columns:1fr} }
+@media (max-width:560px){ .fila{grid-template-columns:1fr} .dir{padding:44px 16px 52px} .indice{position:static} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<nav class="indice" aria-label="Direcciones" id="indice"><strong>Cadencia · tanda 2</strong></nav>
+<header class="intro">
+  <h1>Diez direcciones más</h1>
+  <p>Misma mecánica, mismas pantallas y mismas reglas legales. Cada dirección cambia la paleta, las fuentes, la forma de los botones y el tono de los textos, y tiene su propia partida jugable que cae sola al llegar a ella. Las tres favoritas están guardadas en <a href="../favoritas/index.html">la página de favoritas</a>.</p>
+</header>
+<main id="raiz"></main>
+
+<script>
+const ICO = {
+  llave:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="8" cy="8" r="4.5"/><path d="M11.5 11.5l8 8M16 16l2.5-2.5M18.5 18.5l2-2"/></svg>',
+  estrella:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3L2.8 9.5l6.4-.9z"/></svg>',
+  ficha:'<svg viewBox="0 0 14 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1.5" y="1.5" width="11" height="21" rx="3"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/><circle cx="7" cy="17" r="1.2" fill="currentColor"/></svg>',
+  atras:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  borrar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>',
+  pista:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></svg>'
+};
+
+/* Textos base; cada dirección cambia solo los que definen su tono */
+const BASE = { barrio:'Barrio 1', nombreBarrio:'La Plaza', jugar:'Jugar nivel 5', nivel:'Nivel 5', meta:'Haz sonar la campana doble: las dos ramas deben llegar a la vez.', ya:'Tumbar', superado:'Nivel superado', dato:'fichas · tu mejor marca', repetir:'Repetir', siguiente:'Siguiente', sinTitulo:'Sin cuerda', sinSub:'Recuperas una cada 30 min. La siguiente en 12:40.', anuncio:'Ver anuncio', anuncioS:'+3 cuerdas. Quedan 9 hoy.', esperar:'Esperar', esperarS:'Te avisamos si quieres.', gratis:'Jugar gratis', gratisS:'Reto del día, Taller o Libre.', club:'Club Cadencia', clubS:'Cuerda sin límite. 4,99 €/mes.', aviso:'Arrastra desde el botón de inicio para dibujar.', exito:'Las dos ramas llegaron a la vez.', casi:'No llegó. Prueba otra vez.', una:'Solo llegó una rama.' };
+
+const TEMAS = [
+ { id:'negro', nombre:'Cine negro', clase:'d-negro',
+   desc:'Blanco y negro de película de detectives: alto contraste, grano fino y un único rojo para lo importante. Títulos altos y estrechos como en un cartel de cine. Tenso y elegante.',
+   fd:'"Bebas Neue",sans-serif', fu:'"Barlow",sans-serif',
+   v:{'--fondo':'#0e0e0e','--pantalla':'linear-gradient(180deg,#151515,#0b0b0b)','--texto':'#f2f2f2','--suave':'#a3a3a3','--acento':'#d7263d','--linea':'rgba(255,255,255,.16)','--marco':'#000','--panel':'rgba(255,255,255,.05)','--chip':'rgba(255,255,255,.06)','--prim':'#d7263d','--prim-t':'#fff','--sec':'transparent','--sec-t':'#f2f2f2','--wd':400,'--ttd':'uppercase','--lsd':'.04em','--wb':700,'--ttb':'uppercase','--lsb':'.14em','--rb':'2px','--rredondo':'2px','--rnodo':'2px','--rpanel':'4px','--rventana':'4px','--nodo-h':'#f2f2f2','--nodo-h-t':'#0e0e0e','--nodo-c':'#1d1d1d','--nodo-c-t':'#666','--aviso':'rgba(0,0,0,.8)','--aviso-t':'#f2f2f2','--velo':'rgba(0,0,0,.72)','--ventana':'#f2f2f2','--ventana-t':'#0e0e0e','--ventana-s':'#555','--op':'#e2e2e2','--op-club':'#0e0e0e','--op-club-t':'#fff'},
+   t:{ ya:'Acción', superado:'Caso cerrado', casi:'Se cortó. Otra toma.', sinTitulo:'Sin cuerda', exito:'Llegaron juntas. Corten.', jugar:'Rodar nivel 5' },
+   tono:['Acción','Caso cerrado','Se cortó. Otra toma.'],
+   L:{tablero:'#151515',punto:'rgba(255,255,255,.05)',ficha:'#f2f2f2',pip:'#0e0e0e',cae:'#d7263d',caida:'#4a4a4a',borde:'rgba(0,0,0,.6)',sombra:'rgba(0,0,0,.6)',campana:'#f2f2f2',badajo:'#d7263d',halo:'rgba(215,38,61,.25)',inicio:'#d7263d',inicioIco:'#fff',cifra:'rgba(255,255,255,.14)',cifraT:'#f2f2f2',fuente:'700 10px Barlow'},
+   estrella:'#d7263d', camino:'#f2f2f2', caminoNo:'#333',
+   paleta:[['Negro','#0E0E0E'],['Grafito','#1D1D1D'],['Plata','#A3A3A3'],['Blanco','#F2F2F2'],['Rojo cinta','#D7263D']],
+   tipo:{grande:'Caso cerrado',nota:'Bebas Neue para títulos y Barlow para el resto. SIL OFL.'} },
+
+ { id:'tinta', nombre:'Tinta japonesa', clase:'d-tinta',
+   desc:'Papel de arroz gris, trazos de tinta sumi y un sello bermellón como único color. Mucho vacío, ritmo pausado y textos muy breves. Sereno y respetuoso.',
+   fd:'"Shippori Mincho",serif', fu:'"Zen Kaku Gothic New",sans-serif',
+   v:{'--fondo':'#e9e8e3','--pantalla':'#edece7','--texto':'#1c1c1c','--suave':'#5e5d58','--acento':'#c8372d','--linea':'rgba(28,28,28,.16)','--marco':'#1c1c1c','--panel':'rgba(255,255,255,.5)','--chip':'rgba(28,28,28,.05)','--prim':'#1c1c1c','--prim-t':'#edece7','--sec':'transparent','--sec-t':'#1c1c1c','--wd':500,'--rb':'0','--rredondo':'0','--rnodo':'50%','--rpanel':'2px','--rventana':'2px','--nodo-h':'#1c1c1c','--nodo-h-t':'#edece7','--nodo-c':'transparent','--nodo-c-t':'#9a9993','--nodo-borde':'1px solid rgba(28,28,28,.3)','--nodo-sombra':'0 0 0 6px rgba(200,55,45,.15)','--aviso':'rgba(237,236,231,.9)','--aviso-t':'#1c1c1c','--velo':'rgba(233,232,227,.7)','--ventana':'#f6f5f1','--ventana-t':'#1c1c1c','--ventana-s':'#5e5d58','--borde-ventana':'1px solid rgba(28,28,28,.2)','--op':'#ecebe6','--op-club':'#c8372d','--op-club-t':'#fff','--sombra-ventana':'none'},
+   t:{ ya:'Soltar', superado:'Armonía', casi:'Aún no. Respira y vuelve.', sinTitulo:'La cuerda reposa', exito:'Dos caminos, un sonido.', jugar:'Continuar', nombreBarrio:'La Plaza' },
+   tono:['Soltar','Armonía','Aún no. Respira y vuelve.'],
+   L:{tablero:'#f3f2ed',punto:'rgba(28,28,28,.05)',ficha:'#1c1c1c',pip:'#edece7',cae:'#c8372d',caida:'rgba(28,28,28,.25)',borde:'rgba(0,0,0,0)',sombra:'rgba(0,0,0,.12)',campana:'#1c1c1c',badajo:'#c8372d',halo:'rgba(200,55,45,.15)',inicio:'#c8372d',inicioIco:'#fff',cifra:'rgba(0,0,0,0)',cifraT:'#8a8983',fuente:'500 10px "Zen Kaku Gothic New"'},
+   estrella:'#c8372d', camino:'#1c1c1c', caminoNo:'rgba(28,28,28,.2)',
+   paleta:[['Arroz','#E9E8E3'],['Sumi','#1C1C1C'],['Ceniza','#5E5D58'],['Bermellón','#C8372D'],['Niebla','#F6F5F1']],
+   tipo:{grande:'Armonía',nota:'Shippori Mincho para títulos y Zen Kaku Gothic New para el texto. SIL OFL.'} },
+
+ { id:'deco', nombre:'Art déco', clase:'d-deco',
+   desc:'Vestíbulo de hotel de los años 20: verde esmeralda profundo, filetes dorados, geometría simétrica y mayúsculas romanas. Lujo con orden.',
+   fd:'"Marcellus SC",serif', fu:'"Josefin Sans",sans-serif',
+   v:{'--fondo':'#0b2e28','--pantalla':'linear-gradient(180deg,#0f3a32,#0a2621)','--texto':'#f3ead2','--suave':'#b8b096','--acento':'#d4af37','--linea':'rgba(212,175,55,.35)','--marco':'#06140f','--panel':'rgba(212,175,55,.06)','--chip':'transparent','--borde-chip':'1px solid rgba(212,175,55,.5)','--prim':'#d4af37','--prim-t':'#0b2e28','--sec':'transparent','--sec-t':'#f3ead2','--sec-borde':'1px solid rgba(212,175,55,.6)','--wd':400,'--ttd':'uppercase','--lsd':'.1em','--wb':700,'--ttb':'uppercase','--lsb':'.16em','--rb':'0','--rredondo':'0','--rnodo':'0','--rpanel':'0','--rventana':'0','--nodo-h':'#0b2e28','--nodo-h-t':'#d4af37','--nodo-borde':'1px solid #d4af37','--nodo-c':'transparent','--nodo-c-t':'rgba(212,175,55,.45)','--nodo-sombra':'0 0 0 4px #0b2e28,0 0 0 5px #d4af37','--borde-tablero':'1px solid rgba(212,175,55,.6)','--aviso':'rgba(6,20,15,.85)','--aviso-t':'#f3ead2','--velo':'rgba(4,14,11,.7)','--ventana':'#0f3a32','--ventana-t':'#f3ead2','--ventana-s':'#b8b096','--borde-ventana':'1px solid #d4af37','--op':'rgba(212,175,55,.08)','--borde-op':'1px solid rgba(212,175,55,.35)','--op-club':'#d4af37','--op-club-t':'#0b2e28'},
+   t:{ ya:'Adelante', superado:'Magnífico', casi:'Casi perfecto. De nuevo.', sinTitulo:'Sin cuerda', exito:'Al unísono. Magnífico.' },
+   tono:['Adelante','Magnífico','Casi perfecto. De nuevo.'],
+   L:{tablero:'#0d332c',punto:'rgba(212,175,55,.07)',ficha:'#f3ead2',pip:'#0b2e28',cae:'#d4af37',caida:'#5a6e5f',borde:'rgba(212,175,55,.6)',sombra:'rgba(0,0,0,.4)',campana:'#d4af37',badajo:'#f3ead2',halo:'rgba(212,175,55,.22)',inicio:'#d4af37',inicioIco:'#0b2e28',cifra:'rgba(212,175,55,.0)',cifraT:'#d4af37',fuente:'600 10px "Josefin Sans"'},
+   estrella:'#d4af37', camino:'#d4af37', caminoNo:'rgba(212,175,55,.25)',
+   paleta:[['Esmeralda','#0B2E28'],['Jade','#0F3A32'],['Oro','#D4AF37'],['Marfil','#F3EAD2'],['Salvia','#5A6E5F']],
+   tipo:{grande:'Magnífico',nota:'Marcellus SC para títulos y Josefin Sans para el texto. SIL OFL.'} },
+
+ { id:'bauhaus', nombre:'Bauhaus', clase:'d-bauhaus',
+   desc:'Formas puras y colores primarios: círculo rojo, cuadrado azul, triángulo amarillo sobre blanco y negro. Geometría honesta y tipografía geométrica gruesa.',
+   fd:'"League Spartan",sans-serif', fu:'"League Spartan",sans-serif',
+   v:{'--fondo':'#f0efea','--pantalla':'#f4f3ee','--texto':'#111','--suave':'#555','--acento':'#e1251b','--linea':'#111','--marco':'#111','--panel':'#fff','--chip':'#fff','--borde-chip':'2px solid #111','--rchip':'0','--prim':'#1b4fbf','--prim-t':'#fff','--sec':'#f4f3ee','--sec-t':'#111','--sec-borde':'2px solid #111','--wd':800,'--lsd':'-.01em','--wb':800,'--ttb':'uppercase','--lsb':'.06em','--rb':'0','--rredondo':'50%','--rnodo':'50%','--rpanel':'0','--rventana':'0','--borde-panel':'2px solid #111','--borde-tablero':'2px solid #111','--nodo-h':'#f7c600','--nodo-h-t':'#111','--nodo-borde':'2px solid #111','--nodo-c':'#fff','--nodo-c-t':'#999','--aviso':'#111','--aviso-t':'#fff','--velo':'rgba(244,243,238,.85)','--ventana':'#fff','--ventana-t':'#111','--ventana-s':'#555','--borde-ventana':'2px solid #111','--sombra-ventana':'none','--op':'#f4f3ee','--borde-op':'2px solid #111','--op-club':'#e1251b','--borde-op-club':'2px solid #111','--op-club-t':'#fff'},
+   t:{ ya:'Tumbar', superado:'Forma completa', casi:'Falta una pieza. Otra vez.', exito:'Dos líneas, un punto.' },
+   tono:['Tumbar','Forma completa','Falta una pieza. Otra vez.'],
+   L:{tablero:'#ffffff',punto:'rgba(0,0,0,.06)',ficha:'#111',pip:'#fff',cae:'#e1251b',caida:'#1b4fbf',borde:'#111',sombra:'rgba(0,0,0,0)',campana:'#f7c600',badajo:'#111',halo:'rgba(225,37,27,.18)',inicio:'#e1251b',inicioIco:'#fff',cifra:'#111',cifraT:'#fff',fuente:'800 10px "League Spartan"'},
+   estrella:'#e1251b', camino:'#111', caminoNo:'#cfcec8',
+   paleta:[['Rojo','#E1251B'],['Azul','#1B4FBF'],['Amarillo','#F7C600'],['Negro','#111111'],['Hueso','#F0EFEA']],
+   tipo:{grande:'Forma completa',nota:'League Spartan en todos los pesos: una sola familia geométrica. SIL OFL.'} },
+
+ { id:'brutal', nombre:'Brutalista', clase:'d-brutal',
+   desc:'Web sin maquillaje: gris hormigón, bordes negros gruesos, sombras duras y un verde ácido para la acción. Directo, crudo y muy reconocible en redes.',
+   fd:'"Familjen Grotesk",sans-serif', fu:'"Familjen Grotesk",sans-serif',
+   v:{'--fondo':'#c9c9c4','--pantalla':'#d6d6d1','--texto':'#000','--suave':'#333','--acento':'#000','--linea':'#000','--marco':'#000','--panel':'#fff','--chip':'#fff','--borde-chip':'2px solid #000','--rchip':'0','--prim':'#c6ff00','--prim-t':'#000','--prim-borde':'2px solid #000','--prim-sombra':'4px 4px 0 #000','--sec':'#fff','--sec-t':'#000','--sec-borde':'2px solid #000','--wd':700,'--lsd':'-.02em','--wb':700,'--ttb':'uppercase','--lsb':'.02em','--rb':'0','--rredondo':'0','--rnodo':'0','--rpanel':'0','--rventana':'0','--borde-panel':'2px solid #000','--borde-tablero':'2px solid #000','--sombra-tablero':'6px 6px 0 #000','--nodo-h':'#fff','--nodo-h-t':'#000','--nodo-borde':'2px solid #000','--nodo-c':'#bdbdb8','--nodo-c-t':'#666','--nodo-sombra':'4px 4px 0 #000','--aviso':'#000','--aviso-t':'#c6ff00','--velo':'rgba(201,201,196,.8)','--ventana':'#fff','--ventana-t':'#000','--ventana-s':'#333','--borde-ventana':'2px solid #000','--sombra-ventana':'8px 8px 0 #000','--op':'#e6e6e1','--borde-op':'2px solid #000','--op-club':'#c6ff00','--borde-op-club':'2px solid #000','--op-club-t':'#000'},
+   t:{ ya:'Tumbar', superado:'Hecho.', casi:'Error: no llegó. Reintentar.', sinTitulo:'Cuerda = 0', exito:'OK. Sincronizado.', jugar:'Nivel 5 →' },
+   tono:['Tumbar','Hecho.','Error: no llegó. Reintentar.'],
+   L:{tablero:'#ffffff',punto:'rgba(0,0,0,.07)',ficha:'#fff',pip:'#000',cae:'#c6ff00',caida:'#9a9a95',borde:'#000',sombra:'rgba(0,0,0,0)',campana:'#000',badajo:'#c6ff00',halo:'rgba(198,255,0,.35)',inicio:'#000',inicioIco:'#c6ff00',cifra:'#000',cifraT:'#c6ff00',fuente:'700 10px "Familjen Grotesk"'},
+   estrella:'#000', camino:'#000', caminoNo:'#9a9a95',
+   paleta:[['Hormigón','#C9C9C4'],['Negro','#000000'],['Blanco','#FFFFFF'],['Ácido','#C6FF00'],['Gris','#9A9A95']],
+   tipo:{grande:'Hecho.',nota:'Familjen Grotesk en todo. Sin adornos. SIL OFL.'} },
+
+ { id:'riso', nombre:'Risografía', clase:'d-riso',
+   desc:'Como un fanzine impreso en risógrafo: rosa fluorescente y azul verdoso sobre papel con trama, colores que se pisan y un punto artesanal. Independiente y con carácter.',
+   fd:'"Bricolage Grotesque",sans-serif', fu:'"Bricolage Grotesque",sans-serif',
+   v:{'--fondo':'#efe9e2','--pantalla':'#f2ede6','--texto':'#1e3b8a','--suave':'#4b5f9e','--acento':'#ff4fa3','--linea':'rgba(30,59,138,.3)','--marco':'#1e3b8a','--panel':'rgba(255,79,163,.08)','--chip':'transparent','--borde-chip':'1.5px solid #1e3b8a','--prim':'#ff4fa3','--prim-t':'#1e3b8a','--prim-sombra':'3px 3px 0 #1e3b8a','--sec':'transparent','--sec-t':'#1e3b8a','--sec-borde':'1.5px solid #1e3b8a','--wd':800,'--lsd':'-.02em','--wb':800,'--rb':'14px','--rredondo':'50%','--rnodo':'50%','--rpanel':'14px','--rventana':'18px','--borde-panel':'1.5px solid #1e3b8a','--borde-tablero':'1.5px solid #1e3b8a','--nodo-h':'#00a6a6','--nodo-h-t':'#fff','--nodo-c':'transparent','--nodo-c-t':'#8ea0cf','--nodo-borde':'1.5px solid #1e3b8a','--nodo-sombra':'3px 3px 0 #1e3b8a','--aviso':'#1e3b8a','--aviso-t':'#f2ede6','--velo':'rgba(239,233,226,.75)','--ventana':'#f2ede6','--ventana-t':'#1e3b8a','--ventana-s':'#4b5f9e','--borde-ventana':'1.5px solid #1e3b8a','--sombra-ventana':'6px 6px 0 #ff4fa3','--op':'rgba(0,166,166,.1)','--borde-op':'1.5px solid #1e3b8a','--op-club':'#ff4fa3','--borde-op-club':'1.5px solid #1e3b8a','--op-club-t':'#1e3b8a'},
+   t:{ ya:'¡Allá va!', superado:'¡Impreso!', casi:'Se movió el registro. Otra pasada.', exito:'Dos tintas, un golpe.' },
+   tono:['¡Allá va!','¡Impreso!','Se movió el registro. Otra pasada.'],
+   L:{tablero:'#f5f0ea',punto:'rgba(30,59,138,.08)',ficha:'#f5f0ea',pip:'#1e3b8a',cae:'#ff4fa3',caida:'rgba(0,166,166,.55)',borde:'#1e3b8a',sombra:'rgba(255,79,163,.45)',campana:'#00a6a6',badajo:'#ff4fa3',halo:'rgba(255,79,163,.25)',inicio:'#ff4fa3',inicioIco:'#1e3b8a',cifra:'#1e3b8a',cifraT:'#f5f0ea',fuente:'800 10px "Bricolage Grotesque"'},
+   estrella:'#ff4fa3', camino:'#1e3b8a', caminoNo:'rgba(30,59,138,.25)',
+   paleta:[['Rosa flúor','#FF4FA3'],['Verde azulado','#00A6A6'],['Azul tinta','#1E3B8A'],['Papel','#EFE9E2'],['Trama','#F5F0EA']],
+   tipo:{grande:'¡Impreso!',nota:'Bricolage Grotesque, con carácter de imprenta independiente. SIL OFL.'} },
+
+ { id:'nocturno', nombre:'Nocturno', clase:'d-nocturno',
+   desc:'Un observatorio de noche: azul medianoche, cielo estrellado discreto, fichas plateadas y las cadenas como constelaciones. Silencioso y algo mágico, sin neones.',
+   fd:'"Red Hat Display",sans-serif', fu:'"Red Hat Text",sans-serif',
+   v:{'--fondo':'#0b1026','--pantalla':'linear-gradient(180deg,#121a3d,#0a0f24)','--texto':'#e8ecff','--suave':'#9aa5d1','--acento':'#f5c46b','--linea':'rgba(232,236,255,.16)','--marco':'#05081a','--panel':'rgba(232,236,255,.06)','--chip':'rgba(232,236,255,.07)','--prim':'#f5c46b','--prim-t':'#0b1026','--sec':'transparent','--sec-t':'#e8ecff','--wd':900,'--lsd':'-.01em','--wb':700,'--rb':'999px','--rredondo':'50%','--rnodo':'50%','--rpanel':'18px','--rventana':'22px','--nodo-h':'#e8ecff','--nodo-h-t':'#0b1026','--nodo-c':'rgba(232,236,255,.08)','--nodo-c-t':'#5c6596','--nodo-sombra':'0 0 0 8px rgba(245,196,107,.14)','--aviso':'rgba(5,8,26,.8)','--aviso-t':'#e8ecff','--velo':'rgba(5,8,26,.7)','--ventana':'#151d44','--ventana-t':'#e8ecff','--ventana-s':'#9aa5d1','--borde-ventana':'1px solid rgba(232,236,255,.14)','--op':'rgba(232,236,255,.06)','--op-club':'#f5c46b','--op-club-t':'#0b1026'},
+   t:{ ya:'Encender', superado:'Constelación completa', casi:'Se apagó a medio camino. Otra vez.', sinTitulo:'La cuerda duerme', exito:'Dos estelas, una luz.' },
+   tono:['Encender','Constelación completa','La cuerda duerme'],
+   L:{tablero:'#0f1636',punto:'rgba(232,236,255,.08)',ficha:'#cfd6f2',pip:'#0b1026',cae:'#f5c46b',caida:'rgba(207,214,242,.28)',borde:'rgba(0,0,0,0)',sombra:'rgba(0,0,0,.4)',campana:'#f5c46b',badajo:'#e8ecff',halo:'rgba(245,196,107,.22)',inicio:'#f5c46b',inicioIco:'#0b1026',cifra:'rgba(0,0,0,0)',cifraT:'#9aa5d1',fuente:'700 10px "Red Hat Text"'},
+   estrella:'#f5c46b', camino:'#cfd6f2', caminoNo:'rgba(207,214,242,.18)',
+   paleta:[['Medianoche','#0B1026'],['Índigo','#151D44'],['Plata','#CFD6F2'],['Lucero','#F5C46B'],['Bruma','#9AA5D1']],
+   tipo:{grande:'Constelación',nota:'Red Hat Display para títulos y Red Hat Text para el resto. SIL OFL.'} },
+
+ { id:'terracota', nombre:'Terracota mediterránea', clase:'d-terracota',
+   desc:'Patio andaluz al mediodía: arcilla, arena y azul de azulejo, con una serif cálida y textos con sabor local. Muy reconocible para el público español, sin caer en el folclore.',
+   fd:'"Gloock",serif', fu:'"Mulish",sans-serif',
+   v:{'--fondo':'#e8d9c3','--pantalla':'linear-gradient(180deg,#efe2cd,#e4d2b8)','--texto':'#3b2418','--suave':'#7a5a45','--acento':'#2a5aa8','--linea':'rgba(59,36,24,.18)','--marco':'#3b2418','--panel':'rgba(255,255,255,.45)','--chip':'rgba(255,255,255,.5)','--prim':'#c4623d','--prim-t':'#fff7ef','--sec':'transparent','--sec-t':'#3b2418','--wd':400,'--wb':800,'--rb':'999px','--rredondo':'50%','--rnodo':'50%','--rpanel':'16px','--rventana':'20px','--nodo-h':'#2a5aa8','--nodo-h-t':'#fff','--nodo-c':'rgba(255,255,255,.5)','--nodo-c-t':'#a48b77','--nodo-sombra':'0 0 0 6px rgba(196,98,61,.18)','--aviso':'rgba(59,36,24,.85)','--aviso-t':'#fff7ef','--velo':'rgba(232,217,195,.7)','--ventana':'#fff7ef','--ventana-t':'#3b2418','--ventana-s':'#7a5a45','--op':'#f3e6d4','--op-club':'#2a5aa8','--op-club-t':'#fff'},
+   t:{ ya:'¡Venga!', superado:'¡Olé!', casi:'Por un pelo. Otra vez.', sinTitulo:'Hora de la siesta', sinSub:'La cuerda vuelve de una en una cada 30 min. La próxima, en 12:40.', exito:'¡Al compás! Las dos a la vez.' },
+   tono:['¡Venga!','¡Olé!','Hora de la siesta'],
+   L:{tablero:'#f1e5d2',punto:'rgba(59,36,24,.06)',ficha:'#fff7ef',pip:'#3b2418',cae:'#2a5aa8',caida:'#d9a58a',borde:'rgba(59,36,24,.3)',sombra:'rgba(59,36,24,.25)',campana:'#c4623d',badajo:'#2a5aa8',halo:'rgba(42,90,168,.18)',inicio:'#c4623d',inicioIco:'#fff7ef',cifra:'rgba(59,36,24,.75)',cifraT:'#fff7ef',fuente:'800 10px Mulish'},
+   estrella:'#c4623d', camino:'#2a5aa8', caminoNo:'rgba(59,36,24,.2)',
+   paleta:[['Terracota','#C4623D'],['Azulejo','#2A5AA8'],['Arena','#E8D9C3'],['Cal','#FFF7EF'],['Tierra','#3B2418']],
+   tipo:{grande:'¡Olé!',nota:'Gloock para títulos y Mulish para el texto. SIL OFL.'} },
+
+ { id:'nordico', nombre:'Nórdico', clase:'d-nordico',
+   desc:'Salón escandinavo: gris verdoso claro, fichas de madera de pino, verde bosque para la acción y esquinas suaves. Cálido, ordenado y sin ruido.',
+   fd:'"Figtree",sans-serif', fu:'"Figtree",sans-serif',
+   v:{'--fondo':'#e3e7e1','--pantalla':'#e9ece6','--texto':'#22302b','--suave':'#5f6d67','--acento':'#2f5d50','--linea':'rgba(34,48,43,.14)','--marco':'#22302b','--panel':'#f4f6f2','--chip':'#f4f6f2','--prim':'#2f5d50','--prim-t':'#f4f6f2','--sec':'#f4f6f2','--sec-t':'#22302b','--wd':800,'--lsd':'-.02em','--wb':700,'--rb':'14px','--rredondo':'14px','--rnodo':'14px','--rpanel':'16px','--rventana':'22px','--nodo-h':'#d8b98e','--nodo-h-t':'#22302b','--nodo-c':'#f4f6f2','--nodo-c-t':'#a1aaa5','--aviso':'rgba(34,48,43,.85)','--aviso-t':'#f4f6f2','--velo':'rgba(227,231,225,.75)','--ventana':'#f7f8f5','--ventana-t':'#22302b','--ventana-s':'#5f6d67','--op':'#e9ece6','--op-club':'#2f5d50','--op-club-t':'#f4f6f2'},
+   t:{ ya:'Tumbar', superado:'Bien hecho', casi:'Casi. Prueba de nuevo.', sinTitulo:'Pausa', exito:'Juntas, a la vez.' },
+   tono:['Tumbar','Bien hecho','Pausa'],
+   L:{tablero:'#f4f6f2',punto:'rgba(34,48,43,.06)',ficha:'#e2c49a',pip:'#22302b',cae:'#2f5d50',caida:'#c3cbc5',borde:'rgba(120,80,40,.35)',sombra:'rgba(34,48,43,.2)',campana:'#2f5d50',badajo:'#d8b98e',halo:'rgba(47,93,80,.18)',inicio:'#2f5d50',inicioIco:'#f4f6f2',cifra:'#22302b',cifraT:'#f4f6f2',fuente:'800 10px Figtree'},
+   estrella:'#2f5d50', camino:'#d8b98e', caminoNo:'#c3cbc5',
+   paleta:[['Liquen','#E3E7E1'],['Pino','#E2C49A'],['Bosque','#2F5D50'],['Pizarra','#22302B'],['Nieve','#F4F6F2']],
+   tipo:{grande:'Bien hecho',nota:'Figtree en todos los pesos: amable y muy legible. SIL OFL.'} },
+
+ { id:'cuaderno', nombre:'Cuaderno', clase:'d-cuaderno',
+   desc:'Un cuaderno de cuadros con bolígrafo azul y margen rojo, como resolver un acertijo en clase. Letra manuscrita para los títulos y apuntes de lápiz. Cercano e ingenioso.',
+   fd:'"Caveat",cursive', fu:'"Patrick Hand",sans-serif',
+   v:{'--fondo':'#f4f6fb','--pantalla':'#fbfcff','--texto':'#1d3a8a','--suave':'#4d5f94','--acento':'#e04848','--linea':'rgba(29,58,138,.25)','--marco':'#24324f','--panel':'rgba(255,255,255,.85)','--chip':'#fff','--borde-chip':'1.5px solid #1d3a8a','--prim':'#1d3a8a','--prim-t':'#fbfcff','--sec':'transparent','--sec-t':'#1d3a8a','--sec-borde':'1.5px solid #1d3a8a','--wd':700,'--wb':400,'--lsb':'.02em','--rb':'10px 14px 10px 16px','--rredondo':'50% 46% 52% 48%','--rnodo':'50% 46% 52% 48%','--rpanel':'10px','--rventana':'14px','--borde-panel':'1.5px solid #1d3a8a','--borde-tablero':'1.5px solid #1d3a8a','--nodo-h':'#fff','--nodo-h-t':'#1d3a8a','--nodo-borde':'2px solid #1d3a8a','--nodo-c':'transparent','--nodo-c-t':'#9aa6c8','--nodo-sombra':'0 0 0 5px rgba(224,72,72,.2)','--aviso':'#fff8c4','--aviso-t':'#1d3a8a','--velo':'rgba(244,246,251,.7)','--ventana':'#fff','--ventana-t':'#1d3a8a','--ventana-s':'#4d5f94','--borde-ventana':'1.5px solid #1d3a8a','--sombra-ventana':'0 10px 24px -14px rgba(29,58,138,.4)','--op':'#f4f6fb','--borde-op':'1.5px dashed #1d3a8a','--op-club':'#fff8c4','--borde-op-club':'1.5px solid #1d3a8a','--op-club-t':'#1d3a8a'},
+   t:{ ya:'¡Allá va!', superado:'¡Resuelto!', casi:'Casi… borra y prueba otra vez.', sinTitulo:'Se acabó la tinta', exito:'¡Las dos a la vez! Bien pensado.' },
+   tono:['¡Allá va!','¡Resuelto!','Se acabó la tinta'],
+   L:{tablero:'#fbfcff',punto:'rgba(29,58,138,.1)',ficha:'#fbfcff',pip:'#1d3a8a',cae:'#e04848',caida:'rgba(29,58,138,.25)',borde:'#1d3a8a',sombra:'rgba(0,0,0,0)',campana:'#1d3a8a',badajo:'#e04848',halo:'rgba(224,72,72,.16)',inicio:'#e04848',inicioIco:'#fff',cifra:'rgba(0,0,0,0)',cifraT:'#e04848',fuente:'700 12px Caveat'},
+   estrella:'#e04848', camino:'#1d3a8a', caminoNo:'rgba(29,58,138,.25)',
+   paleta:[['Papel','#FBFCFF'],['Bolígrafo','#1D3A8A'],['Margen','#E04848'],['Pósit','#FFF8C4'],['Cuadrícula','#C9D8EF']],
+   tipo:{grande:'¡Resuelto!',nota:'Caveat para títulos y Patrick Hand para el texto: manuscrito pero legible. SIL OFL.'} }
+];
+
+function render(T,i){
+  const x=Object.assign({},BASE,T.t);
+  const nodos=[[28,88,'h'],[68,72,'h'],[32,55,'h'],[70,38,'h'],[38,21,'a'],[72,7,'c']];
+  const est=(c)=>`<span class="${c||''}" style="color:${T.estrella};display:inline-flex">${ICO.estrella}</span>`;
+  return `
+  <section class="dir ${T.clase}" id="${T.id}">
+    <div class="cab"><div><span class="num">${String(i+1).padStart(2,'0')} / 10</span><h2>${T.nombre}</h2></div><p>${T.desc}</p></div>
+    <div class="fila">
+      <figure class="fig"><div class="movil"><div class="pant">
+        <div class="hud"><span class="chip">${ICO.llave}3/5 · 12:40</span><span class="hueco"></span><span class="chip">${est()}41</span></div>
+        <div class="barrio"><small>${x.barrio}</small><div class="titulo">${x.nombreBarrio}</div></div>
+        <div class="mapa"><svg class="camino" viewBox="0 0 100 100" preserveAspectRatio="none" data-camino></svg>
+          ${nodos.map((n,k)=>`<div class="nodo ${n[2]}" style="left:${n[0]}%;top:${n[1]}%">${k+1}</div>`).join('')}</div>
+        <div class="abajo"><button class="b p ancho">${x.jugar}</button></div>
+      </div></div><figcaption>Inicio</figcaption></figure>
+      <figure class="fig g"><div class="movil g"><div class="pant">
+        <div class="hud"><button class="b s redondo" style="width:36px;height:36px" aria-label="Volver">${ICO.atras}</button><span class="hueco" style="text-align:center"><span class="titulo" style="font-size:1.15rem">${x.nivel}</span></span><span class="chip">${ICO.ficha}<span data-cont>60</span></span></div>
+        <div class="meta">${x.meta}</div>
+        <div class="tablero"><canvas data-lienzo aria-label="Tablero jugable"></canvas><div class="aviso" data-aviso>${x.aviso}</div></div>
+        <div class="mandos"><button class="b s redondo" data-borrar aria-label="Borrar">${ICO.borrar}</button><button class="b p" data-ya>${x.ya}</button><button class="b s redondo" data-ejemplo aria-label="Ver ejemplo">${ICO.pista}</button></div>
+      </div></div><figcaption>Partida jugable</figcaption></figure>
+      <figure class="fig"><div class="movil"><div class="pant">
+        <div class="hud"><span class="chip">${ICO.llave}3/5</span></div>
+        <div class="velo"><div class="ventana"><div class="titulo">${x.superado}</div>
+          <div class="estrellas">${est()}${est('c')}${est()}</div>
+          <div class="cifra">37</div><p>${x.dato}</p>
+          <div class="dos"><button class="b s">${x.repetir}</button><button class="b p">${x.siguiente}</button></div></div></div>
+      </div></div><figcaption>Nivel superado</figcaption></figure>
+      <figure class="fig"><div class="movil"><div class="pant">
+        <div class="hud"><span class="chip">${ICO.llave}0/5 · 12:40</span></div>
+        <div class="velo"><div class="ventana"><div class="titulo" style="font-size:1.2rem">${x.sinTitulo}</div><p>${x.sinSub}</p>
+          <div class="ops"><div class="op"><b>${x.anuncio}</b>${x.anuncioS}</div><div class="op"><b>${x.esperar}</b>${x.esperarS}</div><div class="op"><b>${x.gratis}</b>${x.gratisS}</div><div class="op club"><b>${x.club}</b>${x.clubS}</div></div></div></div>
+      </div></div><figcaption>Sin cuerda</figcaption></figure>
+    </div>
+    <div class="muestras"><div class="paleta">${T.paleta.map(([n,h])=>`<div><i style="background:${h}"></i><span>${n}<em>${h}</em></span></div>`).join('')}</div>
+      <div class="tipo"><p class="grande">${T.tipo.grande}</p><p>${T.tipo.nota}</p></div></div>
+    <div class="tono">${T.tono.map(s=>`<span>«${s}»</span>`).join('')}</div>
+  </section>`;
+}
+
+const raiz=document.getElementById('raiz'), indice=document.getElementById('indice');
+raiz.innerHTML=TEMAS.map(render).join('');
+TEMAS.forEach((T,i)=>{
+  const sec=document.getElementById(T.id);
+  sec.style.setProperty('--fd',T.fd); sec.style.setProperty('--fu',T.fu);
+  Object.entries(T.v).forEach(([k,v])=>sec.style.setProperty(k,v));
+  const a=document.createElement('a'); a.href='#'+T.id; a.textContent=(i+1)+' · '+T.nombre; indice.appendChild(a);
+  const svg=sec.querySelector('[data-camino]'); const p=[[28,88],[68,72],[32,55],[70,38],[38,21],[72,7]]; let h='';
+  for(let s=0;s<p.length-1;s++){const [x1,y1]=p[s],[x2,y2]=p[s+1];for(let k=1;k<8;k++){const t=k/8,x=x1+(x2-x1)*t,y=y1+(y2-y1)*t,an=Math.atan2((y2-y1)*2,(x2-x1))*180/Math.PI+90;
+    h+=`<rect x="${x-.9}" y="${y-1.6}" width="1.8" height="3.2" rx=".4" fill="${s<4?T.camino:T.caminoNo}" transform="rotate(${an} ${x} ${y})"/>`;}}
+  svg.innerHTML=h;
+});
+const fav=document.createElement('a'); fav.href='../favoritas/index.html'; fav.textContent='★ Favoritas'; indice.appendChild(fav);
+
+function demo(sec,T){
+  const x=Object.assign({},BASE,T.t);
+  const cv=sec.querySelector('[data-lienzo]'),ctx=cv.getContext('2d'),aviso=sec.querySelector('[data-aviso]'),cont=sec.querySelector('[data-cont]'),ya=sec.querySelector('[data-ya]');
+  const C=T.L,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const PASO=15,TEMPO=85,MAX=60;let W,H,ramas=[],trazo=[],estado='dibujo',t0=0,dib=false;
+  const L={e:{x:.15,y:.86},c:{x:.8,y:.2}},P=p=>({x:p.x*W,y:p.y*H});
+  const largo=g=>{let s=0;for(let i=1;i<g.length;i++)s+=Math.hypot(g[i].x-g[i-1].x,g[i].y-g[i-1].y);return s;};
+  function rep(g,n){const Lg=largo(g),o=[];let s=1,a=0;for(let k=0;k<n;k++){const ob=Lg*k/(n-1);while(s<g.length-1&&a+Math.hypot(g[s].x-g[s-1].x,g[s].y-g[s-1].y)<ob){a+=Math.hypot(g[s].x-g[s-1].x,g[s].y-g[s-1].y);s++;}const A=g[s-1],B=g[s],d=Math.hypot(B.x-A.x,B.y-A.y)||1,t=Math.min(1,(ob-a)/d);o.push({x:A.x+(B.x-A.x)*t,y:A.y+(B.y-A.y)*t});}return o;}
+  const mues=g=>g.length<2?g.slice():rep(g,Math.max(2,Math.round(largo(g)/PASO)+1));
+  function ejemplo(){const e=P(L.e),c=P(L.c),b={x:e.x+(c.x-e.x)*.36,y:e.y+(c.y-e.y)*.42};const tr=mues([e,{x:e.x+W*.07,y:e.y-H*.07},b]);
+    const iz=[b,{x:b.x-W*.1,y:b.y-H*.22},{x:c.x-W*.25,y:c.y-H*.01},{x:c.x-W*.05,y:c.y+H*.01}],de=[b,{x:b.x+W*.32,y:b.y-H*.01},{x:c.x+W*.03,y:c.y+H*.22},{x:c.x+W*.012,y:c.y+H*.05}];
+    const n=Math.round((largo(iz)+largo(de))/2/PASO)+1;return [{p:tr,i:0},{p:rep(iz,n),i:tr.length-1},{p:rep(de,n),i:tr.length-1}];}
+  const ang=(p,i)=>{const a=p[Math.max(0,i-1)],b=p[Math.min(p.length-1,i+1)];return Math.atan2(b.y-a.y,b.x-a.x)+Math.PI/2;};
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+  function fondo(){ctx.clearRect(0,0,W,H);ctx.fillStyle=C.tablero;ctx.fillRect(0,0,W,H);ctx.fillStyle=C.punto;for(let i=12;i<W;i+=24)for(let j=12;j<H;j+=24){ctx.beginPath();ctx.arc(i,j,1.4,0,7);ctx.fill();}}
+  function ficha(p,a,m,k){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(a);const w=6.5,h=15;
+    if(m==='tumbada'){ctx.rotate(Math.PI/2);ctx.fillStyle=C.caida;rr(-h/2,-w*.45,h,w*.9,2);ctx.fill();ctx.restore();return;}
+    const s=m==='cae'?1-k*.55:1;ctx.shadowColor=C.sombra;ctx.shadowBlur=4;ctx.shadowOffsetY=2;ctx.fillStyle=m==='cae'?C.cae:C.ficha;ctx.globalAlpha=m==='borrador'?.5:1;rr(-w/2,-h/2*s,w,h*s,2);ctx.fill();ctx.shadowColor='transparent';ctx.strokeStyle=C.borde;ctx.lineWidth=1;ctx.stroke();ctx.globalAlpha=1;
+    if(m!=='borrador'){ctx.fillStyle=C.pip;ctx.beginPath();ctx.arc(0,-h*.22*s,1.2,0,7);ctx.arc(0,h*.22*s,1.2,0,7);ctx.fill();}ctx.restore();}
+  function campana(su,pa){const c=P(L.c);ctx.save();ctx.translate(c.x,c.y);if(su){ctx.fillStyle=C.halo;ctx.beginPath();ctx.arc(0,0,36,0,7);ctx.fill();}
+    [-12,12].forEach(dx=>{ctx.save();ctx.translate(dx,0);if(su)ctx.rotate(dx<0?-.22:.22);ctx.fillStyle=C.campana;ctx.beginPath();ctx.moveTo(0,-13);ctx.bezierCurveTo(-8,-13,-9.5,-5,-9.5,0);ctx.lineTo(-9.5,5);ctx.lineTo(-12,9);ctx.lineTo(12,9);ctx.lineTo(9.5,5);ctx.lineTo(9.5,0);ctx.bezierCurveTo(9.5,-5,8,-13,0,-13);ctx.fill();ctx.fillStyle=C.badajo;ctx.beginPath();ctx.arc(0,11.5,2.8,0,7);ctx.fill();ctx.restore();});
+    ctx.fillStyle=C.campana;ctx.fillRect(-12,-16,24,2.5);if(pa){ctx.strokeStyle=C.badajo;ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.arc(0,0,28,0,7);ctx.stroke();ctx.setLineDash([]);}ctx.restore();}
+  function inicio(){const p=P(L.e);ctx.fillStyle=C.inicio;ctx.beginPath();ctx.arc(p.x,p.y,14,0,7);ctx.fill();ctx.fillStyle=C.inicioIco;ctx.beginPath();ctx.moveTo(p.x-4,p.y-6);ctx.lineTo(p.x+7,p.y);ctx.lineTo(p.x-4,p.y+6);ctx.closePath();ctx.fill();}
+  function cifras(p,i0){ctx.font=C.fuente;ctx.textAlign='center';ctx.textBaseline='middle';for(let i=4;i<p.length;i+=4){const q=p[i],a=ang(p,i),cx=q.x+Math.cos(a)*15,cy=q.y+Math.sin(a)*15;ctx.fillStyle=C.cifra;ctx.beginPath();ctx.arc(cx,cy,7.5,0,7);ctx.fill();ctx.fillStyle=C.cifraT;ctx.fillText(String(i0+i),cx,cy+.5);}}
+  function draw(now){if(!W)return;fondo();const todas=estado==='dibujo'&&trazo.length?[{p:trazo,i:0}]:ramas;const t=estado==='cayendo'?(now-t0)/(reduce?TEMPO*.5:TEMPO):-1;const lleg=[];
+    todas.forEach(r=>{r.p.forEach((q,i)=>{const b=r.i+i;let m=dib?'borrador':'armada',k=0;if(t>=0){if(t>b+1)m='tumbada';else if(t>b){m='cae';k=t-b;}}ficha(q,ang(r.p,i),m,k);});cifras(r.p,r.i);const f=r.p[r.p.length-1],c=P(L.c);if(f&&Math.hypot(f.x-c.x,f.y-c.y)<34)lleg.push(r.i+r.p.length-1);});
+    inicio();let su=false,pa=false;if(t>=0&&lleg.length){const hh=lleg.filter(b=>t>b);if(hh.length>=2&&Math.abs(lleg[0]-lleg[1])<=1)su=true;else if(hh.length)pa=true;}campana(su,pa&&!su);
+    cont.textContent=Math.max(0,MAX-todas.reduce((s,r)=>s+r.p.length,0));
+    if(estado==='cayendo'){const fin=Math.max(...todas.map(r=>r.i+r.p.length))+2;if(t>fin){estado='fin';ya.disabled=false;aviso.textContent=su?x.exito:lleg.length===1?x.una:x.casi;}else requestAnimationFrame(draw);}}
+  function size(){const r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);draw(performance.now());}
+  const pos=ev=>{const r=cv.getBoundingClientRect();return{x:ev.clientX-r.left,y:ev.clientY-r.top};};
+  cv.addEventListener('pointerdown',ev=>{if(estado==='cayendo')return;const p=pos(ev),e=P(L.e);if(Math.hypot(p.x-e.x,p.y-e.y)>40){aviso.textContent=x.aviso;return;}ramas=[];estado='dibujo';dib=true;trazo=[e];cv.setPointerCapture(ev.pointerId);draw(performance.now());});
+  cv.addEventListener('pointermove',ev=>{if(!dib)return;const p=pos(ev),u=trazo[trazo.length-1];if(Math.hypot(p.x-u.x,p.y-u.y)>=PASO/2){trazo.push(p);draw(performance.now());}});
+  const soltar=()=>{if(!dib)return;dib=false;ramas=[{p:mues(trazo).slice(0,MAX),i:0}];trazo=[];estado='listo';draw(performance.now());};
+  cv.addEventListener('pointerup',soltar);cv.addEventListener('pointercancel',soltar);
+  const tumbar=()=>{if(!ramas.length)return;estado='cayendo';ya.disabled=true;t0=performance.now();aviso.textContent='…';requestAnimationFrame(draw);};
+  ya.addEventListener('click',tumbar);
+  const cargar=()=>{ramas=ejemplo();trazo=[];estado='listo';ya.disabled=false;aviso.textContent=x.meta.split(':')[0].split('.')[0]+'.';draw(performance.now());};
+  sec.querySelector('[data-ejemplo]').addEventListener('click',cargar);
+  sec.querySelector('[data-borrar]').addEventListener('click',()=>{ramas=[];trazo=[];estado='dibujo';ya.disabled=false;aviso.textContent=x.aviso;draw(performance.now());});
+  addEventListener('resize',size);size();cargar();
+  let hecho=false;new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&!hecho&&!reduce){hecho=true;setTimeout(tumbar,500);}});},{threshold:.5}).observe(cv);
+}
+(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>TEMAS.forEach(T=>demo(document.getElementById(T.id),T)));
+</script>
+</body>
+</html>

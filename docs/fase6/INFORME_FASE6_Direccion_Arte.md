@@ -1,4 +1,8 @@
-# FASE 6 — Identidad visual y dirección de arte: «La Banda del Pueblo»
+# FASE 6 — Identidad visual y dirección de arte
+
+> **⚠️ DIRECCIÓN SUSTITUIDA (17/11/2026).** El cliente rechazó «La Banda del Pueblo». La dirección vigente es **«Dominó Pop»**: ver [rediseno/INFORME_REDISENO.md](rediseno/INFORME_REDISENO.md) y [DESIGN.md](../../DESIGN.md). Este documento se conserva como histórico; sus secciones de método (skills, sonido, animación y registro de recursos) siguen siendo válidas.
+
+## Histórico: «La Banda del Pueblo»
 
 **Fecha:** 16/11/2026
 **Estado:** entregada a falta de tus decisiones sobre la auditoría (sección 9)
