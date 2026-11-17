@@ -138,6 +138,16 @@ canvas.quieto{cursor:default}
 .tema-negro .pant{background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1.3px),linear-gradient(180deg,#151515,#0b0b0b);background-size:3px 3px,100% 100%}
 .tema-bauhaus .cabeza h1::after{content:"";display:inline-block;width:.42em;height:.42em;margin-left:.16em;background:#e1251b;border-radius:50%}
 
+.gancho,.proto{display:none}
+/* Modo clip (?clip=1&t=texto): solo la partida, en vertical, para grabar vídeos de redes */
+body.clip{min-height:100vh;overflow:hidden}
+body.clip .cabeza,body.clip .pie,body.clip .fila:not(:first-child),body.clip .fila > .fig:not(.g),body.clip figcaption{display:none}
+body.clip main{padding:0;max-width:none;gap:0}
+body.clip .fila{display:block}
+body.clip .movil.g{max-width:none;width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;padding:0;box-shadow:none}
+body.clip .movil.g .pant{border-radius:0;padding-top:132px}
+body.clip .gancho{display:block;position:fixed;top:0;left:0;right:0;z-index:3;padding:40px 22px 0;text-align:center;font-family:var(--fd);font-weight:var(--wd);text-transform:var(--ttd);letter-spacing:var(--lsd);font-size:2.1rem;line-height:1.05;color:var(--texto)}
+body.clip .proto{display:block;position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:3;font-family:var(--fu);font-size:.72rem;font-weight:700;padding:4px 8px;border-radius:6px;background:rgba(0,0,0,.55);color:#fff}
 @media (max-width:1000px){
   .fila{grid-template-columns:1fr;justify-items:center}
   .fila .fig.g{order:-1}
@@ -159,6 +169,7 @@ canvas.quieto{cursor:default}
   <ul class="selector" id="selector" aria-label="Tema"></ul>
 </header>
 <main id="raiz" aria-live="polite"></main>
+<div class="gancho" id="gancho" aria-hidden="true"></div><div class="proto" aria-hidden="true">Prototipo · en desarrollo</div>
 <footer class="pie">
   <p>Todas las fuentes tienen licencia SIL OFL (Google Fonts) y todos los gráficos están dibujados en código. Los datos de las pantallas son ilustrativos.</p>
   <p>El tablero completo de Dominó Pop (Reto del día, Club y sistema) está en <a href="../tablero/index.html">su propia página</a>. Art déco, Terracota mediterránea, Cuaderno y La Banda del Pueblo se descartaron el 17/11/2026 y quedan en el historial de Git y en el catálogo en PDF.</p>
@@ -360,7 +371,7 @@ function render(T){
 /* Motor del tablero: el mismo para todos los temas */
 function tablero(cv, T, o){
   const x=Object.assign({},BASE,T.t), C=T.L, ctx=cv.getContext('2d'), reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const PASO=15,TEMPO=85,MAX=60; let W,H,ramas=[],trazo=[],estado='dibujo',t0=0,dib=false;
+  const PASO=15,TEMPO=85,MAX=60; let W,H,k=1,ramas=[],trazo=[],estado='dibujo',t0=0,dib=false; /* k: escala para dibujar siempre en un espacio lógico de tamaño teléfono */
   const L={e:{x:.15,y:.86},c:{x:.8,y:.2}},P=p=>({x:p.x*W,y:p.y*H});
   const largo=g=>{let s=0;for(let i=1;i<g.length;i++)s+=Math.hypot(g[i].x-g[i-1].x,g[i].y-g[i-1].y);return s;};
   function rep(g,n){const Lg=largo(g),r=[];let s=1,a=0;for(let k=0;k<n;k++){const ob=Lg*k/(n-1);while(s<g.length-1&&a+Math.hypot(g[s].x-g[s-1].x,g[s].y-g[s-1].y)<ob){a+=Math.hypot(g[s].x-g[s-1].x,g[s].y-g[s-1].y);s++;}const A=g[s-1],B=g[s],d=Math.hypot(B.x-A.x,B.y-A.y)||1,t=Math.min(1,(ob-a)/d);r.push({x:A.x+(B.x-A.x)*t,y:A.y+(B.y-A.y)*t});}return r;}
@@ -385,12 +396,12 @@ function tablero(cv, T, o){
     inicio();let su=false,pa=false;if(t>=0&&lleg.length){const hh=lleg.filter(b=>t>b);if(hh.length>=2&&Math.abs(lleg[0]-lleg[1])<=1)su=true;else if(hh.length)pa=true;}campana(su,pa&&!su);
     if(o.cont)o.cont.textContent=Math.max(0,MAX-todas.reduce((s,r)=>s+r.p.length,0));
     if(estado==='cayendo'){const fin=Math.max(...todas.map(r=>r.i+r.p.length))+2;if(t>fin){estado='fin';if(o.ya)o.ya.disabled=false;if(o.aviso)o.aviso.textContent=su?x.exito:lleg.length===1?x.una:x.casi;}else requestAnimationFrame(draw);}}
-  function size(){const r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);if(!r.width)return;W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);
+  function size(){const r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);if(!r.width)return;k=Math.max(1,r.width/300);W=r.width/k;H=r.height/k;cv.width=r.width*d;cv.height=r.height*d;ctx.setTransform(d*k,0,0,d*k,0,0);
     if(o.quieto){ramas=ejemplo();estado='listo';}draw(performance.now());}
   const tumbar=()=>{if(!ramas.length||estado==='cayendo')return;estado='cayendo';if(o.ya)o.ya.disabled=true;t0=performance.now();if(o.aviso)o.aviso.textContent='…';requestAnimationFrame(draw);};
   const cargar=()=>{ramas=ejemplo();trazo=[];estado='listo';if(o.ya)o.ya.disabled=false;if(o.aviso)o.aviso.textContent=x.meta.split(':')[0].split('.')[0]+'.';draw(performance.now());};
   if(!o.quieto){
-    const pos=ev=>{const r=cv.getBoundingClientRect();return{x:ev.clientX-r.left,y:ev.clientY-r.top};};
+    const pos=ev=>{const r=cv.getBoundingClientRect();return{x:(ev.clientX-r.left)/k,y:(ev.clientY-r.top)/k};};
     cv.addEventListener('pointerdown',ev=>{if(estado==='cayendo')return;const p=pos(ev),e=P(L.e);if(Math.hypot(p.x-e.x,p.y-e.y)>40){o.aviso.textContent=x.aviso;return;}ramas=[];estado='dibujo';dib=true;trazo=[e];cv.setPointerCapture(ev.pointerId);draw(performance.now());});
     cv.addEventListener('pointermove',ev=>{if(!dib)return;const p=pos(ev),u=trazo[trazo.length-1];if(Math.hypot(p.x-u.x,p.y-u.y)>=PASO/2){trazo.push(p);draw(performance.now());}});
     const soltar=()=>{if(!dib)return;dib=false;ramas=[{p:mues(trazo).slice(0,MAX),i:0}];trazo=[];estado='listo';draw(performance.now());};
@@ -412,7 +423,7 @@ function aplicar(id, foco){
   puestas.forEach(k=>b.style.removeProperty(k)); puestas=[];
   const props=Object.assign({'--fd':T.fd,'--fu':T.fu,'--fb':T.fb||T.fu},T.v);
   Object.entries(props).forEach(([k,v])=>{b.style.setProperty(k,v);puestas.push(k);});
-  b.className='tema-'+T.id;
+  b.className='tema-'+T.id+(consulta.get('clip')==='1'?' clip':'');
   selector.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.tema===T.id)));
   raiz.innerHTML=render(T);
   if(history.replaceState) history.replaceState(null,'','#tema='+T.id);
@@ -432,6 +443,8 @@ function aplicar(id, foco){
 }
 selector.addEventListener('click',e=>{const btn=e.target.closest('button[data-tema]');if(btn)aplicar(btn.dataset.tema,'sel');});
 addEventListener('resize',()=>motores.forEach(m=>m.size()));
+const consulta=new URLSearchParams(location.search);
+if(consulta.get('clip')==='1'){document.documentElement.classList.add('clip-raiz');document.getElementById('gancho').textContent=consulta.get('t')||'';}
 const pedido=(location.hash.match(/tema=([a-z]+)/)||[])[1];
 aplicar(pedido||'pop');
 </script>

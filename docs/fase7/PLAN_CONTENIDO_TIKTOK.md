@@ -103,6 +103,18 @@ Cada vídeo se publica también en **Instagram Reels** y **YouTube Shorts** con 
 
 **Material:** hasta que exista el juego en Godot, los vídeos del pilar 1 y 2 se graban con la **demo jugable de los tableros HTML**, rotulada «prototipo». Los del pilar 3 usan el catálogo y el historial del proyecto.
 
+**Ya grabados (17/11/2026), en vertical, 720 × 1280 y WebM**, en [clips/](clips/):
+- `01_llega_a_la_campana_pop.webm`: el guion 2, la campana doble, con Dominó Pop.
+- `02_campana_doble_nocturno.webm`: el mismo, con el tema Nocturno.
+- `03_mismo_puzle_mesa.webm`: el mismo, con Mesa de juego; sirve para el guion 9.
+
+Cada clip lleva el gancho arriba y la marca «Prototipo · en desarrollo». Se vuelven a grabar con `python -X utf8 docs/fase7/scripts/grabar_clips.py`, que usa el modo clip de la página de temas (`?clip=1&t=gancho#tema=id`).
+
+**Pendiente:**
+- añadir el sonido de las fichas y la campana; la demo no tiene audio;
+- convertir los clips a MP4 para Reels con una herramienta gratuita;
+- para 1080 × 1920, grabar en un equipo con ffmpeg completo.
+
 ---
 
 ## 7. Medición y decisiones
