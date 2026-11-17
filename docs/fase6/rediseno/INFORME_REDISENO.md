@@ -127,3 +127,9 @@ Cada dirección tiene su propia **demo jugable**, el inicio con el mapa, el nive
 Cada una tiene una partida jugable, el inicio con el mapa, el nivel superado y la ventana sin cuerda con cuatro opciones del mismo tamaño.
 
 **Comprobado** en el navegador: escritorio (1440 px) y móvil (375 px), sin desbordamiento horizontal, y las 10 demos se tumban solas.
+
+## 9. Catálogo en PDF (17/11/2026)
+
+**[../CATALOGO_DISENOS.pdf](../CATALOGO_DISENOS.pdf)** reúne las 15 direcciones generadas en 23 páginas A4 apaisadas: portada con índice visual, las 3 favoritas, las 10 de la tanda 2, «Dominó Pop» (4 páginas) y «La Banda del Pueblo» (5 páginas, recuperada del historial de Git). Cada página indica letras, tono y si es favorita, de la tanda 2 o anterior, y muestra la demo de la partida ya resuelta.
+
+Se regenera con `python -X utf8 docs/fase6/scripts/generar_catalogo.py` (Playwright con Chromium y Pillow).
