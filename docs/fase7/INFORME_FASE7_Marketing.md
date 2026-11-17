@@ -16,7 +16,7 @@
 
    **Elegido por el cliente (17/11/2026): «Dingfall»**, libre en TMview, App Store y Google Play. La suscripción se llama **Dingclub**. Villa Cadencia sigue como lugar dentro del juego. Detalle: [NOMBRE_Y_MARCA.md](NOMBRE_Y_MARCA.md).
 2. **La competencia directa es débil en las tiendas.** El juego más parecido, Dominos Draw!, tiene 1,7★ con 3 valoraciones y una ficha descuidada. Hay hueco para una ficha cuidada. Fichas completas en español e inglés en [ASO_FICHAS.md](ASO_FICHAS.md).
-3. **TikTok, Reels y Shorts son el canal principal.** Una cadena de dominó se ve hasta el final para saber si suena la campana, y TikTok dice que ver un vídeo entero es de las señales que más pesan. Plan con 10 guiones y 4 semanas en [PLAN_CONTENIDO_TIKTOK.md](PLAN_CONTENIDO_TIKTOK.md).
+3. **TikTok, Reels y Shorts son el canal principal.** Una cadena de dominó se ve hasta el final para saber si suena la campana, y TikTok dice que ver un vídeo entero es de las señales que más pesan. Plan con 10 guiones y 4 semanas en [PLAN_CONTENIDO_TIKTOK.md](PLAN_CONTENIDO_TIKTOK.md). Desde el 17/11/2026 incluye, a propuesta del cliente, un **pilar de tendencias y memes adaptados al juego** (20 %), con las reglas para no usar material ajeno.
 4. **Marketing antes que código terminado.** El contenido previo al lanzamiento sirve también de **termómetro barato del concepto**: si en 4 semanas ningún tipo de vídeo despega, es una señal de alarma útil antes de meses de desarrollo.
 5. **El lanzamiento va por puertas.** Prototipo, prueba cerrada, lanzamiento suave en pocos países y lanzamiento global solo si la retención alcanza al menos el escenario conservador de la Fase 5. Se usan las herramientas gratuitas de las tiendas: prerregistro, reserva y nominación a destacados. Detalle en [PLAN_LANZAMIENTO.md](PLAN_LANZAMIENTO.md) y [KIT_DE_PRENSA.md](KIT_DE_PRENSA.md).
 
@@ -39,6 +39,7 @@
 | Publicidad veraz (LR-01) | Solo se enseña lo que existe. El prototipo se rotula como prototipo. Las fichas tienen una casilla para comprobar cada afirmación antes de publicar |
 | Contenido comercial en redes | Etiqueta «Contenido promocional» de TikTok en todos los vídeos del juego. Las colaboraciones con creadores se marcan como tales |
 | Música | Biblioteca de Música Comercial o sonido propio. Nunca la biblioteca general en vídeos promocionales |
+| Memes y tendencias | Se recrea el formato con material propio. Nunca clips, fotos o audios ajenos, personajes o marcas de otros, ni personas sin permiso |
 | Menores | Sin sorteos que exijan seguir o compartir, sin pedir datos y sin retos peligrosos |
 | Falsa escasez (LR-06) | Los eventos de temporada vuelven cada año; sin cuentas atrás |
 | Valoraciones | Sin recompensas a cambio de valorar; solo se piden tras un buen momento |

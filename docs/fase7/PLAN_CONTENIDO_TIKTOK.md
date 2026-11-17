@@ -37,6 +37,8 @@ Fuentes: [Newsroom](https://newsroom.tiktok.com/en-us/how-tiktok-recommends-vide
 | **Menores** | El público empieza en los 15 años. Sin retos peligrosos, sin pedir datos y sin sorteos que exijan seguir o compartir. Nada que empuje a gastar | Marco legal, sección de menores |
 | **Sin trampas de interacción** | Nada de «dale like si…» ni «comenta para desbloquear». Las preguntas en los vídeos son genuinas («¿por dónde lo harías tú?») | Normas de la comunidad de TikTok |
 | **Sin marcas de agua cruzadas** | Cada plataforma recibe el archivo original, no la descarga de otra con su logotipo | Buenas prácticas de Reels y Shorts |
+| **Memes: se copia la idea, no el material** | Se recrea el formato con imágenes, voz y sonido nuestros. **Nunca** clips de películas o series, vídeos de otros usuarios, fotos de memes, personajes o marcas ajenas. Detalle en la sección 4.1 | Derechos de autor y de marca; [términos de TikTok](https://www.tiktok.com/legal/page/eea/terms-of-service/en) |
+| **Nadie sale sin permiso** | En los vídeos solo aparecen personas del equipo o quien lo haya autorizado por escrito. Nunca famosos, ni sus caras ni sus voces imitadas | Derecho a la propia imagen (en España, Ley Orgánica 1/1982) |
 
 ---
 
@@ -56,12 +58,57 @@ El público C da poco volumen, pero **comparte, comenta y lleva a la prensa espe
 
 | Pilar | Proporción [HIPÓTESIS] | Formato | Público |
 |---|---|---|---|
-| **1. Caídas satisfactorias** | 40 % | Grabación del juego en vertical, sin voz, con el sonido de las fichas | A |
-| **2. «¿Lo resolverías?»** | 25 % | Nivel planteado, 2 segundos para pensar, solución y caída | A y B |
-| **3. Diario de desarrollo** | 20 % | Grabación de pantalla con voz: decisiones de diseño, fallos, antes y después (la Fase 6 da para mucho) | B y C |
+| **1. Caídas satisfactorias** | 30 % | Grabación del juego en vertical, sin voz, con el sonido de las fichas | A |
+| **2. «¿Lo resolverías?»** | 20 % | Nivel planteado, 2 segundos para pensar, solución y caída | A y B |
+| **3. Diario de desarrollo** | 15 % | Grabación de pantalla con voz: decisiones de diseño, fallos, antes y después (la Fase 6 da para mucho) | B y C |
 | **4. El juego y cómo conseguirlo** | 15 % | Tráiler corto, fecha, enlace de prerregistro | Todos |
+| **5. Tendencias y memes adaptados** | 20 % | Un formato o meme del momento contado con el juego (sección 4.1) | A, y B si el meme es de su generación |
 
 **Serie fija [HIPÓTESIS]:** «La caída del lunes». Cada semana, un nivel nuevo que la gente intenta adivinar en comentarios. Crea costumbre y es la versión en vídeo de la Caída del Día.
+
+### 4.1 Pilar 5: tendencias y memes
+
+Propuesto por el cliente el 17/11/2026: adaptar formatos y memes virales al juego suele funcionar. **Una caída de dominó encaja en muchos formatos**, porque tiene tensión, desenlace y un fallo que da risa.
+
+**Lo que se puede y lo que no:**
+
+| Se puede | No se puede |
+|---|---|
+| Recrear la **estructura** de un formato («Expectativa vs. realidad», «POV: …», «Nivel 1 vs. nivel 100») con imágenes del juego y voz o texto nuestros | Usar el clip, la foto o el audio original de otra persona, de una película, serie o programa |
+| Un sonido de moda **solo si está en la Biblioteca de Música Comercial** | Una canción de la biblioteca general, aunque sea la del meme. Si no está en la comercial, se recrea con nuestro sonido o nuestra voz |
+| Dúo o Stitch con vídeos cuyo autor lo tenga activado, como **respuesta genuina** | Usar el vídeo de otro como anuncio del juego |
+| Personas del equipo, o quien lo autorice por escrito | Famosos, personajes con dueño (series, películas, otros juegos), logotipos o marcas ajenas |
+| Humor sobre nosotros mismos y sobre el juego | Tragedias, política, burlas a personas o grupos, retos peligrosos o contenido sexual (el público empieza en 15 años) |
+
+**Cómo detectar las tendencias** (gratis):
+- **Dos veces por semana, 15 minutos:** las [tendencias del Creative Center de TikTok](https://ads.tiktok.com/creative/creativeCenter/trends) (hashtags y vídeos en tendencia por país; comprobado el 17/11/2026, ahora dentro de TikTok One) y la pestaña «Para ti» de la cuenta del juego. Los sonidos de moda se comprueban en la propia app, mirando si aparecen en la Biblioteca de Música Comercial.
+- **Para cada candidata se apunta** en el registro: país, fecha, si está subiendo o ya bajando, si el sonido está en la biblioteca comercial y la decisión (**usar, adaptar o descartar**).
+- **Solo se usa si encaja de forma natural** con el juego. Un meme metido con calzador resta más que suma.
+
+**Rapidez:** las tendencias duran días. Para adaptar una en menos de una hora, hay un **banco de clips** grabados de antemano:
+- caídas que llegan a la campana;
+- caídas que se paran a una ficha de la campana;
+- la campana doble perfecta y la que falla por poco;
+- una cadena enorme;
+- el primer intento frente al definitivo de un mismo nivel;
+- el cambio de tema sobre la misma caída.
+
+Se graban con `docs/fase7/scripts/grabar_clips.py` mientras no exista el juego en Godot, y siempre llevan la marca «Prototipo · en desarrollo».
+
+**Formatos de larga duración que encajan** [HIPÓTESIS: comprobar en el Creative Center que siguen vivos antes de usarlos; no son tendencias verificadas a fecha de hoy]:
+
+| Formato | Versión Dingfall |
+|---|---|
+| Expectativa vs. realidad | El plan perfecto dibujado / la cadena que se para en la primera curva |
+| «POV: …» | «POV: llevas 20 minutos con el mismo nivel» y por fin suena la campana |
+| Intento 1 vs. intento 47 | El mismo nivel: el primer desastre y la solución limpia |
+| Nivel 1 vs. nivel 100 | Una fila recta / un árbol de ramas que llegan a la vez |
+| «Cosas que simplemente encajan» | Las dos ramas de la campana doble llegando en el mismo instante |
+| «Dime que eres … sin decirme que eres …» | «Dime que eres relojero sin decírmelo»: ramas sincronizadas al milímetro |
+| Tier list | Nuestros 11 temas ordenados por el equipo, con pregunta genuina: «¿cuál pondrías arriba?» |
+| «Explicándole a mi madre de qué va mi juego» | Solo con una persona real del equipo y su permiso |
+
+**Cómo se mide:** un meme puede traer muchas visualizaciones de gente a la que no le interesan los puzles. Se compara con los demás pilares por **seguidores, guardados y clics en el enlace**, no por visualizaciones. Si el pilar 5 trae vistas pero nadie se queda, se reduce su peso.
 
 ---
 
@@ -99,6 +146,8 @@ Ritmo sostenible para tres personas: **3 vídeos por semana**. Mejor constante q
 | 3 | Guion 7 (500 fichas) | Guion 6 (fallo de Godot) | Guion 4 (¿cuál llega antes?) |
 | 4 | Caída del lunes n.º 2 | Guion 9 (11 estilos) | Guion 10 (prerregistro) **solo si ya está abierto** |
 
+**Tendencias (pilar 5):** no tienen día fijo. Cuando aparece una que encaja, **sustituye al vídeo menos urgente de esa semana** o va como cuarto vídeo si hay tiempo. Así se aprovecha la tendencia sin aumentar la carga fija.
+
 Cada vídeo se publica también en **Instagram Reels** y **YouTube Shorts** con el archivo original. Es el mismo trabajo y llega a públicos distintos: Shorts llega más al público B [HIPÓTESIS].
 
 **Material:** hasta que exista el juego en Godot, los vídeos del pilar 1 y 2 se graban con la **demo jugable de los tableros HTML**, rotulada «prototipo». Los del pilar 3 usan el catálogo y el historial del proyecto.
@@ -119,7 +168,7 @@ Cada clip lleva el gancho arriba y la marca «Prototipo · en desarrollo». Se v
 
 ## 7. Medición y decisiones
 
-**Registro semanal** (una hoja compartida, gratis): fecha, vídeo, pilar, gancho, duración, sonido, visualizaciones, % que llega a «Para ti», tiempo medio, % que lo ve entero, veces compartido, guardados, seguidores ganados y clics en el enlace.
+**Registro semanal** (una hoja compartida, gratis): fecha, vídeo, pilar, gancho, tendencia usada y fecha en que se comprobó, duración, sonido y si es de la biblioteca comercial, visualizaciones, % que llega a «Para ti», tiempo medio, % que lo ve entero, veces compartido, guardados, seguidores ganados y clics en el enlace.
 
 **Cómo leer los datos** (comparando con nuestros propios vídeos, sin cifras universales):
 
