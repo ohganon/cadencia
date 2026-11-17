@@ -5,7 +5,7 @@ primary_target: "docs/fase6/tablero/index.html"
 related_targets: []
 ---
 
-Scope: Cadencia style board (docs/fase6/tablero/index.html), a full redesign. Experience mode. Audience: players aged 15–55 on phones. The client rejected «La Banda del Pueblo» and pinned the method: casual mobile game UI inspired by Pinterest (docs/fase6/rediseno/INSPIRACION_PINTEREST.md).
+Scope: Dingfall style board (docs/fase6/tablero/index.html), a full redesign. Experience mode. Audience: players aged 15–55 on phones. The client rejected «La Banda del Pueblo» and pinned the method: casual mobile game UI inspired by Pinterest (docs/fase6/rediseno/INSPIRACION_PINTEREST.md).
 
 ## Direction contract
 

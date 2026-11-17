@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cadencia · Temas</title>
+<title>Dingfall · Temas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;700;800;900&family=Manrope:wght@500;600;700;800&family=Jost:wght@300;400;500&family=Archivo:wdth,wght@75..100,500..900&family=Bebas+Neue&family=Barlow:wght@400;500;700&family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=League+Spartan:wght@400;600;800&family=Familjen+Grotesk:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Red+Hat+Display:wght@400;700;900&family=Red+Hat+Text:wght@400;500;700&family=Figtree:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -165,7 +165,7 @@ body.clip .proto{display:block;position:fixed;left:50%;top:10px;transform:transl
 <body>
 <header class="cabeza">
   <h1 class="titulo">Temas</h1>
-  <p>El jugador elige el aspecto en <b>Ajustes › Apariencia</b>. Cadencia arranca con Dominó Pop, que es gratis. Los otros diez vienen con el Club Cadencia y se pueden probar antes de pagar. Cambian colores, letras y tono, nunca las reglas, los niveles ni el progreso. Elige uno aquí o desde la pantalla de Apariencia del teléfono.</p>
+  <p>El jugador elige el aspecto en <b>Ajustes › Apariencia</b>. Dingfall arranca con Dominó Pop, que es gratis. Los otros diez vienen con el Dingclub y se pueden probar antes de pagar. Cambian colores, letras y tono, nunca las reglas, los niveles ni el progreso. Elige uno aquí o desde la pantalla de Apariencia del teléfono.</p>
   <ul class="selector" id="selector" aria-label="Tema"></ul>
 </header>
 <main id="raiz" aria-live="polite"></main>
@@ -187,7 +187,7 @@ const ICO = {
 };
 
 /* Textos base; cada tema cambia solo los que definen su tono */
-const BASE = { barrio:'Barrio 1', nombreBarrio:'La Plaza', jugar:'Jugar nivel 5', nivel:'Nivel 5', meta:'Haz sonar la campana doble: las dos ramas deben llegar a la vez.', ya:'Tumbar', superado:'Nivel superado', dato:'fichas · tu mejor marca', repetir:'Repetir', siguiente:'Siguiente', sinTitulo:'Sin cuerda', sinSub:'Recuperas una cada 30 min. La siguiente en 12:40.', anuncio:'Ver anuncio', anuncioS:'+3 cuerdas. Quedan 9 hoy.', esperar:'Esperar', esperarS:'Te avisamos si quieres.', gratis:'Jugar gratis', gratisS:'Reto del día, Taller o Libre.', club:'Club Cadencia', clubS:'Cuerda sin límite. 4,99 €/mes.', aviso:'Arrastra desde el botón de inicio para dibujar.', exito:'Las dos ramas llegaron a la vez.', casi:'No llegó. Prueba otra vez.', una:'Solo llegó una rama.', apTitulo:'Apariencia', apNota:'Dominó Pop es gratis. Los demás temas vienen con el Club: tócalos para probarlos.', pruebaT:'Probando', pruebaS:'Los 10 temas vienen con el Club Cadencia, junto a la cuerda ilimitada y sin anuncios. Tus niveles y estrellas no cambian.', unirme:'Unirme al Club', ahoraNo:'Ahora no' };
+const BASE = { barrio:'Barrio 1', nombreBarrio:'La Plaza', jugar:'Jugar nivel 5', nivel:'Nivel 5', meta:'Haz sonar la campana doble: las dos ramas deben llegar a la vez.', ya:'Tumbar', superado:'Nivel superado', dato:'fichas · tu mejor marca', repetir:'Repetir', siguiente:'Siguiente', sinTitulo:'Sin cuerda', sinSub:'Recuperas una cada 30 min. La siguiente en 12:40.', anuncio:'Ver anuncio', anuncioS:'+3 cuerdas. Quedan 9 hoy.', esperar:'Esperar', esperarS:'Te avisamos si quieres.', gratis:'Jugar gratis', gratisS:'Reto del día, Taller o Libre.', club:'Dingclub', clubS:'Cuerda sin límite. 4,99 €/mes.', aviso:'Arrastra desde el botón de inicio para dibujar.', exito:'Las dos ramas llegaron a la vez.', casi:'No llegó. Prueba otra vez.', una:'Solo llegó una rama.', apTitulo:'Apariencia', apNota:'Dominó Pop es gratis. Los demás temas vienen con el Club: tócalos para probarlos.', pruebaT:'Probando', pruebaS:'Los 10 temas vienen con el Dingclub, junto a la cuerda ilimitada y sin anuncios. Tus niveles y estrellas no cambian.', unirme:'Unirme al Club', ahoraNo:'Ahora no' };
 
 const TEMAS = [
  { id:'pop', nombre:'Dominó Pop', defecto:true,
@@ -360,7 +360,7 @@ function render(T){
       <ul class="ap-lista" role="radiogroup" aria-label="Tema del juego">${apariencia}</ul>${prueba}
     </div></div><figcaption>${T.defecto?'Ajustes › Apariencia: aquí elige el jugador':'Ajustes › Apariencia: probando un tema del Club'}</figcaption></figure>
     <div class="ficha">
-      <h2 class="titulo">${T.nombre}</h2>${T.defecto?'<span class="pordefecto">Tema por defecto · gratis</span>':'<span class="club-nota">Incluido en el Club Cadencia · se puede probar gratis</span>'}
+      <h2 class="titulo">${T.nombre}</h2>${T.defecto?'<span class="pordefecto">Tema por defecto · gratis</span>':'<span class="club-nota">Incluido en el Dingclub · se puede probar gratis</span>'}
       <p>${T.desc}</p>
       <div class="colores" role="img" aria-label="Paleta: ${T.paleta.map(p=>p[0]).join(', ')}">${T.paleta.map(([n,h])=>`<span style="background:${h}" title="${n} ${h}"></span>`).join('')}</div>
       <dl><dt>Colores</dt><dd>${T.paleta.map(([n,h])=>`${n} ${h}`).join(' · ')}</dd><dt>Letras</dt><dd>${T.letras}. SIL OFL.</dd><dt>Tono</dt><dd>${T.tono.map(s=>`«${s}»`).join(' · ')}</dd></dl>

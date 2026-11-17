@@ -16,7 +16,7 @@ A broad audience, confirmed by the client: from teenagers of 15–16 who are on 
 
 ## Product Purpose
 
-Cadencia is a free-to-play mobile puzzle game about dominoes. The player draws the path of the tiles with a finger, pushes the first one and watches the chain fall, ringing bells and setting off mechanisms. Success means players who come back because of curiosity, challenge and progress (never fear of losing something), who share their falls on social media, and a business funded by optional ads, a subscription (Club Cadencia) and cosmetic packs.
+Dingfall is a free-to-play mobile puzzle game about dominoes. The player draws the path of the tiles with a finger, pushes the first one and watches the chain fall, ringing bells and setting off mechanisms. Success means players who come back because of curiosity, challenge and progress (never fear of losing something), who share their falls on social media, and a business funded by optional ads, a subscription (Dingclub) and cosmetic packs.
 
 ## Positioning
 
@@ -36,7 +36,7 @@ Cadencia is a free-to-play mobile puzzle game about dominoes. The player draws t
 - 0 € budget: no paid assets and no hired artists. Every font, sound, music track and graphic must carry a commercially compatible licence, recorded in an asset register.
 - It must run smoothly on mid-range phones while hundreds of tiles fall at once.
 - No paid virtual currency, no paid randomness, no difficulty manipulation, no fake scarcity, no dark patterns (legal framework LR-01 to LR-15, docs/legal/MARCO_CUMPLIMIENTO_LEGAL.md).
-- Names are provisional: "Cadencia", "Tilde" (the apprentice clockmaker protagonist) and "Pío" (a tin wind-up bird who guides the player). Trademark search is pending.
+- The commercial name is "Dingfall" (chosen 17/11/2026; "Cadencia" was dropped after a trademark conflict). The subscription is "Dingclub". Still provisional: "Tilde" (the apprentice clockmaker protagonist) and "Pío" (a tin wind-up bird who guides the player). A search for similar trademarks is still pending.
 
 ## Brand Commitments
 

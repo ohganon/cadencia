@@ -171,17 +171,17 @@ class RetoDiarioYTaller(unittest.TestCase):
         n = Nivel(100, 160, (20, 150), [Campana("d", (50, 20), "doble")],
                   muros=[((0, 80), (30, 80))], puertas=[Puerta((60, 0), (60, 50), 20, 5, 3)], fichas=42, marca=37)
         codigo = sim.codigo_taller(n)
-        self.assertTrue(codigo.startswith("CAD1-"))
+        self.assertTrue(codigo.startswith("DING1-"))
         self.assertLess(len(codigo), 400)
         self.assertEqual(sim.nivel_de_codigo(codigo), n)
 
     def test_codigo_manipulado(self):
-        for malo in ("hola", "CAD1-!!!!", "CAD1-" + base64.urlsafe_b64encode(b"no es zlib").decode()):
+        for malo in ("hola", "CAD1-!!!!", "DING1-" + base64.urlsafe_b64encode(b"no es zlib").decode()):
             with self.assertRaises(ValueError):
                 sim.nivel_de_codigo(malo)
 
     def test_bomba_de_descompresion(self):
-        bomba = "CAD1-" + base64.urlsafe_b64encode(zlib.compress(b" " * 5_000_000, 9)).decode().rstrip("=")
+        bomba = "DING1-" + base64.urlsafe_b64encode(zlib.compress(b" " * 5_000_000, 9)).decode().rstrip("=")
         with self.assertRaises(ValueError):
             sim.nivel_de_codigo(bomba)
 

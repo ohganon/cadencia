@@ -177,7 +177,7 @@ def maquetar(imagenes: dict) -> str:
     leyenda = "".join(f'<span><i style="background:{c}"></i>{e(t)}</span>' for t, c in GRUPOS.values())
     hojas.append(f"""<section class="hoja portada">
       <div class="chip" style="background:#1d1d1b;align-self:flex-start">Fase 6 · Dirección de arte</div>
-      <h1>Cadencia · Catálogo de diseños</h1>
+      <h1>Dingfall · Catálogo de diseños</h1>
       <p class="sub">Las 15 direcciones visuales generadas hasta el 17/11/2026. Todas comparten la mecánica, las pantallas
       (inicio con mapa, partida, nivel superado y ventana sin cuerda) y el marco legal; cambian el color, las letras, las
       texturas y el tono de los textos. Cada página muestra la demo de la partida ya resuelta.</p>
@@ -200,9 +200,9 @@ def maquetar(imagenes: dict) -> str:
                   <b>Letras:</b> {e(fuentes)}<br><b>Tono:</b> {e(tono)}</div>
               </header>
               <div class="lienzo"><img src="{img.as_uri()}" alt="{e(nombre)}"></div>
-              <div class="pie"><span>Cadencia · Catálogo de diseños</span><span>{pagina}</span></div>
+              <div class="pie"><span>Dingfall · Catálogo de diseños</span><span>{pagina}</span></div>
             </section>""")
-    return f"""<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Cadencia · Catálogo de diseños</title>
+    return f"""<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Dingfall · Catálogo de diseños</title>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
 <style>{CSS}</style></head><body>{''.join(hojas)}</body></html>"""
 

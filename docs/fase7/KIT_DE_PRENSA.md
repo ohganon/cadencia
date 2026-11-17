@@ -8,7 +8,7 @@
 
 | Dato | Valor |
 |---|---|
-| Nombre | Dingfall *(provisional; ver NOMBRE_Y_MARCA.md)* |
+| Nombre | Dingfall |
 | Estudio | *(nombre del equipo, por decidir)*, 3 personas, España |
 | Plataformas | iOS y Android |
 | Motor | Godot 4 (código abierto, MIT) |

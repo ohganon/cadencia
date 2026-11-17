@@ -274,16 +274,19 @@ def nivel_de_dict(d: dict) -> Nivel:
                  d["f"], d["m"])
 
 
+PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
+
+
 def codigo_taller(n: Nivel) -> str:
     """Código de texto para compartir un nivel del Taller sin servidor."""
     datos = json.dumps(nivel_a_dict(n), separators=(",", ":"), sort_keys=True).encode()
-    return "CAD1-" + base64.urlsafe_b64encode(zlib.compress(datos, 9)).decode().rstrip("=")
+    return PREFIJO_TALLER + base64.urlsafe_b64encode(zlib.compress(datos, 9)).decode().rstrip("=")
 
 
 def nivel_de_codigo(codigo: str) -> Nivel:
-    if not codigo.startswith("CAD1-"):
+    if not codigo.startswith(PREFIJO_TALLER):
         raise ValueError("código no válido")
-    cuerpo = codigo[5:]
+    cuerpo = codigo[len(PREFIJO_TALLER):]
     cuerpo += "=" * (-len(cuerpo) % 4)
     limite = 65536             # un nivel ocupa unos pocos KB; más es un código manipulado
     try:

@@ -14,7 +14,7 @@
    - **una solicitud de marca en la OEPM (España) del 15/10/2026 que incluye la clase 41**, la del ocio y los juegos, y un registro en Francia en la misma clase;
    - un **juego de puzle llamado «Cadence»** lanzado en iOS en febrero de 2026.
 
-   **Recomiendo «Dingfall»**, libre en TMview, App Store y Google Play. La alternativa es «Chimefall». Villa Cadencia y el Club Cadencia pueden seguir como nombres dentro del juego. Detalle: [NOMBRE_Y_MARCA.md](NOMBRE_Y_MARCA.md).
+   **Elegido por el cliente (17/11/2026): «Dingfall»**, libre en TMview, App Store y Google Play. La suscripción se llama **Dingclub**. Villa Cadencia sigue como lugar dentro del juego. Detalle: [NOMBRE_Y_MARCA.md](NOMBRE_Y_MARCA.md).
 2. **La competencia directa es débil en las tiendas.** El juego más parecido, Dominos Draw!, tiene 1,7★ con 3 valoraciones y una ficha descuidada. Hay hueco para una ficha cuidada. Fichas completas en español e inglés en [ASO_FICHAS.md](ASO_FICHAS.md).
 3. **TikTok, Reels y Shorts son el canal principal.** Una cadena de dominó se ve hasta el final para saber si suena la campana, y TikTok dice que ver un vídeo entero es de las señales que más pesan. Plan con 10 guiones y 4 semanas en [PLAN_CONTENIDO_TIKTOK.md](PLAN_CONTENIDO_TIKTOK.md).
 4. **Marketing antes que código terminado.** El contenido previo al lanzamiento sirve también de **termómetro barato del concepto**: si en 4 semanas ningún tipo de vídeo despega, es una señal de alarma útil antes de meses de desarrollo.
@@ -51,7 +51,7 @@
 
 ## 4. Decisiones que necesito del cliente
 
-1. **Nombre:** Dingfall, Chimefall u otro.
+1. ~~**Nombre:** Dingfall, Chimefall u otro.~~ **Decidido: Dingfall** (17/11/2026).
 2. **Nombre del equipo o estudio** para la ficha de la tienda y la prensa.
 3. **Cuenta de desarrollador:** personal o de empresa. En Google Play, las cuentas personales nuevas necesitan la prueba cerrada de 12 probadores durante 14 días (marco legal). Afecta al calendario.
 4. **Quién graba y publica** los 3 vídeos semanales. Sostenerlo cuesta unas horas a la semana.

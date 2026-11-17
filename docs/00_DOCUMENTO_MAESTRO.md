@@ -1,6 +1,6 @@
-# DOCUMENTO MAESTRO — Proyecto de videojuego móvil (nombre por definir)
+# DOCUMENTO MAESTRO — Proyecto de videojuego móvil · Dingfall
 
-**Última actualización:** 16/11/2026
+**Última actualización:** 17/11/2026
 **Fase actual:** Fases 1–5 **aprobadas** (Fase 5 revisada el 17/11/2026). Fase 6: selección final de 11 temas, pendiente de aprobar en el Pull Request. **Fase 7 (marketing) entregada el 17/11/2026, pendiente de aprobación**
 
 > **Requisito transversal del cliente (16/11/2026):** mantener a los usuarios enganchados **sin asumir riesgos legales ni de otro tipo**. Es de obligado cumplimiento: [legal/MARCO_CUMPLIMIENTO_LEGAL.md](legal/MARCO_CUMPLIMIENTO_LEGAL.md) (líneas rojas LR-01 a LR-15).
@@ -57,7 +57,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 | Transversal: marco legal | ✅ v1.0 | [legal/MARCO_CUMPLIMIENTO_LEGAL.md](legal/MARCO_CUMPLIMIENTO_LEGAL.md) |
 | 2. Top 50 juegos de Apple | ✅ Aprobada (16/11/2026) | [fase2/INFORME_FASE2_Top50.md](fase2/INFORME_FASE2_Top50.md) |
 | 3. Psicología, retención y monetización | ✅ Aprobada (16/11/2026) | [fase3/INFORME_FASE3_Biblioteca_Mecanismos.md](fase3/INFORME_FASE3_Biblioteca_Mecanismos.md) |
-| 4. Concepto original | ✅ Aprobada (16/11/2026): Cadencia | [fase4/INFORME_FASE4_Concepto.md](fase4/INFORME_FASE4_Concepto.md) |
+| 4. Concepto original | ✅ Aprobada (16/11/2026): Cadencia, hoy Dingfall | [fase4/INFORME_FASE4_Concepto.md](fase4/INFORME_FASE4_Concepto.md) |
 | 5. Modelo de negocio | ✅ Aprobada; revisada el 17/11/2026 (temas en el Club, sin «Sin anuncios») | [fase5/INFORME_FASE5_Monetizacion.md](fase5/INFORME_FASE5_Monetizacion.md) |
 | 6. Dirección de arte | 🔄 11 temas seleccionables, Dominó Pop v2 por defecto (17/11/2026). Pendiente de aprobar el Pull Request | [fase6/rediseno/INFORME_REDISENO.md](fase6/rediseno/INFORME_REDISENO.md) · [fase6/temas/index.html](fase6/temas/index.html) · [DESIGN.md](../DESIGN.md) |
 | 7. Viralidad y marketing | ✅ Entregada (17/11/2026), esperando aprobación | [fase7/INFORME_FASE7_Marketing.md](fase7/INFORME_FASE7_Marketing.md) |
@@ -109,7 +109,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 > - **El límite de energía debe incentivar de verdad el premium**: no puede ser tan generoso que casi nadie lo note.
 > - La Fase 5 calibrará el límite para que **afecte a los jugadores comprometidos** sin hacer "ilusorio" el camino gratuito (DFA art. 16).
 
-**CADENCIA** (nombre provisional): un puzle de dominós en el que **se dibuja el recorrido con el dedo y la longitud es el tiempo**. Detalle en [fase4/INFORME_FASE4_Concepto.md](fase4/INFORME_FASE4_Concepto.md).
+**DINGFALL** (antes «Cadencia»): un puzle de dominós en el que **se dibuja el recorrido con el dedo y la longitud es el tiempo**. Detalle en [fase4/INFORME_FASE4_Concepto.md](fase4/INFORME_FASE4_Concepto.md).
 
 - **Núcleo:** dibujar cadenas de fichas, empujar y activar campanas y mecanismos. La profundidad viene de la sincronización (orden, campanas dobles, ventanas de tiempo).
 - **Meta-juego:** reconstruir la Gran Cadena del festival de Villa Cadencia, barrio a barrio. Cinemática de la cadena completa al final de cada capítulo.
@@ -118,7 +118,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - **Plan B:** Brote (jardín de autómatas), si el dibujo no funciona en el prototipo.
 - **Monetización (Fase 5, pendiente de aprobación):**
   - **Cuerda**: cada nivel nuevo cuesta 1, los reintentos son gratis; 5 como máximo, 1 cada 30 minutos; +3 por anuncio recompensado (máximo 10 al día). Afecta sobre todo al jugador comprometido.
-  - **Club Cadencia**: 4,99 €/mes o 29,99 €/año; cuerda ilimitada, sin anuncios, los 10 temas de aspecto y extras. Es la única forma de quitar los anuncios.
+  - **Dingclub**: 4,99 €/mes o 29,99 €/año; cuerda ilimitada, sin anuncios, los 10 temas de aspecto y extras. Es la única forma de quitar los anuncios.
   - **Packs de fichas**: 1,99–3,99 €. ~~Sin anuncios a 7,99 €~~, eliminado el 17/11/2026.
   - Intersticiales limitados. Sin banners.
 
@@ -157,8 +157,10 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [ ] **Aprobación del rediseño** (Pull Request en GitHub)
 - [x] Licencia de godot-iap verificada: MIT (repositorio hyodotdev/openiap; cubre iOS y Android). 17/11/2026
 - [x] Búsqueda de marca de «Cadencia» (17/11/2026): conflicto con una solicitud en la OEPM en la clase 41 y con el juego «Cadence» (2026). Se recomienda «Dingfall» (fase7/NOMBRE_Y_MARCA.md)
+- [x] **Nombre elegido por el cliente (17/11/2026): Dingfall.** La suscripción se llama **Dingclub**. Villa Cadencia se mantiene como lugar del juego
+- [ ] Antes de usar el nombre en público: búsqueda de marcas parecidas, dominio y usuarios en redes
 - [x] Fase 7: nombre y marca, fichas ASO en español e inglés, plan de TikTok, plan de lanzamiento y kit de prensa
-- [ ] **Decisión del cliente:** nombre comercial (Dingfall, Chimefall u otro), nombre del equipo y tipo de cuenta de desarrollador
+- [ ] **Decisión del cliente:** nombre del equipo y tipo de cuenta de desarrollador
 - [ ] Aprobación de la Fase 7
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal

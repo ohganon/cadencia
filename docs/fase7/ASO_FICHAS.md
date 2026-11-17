@@ -71,7 +71,7 @@ Todas las longitudes están comprobadas con un script. Apple cuenta el campo de 
 >
 > Dingfall es gratis para jugar, con anuncios. Cada nivel nuevo de la campaña usa una «cuerda»: tienes 5, recuperas una cada 30 minutos y puedes ver un anuncio para conseguir 3. Los reintentos, la Caída del Día, el Taller y el Modo Libre no la gastan.
 >
-> Club Cadencia (suscripción opcional, 4,99 €/mes o 29,99 €/año, con 7 días de prueba en el plan anual): cuerda ilimitada, sin anuncios, 10 temas de aspecto, pistas ilimitadas y contenido extra. Te avisamos 24 horas antes del primer cobro y puedes cancelar cuando quieras desde los ajustes de tu cuenta.
+> Dingclub (suscripción opcional, 4,99 €/mes o 29,99 €/año, con 7 días de prueba en el plan anual): cuerda ilimitada, sin anuncios, 10 temas de aspecto, pistas ilimitadas y contenido extra. Te avisamos 24 horas antes del primer cobro y puedes cancelar cuando quieras desde los ajustes de tu cuenta.
 >
 > Sin monedas de pago, sin sobres sorpresa y sin cuentas atrás.
 
@@ -90,7 +90,7 @@ Todas las longitudes están comprobadas con un script. Apple cuenta el campo de 
 >
 > Dingfall is free to play, with ads. Each new campaign level uses one "wind-up": you hold up to 5, get one back every 30 minutes, and can watch an ad for 3 more. Retries, the Daily Fall, the Workshop and Free Mode never use it.
 >
-> Club Cadencia (optional subscription, €4.99/month or €29.99/year, 7-day trial on the yearly plan): unlimited wind-ups, no ads, 10 visual themes, unlimited hints and extra content. We remind you 24 hours before the first charge, and you can cancel any time in your account settings.
+> Dingclub (optional subscription, €4.99/month or €29.99/year, 7-day trial on the yearly plan): unlimited wind-ups, no ads, 10 visual themes, unlimited hints and extra content. We remind you 24 hours before the first charge, and you can cancel any time in your account settings.
 >
 > No paid currencies, no surprise packs, no countdowns.
 
@@ -142,7 +142,7 @@ Google admite 8 y Apple 10, así que hay 8 para ambas. **Las 3 primeras son las 
 | 4 | Pantalla de fallo con «se paró aquí» | «Reintentar siempre es gratis» / «Retries are always free» | Contra el miedo a los juegos con trampas |
 | 5 | Caída del Día con el resultado para compartir | «Un reto nuevo cada día» / «A new challenge every day» | Hábito |
 | 6 | Taller con un nivel a medias | «Crea niveles y compártelos» / «Build levels and share them» | Profundidad |
-| 7 | Cuatro miniaturas de temas (Pop, Mesa, Nocturno, Nórdico) | «10 temas más con el Club Cadencia» / «10 more themes with Club Cadencia» | Club. **El texto dice claramente que son de pago** (Apple 2.3.2) |
+| 7 | Cuatro miniaturas de temas (Pop, Mesa, Nocturno, Nórdico) | «10 temas más con el Dingclub» / «10 more themes with Dingclub» | Club. **El texto dice claramente que son de pago** (Apple 2.3.2) |
 | 8 | Ajustes de accesibilidad | «A una mano, sin sonido y con alto contraste» / «One-handed, sound off, high contrast» | Público de 50–55 años |
 
 **Formato:** vertical, de iPhone de 6,9" y Android de 1080 × 1920 como mínimo. Texto de 2 líneas como mucho, en Lilita One, legible en la miniatura de búsqueda.

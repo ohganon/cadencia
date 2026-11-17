@@ -37,7 +37,7 @@ Clasificación aproximada a partir de las capturas y las descripciones:
 9. **Selector de dificultad o modo** con botones apilados de colores distintos (verde, azul, rojo).
 10. **Tienda** con ofertas en tarjetas con cinta de "mejor oferta". Nosotros **no** usaremos cintas de urgencia falsa (marco legal, LR-06).
 
-## Qué tomamos para Cadencia y qué no
+## Qué tomamos para Dingfall y qué no
 
 | Tomamos | No tomamos |
 |---|---|

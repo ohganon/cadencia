@@ -1,4 +1,4 @@
-"""Modelo financiero de Cadencia (Fase 5).
+"""Modelo financiero de Dingfall (Fase 5).
 
 TODAS las cifras de entrada son HIPÓTESIS basadas en referencias públicas citadas en
 INFORME_FASE5_Monetizacion.md. No son datos reales del juego (todavía no existe).
