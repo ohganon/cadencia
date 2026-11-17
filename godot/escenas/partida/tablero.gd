@@ -6,6 +6,8 @@ extends Control
 
 signal cambio                 # el dibujo ha cambiado (fichas usadas, botones)
 signal caida_terminada        # ha terminado la animación de la caída
+signal cae(cuantas: int)      # en este tic caen `cuantas` fichas (para el sonido)
+signal suena(campana: Array)  # una campana acaba de sonar: [id, pos, tipo, numero]
 
 const Sim = preload("res://nucleo/simulacion.gd")
 
@@ -27,7 +29,10 @@ enum Modo { EDITAR, CAYENDO, RESULTADO }
 var partida = null            # nucleo/partida.gd
 var modo := Modo.EDITAR
 var pista: Array = []         # puntos del tramo de la pista (fantasma), o vacío
+var velocidad := 1.0           # 0,5 = cámara lenta
 var _detalle := {}
+var _eventos := {}             # tic -> {"fichas": n, "campanas": [...]}
+var _tic_avisado := -1
 var _tiempo := 0.0
 var _ultimo_tic := 0
 var _k := 1.0                 # píxeles por unidad lógica
@@ -51,6 +56,19 @@ func tumbar() -> void:
 		var caidas: Array = _detalle["caidas"]
 		if i < caidas.size() and caidas[i] >= 0:
 			_ultimo_tic = maxi(_ultimo_tic, _detalle["tics"][i][caidas[i]])
+	_eventos = {}
+	for i in _detalle["tics"].size():
+		var caidas: Array = _detalle["caidas"]
+		if i >= caidas.size():
+			continue
+		for j in range(0, caidas[i] + 1):
+			var tic_j: int = _detalle["tics"][i][j]
+			_eventos.get_or_add(tic_j, {"fichas": 0, "campanas": []})["fichas"] += 1
+	var sonaron: Dictionary = _detalle["resultado"]["campanas"]
+	for c in partida.nivel["c"]:
+		if sonaron.get(c[0]) != null:
+			_eventos.get_or_add(int(sonaron[c[0]]), {"fichas": 0, "campanas": []})["campanas"].append(c)
+	_tic_avisado = -1
 	modo = Modo.CAYENDO
 	pista = []
 	set_process(true)
@@ -70,7 +88,16 @@ func editar() -> void:
 
 
 func _process(delta: float) -> void:
-	_tiempo += delta
+	_tiempo += delta * velocidad
+	if modo == Modo.CAYENDO:
+		var tic := _tic_actual()
+		while _tic_avisado < tic:
+			_tic_avisado += 1
+			var e: Dictionary = _eventos.get(_tic_avisado, {})
+			if e.get("fichas", 0) > 0:
+				cae.emit(e["fichas"])
+			for c in e.get("campanas", []):
+				suena.emit(c)
 	if modo == Modo.CAYENDO and _tic_actual() > _ultimo_tic + 1 and _tiempo > (_ultimo_tic + 1) * DURACION_TIC + PAUSA_FINAL:
 		modo = Modo.RESULTADO
 		caida_terminada.emit()
@@ -267,11 +294,14 @@ func _campana(c: Array) -> void:
 		draw_circle(cc + Vector2(0, r * 0.95), r * 0.22, TINTA)
 	draw_arc(centro, Sim.RADIO_CAMPANA * _k, 0, TAU, 40, Color(CORAL, 0.35), maxf(1.0, 0.25 * _k), true)
 	if tipo == "numerada":
+		# El número va dentro de la campana, en blanco, para que ninguna ficha lo tape
 		var fuente := get_theme_default_font()
-		var tam := int(3.6 * _k)
+		var tam := int(3.4 * _k)
 		var texto := str(int(c[3]))
-		var ancho := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
-		draw_string(fuente, centro + Vector2(-ancho / 2, -r - 0.8 * _k), texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, TINTA)
+		var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
+		var base := centro + Vector2(-medida.x / 2, fuente.get_ascent(tam) / 2 - 0.1 * _k)
+		draw_string_outline(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, maxi(2, int(0.5 * _k)), TINTA)
+		draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color.WHITE)
 
 
 func _puerta(p: Array) -> void:

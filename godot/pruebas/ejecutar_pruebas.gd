@@ -12,7 +12,7 @@
 ## Es un ejecutor mínimo sin dependencias. GUT se añadirá cuando haga falta probar escenas.
 extends SceneTree
 
-const SCRIPTS := ["res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd",
+const SCRIPTS := ["res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd",
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd"]
 
 var fallos := 0
@@ -34,6 +34,8 @@ func _init() -> void:
 	casos_compartidos(sim)
 	pruebas_partida(partida)
 	pruebas_progreso(progreso)
+	pruebas_registro(load("res://nucleo/registro.gd"))
+	pruebas_sonidos()
 	terminar()
 
 
@@ -142,9 +144,41 @@ func pruebas_progreso(Progreso: GDScript) -> void:
 	f.close()
 	var c = Progreso.new(ruta)
 	comprobar(c.total() == 0, "un archivo dañado no rompe el juego")
+	c.ajustar("sonido", false)
+	var d = Progreso.new(ruta)
+	comprobar(d.ajustes["sonido"] == false and d.ajustes["vibracion"] == true, "los ajustes de sonido y vibración se guardan")
 	for r in [ruta, "user://prueba_progreso.anterior.json"]:
 		if FileAccess.file_exists(r):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(r))
+
+
+func pruebas_registro(Registro: GDScript) -> void:
+	var ruta := "user://prueba_registro.jsonl"
+	if FileAccess.file_exists(ruta):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
+	var r = Registro.new(ruta)
+	r.anotar("nivel", {"nivel": 3})
+	r.anotar("intento", {"nivel": 3, "exito": false, "pistas": 0})
+	r.anotar("intento", {"nivel": 3, "exito": false, "pistas": 1})
+	r.anotar("intento", {"nivel": 3, "exito": true, "pistas": 1})
+	r.anotar("intento", {"nivel": 3, "exito": true, "pistas": 1})
+	var lineas: Array = r.leer()
+	comprobar(lineas.size() == 5 and lineas[0]["evento"] == "nivel", "el registro guarda una línea por evento")
+	var s: Dictionary = r.resumen()
+	comprobar(s.has("3") and s["3"]["intentos"] == 4 and s["3"]["intentos_hasta_superar"] == 3 and s["3"]["superado"] and s["3"]["pistas"] == 1,
+		"el resumen cuenta intentos hasta superar y pistas", JSON.stringify(s))
+	var claves := {}
+	for l in lineas:
+		for k in l:
+			claves[k] = true
+	comprobar(claves.keys().all(func(k): return k in ["evento", "t", "nivel", "exito", "pistas"]), "el registro no guarda nada más que lo previsto")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
+
+
+func pruebas_sonidos() -> void:
+	for nombre in ["ficha", "campana", "superado", "fallo"]:
+		var s = load("res://sonidos/%s.wav" % nombre)
+		comprobar(s is AudioStreamWAV and s.get_length() > 0.0, "sonido %s cargado (%.2f s)" % [nombre, s.get_length() if s else 0.0])
 
 
 ## Igualdad profunda. JSON convierte todos los números en float, así que 3 y 3.0 son iguales.

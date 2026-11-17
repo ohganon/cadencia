@@ -12,8 +12,8 @@ config_version=5
 
 config/name="Dingfall"
 config/description="Puzle de dominó: dibuja la cadena y haz sonar las campanas."
-config/features=PackedStringArray("4.7", "Mobile")
 run/main_scene="res://escenas/partida/partida.tscn"
+config/features=PackedStringArray("4.7", "Mobile")
 
 [display]
 

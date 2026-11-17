@@ -11,6 +11,7 @@ extends Control
 
 const Partida = preload("res://nucleo/partida.gd")
 const Progreso = preload("res://nucleo/progreso.gd")
+const Registro = preload("res://nucleo/registro.gd")
 const Tablero = preload("res://escenas/partida/tablero.gd")
 
 const AZUL := Color("#2462d6")
@@ -64,7 +65,15 @@ var boton_repetir: Button
 var boton_siguiente: Button
 var lista_niveles: PanelContainer
 var rejilla: GridContainer
+var boton_lento: Button
+var boton_sonido: Button
+var boton_vibracion: Button
+var resumen_prueba: Label
+var registro = null
 var _pista_paso := 0
+var _fallos_nivel := 0          # fallos seguidos en este nivel (a los 5 se destaca la cámara lenta)
+var _abierto_en := 0            # ms en que se abrió el nivel
+var _sonidos := {}              # nombre -> AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -75,6 +84,7 @@ func _ready() -> void:
 	for a in OS.get_cmdline_user_args():
 		demo = demo or a.begins_with("--demo")
 	progreso = Progreso.new("user://demo_progreso.json" if demo else Progreso.RUTA)
+	registro = Registro.new("user://demo_registro.jsonl" if demo else Registro.RUTA)
 	_construir()
 	var primero := 0
 	for n in niveles:
@@ -93,6 +103,10 @@ func cargar(i: int) -> void:
 	partida = Partida.new(n["nivel"])
 	tablero.preparar(partida)
 	_pista_paso = 0
+	_fallos_nivel = 0
+	_abierto_en = Time.get_ticks_msec()
+	_resaltar(boton_lento, false)
+	registro.anotar("nivel", {"nivel": int(n["id"])})
 	titulo.text = "Nivel %d · %s" % [n["id"], n["titulo"]]
 	ayuda.text = n["ayuda"]
 	_cerrar_ventanas()
@@ -120,6 +134,16 @@ func _al_terminar_caida() -> void:
 	var r: Dictionary = tablero.resultado()
 	var n: Dictionary = niveles[indice]
 	var e: int = Partida.estrellas(r, int(n["nivel"]["m"]))
+	registro.anotar("intento", {"nivel": int(n["id"]), "exito": bool(r["exito"]), "fichas": int(r["fichas_usadas"]),
+		"estrellas": e, "segundos": int((Time.get_ticks_msec() - _abierto_en) / 1000), "pistas": _pista_paso,
+		"lento": tablero.velocidad < 1.0, "motivo": _motivo(r)})
+	_sonar("superado" if e > 0 else "fallo")
+	if e > 0:
+		_fallos_nivel = 0
+	else:
+		_fallos_nivel += 1
+		# Tras 5 fallos se destaca la cámara lenta, sin cambiar el nivel (P-05)
+		_resaltar(boton_lento, _fallos_nivel >= 5 and tablero.velocidad == 1.0)
 	if e > 0:
 		progreso.registrar(int(n["id"]), e)
 		ventana_titulo.text = "¡Nivel superado!"
@@ -129,6 +153,9 @@ func _al_terminar_caida() -> void:
 			linea += "Sin pasarte de la marca (%d)." % int(n["nivel"]["m"])
 		else:
 			linea += "La marca es %d: inténtalo con menos para la segunda estrella." % int(n["nivel"]["m"])
+		if indice == niveles.size() - 1:
+			linea += "
+Has terminado los niveles de esta prueba. ¡Gracias por jugar!"
 		ventana_texto.text = linea
 		boton_siguiente.visible = indice < niveles.size() - 1
 		boton_siguiente.text = "Siguiente"
@@ -151,6 +178,15 @@ func _al_terminar_caida() -> void:
 		ventana.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 130)
 	ventana.visible = true
 	_actualizar()
+
+
+func _motivo(r: Dictionary) -> String:
+	var parada = r.get("parada")
+	if parada != null:
+		return str(parada["motivo"])
+	for k in r["motivos"]:
+		return "orden" if k == "orden" else str(r["motivos"][k])
+	return ""
 
 
 func _explicacion(r: Dictionary) -> String:
@@ -194,6 +230,82 @@ func _al_pista() -> void:
 	tablero.queue_redraw()
 
 
+func _al_lento() -> void:
+	tablero.velocidad = 0.5 if tablero.velocidad == 1.0 else 1.0
+	boton_lento.text = "Lento: sí" if tablero.velocidad < 1.0 else "Lento: no"
+	_resaltar(boton_lento, false)
+
+
+func _al_sonido() -> void:
+	progreso.ajustar("sonido", not progreso.ajustes["sonido"])
+	_textos_ajustes()
+
+
+func _al_vibracion() -> void:
+	progreso.ajustar("vibracion", not progreso.ajustes["vibracion"])
+	_textos_ajustes()
+
+
+func _textos_ajustes() -> void:
+	boton_sonido.text = "Sonido: " + ("sí" if progreso.ajustes["sonido"] else "no")
+	boton_vibracion.text = "Vibración: " + ("sí" if progreso.ajustes["vibracion"] else "no")
+
+
+## Para quien dirige la prueba: intentos por nivel, leídos del registro local.
+func _al_resumen() -> void:
+	var s: Dictionary = registro.resumen()
+	var lineas := ["Nivel · intentos · hasta superarlo · pistas"]
+	for n in niveles:
+		var k := str(int(n["id"]))
+		if s.has(k):
+			var r: Dictionary = s[k]
+			lineas.append("%s · %d · %s · %d" % [k, r["intentos"], str(r["intentos_hasta_superar"]) if r["superado"] else "sin superar", r["pistas"]])
+	if lineas.size() == 1:
+		lineas.append("Aún no hay partidas registradas.")
+	resumen_prueba.text = "
+".join(lineas)
+	resumen_prueba.visible = not resumen_prueba.visible
+
+
+func _al_caer(cuantas: int) -> void:
+	# Como mucho dos clics por tic, con un poco de variación para que no suene a metralleta
+	for k in mini(cuantas, 2):
+		_sonar("ficha", randf_range(0.9, 1.1), -4.0 if k > 0 else 0.0)
+
+
+func _al_sonar_campana(c: Array) -> void:
+	var tipo: String = c[2]
+	if tipo == "doble":
+		_sonar("campana", 1.0)
+		_sonar("campana", 1.335)          # una cuarta por encima: dos golpes a la vez
+	elif tipo == "numerada":
+		_sonar("campana", 1.0 + 0.125 * (int(c[3]) - 1))
+	else:
+		_sonar("campana", 1.0)
+	if progreso.ajustes["vibracion"] and OS.has_feature("mobile"):
+		Input.vibrate_handheld(35)
+
+
+func _sonar(nombre: String, tono := 1.0, volumen_db := 0.0) -> void:
+	var r: AudioStreamPlayer = _sonidos.get(nombre)
+	if r == null or r.stream == null or not progreso.ajustes["sonido"]:
+		return
+	r.pitch_scale = tono
+	r.volume_db = volumen_db
+	r.play()
+
+
+func _resaltar(b: Button, si: bool) -> void:
+	if b == null:
+		return
+	var s: StyleBoxFlat = b.get_theme_stylebox("normal").duplicate()
+	s.border_color = TINTA if si else LABIO_MARFIL
+	s.border_width_left = 3 if si else 0
+	s.border_width_right = 3 if si else 0
+	s.border_width_top = 3 if si else 0
+	b.add_theme_stylebox_override("normal", s)
+
+
 func _abrir_lista() -> void:
 	for h in rejilla.get_children():
 		h.queue_free()
@@ -209,6 +321,7 @@ func _abrir_lista() -> void:
 		b.disabled = not abierto
 		b.pressed.connect(cargar.bind(i))
 		rejilla.add_child(b)
+	_textos_ajustes()
 	velo.visible = true
 	lista_niveles.visible = true
 
@@ -261,11 +374,27 @@ func _construir() -> void:
 	tablero.mouse_filter = Control.MOUSE_FILTER_STOP
 	tablero.cambio.connect(_actualizar)
 	tablero.caida_terminada.connect(_al_terminar_caida)
+	tablero.cae.connect(_al_caer)
+	tablero.suena.connect(_al_sonar_campana)
+	for nombre in ["ficha", "campana", "superado", "fallo"]:
+		var r := AudioStreamPlayer.new()
+		r.stream = load("res://sonidos/%s.wav" % nombre)
+		r.max_polyphony = 6 if nombre == "ficha" else 3
+		add_child(r)
+		_sonidos[nombre] = r
 	columna.add_child(tablero)
 
+	var fila := HBoxContainer.new()
+	fila.add_theme_constant_override("separation", 10)
+	columna.add_child(fila)
 	contador = _etiqueta(22, Color.WHITE)
-	contador.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	columna.add_child(contador)
+	contador.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fila.add_child(contador)
+	boton_lento = _boton("Lento: no", false)
+	boton_lento.custom_minimum_size = Vector2(0, 56)
+	boton_lento.add_theme_font_size_override("font_size", 20)
+	boton_lento.pressed.connect(_al_lento)
+	fila.add_child(boton_lento)
 
 	var abajo := HBoxContainer.new()
 	abajo.add_theme_constant_override("separation", 10)
@@ -325,6 +454,22 @@ func _construir() -> void:
 	rejilla.add_theme_constant_override("h_separation", 12)
 	rejilla.add_theme_constant_override("v_separation", 12)
 	caja_lista.add_child(rejilla)
+	var ajustes := HBoxContainer.new()
+	ajustes.add_theme_constant_override("separation", 12)
+	ajustes.alignment = BoxContainer.ALIGNMENT_CENTER
+	boton_sonido = _boton("Sonido: sí", false)
+	boton_sonido.pressed.connect(_al_sonido)
+	boton_vibracion = _boton("Vibración: sí", false)
+	boton_vibracion.pressed.connect(_al_vibracion)
+	ajustes.add_child(boton_sonido)
+	ajustes.add_child(boton_vibracion)
+	caja_lista.add_child(ajustes)
+	var b_resumen := _boton("Resumen de la prueba", false)
+	b_resumen.pressed.connect(_al_resumen)
+	caja_lista.add_child(b_resumen)
+	resumen_prueba = _etiqueta(20, TINTA_SUAVE)
+	resumen_prueba.visible = false
+	caja_lista.add_child(resumen_prueba)
 	var cerrar := _boton("Volver", false)
 	cerrar.pressed.connect(_cerrar_ventanas)
 	caja_lista.add_child(cerrar)
@@ -425,7 +570,7 @@ func _demo_si_toca() -> void:
 	await get_tree().create_timer(0.6).timeout
 	await _capturar(prefijo + "_4_resultado.png")
 	print("DEMO resultado: ", JSON.stringify(tablero.resultado()))
-	for r in ["user://demo_progreso.json", "user://demo_progreso.anterior.json"]:
+	for r in ["user://demo_progreso.json", "user://demo_progreso.anterior.json", "user://demo_registro.jsonl"]:
 		if FileAccess.file_exists(r):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(r))
 	get_tree().quit()
