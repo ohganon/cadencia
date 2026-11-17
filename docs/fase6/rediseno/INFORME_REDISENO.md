@@ -37,7 +37,7 @@
 - Títulos blancos con contorno.
 - Mascota (Pío) con presencia.
 
-**Lo propio de Cadencia:** **la interfaz está hecha de dominós**. El logotipo son fichas que caen, el camino del mapa es una fila de fichas y el contador de fichas es una ficha.
+**Lo propio de Dingfall:** **la interfaz está hecha de dominós**. El logotipo son fichas que caen, el camino del mapa es una fila de fichas y el contador de fichas es una ficha.
 
 ## 3. Pantallas del tablero
 
@@ -46,7 +46,7 @@
 3. **¡Nivel superado!**: 3 estrellas, fichas usadas frente a la marca y botones Repetir / Siguiente.
 4. **¡Sin cuerda!**: cuatro opciones del mismo tamaño, sin cuentas atrás falsas.
 5. **Reto del día**: resultado compartible y racha sin castigo.
-6. **Club Cadencia**: ventajas, precios mensual y anual, prueba con aviso y «Ahora no» visible.
+6. **Dingclub**: ventajas, precios mensual y anual, prueba con aviso y «Ahora no» visible.
 7. **Sistema**: paleta, letras, botones con sus estados y piezas del tablero.
 8. **Cómo hablamos**: tabla de textos antes y después.
 
@@ -185,4 +185,4 @@ Se regenera con `python -X utf8 docs/fase6/scripts/generar_catalogo.py` (Playwri
 - rendimiento en móviles reales;
 - cambio de tema dentro de Godot.
 
-**Decidido por el cliente (17/11/2026):** los 10 temas van en el Club Cadencia y Dominó Pop sigue gratis. El jugador puede probar cualquier tema antes de pagar; mientras lo prueba, un aviso le ofrece el Club con «Unirme al Club» y «Ahora no» del mismo tamaño. Detalle y efecto en el modelo financiero: [Fase 5, sección 10](../../fase5/INFORME_FASE5_Monetizacion.md).
+**Decidido por el cliente (17/11/2026):** los 10 temas van en el Dingclub y Dominó Pop sigue gratis. El jugador puede probar cualquier tema antes de pagar; mientras lo prueba, un aviso le ofrece el Club con «Unirme al Club» y «Ahora no» del mismo tamaño. Detalle y efecto en el modelo financiero: [Fase 5, sección 10](../../fase5/INFORME_FASE5_Monetizacion.md).

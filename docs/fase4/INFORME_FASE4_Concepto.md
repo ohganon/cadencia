@@ -9,6 +9,8 @@
 - principios P-01 a P-16 y modelo de tres bucles de la Fase 3;
 - [marco legal](../legal/MARCO_CUMPLIMIENTO_LEGAL.md).
 
+> **Nota (17/11/2026):** el nombre comercial es ahora **Dingfall** y la suscripción, **Dingclub**. «Cadencia» se descartó por un conflicto de marca ([fase7/NOMBRE_Y_MARCA.md](../fase7/NOMBRE_Y_MARCA.md)). Este informe se deja como se aprobó.
+
 ---
 
 ## 0. Resumen ejecutivo

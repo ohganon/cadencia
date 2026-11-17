@@ -100,7 +100,7 @@ def maquetar(imgs):
         f'<div class="mini"><div class="foto" style="background-image:url(\'{imgs[i].as_uri()}\')"></div>'
         f'<p>{e(n)}{" <small>· por defecto</small>" if i == "pop" else ""}</p></div>' for i, n in TEMAS)
     hojas = [f"""<section class="hoja portada">
-      <h1>Cadencia · Temas del juego</h1>
+      <h1>Dingfall · Temas del juego</h1>
       <p class="sub">Selección final del 17/11/2026. El jugador elige el aspecto en Ajustes › Apariencia. Dominó Pop
       (versión 2, más calmada) viene por defecto; los otros diez comparten pantallas, componentes y reglas, y cambian
       solo colores, letras, formas y tono. Ningún tema cambia niveles, precios ni progreso.</p>
@@ -111,13 +111,13 @@ def maquetar(imgs):
         pag += 1
         hojas.append(f"""<section class="hoja"><header class="cab"><h2>{e(n)}</h2><span>{"Tema por defecto" if i == "pop" else "Tema seleccionable"}</span></header>
           <div class="lienzo"><img src="{imgs[i].as_uri()}" alt="{e(n)}"></div>
-          <div class="pie"><span>Cadencia · Temas del juego</span><span>{pag}</span></div></section>""")
+          <div class="pie"><span>Dingfall · Temas del juego</span><span>{pag}</span></div></section>""")
     for k, img in enumerate(imgs["tablero"], 1):
         pag += 1
         hojas.append(f"""<section class="hoja"><header class="cab"><h2>Dominó Pop · tablero completo</h2><span>parte {k} de {len(imgs["tablero"])}</span></header>
           <div class="lienzo"><img src="{img.as_uri()}" alt="Tablero de Dominó Pop, parte {k}"></div>
-          <div class="pie"><span>Cadencia · Temas del juego</span><span>{pag}</span></div></section>""")
-    return f"""<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Cadencia · Temas del juego</title>
+          <div class="pie"><span>Dingfall · Temas del juego</span><span>{pag}</span></div></section>""")
+    return f"""<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Dingfall · Temas del juego</title>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>{CSS}</style></head><body>{''.join(hojas)}</body></html>"""
 

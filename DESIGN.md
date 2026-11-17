@@ -1,5 +1,5 @@
 ---
-name: Cadencia
+name: Dingfall
 description: Dominó Pop (default theme, calmer v2) plus ten player-selectable themes on one shared component system.
 colors:
   page-blue: "#1a4fb8"
@@ -101,7 +101,7 @@ components:
     size: "48px"
 ---
 
-# Design System: Cadencia
+# Design System: Dingfall
 
 ## Overview
 
@@ -254,7 +254,7 @@ Components read only these keys, so adding a theme never touches layout. Texture
 Fonts for every theme are SIL OFL from Google Fonts and are recorded in `docs/legal/REGISTRO_ASSETS.md`.
 
 **Monetisation (decided 17/11/2026).**
-- Dominó Pop is free. The other ten themes are part of Club Cadencia.
+- Dominó Pop is free. The other ten themes are part of Dingclub.
 - A non-subscriber can **try any Club theme for free**. While trying it, a notice shows the price and two buttons of equal size: «Unirme al Club» and «Ahora no». «Ahora no» returns the game to Dominó Pop.
 - If a subscription ends, the game returns to Dominó Pop and nothing else is lost.
 - The one-time «Sin anuncios» purchase was removed: the Club is the only way to remove ads.

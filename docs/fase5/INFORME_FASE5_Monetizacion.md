@@ -1,4 +1,4 @@
-# FASE 5 — Modelo de negocio y monetización de Cadencia
+# FASE 5 — Modelo de negocio y monetización de Dingfall
 
 **Fecha:** 16/11/2026
 **Estado:** aprobado. **Revisado el 17/11/2026** (sección 10): los temas pasan al Club y se elimina el pago único «Sin anuncios»
@@ -20,7 +20,7 @@
    - **El jugador comprometido** (sesiones de 20–40 minutos) **se queda sin cuerda en su primera sesión**. Entonces elige entre ver un anuncio (+3), esperar, jugar a los modos gratuitos o hacerse premium.
    - **El jugador casual** (2–3 ratos de 5 minutos) casi no lo nota.
    - **El límite presiona justo al segmento con más probabilidad de pagar**, sin hacer "ilusorio" el camino gratuito.
-2. **Club Cadencia (suscripción)** [HIPÓTESIS de precio, justificada con los datos de la Fase 2]:
+2. **Dingclub (suscripción)** [HIPÓTESIS de precio, justificada con los datos de la Fase 2]:
    - **4,99 €/mes o 29,99 €/año**;
    - prueba de 7 días **solo en el plan anual**, con aviso antes del cobro;
    - incluye: **cuerda ilimitada**, **sin anuncios**, **los 10 temas de aspecto** (Dominó Pop sigue gratis), pistas ilimitadas, archivo de retos diarios, capítulos extra y un estilo de ficha exclusivo cada mes.
@@ -132,7 +132,7 @@ Fuentes:
 | C. Pase de temporada | Muy extendido (20 de 50 juegos) | Más complejo; riesgo de presión por tiempo | ⏸ **Más adelante**: con camino gratuito y vendido en euros |
 | D. Suscripción semanal | Convierte bien (Meowdoku, Magic Tiles) | 3,99 €/semana equivale a unos 207 €/año. Mal visto en cuanto a transparencia y compras de las que el jugador se arrepiente | ❌ No se ofrece |
 
-### 3.2 Club Cadencia: beneficios
+### 3.2 Dingclub: beneficios
 
 | Beneficio | ¿Es pagar para avanzar? |
 |---|---|
@@ -287,7 +287,7 @@ Recalculado el 17/11/2026 sin el pago único «Sin anuncios» (sección 10).
 ## 6. Decisiones tomadas
 
 1. **Energía "Cuerda"**: 5 como máximo, 1 cada 30 minutos, solo para niveles nuevos de la campaña, con +3 por anuncio (máximo 10 al día), sin consumo en los primeros 15 niveles. **Se calibrará con pruebas A/B dentro de un rango ético**, igual para todos.
-2. **Club Cadencia** a 4,99 €/mes o 29,99 €/año, con prueba de 7 días solo en el anual. Incluye los 10 temas y es la única forma de quitar los anuncios. Packs de fichas a 1,99–3,99 €. ~~Sin anuncios a 7,99 €~~ (eliminado el 17/11/2026).
+2. **Dingclub** a 4,99 €/mes o 29,99 €/año, con prueba de 7 días solo en el anual. Incluye los 10 temas y es la única forma de quitar los anuncios. Packs de fichas a 1,99–3,99 €. ~~Sin anuncios a 7,99 €~~ (eliminado el 17/11/2026).
 3. **AdMob** (plugin MIT de Poing Studios) para la versión 1.0. **AppLovin MAX** (plugin oficial MIT) a partir de unos 10.000 jugadores diarios.
 4. **Sin banners, sin suscripción semanal y sin moneda virtual de pago.**
 5. **Crecimiento 100 % orgánico** al principio. La publicidad de pago solo si el valor de vida real supera al coste de adquisición.
@@ -301,7 +301,7 @@ Recalculado el 17/11/2026 sin el pago único «Sin anuncios» (sección 10).
 | Conversión al Club inferior al 0,5 % | Medio | El modelo aguanta: los anuncios son el 70–80 % de los ingresos |
 | La DFA endurece las reglas sobre la energía | Medio | Diseño ya defendible (camino gratuito real y modos sin límite). Revisión trimestral |
 | Integración de plugins (AdMob, compras) con fallos en Godot | Medio | Prototipo técnico temprano (entregas 9–11) |
-| **Licencia del plugin de compras godot-iap** (las fuentes indican MIT o AGPLv3) | Medio | **Verificar el archivo LICENSE.** Alternativa en Android: el plugin oficial GodotGooglePlayBilling. Para iOS hay que confirmar la alternativa en la Fase 8 |
+| **Licencia del plugin de compras godot-iap** | ✅ Resuelto (17/11/2026) | **Verificado: MIT.** El repositorio vigente es [hyodotdev/openiap](https://github.com/hyodotdev/openiap/tree/main/libraries/godot-iap) ([LICENSE](https://raw.githubusercontent.com/hyodotdev/openiap/main/libraries/godot-iap/LICENSE)); cubre iOS (StoreKit 2) y Android (Google Play Billing). Su dependencia SwiftGodot también tiene licencia tipo MIT. Hay que incluir los avisos de licencia en los créditos |
 
 ## 8. Pendiente
 
@@ -312,7 +312,7 @@ Recalculado el 17/11/2026 sin el pago único «Sin anuncios» (sección 10).
 
 ## 9. Próximos pasos (sujetos a tu aprobación)
 
-**Fase 6: identidad visual y dirección de arte de Cadencia.**
+**Fase 6: identidad visual y dirección de arte de Dingfall.**
 - Paleta, tipografías (con licencia OFL), estilo del juguete de madera, personajes (Tilde, Pío), escenarios (barrios), interfaz, animaciones (sobre todo **la caída**), partículas, sonido (los clics de las fichas y las campanas) y música (con licencias compatibles).
 - Usaremos las skills **impeccable** y **ai-slop-design-auditor**, comprobando antes sus instrucciones.
 - **Registro de recursos y licencias.**
@@ -329,8 +329,8 @@ Recalculado el 17/11/2026 sin el pago único «Sin anuncios» (sección 10).
 
 | Producto | Precio | Incluye |
 |---|---|---|
-| **Club Cadencia mensual** | 4,99 € | Cuerda ilimitada, sin anuncios, los 10 temas, pistas ilimitadas, archivo de la Caída del Día, capítulos extra, un estilo de ficha al mes y Taller ampliado |
-| **Club Cadencia anual** | 29,99 € (2,50 €/mes) | Lo mismo. Prueba de 7 días solo en este plan, con aviso 24 h antes del cobro |
+| **Dingclub mensual** | 4,99 € | Cuerda ilimitada, sin anuncios, los 10 temas, pistas ilimitadas, archivo de la Caída del Día, capítulos extra, un estilo de ficha al mes y Taller ampliado |
+| **Dingclub anual** | 29,99 € (2,50 €/mes) | Lo mismo. Prueba de 7 días solo en este plan, con aviso 24 h antes del cobro |
 | **Packs de fichas** | 1,99–3,99 € | Estilos de ficha con su sonido, comprados una vez y para siempre |
 
 **Catálogo inicial de packs propuesto** [HIPÓTESIS, se decidirá con el arte final]:
@@ -387,7 +387,7 @@ Está diseñado en [docs/fase6/temas/index.html](../fase6/temas/index.html):
 **Plugins para Godot**
 - [Plugin AdMob de Poing Studios (GitHub)](https://www.Github.com/poingstudios/godot-admob-plugin) · [Godot Asset Store](https://store.godotengine.org/asset/poingstudios/admob/)
 - [AppLovin MAX para Godot (GitHub)](https://github.com/AppLovin/AppLovin-MAX-Godot) · [Documentación de integración](https://developers.applovin.com/en/max/godot/overview/integration)
-- [godot-iap (compras integradas)](https://hyochan.github.io/godot-iap) · [Documentación de Godot: compras en Android](https://docs.godotengine.org/en/4.4/tutorials/platform/android/android_in_app_purchases.html)
+- [godot-iap (compras integradas), repositorio vigente](https://github.com/hyodotdev/openiap/tree/main/libraries/godot-iap) · [Documentación de Godot: compras en Android](https://docs.godotengine.org/en/4.4/tutorials/platform/android/android_in_app_purchases.html)
 
 **Comisiones de las tiendas**
 - [RevenueCat, Small Business Program](https://www.revenuecat.com/blog/engineering/small-business-program)

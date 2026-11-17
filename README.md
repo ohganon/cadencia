@@ -1,4 +1,4 @@
-# Cadencia (nombre provisional)
+# Dingfall
 
 Juego móvil de puzles de dominós para iOS y Android, hecho con **Godot 4**.
 
@@ -43,7 +43,7 @@ docs/
   fase1/                        Candy Crush y Block Blast: técnica, psicología, negocio
   fase2/                        Análisis de 50 juegos del App Store (ES/US), datos y scripts
   fase3/                        Biblioteca de mecanismos psicológicos (con semáforo ético)
-  fase4/                        Concepto: Cadencia, niveles y generador procedural
+  fase4/                        Concepto: Dingfall, niveles y generador procedural
   fase5/                        Monetización: Cuerda, Club, anuncios, modelo financiero
   fase6/                        Dirección de arte «Dominó Pop», tablero jugable e inspiración de Pinterest
   legal/                        Marco legal y registro de recursos y licencias
@@ -57,7 +57,7 @@ docs/
 | 1. Investigación de Candy Crush y Block Blast | ✅ |
 | 2. Análisis de 50 juegos del App Store | ✅ |
 | 3. Psicología, retención y monetización | ✅ |
-| 4. Concepto original (Cadencia) | ✅ |
+| 4. Concepto original (Dingfall) | ✅ |
 | 5. Modelo de negocio | ✅ |
 | 6. Dirección de arte | 🔄 Rediseño «Dominó Pop» pendiente de aprobación (DESIGN.md incluido) |
 | 7. Viralidad y marketing | ⏸ |

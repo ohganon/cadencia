@@ -1,4 +1,4 @@
-# Cómo trabajamos en Cadencia
+# Cómo trabajamos en Dingfall
 
 Somos tres personas. Estas reglas sirven para no pisarnos los cambios y para que el proyecto siga siendo coherente.
 

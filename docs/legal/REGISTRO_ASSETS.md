@@ -20,6 +20,8 @@
 | Manrope, Jost, Archivo, Bebas Neue, Barlow, Shippori Mincho, Zen Kaku Gothic New, League Spartan, Familjen Grotesk, Bricolage Grotesque, Red Hat Display, Red Hat Text, Figtree | Fuentes | Sus autores respectivos (ficha de cada una en Google Fonts) | SIL OFL 1.1 | No obligatoria (incluir el texto de la licencia de cada familia con la app) | [Google Fonts](https://fonts.google.com/) | Temas seleccionables por el jugador (docs/fase6/temas/index.html). **Al descargarlas, guardar el OFL.txt de cada familia** y confirmar que sigue siendo OFL |
 | ~~Bodoni Moda / Atkinson Hyperlegible~~ | Fuentes | — | SIL OFL 1.1 | — | — | **Retiradas** con la dirección «La Banda del Pueblo» (17/11/2026) |
 | Godot Engine | Motor | Godot Foundation y colaboradores | MIT | **Sí**: el aviso de licencia en los créditos o la pantalla legal | [godotengine.org/license](https://godotengine.org/license/) | Motor del juego |
+| godot-iap (OpenIAP) | Plugin de compras (iOS y Android) | hyo.dev | MIT (verificado el 17/11/2026) | **Sí**: el aviso de licencia en los créditos | [LICENSE](https://raw.githubusercontent.com/hyodotdev/openiap/main/libraries/godot-iap/LICENSE) | Dingclub y packs de fichas (previsto, Fase 8) |
+| SwiftGodot (dependencia de godot-iap en iOS) | Biblioteca | Miguel de Icaza | Tipo MIT | **Sí**: el aviso de licencia en los créditos | [LICENSE](https://raw.githubusercontent.com/hyodotdev/openiap/main/libraries/godot-iap/third-party/SwiftGodot-LICENSE) | Previsto, Fase 8 |
 | Gráficos del tablero de estilo | Vectores | Hechos en código para este proyecto | Propios | — | docs/fase6/tablero/index.html | Referencia de diseño |
 
 ## Fuentes candidatas (todavía no incorporadas)

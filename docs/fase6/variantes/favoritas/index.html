@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cadencia · Favoritas</title>
+<title>Dingfall · Favoritas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Jost:wght@300;400;500&family=Archivo:wdth,wght@75..100,400..900&display=swap" rel="stylesheet">
@@ -161,7 +161,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
 </head>
 <body>
 <nav class="indice" aria-label="Direcciones">
-  <strong>Cadencia</strong>
+  <strong>Dingfall</strong>
   <a href="#mesa">1 · Mesa de juego</a>
   <a href="#calma">2 · Calma premium</a>
   <a href="#grafico">3 · Gráfico y limpio</a>
@@ -184,15 +184,15 @@ const ICO = {
 };
 
 const TEMAS = [
- { id:'mesa', clase:'t-mesa', nombre:'Mesa de juego', marca:'Cadencia · club de dominó',
+ { id:'mesa', clase:'t-mesa', nombre:'Mesa de juego', marca:'Dingfall · club de dominó',
    desc:'El dominó de siempre, sobre una mesa: tapete de pizarra, fichas de hueso con sombra real, detalles de latón y un rojo lacre para las campanas. Sin contornos gruesos ni colores de caramelo. Pensado para parecer un juego de mesa premium.',
-   t:{ barrio:'Barrio I', nombreBarrio:'La Plaza', jugar:'Jugar nivel 5', nivel:'Nivel 5', meta:'Haz sonar la campana doble. Las dos ramas deben llegar a la vez.', ya:'Tumbar', superado:'Bien hecho', dato:'fichas · tu mejor marca', repetir:'Repetir', siguiente:'Siguiente', sinTitulo:'Sin cuerda por ahora', sinSub:'Se recupera una cada 30 minutos. Siguiente en 12:40.', anuncio:'Ver un anuncio', anuncioS:'+3 cuerdas. Quedan 9 hoy.', esperar:'Esperar', esperarS:'Te avisamos si quieres.', gratis:'Jugar sin cuerda', gratisS:'Reto del día, Taller o Libre.', club:'Club Cadencia', clubS:'Cuerda sin límite. 4,99 €/mes.', aviso:'Arrastra desde el botón de inicio para dibujar.', exito:'Las dos ramas llegaron a la vez.', casi:'No llegó. Inténtalo otra vez.', una:'Solo llegó una rama.', cae:'…' },
+   t:{ barrio:'Barrio I', nombreBarrio:'La Plaza', jugar:'Jugar nivel 5', nivel:'Nivel 5', meta:'Haz sonar la campana doble. Las dos ramas deben llegar a la vez.', ya:'Tumbar', superado:'Bien hecho', dato:'fichas · tu mejor marca', repetir:'Repetir', siguiente:'Siguiente', sinTitulo:'Sin cuerda por ahora', sinSub:'Se recupera una cada 30 minutos. Siguiente en 12:40.', anuncio:'Ver un anuncio', anuncioS:'+3 cuerdas. Quedan 9 hoy.', esperar:'Esperar', esperarS:'Te avisamos si quieres.', gratis:'Jugar sin cuerda', gratisS:'Reto del día, Taller o Libre.', club:'Dingclub', clubS:'Cuerda sin límite. 4,99 €/mes.', aviso:'Arrastra desde el botón de inicio para dibujar.', exito:'Las dos ramas llegaron a la vez.', casi:'No llegó. Inténtalo otra vez.', una:'Solo llegó una rama.', cae:'…' },
    tono:['Tumbar','Bien hecho','Inténtalo otra vez','Sin cuerda por ahora'],
    lienzo:{ tablero:'#20382f', punto:'rgba(236,230,218,.07)', ficha:'#f2ede4', pip:'#161616', cae:'#c2a36b', caida:'#8e9690', borde:'rgba(0,0,0,.35)', sombra:'rgba(0,0,0,.45)', campana:'#c2a36b', badajo:'#b33a3a', halo:'rgba(194,163,107,.28)', inicio:'#c2a36b', inicioIco:'#18211f', cifra:'rgba(236,230,218,.55)', cifraT:'#18211f', fuente:'800 10px Manrope' },
    estrella:'#c2a36b', estrellaVacia:'#cfc7b8', camino:'#f2ede4', caminoNo:'rgba(236,230,218,.18)',
    paleta:[['Pizarra','#1F2B29'],['Tapete','#20382F'],['Hueso','#F2EDE4'],['Latón','#C2A36B'],['Lacre','#B33A3A']],
    tipo:{ grande:'Bien hecho', nota:'Manrope 800 en mayúsculas espaciadas para títulos, y la misma familia en 500–700 para todo lo demás. Cifras tabulares. SIL OFL.' } },
- { id:'calma', clase:'t-calma', nombre:'Calma premium', marca:'Cadencia',
+ { id:'calma', clase:'t-calma', nombre:'Calma premium', marca:'Dingfall',
    desc:'Un juego para respirar: degradados de atardecer, fichas blancas mate con sombra larga, mucho espacio y una sola nota de color por barrio. Texto mínimo y tranquilo. Pensado para que cada captura sea bonita.',
    t:{ barrio:'Primer barrio', nombreBarrio:'La plaza', jugar:'Continuar', nivel:'5', meta:'Dos caminos, una campana. Que lleguen juntos.', ya:'Soltar', superado:'Todo encaja', dato:'fichas', repetir:'Otra vez', siguiente:'Seguir', sinTitulo:'La cuerda descansa', sinSub:'Vuelve una cada media hora. La próxima, en 12:40.', anuncio:'Un anuncio', anuncioS:'Tres cuerdas más. Nueve hoy.', esperar:'Esperar', esperarS:'Te avisamos.', gratis:'Jugar libre', gratisS:'Reto, taller o lienzo libre.', club:'Club', clubS:'Sin límite. 4,99 € al mes.', aviso:'Dibuja desde el punto de inicio.', exito:'Juntas. Todo encaja.', casi:'Casi. Otra vez, con calma.', una:'Solo llegó una.', cae:'…' },
    tono:['Soltar','Todo encaja','Casi. Otra vez, con calma','La cuerda descansa'],
@@ -200,7 +200,7 @@ const TEMAS = [
    estrella:'#e0775a', estrellaVacia:'#d9d3e3', camino:'#ffffff', caminoNo:'rgba(255,255,255,.45)',
    paleta:[['Melocotón','#F3D6C8'],['Lavanda','#D9CFE0'],['Bruma','#C6CBE0'],['Tinta suave','#3A3550'],['Coral de barrio','#E0775A']],
    tipo:{ grande:'Todo encaja', nota:'Jost 300 grande para títulos y 400–500 para el resto, con mucho interlineado. Una sola familia, de trazo fino. SIL OFL.' } },
- { id:'grafico', clase:'t-grafico', nombre:'Gráfico y limpio', marca:'Cadencia',
+ { id:'grafico', clase:'t-grafico', nombre:'Gráfico y limpio', marca:'Dingfall',
    desc:'Inteligente y adulto, como los pasatiempos de un periódico: fondo blanco roto, fichas negras, mostaza y cobalto como únicos acentos, bordes de 2 px y tipografía grotesca muy firme. Se entiende de un vistazo en una captura.',
    t:{ barrio:'Barrio 1', nombreBarrio:'La Plaza', jugar:'Jugar · nivel 5', nivel:'Nivel 5', meta:'Campana doble: las dos ramas tienen que llegar en el mismo tiempo.', ya:'Tumbar', superado:'Resuelto', dato:'fichas · marca del nivel: 38', repetir:'Repetir', siguiente:'Siguiente', sinTitulo:'Sin cuerda', sinSub:'+1 cada 30 min. Próxima: 12:40.', anuncio:'Anuncio', anuncioS:'+3 cuerdas. Quedan 9 hoy.', esperar:'Esperar', esperarS:'Aviso cuando haya cuerda.', gratis:'Modos libres', gratisS:'Reto diario, Taller, Libre.', club:'Club', clubS:'Cuerda ilimitada. 4,99 €/mes.', aviso:'Arrastra desde el botón de inicio.', exito:'Resuelto. Llegaron a la vez.', casi:'No llegó. Reintentar.', una:'Solo una rama llegó.', cae:'…' },
    tono:['Tumbar','Resuelto','No llegó. Reintentar','Reto diario n.º 214'],

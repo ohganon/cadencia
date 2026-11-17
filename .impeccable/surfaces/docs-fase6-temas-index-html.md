@@ -5,7 +5,7 @@ primary_target: "docs/fase6/temas/index.html"
 related_targets: ["docs/fase6/tablero/index.html"]
 ---
 
-Scope: Cadencia themes page. It shows all 11 player-selectable themes on one shared screen engine, plus the in-game Ajustes › Apariencia theme picker. Experience mode for the page. The picker screen inside the phone is Operate mode.
+Scope: Dingfall themes page. It shows all 11 player-selectable themes on one shared screen engine, plus the in-game Ajustes › Apariencia theme picker. Experience mode for the page. The picker screen inside the phone is Operate mode.
 
 ## Direction contract
 

@@ -41,7 +41,7 @@
 **Cada nivel es la partitura de desfile de la banda del pueblo.**
 - La cadena es una formación que avanza **un tiempo de compás por ficha**.
 - Las **campanas son notas**.
-- "Cadencia" es también un término musical, así que nombre, mundo y mecánica dicen lo mismo: **el largo del camino es el tiempo**.
+- "Dingfall" (antes "Cadencia") une el sonido de la campana y la caída, así que nombre, mundo y mecánica dicen lo mismo: **el largo del camino es el tiempo**.
 
 **Lo que rechazamos:** el estándar del género (plástico brillante, marcos dorados, botones de caramelo, al estilo Royal Match) y la estética luminosa genérica.
 
