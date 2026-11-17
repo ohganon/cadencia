@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadencia · Tres direcciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Jost:wght@300;400;500&family=Archivo:wdth,wght@75..100,400..900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#dcd8d1;color:#1a1a1a;font-family:"Manrope",system-ui,sans-serif}
+:focus-visible{outline:3px solid #1f4fd1;outline-offset:3px}
+
+/* ===== Índice ===== */
+.indice{position:sticky;top:0;z-index:5;display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;padding:12px 16px;background:rgba(220,216,209,.94);border-bottom:1px solid #c4bfb6}
+.indice strong{font-weight:800;margin-right:8px}
+.indice a{text-decoration:none;color:#1a1a1a;font-weight:700;font-size:.92rem;padding:8px 14px;border-radius:999px;border:1px solid #9d978c}
+.indice a:hover{background:#1a1a1a;color:#fff}
+.intro{max-width:760px;margin:0 auto;padding:36px 16px 8px;text-align:center}
+.intro h1{font-size:clamp(1.8rem,4vw,2.6rem);margin:0 0 8px;letter-spacing:-.01em}
+.intro p{margin:0;color:#4a463f;font-weight:500}
+
+/* ===== Cada dirección es un mundo con sus propias variables ===== */
+.dir{padding:56px 4vw 64px;background:var(--fondo);color:var(--texto);font-family:var(--fu);border-top:1px solid rgba(0,0,0,.12)}
+.cab{max-width:1200px;margin:0 auto 34px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:end}
+.cab h2{margin:0;font-family:var(--fd);font-weight:var(--wd);font-size:clamp(2.2rem,5vw,3.8rem);letter-spacing:var(--lsd);text-transform:var(--ttd);line-height:1}
+.cab p{margin:0;max-width:62ch;color:var(--suave);font-weight:500}
+.cab .logo{font-family:var(--fd);font-weight:var(--wd);letter-spacing:var(--lsl);text-transform:uppercase;font-size:.95rem;color:var(--acento);margin-bottom:10px;display:block}
+
+.fila{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.15fr 1fr 1fr;gap:clamp(14px,2.4vw,32px);align-items:end}
+.fig{margin:0;display:flex;flex-direction:column;align-items:center;gap:12px}
+.fig figcaption{font-size:.88rem;color:var(--suave);text-align:center;max-width:28ch;font-weight:500}
+.movil{width:100%;max-width:270px;aspect-ratio:390/800;border-radius:40px;padding:9px;background:var(--marco);box-shadow:0 24px 44px -20px rgba(0,0,0,.45)}
+.movil.g{max-width:320px}
+.pant{position:relative;height:100%;border-radius:32px;overflow:hidden;display:flex;flex-direction:column;background:var(--pantalla);color:var(--texto)}
+
+/* HUD */
+.hud{display:flex;align-items:center;gap:8px;padding:16px 14px 6px;font-size:.8rem;font-weight:700}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--rchip);background:var(--chip);border:var(--borde-chip);font-variant-numeric:tabular-nums}
+.chip svg{width:14px;height:14px}
+.hueco{flex:1}
+.titulo{font-family:var(--fd);font-weight:var(--wd);text-transform:var(--ttd);letter-spacing:var(--lsd);line-height:1.05}
+
+/* Botones de cada mundo */
+.b{font:inherit;cursor:pointer;font-family:var(--fu);font-weight:var(--wb);letter-spacing:var(--lsb);text-transform:var(--ttb);border-radius:var(--rb);padding:13px 18px;font-size:.95rem;transition:transform .15s ease,filter .2s}
+.b:active{transform:translateY(1px)}
+.b.p{background:var(--prim);color:var(--prim-t);border:var(--prim-borde);box-shadow:var(--prim-sombra)}
+.b.s{background:var(--sec);color:var(--sec-t);border:var(--sec-borde)}
+.b.ancho{width:100%}
+.b:hover{filter:brightness(1.05)}
+.b[disabled]{opacity:.55;cursor:default}
+
+/* Inicio */
+.barrio{padding:6px 16px 0}
+.barrio small{display:block;color:var(--suave);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.barrio .titulo{font-size:1.5rem}
+.mapa{flex:1;position:relative;margin:4px 0}
+.mapa svg.camino{position:absolute;inset:0;width:100%;height:100%}
+.nodo{position:absolute;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:var(--rnodo);display:grid;place-items:center;font-weight:800;font-size:.95rem;font-variant-numeric:tabular-nums;font-family:var(--fu)}
+.nodo.h{background:var(--nodo-h);color:var(--nodo-h-t);border:var(--nodo-borde)}
+.nodo.a{width:54px;height:54px;background:var(--prim);color:var(--prim-t);border:var(--prim-borde);box-shadow:var(--nodo-sombra)}
+.nodo.c{background:var(--nodo-c);color:var(--nodo-c-t);border:var(--nodo-borde)}
+.abajo{padding:8px 14px 16px}
+
+/* Partida */
+.meta{margin:4px 14px 8px;padding:9px 12px;border-radius:var(--rpanel);background:var(--panel);border:var(--borde-panel);font-size:.8rem;font-weight:600;line-height:1.35}
+.tablero{position:relative;flex:1;margin:0 14px;border-radius:var(--rpanel);overflow:hidden;border:var(--borde-tablero);box-shadow:var(--sombra-tablero)}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.aviso{position:absolute;left:10px;right:10px;top:10px;padding:7px 10px;border-radius:calc(var(--rpanel) - 4px);background:var(--aviso);color:var(--aviso-t);font-size:.76rem;font-weight:700;text-align:center;pointer-events:none}
+.mandos{display:grid;grid-template-columns:46px 1fr 46px;gap:10px;align-items:center;padding:12px 14px 16px}
+.redondo{width:46px;height:46px;padding:0;display:grid;place-items:center;border-radius:var(--rredondo)}
+.redondo svg{width:20px;height:20px}
+
+/* Ventanas */
+.velo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--velo)}
+.ventana{width:100%;border-radius:var(--rventana);background:var(--ventana);color:var(--ventana-t);border:var(--borde-ventana);padding:22px 16px 16px;text-align:center;box-shadow:var(--sombra-ventana)}
+.ventana .titulo{font-size:1.45rem;margin:0 0 4px}
+.ventana p{margin:0 0 12px;font-size:.82rem;font-weight:500;color:var(--ventana-s)}
+.estrellas{display:flex;justify-content:center;gap:8px;margin:10px 0 8px}
+.estrellas svg{width:30px;height:30px}
+.estrellas svg.c{width:38px;height:38px;margin-top:-6px}
+.cifra{font-family:var(--fd);font-weight:var(--wd);font-size:2.2rem;line-height:1;font-variant-numeric:tabular-nums;margin:6px 0 2px}
+.dos{display:flex;gap:8px;margin-top:12px}
+.dos .b{flex:1;padding:11px 8px;font-size:.85rem}
+.ventana .b.s{background:var(--sec-v,transparent);color:var(--ventana-t);border-color:var(--ventana-t)}
+.ops{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left}
+.op{padding:10px;border-radius:calc(var(--rventana) - 8px);background:var(--op);border:var(--borde-op);font-size:.72rem;line-height:1.3;color:var(--ventana-s);min-height:86px;display:flex;flex-direction:column;gap:3px;font-weight:500}
+.op b{font-size:.86rem;color:var(--ventana-t);font-weight:800}
+.op.club{background:var(--op-club);border:var(--borde-op-club)}
+.op.club,.op.club b{color:var(--op-club-t)}
+
+/* Muestras */
+.muestras{max-width:1200px;margin:34px auto 0;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start}
+.paleta{display:flex;gap:10px;flex-wrap:wrap}
+.paleta div{flex:1;min-width:92px;border-radius:12px;overflow:hidden;border:1px solid var(--linea);background:var(--panel)}
+.paleta i{display:block;height:58px}
+.paleta span{display:block;padding:7px 9px;font-size:.72rem;font-weight:700;color:var(--texto)}
+.paleta span em{display:block;font-style:normal;font-weight:500;color:var(--suave);font-variant-numeric:tabular-nums}
+.tipo{padding:16px 18px;border-radius:14px;border:1px solid var(--linea);background:var(--panel)}
+.tipo .grande{font-family:var(--fd);font-weight:var(--wd);text-transform:var(--ttd);letter-spacing:var(--lsd);font-size:2rem;line-height:1.05;margin:0 0 6px}
+.tipo p{margin:0;font-size:.85rem;color:var(--suave);font-weight:500}
+.tono{max-width:1200px;margin:18px auto 0;display:flex;flex-wrap:wrap;gap:8px}
+.tono span{font-size:.8rem;font-weight:700;padding:6px 12px;border-radius:999px;border:1px solid var(--linea);background:var(--panel)}
+
+/* ===== 1. MESA DE JUEGO ===== */
+.t-mesa{
+  --fondo:#18211f; --pantalla:linear-gradient(180deg,#1f2b29,#172120); --texto:#ece6da; --suave:#a9b3ae; --acento:#c2a36b; --linea:rgba(236,230,218,.14);
+  --marco:#0c1110; --panel:rgba(236,230,218,.06); --borde-panel:1px solid rgba(236,230,218,.12); --rpanel:14px;
+  --fd:"Manrope",sans-serif; --fu:"Manrope",sans-serif; --wd:800; --ttd:uppercase; --lsd:.08em; --lsl:.32em;
+  --chip:rgba(236,230,218,.07); --borde-chip:1px solid rgba(236,230,218,.14); --rchip:999px;
+  --prim:#c2a36b; --prim-t:#18211f; --prim-borde:0; --prim-sombra:0 6px 16px -8px rgba(194,163,107,.55);
+  --sec:transparent; --sec-t:#ece6da; --sec-borde:1px solid rgba(236,230,218,.28);
+  --wb:800; --lsb:.12em; --ttb:uppercase; --rb:12px; --rredondo:12px;
+  --nodo-h:rgba(236,230,218,.92); --nodo-h-t:#18211f; --nodo-c:rgba(236,230,218,.07); --nodo-c-t:#7f8a86; --nodo-borde:1px solid rgba(236,230,218,.18); --rnodo:10px; --nodo-sombra:0 0 0 6px rgba(194,163,107,.16);
+  --borde-tablero:1px solid rgba(236,230,218,.12); --sombra-tablero:inset 0 0 40px rgba(0,0,0,.35);
+  --aviso:rgba(12,17,16,.78); --aviso-t:#ece6da; --velo:rgba(8,12,11,.64);
+  --ventana:#f2ede4; --ventana-t:#18211f; --ventana-s:#55605b; --borde-ventana:0; --rventana:18px; --sombra-ventana:0 24px 48px -16px rgba(0,0,0,.6);
+  --op:#e7e1d5; --borde-op:0; --op-club:#18211f; --borde-op-club:0; --op-club-t:#ece6da;
+}
+/* ===== 2. CALMA PREMIUM ===== */
+.t-calma{
+  --fondo:linear-gradient(180deg,#f3d6c8 0%,#d9cfe0 55%,#c6cbe0 100%); --pantalla:linear-gradient(180deg,#f6dccd 0%,#e2d4e3 50%,#cdd0e6 100%); --texto:#3a3550; --suave:#6a6582; --acento:#e0775a; --linea:rgba(58,53,80,.14);
+  --marco:#2c2840; --panel:rgba(255,255,255,.55); --borde-panel:1px solid rgba(255,255,255,.75); --rpanel:22px;
+  --fd:"Jost",sans-serif; --fu:"Jost",sans-serif; --wd:300; --ttd:none; --lsd:.01em; --lsl:.42em;
+  --chip:rgba(255,255,255,.6); --borde-chip:0; --rchip:999px;
+  --prim:#3a3550; --prim-t:#fbf6f2; --prim-borde:0; --prim-sombra:0 10px 24px -12px rgba(58,53,80,.6);
+  --sec:rgba(255,255,255,.7); --sec-t:#3a3550; --sec-borde:0;
+  --wb:500; --lsb:.04em; --ttb:none; --rb:999px; --rredondo:999px;
+  --nodo-h:#ffffff; --nodo-h-t:#3a3550; --nodo-c:rgba(255,255,255,.35); --nodo-c-t:#8a85a0; --nodo-borde:0; --rnodo:999px; --nodo-sombra:0 0 0 10px rgba(255,255,255,.35);
+  --borde-tablero:1px solid rgba(255,255,255,.8); --sombra-tablero:0 18px 40px -22px rgba(58,53,80,.45);
+  --aviso:rgba(255,255,255,.78); --aviso-t:#3a3550; --velo:rgba(205,200,225,.55);
+  --ventana:rgba(255,255,255,.92); --ventana-t:#3a3550; --ventana-s:#6a6582; --borde-ventana:0; --rventana:28px; --sombra-ventana:0 30px 60px -24px rgba(58,53,80,.45);
+  --op:#f4eff4; --borde-op:0; --sec-v:#ece6f0; --op-club:#3a3550; --borde-op-club:0; --op-club-t:#fbf6f2;
+}
+/* ===== 3. GRÁFICO Y LIMPIO ===== */
+.t-grafico{
+  --fondo:#f2f2ef; --pantalla:#f2f2ef; --texto:#111111; --suave:#55524b; --acento:#1f4fd1; --linea:#111111;
+  --marco:#111111; --panel:#ffffff; --borde-panel:2px solid #111111; --rpanel:4px;
+  --fd:"Archivo",sans-serif; --fu:"Archivo",sans-serif; --wd:900; --ttd:none; --lsd:-.02em; --lsl:.24em;
+  --chip:#ffffff; --borde-chip:2px solid #111111; --rchip:4px;
+  --prim:#111111; --prim-t:#f2f2ef; --prim-borde:2px solid #111111; --prim-sombra:none;
+  --sec:#f2f2ef; --sec-t:#111111; --sec-borde:2px solid #111111;
+  --wb:800; --lsb:.02em; --ttb:none; --rb:4px; --rredondo:4px;
+  --nodo-h:#f2b705; --nodo-h-t:#111111; --nodo-c:#ffffff; --nodo-c-t:#8f8a80; --nodo-borde:2px solid #111111; --rnodo:4px; --nodo-sombra:none;
+  --borde-tablero:2px solid #111111; --sombra-tablero:none;
+  --aviso:#111111; --aviso-t:#f2f2ef; --velo:rgba(247,245,240,.82);
+  --ventana:#ffffff; --ventana-t:#111111; --ventana-s:#55524b; --borde-ventana:2px solid #111111; --rventana:6px; --sombra-ventana:none;
+  --op:#f2f2ef; --borde-op:2px solid #111111; --op-club:#1f4fd1; --borde-op-club:2px solid #111111; --op-club-t:#ffffff;
+}
+.t-grafico .cab h2,.t-grafico .titulo,.t-grafico .tipo .grande{font-stretch:78%}
+.t-grafico .b{font-stretch:88%}
+.t-grafico .pant{background-image:linear-gradient(#e2e2dd 1px,transparent 1px),linear-gradient(90deg,#e2e2dd 1px,transparent 1px);background-size:24px 24px}
+
+@media (max-width:1100px){ .fila{grid-template-columns:1fr 1fr} .fila .fig.g{grid-column:1/-1;order:-1} .muestras,.cab{grid-template-columns:1fr} }
+@media (max-width:560px){ .fila{grid-template-columns:1fr} .dir{padding:44px 16px 52px} .indice{position:static;gap:6px} .indice a{padding:6px 10px;font-size:.8rem} }
+.dir{scroll-margin-top:64px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<nav class="indice" aria-label="Direcciones">
+  <strong>Cadencia</strong>
+  <a href="#mesa">1 · Mesa de juego</a>
+  <a href="#calma">2 · Calma premium</a>
+  <a href="#grafico">3 · Gráfico y limpio</a>
+  <a href="../tablero/index.html">Ver «Dominó Pop»</a>
+</nav>
+<header class="intro">
+  <h1>Tres direcciones para Cadencia</h1>
+  <p>Misma mecánica, mismas pantallas y mismas reglas legales. Cambian el aspecto, las fuentes y el tono de los textos. Cada partida es jugable: se tumba sola al aparecer, y luego puedes dibujar desde el botón de inicio.</p>
+</header>
+<main id="raiz"></main>
+
+<script>
+const ICO = {
+  llave:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="8" cy="8" r="4.5"/><path d="M11.5 11.5l8 8M16 16l2.5-2.5M18.5 18.5l2-2"/></svg>',
+  estrella:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3L2.8 9.5l6.4-.9z"/></svg>',
+  ficha:'<svg viewBox="0 0 14 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1.5" y="1.5" width="11" height="21" rx="3"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/><circle cx="7" cy="17" r="1.2" fill="currentColor"/></svg>',
+  atras:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  borrar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>',
+  pista:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></svg>'
+};
+
+const TEMAS = [
+ { id:'mesa', clase:'t-mesa', nombre:'Mesa de juego', marca:'Cadencia · club de dominó',
+   desc:'El dominó de siempre, sobre una mesa: tapete de pizarra, fichas de hueso con sombra real, detalles de latón y un rojo lacre para las campanas. Sin contornos gruesos ni colores de caramelo. Pensado para parecer un juego de mesa premium.',
+   t:{ barrio:'Barrio I', nombreBarrio:'La Plaza', jugar:'Jugar nivel 5', nivel:'Nivel 5', meta:'Haz sonar la campana doble. Las dos ramas deben llegar a la vez.', ya:'Tumbar', superado:'Bien hecho', dato:'fichas · tu mejor marca', repetir:'Repetir', siguiente:'Siguiente', sinTitulo:'Sin cuerda por ahora', sinSub:'Se recupera una cada 30 minutos. Siguiente en 12:40.', anuncio:'Ver un anuncio', anuncioS:'+3 cuerdas. Quedan 9 hoy.', esperar:'Esperar', esperarS:'Te avisamos si quieres.', gratis:'Jugar sin cuerda', gratisS:'Reto del día, Taller o Libre.', club:'Club Cadencia', clubS:'Cuerda sin límite. 4,99 €/mes.', aviso:'Arrastra desde el botón de inicio para dibujar.', exito:'Las dos ramas llegaron a la vez.', casi:'No llegó. Inténtalo otra vez.', una:'Solo llegó una rama.', cae:'…' },
+   tono:['Tumbar','Bien hecho','Inténtalo otra vez','Sin cuerda por ahora'],
+   lienzo:{ tablero:'#20382f', punto:'rgba(236,230,218,.07)', ficha:'#f2ede4', pip:'#161616', cae:'#c2a36b', caida:'#8e9690', borde:'rgba(0,0,0,.35)', sombra:'rgba(0,0,0,.45)', campana:'#c2a36b', badajo:'#b33a3a', halo:'rgba(194,163,107,.28)', inicio:'#c2a36b', inicioIco:'#18211f', cifra:'rgba(236,230,218,.55)', cifraT:'#18211f', fuente:'800 10px Manrope' },
+   estrella:'#c2a36b', estrellaVacia:'#cfc7b8', camino:'#f2ede4', caminoNo:'rgba(236,230,218,.18)',
+   paleta:[['Pizarra','#1F2B29'],['Tapete','#20382F'],['Hueso','#F2EDE4'],['Latón','#C2A36B'],['Lacre','#B33A3A']],
+   tipo:{ grande:'Bien hecho', nota:'Manrope 800 en mayúsculas espaciadas para títulos, y la misma familia en 500–700 para todo lo demás. Cifras tabulares. SIL OFL.' } },
+ { id:'calma', clase:'t-calma', nombre:'Calma premium', marca:'Cadencia',
+   desc:'Un juego para respirar: degradados de atardecer, fichas blancas mate con sombra larga, mucho espacio y una sola nota de color por barrio. Texto mínimo y tranquilo. Pensado para que cada captura sea bonita.',
+   t:{ barrio:'Primer barrio', nombreBarrio:'La plaza', jugar:'Continuar', nivel:'5', meta:'Dos caminos, una campana. Que lleguen juntos.', ya:'Soltar', superado:'Todo encaja', dato:'fichas', repetir:'Otra vez', siguiente:'Seguir', sinTitulo:'La cuerda descansa', sinSub:'Vuelve una cada media hora. La próxima, en 12:40.', anuncio:'Un anuncio', anuncioS:'Tres cuerdas más. Nueve hoy.', esperar:'Esperar', esperarS:'Te avisamos.', gratis:'Jugar libre', gratisS:'Reto, taller o lienzo libre.', club:'Club', clubS:'Sin límite. 4,99 € al mes.', aviso:'Dibuja desde el punto de inicio.', exito:'Juntas. Todo encaja.', casi:'Casi. Otra vez, con calma.', una:'Solo llegó una.', cae:'…' },
+   tono:['Soltar','Todo encaja','Casi. Otra vez, con calma','La cuerda descansa'],
+   lienzo:{ tablero:'rgba(255,255,255,.42)', punto:'rgba(58,53,80,.06)', ficha:'#ffffff', pip:'#3a3550', cae:'#e0775a', caida:'rgba(58,53,80,.22)', borde:'rgba(58,53,80,.08)', sombra:'rgba(58,53,80,.18)', campana:'#e0775a', badajo:'#3a3550', halo:'rgba(224,119,90,.22)', inicio:'#3a3550', inicioIco:'#fbf6f2', cifra:'rgba(58,53,80,.0)', cifraT:'#6a6582', fuente:'400 10px Jost' },
+   estrella:'#e0775a', estrellaVacia:'#d9d3e3', camino:'#ffffff', caminoNo:'rgba(255,255,255,.45)',
+   paleta:[['Melocotón','#F3D6C8'],['Lavanda','#D9CFE0'],['Bruma','#C6CBE0'],['Tinta suave','#3A3550'],['Coral de barrio','#E0775A']],
+   tipo:{ grande:'Todo encaja', nota:'Jost 300 grande para títulos y 400–500 para el resto, con mucho interlineado. Una sola familia, de trazo fino. SIL OFL.' } },
+ { id:'grafico', clase:'t-grafico', nombre:'Gráfico y limpio', marca:'Cadencia',
+   desc:'Inteligente y adulto, como los pasatiempos de un periódico: fondo blanco roto, fichas negras, mostaza y cobalto como únicos acentos, bordes de 2 px y tipografía grotesca muy firme. Se entiende de un vistazo en una captura.',
+   t:{ barrio:'Barrio 1', nombreBarrio:'La Plaza', jugar:'Jugar · nivel 5', nivel:'Nivel 5', meta:'Campana doble: las dos ramas tienen que llegar en el mismo tiempo.', ya:'Tumbar', superado:'Resuelto', dato:'fichas · marca del nivel: 38', repetir:'Repetir', siguiente:'Siguiente', sinTitulo:'Sin cuerda', sinSub:'+1 cada 30 min. Próxima: 12:40.', anuncio:'Anuncio', anuncioS:'+3 cuerdas. Quedan 9 hoy.', esperar:'Esperar', esperarS:'Aviso cuando haya cuerda.', gratis:'Modos libres', gratisS:'Reto diario, Taller, Libre.', club:'Club', clubS:'Cuerda ilimitada. 4,99 €/mes.', aviso:'Arrastra desde el botón de inicio.', exito:'Resuelto. Llegaron a la vez.', casi:'No llegó. Reintentar.', una:'Solo una rama llegó.', cae:'…' },
+   tono:['Tumbar','Resuelto','No llegó. Reintentar','Reto diario n.º 214'],
+   lienzo:{ tablero:'#ffffff', punto:'#e6e6e1', ficha:'#111111', pip:'#f2f2ef', cae:'#f2b705', caida:'#c9c5bb', borde:'#111111', sombra:'rgba(0,0,0,0)', campana:'#1f4fd1', badajo:'#f2b705', halo:'rgba(31,79,209,.16)', inicio:'#111111', inicioIco:'#f2f2ef', cifra:'#111111', cifraT:'#ffffff', fuente:'800 10px Archivo' },
+   estrella:'#f2b705', estrellaVacia:'#ffffff', camino:'#111111', caminoNo:'#cfcabf',
+   paleta:[['Papel','#F2F2EF'],['Negro','#111111'],['Mostaza','#F2B705'],['Cobalto','#1F4FD1'],['Gris','#C9C5BB']],
+   tipo:{ grande:'Resuelto', nota:'Archivo condensada en 900 para títulos y cifras grandes, y Archivo 500–800 para el resto. Una grotesca firme. SIL OFL.' } }
+];
+
+function estrellas(T, n, cls){ return `<span style="color:${T.estrella}">${ICO.estrella.replace('<svg','<svg'+(cls?` class="${cls}"`:''))}</span>`; }
+
+function render(T){
+  const x=T.t;
+  const nodos=[[28,88,'h'],[68,72,'h'],[32,55,'h'],[70,38,'h'],[38,21,'a'],[72,7,'c']];
+  return `
+  <section class="dir ${T.clase}" id="${T.id}">
+    <div class="cab">
+      <div><span class="logo">${T.marca}</span><h2>${T.nombre}</h2></div>
+      <p>${T.desc}</p>
+    </div>
+    <div class="fila">
+      <figure class="fig"><div class="movil"><div class="pant">
+        <div class="hud"><span class="chip">${ICO.llave}3/5 · 12:40</span><span class="hueco"></span><span class="chip" style="color:inherit"><span style="color:${T.estrella};display:inline-flex">${ICO.estrella}</span>41</span></div>
+        <div class="barrio"><small>${x.barrio}</small><div class="titulo">${x.nombreBarrio}</div></div>
+        <div class="mapa"><svg class="camino" viewBox="0 0 100 100" preserveAspectRatio="none" data-camino></svg>
+          ${nodos.map((n,i)=>`<div class="nodo ${n[2]}" style="left:${n[0]}%;top:${n[1]}%">${i+1}</div>`).join('')}
+        </div>
+        <div class="abajo"><button class="b p ancho">${x.jugar}</button></div>
+      </div></div><figcaption>Inicio con el mapa del barrio</figcaption></figure>
+
+      <figure class="fig g"><div class="movil g"><div class="pant">
+        <div class="hud"><button class="b s redondo" style="width:36px;height:36px" aria-label="Volver">${ICO.atras}</button><span class="hueco" style="text-align:center"><span class="titulo" style="font-size:1.1rem">${x.nivel}</span></span><span class="chip">${ICO.ficha}<span data-cont>60</span></span></div>
+        <div class="meta">${x.meta}</div>
+        <div class="tablero"><canvas data-lienzo aria-label="Tablero jugable"></canvas><div class="aviso" data-aviso>${x.aviso}</div></div>
+        <div class="mandos"><button class="b s redondo" data-borrar aria-label="Borrar">${ICO.borrar}</button><button class="b p" data-ya>${x.ya}</button><button class="b s redondo" data-ejemplo aria-label="Ver ejemplo">${ICO.pista}</button></div>
+      </div></div><figcaption>Partida jugable</figcaption></figure>
+
+      <figure class="fig"><div class="movil"><div class="pant">
+        <div class="hud"><span class="chip">${ICO.llave}3/5</span></div>
+        <div class="velo"><div class="ventana">
+          <div class="titulo">${x.superado}</div>
+          <div class="estrellas">${estrellas(T)}${estrellas(T,0,'c')}${estrellas(T)}</div>
+          <div class="cifra">37</div><p>${x.dato}</p>
+          <div class="dos"><button class="b s">${x.repetir}</button><button class="b p">${x.siguiente}</button></div>
+        </div></div>
+      </div></div><figcaption>Nivel superado</figcaption></figure>
+
+      <figure class="fig"><div class="movil"><div class="pant">
+        <div class="hud"><span class="chip">${ICO.llave}0/5 · 12:40</span></div>
+        <div class="velo"><div class="ventana">
+          <div class="titulo" style="font-size:1.2rem">${x.sinTitulo}</div><p>${x.sinSub}</p>
+          <div class="ops">
+            <div class="op"><b>${x.anuncio}</b>${x.anuncioS}</div>
+            <div class="op"><b>${x.esperar}</b>${x.esperarS}</div>
+            <div class="op"><b>${x.gratis}</b>${x.gratisS}</div>
+            <div class="op club"><b>${x.club}</b>${x.clubS}</div>
+          </div>
+        </div></div>
+      </div></div><figcaption>Sin cuerda: cuatro salidas iguales</figcaption></figure>
+    </div>
+    <div class="muestras">
+      <div class="paleta">${T.paleta.map(([n,h])=>`<div><i style="background:${h}"></i><span>${n}<em>${h}</em></span></div>`).join('')}</div>
+      <div class="tipo"><p class="grande">${T.tipo.grande}</p><p>${T.tipo.nota}</p></div>
+    </div>
+    <div class="tono">${T.tono.map(s=>`<span>«${s}»</span>`).join('')}</div>
+  </section>`;
+}
+
+document.getElementById('raiz').innerHTML = TEMAS.map(render).join('');
+
+/* Camino de fichas del mapa */
+TEMAS.forEach(T=>{
+  const svg=document.querySelector(`#${T.id} [data-camino]`);
+  const p=[[28,88],[68,72],[32,55],[70,38],[38,21],[72,7]]; let h='';
+  for(let i=0;i<p.length-1;i++){ const [x1,y1]=p[i],[x2,y2]=p[i+1];
+    for(let k=1;k<8;k++){ const t=k/8, x=x1+(x2-x1)*t, y=y1+(y2-y1)*t, a=Math.atan2((y2-y1)*2,(x2-x1))*180/Math.PI+90;
+      h+=`<rect x="${x-.9}" y="${y-1.6}" width="1.8" height="3.2" rx=".4" fill="${i<4?T.camino:T.caminoNo}" transform="rotate(${a} ${x} ${y})"/>`; } }
+  svg.innerHTML=h;
+});
+
+/* Demo jugable por dirección */
+function demo(sec, T){
+  const cv=sec.querySelector('[data-lienzo]'), ctx=cv.getContext('2d'), aviso=sec.querySelector('[data-aviso]'), cont=sec.querySelector('[data-cont]'), ya=sec.querySelector('[data-ya]');
+  const C=T.lienzo, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const PASO=15, TEMPO=85, MAX=60; let W,H,ramas=[],trazo=[],estado='dibujo',t0=0,dib=false,sono=false;
+  const L={e:{x:.15,y:.86},c:{x:.8,y:.2}}, P=p=>({x:p.x*W,y:p.y*H});
+  const largo=g=>{let s=0;for(let i=1;i<g.length;i++)s+=Math.hypot(g[i].x-g[i-1].x,g[i].y-g[i-1].y);return s;};
+  function rep(g,n){const Lg=largo(g),o=[];let s=1,a=0;for(let k=0;k<n;k++){const ob=Lg*k/(n-1);while(s<g.length-1&&a+Math.hypot(g[s].x-g[s-1].x,g[s].y-g[s-1].y)<ob){a+=Math.hypot(g[s].x-g[s-1].x,g[s].y-g[s-1].y);s++;}const A=g[s-1],B=g[s],d=Math.hypot(B.x-A.x,B.y-A.y)||1,t=Math.min(1,(ob-a)/d);o.push({x:A.x+(B.x-A.x)*t,y:A.y+(B.y-A.y)*t});}return o;}
+  const mues=g=>g.length<2?g.slice():rep(g,Math.max(2,Math.round(largo(g)/PASO)+1));
+  function ejemplo(){const e=P(L.e),c=P(L.c),b={x:e.x+(c.x-e.x)*.36,y:e.y+(c.y-e.y)*.42};const tr=mues([e,{x:e.x+W*.07,y:e.y-H*.07},b]);
+    const iz=[b,{x:b.x-W*.1,y:b.y-H*.22},{x:c.x-W*.25,y:c.y-H*.01},{x:c.x-W*.05,y:c.y+H*.01}],de=[b,{x:b.x+W*.32,y:b.y-H*.01},{x:c.x+W*.03,y:c.y+H*.22},{x:c.x+W*.012,y:c.y+H*.05}];
+    const n=Math.round((largo(iz)+largo(de))/2/PASO)+1;return [{p:tr,i:0},{p:rep(iz,n),i:tr.length-1},{p:rep(de,n),i:tr.length-1}];}
+  const ang=(p,i)=>{const a=p[Math.max(0,i-1)],b=p[Math.min(p.length-1,i+1)];return Math.atan2(b.y-a.y,b.x-a.x)+Math.PI/2;};
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+  function fondo(){ctx.clearRect(0,0,W,H);ctx.fillStyle=C.tablero;ctx.fillRect(0,0,W,H);ctx.fillStyle=C.punto;for(let x=12;x<W;x+=24)for(let y=12;y<H;y+=24){ctx.beginPath();ctx.arc(x,y,1.4,0,7);ctx.fill();}}
+  function ficha(p,a,m,k){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(a);const w=6.5,h=15;
+    if(m==='tumbada'){ctx.rotate(Math.PI/2);ctx.fillStyle=C.caida;rr(-h/2,-w*.45,h,w*.9,2);ctx.fill();ctx.restore();return;}
+    const s=m==='cae'?1-k*.55:1;ctx.shadowColor=C.sombra;ctx.shadowBlur=4;ctx.shadowOffsetY=2;
+    ctx.fillStyle=m==='cae'?C.cae:C.ficha;ctx.globalAlpha=m==='borrador'?.5:1;rr(-w/2,-h/2*s,w,h*s,2);ctx.fill();ctx.shadowColor='transparent';
+    ctx.strokeStyle=C.borde;ctx.lineWidth=1;ctx.stroke();ctx.globalAlpha=1;
+    if(m!=='borrador'){ctx.fillStyle=C.pip;ctx.beginPath();ctx.arc(0,-h*.22*s,1.2,0,7);ctx.arc(0,h*.22*s,1.2,0,7);ctx.fill();}ctx.restore();}
+  function campana(su,pa){const c=P(L.c);ctx.save();ctx.translate(c.x,c.y);if(su){ctx.fillStyle=C.halo;ctx.beginPath();ctx.arc(0,0,36,0,7);ctx.fill();}
+    [-12,12].forEach(dx=>{ctx.save();ctx.translate(dx,0);if(su)ctx.rotate(dx<0?-.22:.22);ctx.fillStyle=C.campana;ctx.beginPath();ctx.moveTo(0,-13);ctx.bezierCurveTo(-8,-13,-9.5,-5,-9.5,0);ctx.lineTo(-9.5,5);ctx.lineTo(-12,9);ctx.lineTo(12,9);ctx.lineTo(9.5,5);ctx.lineTo(9.5,0);ctx.bezierCurveTo(9.5,-5,8,-13,0,-13);ctx.fill();ctx.fillStyle=C.badajo;ctx.beginPath();ctx.arc(0,11.5,2.8,0,7);ctx.fill();ctx.restore();});
+    ctx.fillStyle=C.campana;ctx.fillRect(-12,-16,24,2.5);if(pa){ctx.strokeStyle=C.badajo;ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.arc(0,0,28,0,7);ctx.stroke();ctx.setLineDash([]);}ctx.restore();}
+  function inicio(){const p=P(L.e);ctx.fillStyle=C.inicio;ctx.beginPath();ctx.arc(p.x,p.y,14,0,7);ctx.fill();ctx.fillStyle=C.inicioIco;ctx.beginPath();ctx.moveTo(p.x-4,p.y-6);ctx.lineTo(p.x+7,p.y);ctx.lineTo(p.x-4,p.y+6);ctx.closePath();ctx.fill();}
+  function cifras(p,i0){ctx.font=C.fuente;ctx.textAlign='center';ctx.textBaseline='middle';for(let i=4;i<p.length;i+=4){const q=p[i],a=ang(p,i),x=q.x+Math.cos(a)*15,y=q.y+Math.sin(a)*15;ctx.fillStyle=C.cifra;ctx.beginPath();ctx.arc(x,y,7.5,0,7);ctx.fill();ctx.fillStyle=C.cifraT;ctx.fillText(String(i0+i),x,y+.5);}}
+  function draw(now){if(!W)return;fondo();const todas=estado==='dibujo'&&trazo.length?[{p:trazo,i:0}]:ramas;const t=estado==='cayendo'?(now-t0)/(reduce?TEMPO*.5:TEMPO):-1;const lleg=[];
+    todas.forEach(r=>{r.p.forEach((q,i)=>{const b=r.i+i;let m=dib?'borrador':'armada',k=0;if(t>=0){if(t>b+1)m='tumbada';else if(t>b){m='cae';k=t-b;}}ficha(q,ang(r.p,i),m,k);});cifras(r.p,r.i);const f=r.p[r.p.length-1],c=P(L.c);if(f&&Math.hypot(f.x-c.x,f.y-c.y)<34)lleg.push(r.i+r.p.length-1);});
+    inicio();let su=false,pa=false;if(t>=0&&lleg.length){const h=lleg.filter(b=>t>b);if(h.length>=2&&Math.abs(lleg[0]-lleg[1])<=1)su=true;else if(h.length)pa=true;}campana(su,pa&&!su);
+    cont.textContent=Math.max(0,MAX-todas.reduce((s,r)=>s+r.p.length,0));
+    if(estado==='cayendo'){const fin=Math.max(...todas.map(r=>r.i+r.p.length))+2;if(t>fin){estado='fin';ya.disabled=false;aviso.textContent=su?T.t.exito:lleg.length===1?T.t.una:T.t.casi;}else requestAnimationFrame(draw);}}
+  function size(){const r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);draw(performance.now());}
+  const pos=ev=>{const r=cv.getBoundingClientRect();return{x:ev.clientX-r.left,y:ev.clientY-r.top};};
+  cv.addEventListener('pointerdown',ev=>{if(estado==='cayendo')return;const p=pos(ev),e=P(L.e);if(Math.hypot(p.x-e.x,p.y-e.y)>40){aviso.textContent=T.t.aviso;return;}ramas=[];estado='dibujo';dib=true;trazo=[e];cv.setPointerCapture(ev.pointerId);draw(performance.now());});
+  cv.addEventListener('pointermove',ev=>{if(!dib)return;const p=pos(ev),u=trazo[trazo.length-1];if(Math.hypot(p.x-u.x,p.y-u.y)>=PASO/2){trazo.push(p);draw(performance.now());}});
+  const soltar=()=>{if(!dib)return;dib=false;ramas=[{p:mues(trazo).slice(0,MAX),i:0}];trazo=[];estado='listo';draw(performance.now());};
+  cv.addEventListener('pointerup',soltar);cv.addEventListener('pointercancel',soltar);
+  const tumbar=()=>{if(!ramas.length)return;estado='cayendo';ya.disabled=true;t0=performance.now();aviso.textContent=T.t.cae;requestAnimationFrame(draw);};
+  ya.addEventListener('click',tumbar);
+  const cargar=()=>{ramas=ejemplo();trazo=[];estado='listo';ya.disabled=false;aviso.textContent=T.t.meta.split('.')[0]+'.';draw(performance.now());};
+  sec.querySelector('[data-ejemplo]').addEventListener('click',cargar);
+  sec.querySelector('[data-borrar]').addEventListener('click',()=>{ramas=[];trazo=[];estado='dibujo';ya.disabled=false;aviso.textContent=T.t.aviso;draw(performance.now());});
+  addEventListener('resize',size);
+  size();cargar();
+  let hecho=false;new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&!hecho&&!reduce){hecho=true;setTimeout(tumbar,500);}});},{threshold:.5}).observe(cv);
+}
+(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>TEMAS.forEach(T=>demo(document.getElementById(T.id),T)));
+</script>
+</body>
+</html>

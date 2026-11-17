@@ -88,3 +88,19 @@ Corregido durante el rediseño:
 
 - **Tu aprobación** del rediseño. Si algo no convence, se itera sobre este mismo Pull Request.
 - Diseño final de Pío, del icono de la app y de las ilustraciones de cada barrio (fase de desarrollo).
+
+---
+
+## 7. Tres alternativas menos "divertidas" (17/11/2026)
+
+El cliente valoró «Dominó Pop» como **mucho mejor**, pero lo ve **demasiado saturado en el mercado** y pidió algo más diferente y menos "divertido". Pidió ver las tres direcciones propuestas: **[../variantes/index.html](../variantes/index.html)**.
+
+| Dirección | Idea | Fuentes (SIL OFL) | Tono de los textos |
+|---|---|---|---|
+| **1 · Mesa de juego** | Dominó real sobre tapete de pizarra: fichas de hueso con sombra, latón y lacre | Manrope | «Tumbar», «Bien hecho», «Inténtalo otra vez» |
+| **2 · Calma premium** | Degradado de atardecer, fichas blancas mate, mucho espacio, un color por barrio | Jost | «Soltar», «Todo encaja», «Casi. Otra vez, con calma» |
+| **3 · Gráfico y limpio** | Pasatiempo de periódico: blanco, fichas negras, mostaza y cobalto, bordes de 2 px | Archivo | «Tumbar», «Resuelto», «No llegó. Reintentar» |
+
+Cada dirección tiene su propia **demo jugable**, el inicio con el mapa, el nivel superado y la ventana sin cuerda (cuatro opciones del mismo tamaño). Todas respetan el marco legal.
+
+**Pendiente:** que el cliente elija una (o una mezcla). Después actualizaré `DESIGN.md` y el tablero principal con la dirección elegida.
