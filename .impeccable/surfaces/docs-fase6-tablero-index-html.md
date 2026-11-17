@@ -11,7 +11,7 @@ Scope: Cadencia style board (docs/fase6/tablero/index.html), a full redesign. Ex
 
 THESIS: «Dominó Pop». The juicy, chunky casual-game UI the audience already knows, with one twist of its own: the UI is built from dominoes. Map paths, progress bars and the logo are tiles that topple. This refuses sober editorial looks and generic templates without dominoes.
 
-OWN-WORLD: deep violet gradient ground (#3A1C9E→#6C3CF0). Light lilac board. Ivory tiles with ink pips (#26124D). Press-in buttons with a dark lower lip: green (#3DDC6B) to play, yellow for rewards, coral for bells, cyan as secondary. Lilita One headlines in white with ink outline and shadow; Nunito for service text.
+OWN-WORLD (v2, 17/11/2026, quieter): flat pool blue (#2462D6) on page blue (#1A4FB8), ice board, ivory tiles with ink pips, 2 px ink outlines with a 3 px drop, only two button kinds (green primary, ivory secondary), Lilita One in sentence case without outline, Nunito for service text. Superseded v1: violet then blue gradient, outlined white headlines, ribbons, rainbow buttons.
 
 STORY: the visitor sees a playful puzzle where the length of the chain is the time. They understand cord, stars and levels, and want to press PLAY.
 

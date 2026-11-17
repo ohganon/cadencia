@@ -133,3 +133,56 @@ Cada una tiene una partida jugable, el inicio con el mapa, el nivel superado y l
 **[../CATALOGO_DISENOS.pdf](../CATALOGO_DISENOS.pdf)** reúne las 15 direcciones generadas en 23 páginas A4 apaisadas: portada con índice visual, las 3 favoritas, las 10 de la tanda 2, «Dominó Pop» (4 páginas) y «La Banda del Pueblo» (5 páginas, recuperada del historial de Git). Cada página indica letras, tono y si es favorita, de la tanda 2 o anterior, y muestra la demo de la partida ya resuelta.
 
 Se regenera con `python -X utf8 docs/fase6/scripts/generar_catalogo.py` (Playwright con Chromium y Pillow).
+
+## 10. Selección final: 11 temas a elegir y Dominó Pop más calmado (17/11/2026)
+
+**Idea del cliente:** el jugador podrá escoger entre varios diseños, con «Dominó Pop» como principal. Se quedan 11 de las 15 direcciones; se descartan La Banda del Pueblo, Cuaderno, Terracota mediterránea y Art déco (siguen en el historial de Git y en [../CATALOGO_DISENOS.pdf](../CATALOGO_DISENOS.pdf)).
+
+| Entregable | Contenido |
+|---|---|
+| **[../temas/index.html](../temas/index.html)** | Los 11 temas sobre el mismo motor de pantallas. Selector arriba y pantalla nueva del juego **Ajustes › Apariencia**, donde elige el jugador. Al cambiar de tema cambian la página, las pantallas, los textos y la partida jugable |
+| **[../CATALOGO_TEMAS.pdf](../CATALOGO_TEMAS.pdf)** | 14 páginas A4: portada, una página por tema y el tablero completo de Dominó Pop. Se regenera con `docs/fase6/scripts/generar_catalogo_temas.py` |
+| **[../tablero/index.html](../tablero/index.html)** | Dominó Pop versión 2 |
+| **[../../../DESIGN.md](../../../DESIGN.md)** | Reescrito: Pop v2 y el sistema de temas para Godot |
+
+### Qué ha cambiado en Dominó Pop (menos abrumador, menos «hecho con IA»)
+
+| Antes (v1) | Ahora (v2) |
+|---|---|
+| Títulos blancos con contorno de tinta y sombra en todas partes | Lilita limpia, sin contorno; en minúsculas |
+| Cintas de color coral en cada título y ventana | Títulos sin cinta |
+| Logo de fichas inclinadas con una raya cada una | Fila recta de fichas; solo la última empieza a caer |
+| Botones verdes, cian, amarillos y coral | Dos tipos: verde para la acción principal y marfil para el resto |
+| Contornos de 3 px, sombras de 4–6 px, canto de 7 px | Contornos de 2 px, sombra de 3 px, canto de 4 px |
+| Degradado azul de fondo | Azul liso |
+| Estrellas encima de cada nodo del mapa, pestaña activa elevada | Sin estrellas en el mapa; pestaña activa marcada con una píldora |
+| Lema «Dibuja. Empuja. ¡Que suene!» | «El largo del camino es el tiempo.» |
+| Ventanas sobre una pantalla vacía | Se ve la pantalla real debajo (mapa o tablero) |
+| Icono de llave genérico para la cuerda | Llave de dar cuerda, como un juguete de hojalata |
+
+### Lo que se ha pulido en los otros diez
+
+- Todos usan ahora el mismo motor y las mismas pantallas, así que se comportan igual en el juego.
+- Debajo de cada ventana se ve la pantalla real.
+- Los textos secundarios tienen más contraste en Calma, Tinta, Bauhaus, Brutalista, Risografía, Nocturno y Nórdico.
+- Se han quitado las etiquetas y numeraciones decorativas de encima de los títulos.
+- Cine negro lleva grano de película.
+
+### Revisión
+
+**Comprobado en el navegador:**
+- los 11 temas a 1440 px y Dominó Pop a 375 px, sin desbordamiento horizontal y sin errores de consola;
+- el cambio de tema funciona desde el selector y desde la pantalla de Apariencia, y la demo se tumba en todos.
+
+**Detector de impeccable:**
+- Corregido: contraste del texto claro sobre azul (4,49 → 4,5 o más), sombra azulada de los teléfonos e imagen sin `src`.
+- Se mantiene a propósito:
+  - el canto de los botones y la sombra de 3 px, que son el material de Pop;
+  - la cuadrícula de Gráfico y limpio, que es su papel de pasatiempo;
+  - las sombras duras de Brutalista y Risografía, propias de su estilo.
+
+**No comprobado:**
+- rendimiento en móviles reales;
+- cambio de tema dentro de Godot.
+
+**Pendiente de decisión del cliente:** si los temas son gratis, se desbloquean jugando o forman parte del Club Cadencia. Las tres opciones son legales mientras no haya moneda de pago ni sobres aleatorios.

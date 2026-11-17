@@ -1,56 +1,56 @@
 ---
 name: Cadencia
-description: Dominó Pop. Juicy casual mobile-game UI built out of dominoes.
+description: Dominó Pop (default theme, calmer v2) plus ten player-selectable themes on one shared component system.
 colors:
-  pool-blue: "#1f63d8"
-  pool-blue-deep: "#1149b8"
+  page-blue: "#1a4fb8"
+  pool-blue: "#2462d6"
   ink: "#142554"
+  ink-soft: "#3a4f86"
+  light-text: "#e8f0ff"
   ice: "#eaf3ff"
   ice-dot: "#cfe0ff"
   ivory: "#fffdf6"
+  ivory-lip: "#d9e2f2"
   play-green: "#3ddc6b"
-  play-green-lip: "#1e9e48"
+  play-green-lip: "#22a552"
   star-yellow: "#ffc83d"
-  star-yellow-lip: "#d9921a"
   bell-coral: "#ff5470"
-  bell-coral-lip: "#c42a48"
-  helper-cyan: "#29d3f5"
-  helper-cyan-lip: "#0d8fb5"
+  pio-cyan: "#29d3f5"
   locked-blue: "#9db4e6"
   fallen-tile: "#c9d6f2"
   white: "#ffffff"
 typography:
   display:
     fontFamily: "Lilita One, Arial Rounded MT Bold, sans-serif"
-    fontSize: "3.2rem"
+    fontSize: "3rem"
     fontWeight: 400
-    lineHeight: 1.05
-    letterSpacing: "0.01em"
+    lineHeight: 1.08
+    letterSpacing: "0.005em"
   headline:
     fontFamily: "Lilita One, Arial Rounded MT Bold, sans-serif"
-    fontSize: "1.6rem"
+    fontSize: "1.5rem"
     fontWeight: 400
-    lineHeight: 1.05
+    lineHeight: 1.08
   button:
     fontFamily: "Lilita One, Arial Rounded MT Bold, sans-serif"
-    fontSize: "1.35rem"
+    fontSize: "1.2rem"
     fontWeight: 400
-    letterSpacing: "0.02em"
+    letterSpacing: "0.01em"
   body:
     fontFamily: "Nunito, system-ui, sans-serif"
     fontSize: "1rem"
-    fontWeight: 700
-    lineHeight: 1.45
+    fontWeight: 600
+    lineHeight: 1.5
   label:
     fontFamily: "Nunito, system-ui, sans-serif"
-    fontSize: "0.85rem"
-    fontWeight: 900
+    fontSize: "0.8rem"
+    fontWeight: 800
     lineHeight: 1.2
 rounded:
   pill: "999px"
-  button: "20px"
-  panel: "22px"
-  window: "26px"
+  button: "16px"
+  panel: "18px"
+  window: "22px"
   tile: "5px"
   phone: "35px"
 spacing:
@@ -61,31 +61,21 @@ spacing:
 components:
   button-primary:
     backgroundColor: "{colors.play-green}"
-    textColor: "{colors.white}"
+    textColor: "{colors.ink}"
     typography: "{typography.button}"
     rounded: "{rounded.button}"
-    padding: "12px 22px 16px"
-  button-reward:
-    backgroundColor: "{colors.star-yellow}"
-    textColor: "{colors.white}"
-    typography: "{typography.button}"
-    rounded: "{rounded.button}"
-  button-bell:
-    backgroundColor: "{colors.bell-coral}"
-    textColor: "{colors.white}"
-    typography: "{typography.button}"
-    rounded: "{rounded.button}"
+    padding: "11px 20px 14px"
   button-secondary:
-    backgroundColor: "{colors.helper-cyan}"
-    textColor: "{colors.white}"
+    backgroundColor: "{colors.ivory}"
+    textColor: "{colors.ink}"
     typography: "{typography.button}"
     rounded: "{rounded.button}"
   button-disabled:
-    backgroundColor: "#a7b6d6"
-    textColor: "{colors.white}"
+    backgroundColor: "#b7c4df"
+    textColor: "#43557f"
     rounded: "{rounded.button}"
   hud-pill:
-    backgroundColor: "rgba(8,22,70,.5)"
+    backgroundColor: "rgba(20,37,84,.38)"
     textColor: "{colors.white}"
     typography: "{typography.label}"
     rounded: "{rounded.pill}"
@@ -93,82 +83,182 @@ components:
     backgroundColor: "{colors.ivory}"
     textColor: "{colors.ink}"
     rounded: "{rounded.window}"
-    padding: "56px 16px 18px"
+    padding: "22px 16px 18px"
   board:
     backgroundColor: "{colors.ice}"
     rounded: "{rounded.panel}"
   level-node-done:
     backgroundColor: "{colors.star-yellow}"
     textColor: "{colors.ink}"
-    size: "52px"
+    size: "48px"
   level-node-current:
     backgroundColor: "{colors.play-green}"
-    textColor: "{colors.white}"
-    size: "66px"
+    textColor: "{colors.ink}"
+    size: "60px"
   level-node-locked:
     backgroundColor: "{colors.locked-blue}"
     textColor: "{colors.ink}"
-    size: "52px"
+    size: "48px"
 ---
 
 # Design System: Cadencia
 
 ## Overview
 
-**Creative North Star: «Dominó Pop».** It is the chunky, juicy UI of casual mobile games (thick outlines, buttons that sink when pressed, headlines in white with an outline), the language a 15–55 audience already reads on TikTok and in Royal Match or Block Blast. It adds one move of its own: **the interface is built from dominoes**. The logo is tiles toppling, the map path between levels is a row of tiles, and the tile counter is a tile.
+**Default theme: «Dominó Pop», version 2.** A casual puzzle game with character: pool blue, ivory domino tiles, buttons that sink slightly when pressed, and Pío the tin bird pointing the way. **The interface is built from dominoes**: the logo is a row of tiles with the last one starting to fall, the map path between levels is a row of tiles, and the tile counter is a tile.
 
-Origin: the client rejected the previous direction and pinned this method, a redesign inspired by 222 Pinterest pins for "mobile game ui design inspo" (docs/fase6/rediseno/INSPIRACION_PINTEREST.md). Reference build: `docs/fase6/tablero/index.html`.
+Version 2 (17/11/2026) is a deliberate *quieter* pass. The client found version 1 overwhelming and "very AI-looking". Removed:
 
-Anti-references: medieval wood and stone panels (RPG), dark esports neon, and violet gradients with a radial halo. The violet palette was replaced with blue in this same build because it reads as "AI-made".
+- the ink outline and drop shadow on every white headline;
+- the coral ribbons on titles;
+- the tilted logo tiles with strike lines;
+- the cyan and yellow buttons;
+- the stars above every map node;
+- gradients;
+- the uppercase shouting.
+
+Strong colour is now reserved for meaning.
+
+**Player-selectable themes.** The player can change the look in *Ajustes › Apariencia*. Dominó Pop is the default. The other ten themes share the same screens, components and game rules, and change only tokens (colour, type, radius, borders, shadows), one canvas palette and the tone of the copy:
+
+- Mesa de juego
+- Calma premium
+- Gráfico y limpio
+- Cine negro
+- Tinta japonesa
+- Bauhaus
+- Brutalista
+- Risografía
+- Nocturno
+- Nórdico
+
+A theme never changes levels, difficulty, prices or progress. The reference build for all eleven is `docs/fase6/temas/index.html`, and the full Dominó Pop board is `docs/fase6/tablero/index.html`.
+
+Discarded directions, kept only in Git history and in `docs/fase6/CATALOGO_DISENOS.pdf`: La Banda del Pueblo, Art déco, Terracota mediterránea and Cuaderno.
+
+Anti-references:
+
+- RPG wood and stone panels;
+- esports neon;
+- violet gradients with radial halos;
+- the over-saturated "every element shouts" casual-game template (Dominó Pop v1).
 
 ## Colors
 
-- **Pool Blue (#1F63D8 → #1149B8)** is the ground of every screen, as a vertical gradient with no halo. White text over it reads at 5.5:1 or better.
-- **Ink (#142554)** is every outline, the shadow under headlines and the text on light surfaces. It is the glue of the whole look.
-- **Ice (#EAF3FF)** is the board, with **Ice Dot (#CFE0FF)** dots every 24 px.
-- **Ivory (#FFFDF6)** is the standing tile, popup windows and cards.
-- Every colour has **one job**, and its darker lip (`-lip`) sits underneath:
-  - **Play Green**: play and move forward.
-  - **Star Yellow**: stars, rewards, cord, and **the tile currently falling (the only yellow tile on the board)**.
-  - **Bell Coral**: bells and title ribbons.
-  - **Helper Cyan**: secondary actions (repeat, back, undo).
-- **Fallen Tile (#C9D6F2)** and **Locked Blue (#9DB4E6)** cover what has already happened or is not open yet.
+These are the Dominó Pop colours.
+
+**Base colours**
+
+- **Pool Blue (#2462D6)** is the flat ground of every screen. Page Blue (#1A4FB8) sits around the phones. There are no gradients.
+- **Ink (#142554)** is used for thin 2 px outlines and for text on light surfaces. **Ink Soft (#3A4F86)** is for secondary text on ivory.
+- **Light Text (#E8F0FF)** is secondary text on blue, at 4.5:1 or better on Pool Blue.
+- **Ivory (#FFFDF6)** is the standing tile, popup windows, secondary buttons and the objective card.
+- **Ice (#EAF3FF)** is the board, with Ice Dot (#CFE0FF) dots every 24 px.
+
+**Strong colours.** Each has one job only:
+
+- **Play Green**: the single primary action on each screen, plus the current map node.
+- **Star Yellow**: stars, completed nodes, and **the tile currently falling**. It is never used on a button that spends money.
+- **Bell Coral**: bells only.
+- **Pío Cyan**: only the mascot.
+
+**State colours.** Fallen Tile (#C9D6F2) and Locked Blue (#9DB4E6) mark what has already happened or is not open yet. The Club option is ink with ivory text: a calm, honest money option.
 
 ## Typography
 
-- **Lilita One** (SIL OFL) carries headlines, buttons and big figures. It is **always white with an ink outline and an ink shadow**: CSS `paint-order: stroke fill; -webkit-text-stroke: .16em ink; text-shadow: 0 .09em 0 ink`; in Godot, a Label with outline + shadow. That outline is what gives white text on green, yellow and cyan its contrast.
-- **Nunito** (SIL OFL, 600–900) carries service copy, help and prices. Minimum 15 px in game; weight 700 or heavier on dark backgrounds.
-- Short sentences, action verbs, no false urgency ("¡A TUMBAR!", "¡NIVEL SUPERADO!", "¡Casi! Prueba otra vez, es gratis.").
+- **Lilita One** (SIL OFL) is used for headlines, buttons and big figures.
+  - Sentence case, with no outline and no shadow.
+  - White on blue; ink on ivory and on green.
+  - In Godot, a plain Label with no outline.
+- **Nunito** (SIL OFL, 600–900) is used for service copy, help and prices. The minimum in game is 15 px.
+- Copy: short sentences, action verbs and no false urgency.
+  - «¡A tumbar!»
+  - «¡Nivel superado!»
+  - «¡Casi! Prueba otra vez, es gratis.»
+  - «Sin cuerda. Pío necesita un respiro.»
 
 ## Layout
 
-- Phone, single column, one-handed. HUD at the top (cord with its timer and a "+", stars), content in the centre, **a single large primary action** at the bottom, and a 5-tab bottom nav whose active tab rises.
-- Map: a vertical path of nodes linked by tiles. Done = yellow with stars, current = larger green with Pío, locked = muted blue.
-- Popups centred over a translucent dark-blue veil, with the coral ribbon overlapping the top edge.
+- The game is a single column on a phone, playable with one hand.
+  - The HUD sits at the top: cord (a wind-up key icon) with its timer and a green "+", and stars.
+  - The content sits in the centre, with a single large primary action at the bottom.
+  - A 5-tab bottom nav marks the active tab with an ivory pill. The tab does not rise.
+- Map: a vertical path of nodes linked by tiles.
+  - Done nodes are yellow.
+  - The current node is larger and green, with a soft white ring and Pío.
+  - Locked nodes are muted blue with no shadow.
+- Popups sit centred over a translucent blue veil, with the real screen visible underneath. A popup is never drawn over an empty screen.
 
 ## Elevation & Depth
 
-Depth is drawn the cartoon way, not with soft blur: **a solid ink shadow 4–6 px straight down** under buttons, panels and windows, plus **an inner lip at the bottom** in the darker shade of each colour. That is the native material of this world (casual chunky UI). It is not a decorative neo-brutalist shadow. Phone mockups only get a soft shadow, as presentation.
+Depth is a small cartoon offset: **a solid ink shadow 3 px straight down** under buttons, nodes, windows and cards, plus a **4 px inner lip** at the bottom of buttons. This is the material of this world, scaled down from v1 (which used 4–6 px shadows and 7 px lips). Phone mockups get only a soft neutral presentation shadow.
 
 ## Shapes
 
-- Large, consistent radii: buttons 20 px, panels 22 px, windows 26 px, pills 999 px.
-- 3 px ink outline on every interactive or informative element.
+- Radii: buttons 16 px, panels 18 px, windows 22 px, pills 999 px.
+- 2 px ink outlines on interactive elements.
 - Tiles are rounded rectangles (5 px) with two pips, and are the brand's recognisable form.
 
 ## Components
 
-- **Pressable button**: colour + bottom lip + top highlight + ink outline + ink shadow. On press it sinks 4 px and the lip narrows (spring curve `cubic-bezier(.34,1.56,.64,1)`, 120 ms). Disabled = grey-blue, no change on press.
-- **HUD pill**: round icon in a colour, a number in Nunito 900, and an optional green "+" for getting more (free ad first, never a paid currency).
-- **Result window**: ivory, coral ribbon, 3 stars (the centre one larger), the stat that matters (tiles used against the level target), a reward and two buttons (Repeat / Next).
-- **Decision popup** (no cord, paywall): **options at the same size**, price always visible, "Ahora no" as a visible link, and no countdowns (legal framework LR-06/LR-12).
-- **Board**: ice with dots. Ivory tile with two pips → yellow while falling → lying flat in fallen grey-blue. Count markers every 4 tiles as small ink circles with a white number.
+- **Pressable button.** There are only two kinds:
+  - green for the primary action;
+  - ivory for everything else.
+
+  On press the button moves down 3 px and its lip narrows, over 140 ms with `cubic-bezier(.22,1,.36,1)` (no spring overshoot). Disabled is grey-blue and does not move.
+- **HUD pill.** A small coloured icon and a Nunito 800 number on translucent ink.
+- **Result window.** An ivory window with:
+  - a Lilita title;
+  - 3 outlined stars, the centre one larger;
+  - the stat that matters;
+  - a quiet line for the reward;
+  - Repeat (ivory) and Next (green).
+- **Decision popup** (no cord, paywall):
+  - **options at the same size**;
+  - the price always visible;
+  - "Ahora no" as a visible link with a touch target of at least 44 px;
+  - no countdowns (legal framework LR-06/LR-12).
+- **Board.** Ice with dots. A tile goes ivory with two pips, then yellow while falling, then lies flat in fallen grey-blue. Count markers every 4 tiles are small ink circles.
+- **Theme picker (Ajustes › Apariencia).**
+  - A 2-column list of the 11 themes.
+  - Each item has a preview strip: the theme's screen colour, "Aa" in its display font, a tile and a primary-colour bar.
+  - The theme name sits under the strip, with "Por defecto" under Dominó Pop.
+  - The selected item has a 2 px accent ring and a check.
+  - It is a radio group. The change applies instantly and is saved locally.
+
+## Theme system (for Godot)
+
+Every theme is one data file holding the same keys:
+
+- **Screen:** `fondo`, `pantalla`, `texto`, `suave`, `acento`, `linea`, `marco`.
+- **Panels and chips:** `panel`, `panel-t`, `chip`.
+- **Buttons:** `prim`, `prim-t`, `prim-borde`, `prim-sombra`, `sec`, `sec-t`, `sec-borde`, `sec-sombra`.
+- **Map nodes:** `nodo-h`, `nodo-a`, `nodo-c`.
+- **Messages and veil:** `aviso`, `velo`.
+- **Windows:** `ventana`, `ventana-t`, `ventana-s`.
+- **Option cards:** `op`, `op-club`.
+- **Radii:** `rb`, `rpanel`, `rventana`, `rnodo`.
+- **Type:** the display font, the UI font and the button font, with their weights, case and tracking.
+- **Canvas palette (`L`):** board, dot, tile, pip, falling, fallen, outline, shadow, bell, clapper, halo, start, count marker.
+- **Copy overrides:** a small set, such as the primary button, the success title, the failure line and the no-cord title.
+
+Components read only these keys, so adding a theme never touches layout. Textures are allowed per theme only as screen background layers:
+
+- Gráfico: grid paper.
+- Risografía: halftone.
+- Nocturno: star field.
+- Cine negro: film grain.
+
+Fonts for every theme are SIL OFL from Google Fonts and are recorded in `docs/legal/REGISTRO_ASSETS.md`.
+
+**Monetisation note (pending client decision).** Themes are cosmetic, so they can be free, unlocked by progress, or included in Club Cadencia without breaching the legal framework (no paid randomness, price shown in euros). They must not be sold through a paid currency or in random packs.
 
 ## Do's and Don'ts
 
-- **Do** keep a single primary action per screen, in green.
-- **Do** keep yellow for whatever is falling or being won. Never use it for a button that spends money.
-- **Do** use dominoes as UI material (paths, counters, logo) when it helps people understand the game.
-- **Don't** use violet gradients or radial halos on the background. They were rejected for reading as generic.
+- **Do** keep a single primary action per screen, in green (or each theme's `prim`).
+- **Do** keep yellow for whatever is falling or being won.
+- **Do** show the real screen under every popup.
+- **Do** keep themes cosmetic: the same rules, prices and progress in all of them.
+- **Don't** bring back outlined white headlines, ribbons, gradients or rainbow buttons in Dominó Pop. Those were the "overwhelming / AI-looking" tells of v1.
 - **Don't** add "¡OFERTA!" ribbons, countdowns, or bundles with a paid currency (legal framework).
-- **Don't** use white text without the ink outline on light colours.
+- **Don't** let a theme reduce contrast below 4.5:1 for body text or 3:1 for large text.
