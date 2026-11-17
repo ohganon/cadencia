@@ -13,7 +13,8 @@
 extends SceneTree
 
 const SCRIPTS := ["res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd",
-	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd"]
+	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
+	"res://escenas/comun/iconos.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd"]
 
 var fallos := 0
 var pasadas := 0

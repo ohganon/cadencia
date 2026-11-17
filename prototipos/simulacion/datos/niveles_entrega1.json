@@ -8,7 +8,7 @@
   {
    "id": 1,
    "titulo": "Primer empujón",
-   "ayuda": "Dibuja con el dedo desde la ficha amarilla hasta la campana y pulsa «¡A tumbar!».",
+   "ayuda": "Arrastra el dedo desde el [b]botón verde[/b] hasta la campana y pulsa «¡A tumbar!».",
    "pieza_nueva": "campana",
    "nivel": {
     "v": 1,
@@ -54,7 +54,7 @@
   {
    "id": 2,
    "titulo": "La curva",
-   "ayuda": "Las curvas suaves aguantan; las cerradas rompen la cadena.",
+   "ayuda": "Rodea el muro: las [b]curvas suaves[/b] aguantan, las cerradas rompen la cadena.",
    "pieza_nueva": "muro",
    "nivel": {
     "v": 1,
@@ -263,7 +263,7 @@
   {
    "id": 3,
    "titulo": "Fichas justas",
-   "ayuda": "Hoy sobran pocas fichas: busca el camino corto.",
+   "ayuda": "Llega a la campana con [b]pocas fichas[/b]: busca el camino corto.",
    "pieza_nueva": null,
    "nivel": {
     "v": 1,
@@ -504,7 +504,7 @@
   {
    "id": 4,
    "titulo": "Dos caminos",
-   "ayuda": "Arrastra desde una ficha ya puesta para abrir otra rama.",
+   "ayuda": "Haz sonar [b]las dos campanas[/b]: arrastra desde una ficha puesta para abrir otra rama.",
    "pieza_nueva": "bifurcador",
    "nivel": {
     "v": 1,
@@ -763,7 +763,7 @@
   {
    "id": 5,
    "titulo": "Eslalon",
-   "ayuda": "Sin prisa: disfruta de la caída.",
+   "ayuda": "Un respiro: baja por el [b]eslalon[/b] y disfruta de la caída.",
    "pieza_nueva": null,
    "nivel": {
     "v": 1,
@@ -1046,7 +1046,7 @@
   {
    "id": 6,
    "titulo": "Primero la 1",
-   "ayuda": "Las campanas numeradas suenan en orden: la 1 antes que la 2.",
+   "ayuda": "Las campanas numeradas suenan [b]en orden[/b]: la 1 antes que la 2.",
    "pieza_nueva": "campanas numeradas",
    "nivel": {
     "v": 1,
@@ -1381,7 +1381,7 @@
   {
    "id": 7,
    "titulo": "La campana doble",
-   "ayuda": "Necesita dos golpes a la vez: dos ramas igual de largas.",
+   "ayuda": "Haz sonar la [b]campana doble[/b]: las dos ramas tienen que llegar a la vez.",
    "pieza_nueva": "campana doble",
    "nivel": {
     "v": 1,
@@ -1695,7 +1695,7 @@
   {
    "id": 8,
    "titulo": "El que espera",
-   "ayuda": "La longitud es el tiempo: alarga el camino corto para que lleguen juntos.",
+   "ayuda": "La [b]longitud es el tiempo[/b]: alarga el camino corto para que las dos ramas lleguen juntas.",
    "pieza_nueva": null,
    "nivel": {
     "v": 1,
@@ -2013,7 +2013,7 @@
   {
    "id": 9,
    "titulo": "Una sola salida",
-   "ayuda": "Pasa el hueco y divide después.",
+   "ayuda": "Solo hay un hueco: pásalo y [b]divide después[/b] hacia la campana doble.",
    "pieza_nueva": null,
    "nivel": {
     "v": 1,
@@ -2402,7 +2402,7 @@
   {
    "id": 10,
    "titulo": "Gran Tramo: la plaza",
-   "ayuda": "Todo lo aprendido: una campana y una doble, con pocas fichas de sobra.",
+   "ayuda": "Haz sonar [b]la campana y la doble[/b] con pocas fichas de sobra.",
    "pieza_nueva": null,
    "nivel": {
     "v": 1,

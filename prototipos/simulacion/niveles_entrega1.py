@@ -88,13 +88,13 @@ def niveles():
 
     # 1. Dibujar y empujar
     t = [Tramo([(50, 150), (50, 30)])]
-    nuevo(1, "Primer empujón", "Dibuja con el dedo desde la ficha amarilla hasta la campana y pulsa «¡A tumbar!».",
+    nuevo(1, "Primer empujón", "Arrastra el dedo desde el [b]botón verde[/b] hasta la campana y pulsa «¡A tumbar!».",
           "campana", Nivel(ANCHO, ALTO, (50, 150), [Campana("a", (50, 30))]), t, 15)
 
     # 2. Curvas suaves para esquivar un muro
     muro2 = ((30, 100), (100, 100))
     t = [Tramo(suave([(20, 150), (18, 95), (30, 68), (55, 45), (80, 30)]))]
-    nuevo(2, "La curva", "Las curvas suaves aguantan; las cerradas rompen la cadena.", "muro",
+    nuevo(2, "La curva", "Rodea el muro: las [b]curvas suaves[/b] aguantan, las cerradas rompen la cadena.", "muro",
           Nivel(ANCHO, ALTO, (20, 150), [Campana("a", (80, 30))], muros=[muro2]), t, 12,
           ingenuos=[("recto contra el muro", [Tramo([(20, 150), (80, 30)])], "choca con un muro"),
                     ("esquina en ángulo recto", [Tramo([(20, 150), (20, 30), (80, 30)])], "curva demasiado cerrada")])
@@ -102,7 +102,7 @@ def niveles():
     # 3. Fichas justas
     muro3 = ((25, 80), (75, 80))
     t = [Tramo(suave([(50, 150), (45, 115), (20, 92), (18, 70), (35, 45), (50, 22)]))]
-    nuevo(3, "Fichas justas", "Hoy sobran pocas fichas: busca el camino corto.", None,
+    nuevo(3, "Fichas justas", "Llega a la campana con [b]pocas fichas[/b]: busca el camino corto.", None,
           Nivel(ANCHO, ALTO, (50, 150), [Campana("a", (50, 22))], muros=[muro3]), t, 3,
           ingenuos=[("rodeo muy largo", [Tramo(suave([(50, 150), (85, 135), (92, 95), (92, 60), (80, 30), (50, 22)]))], "faltan fichas")])
 
@@ -112,19 +112,19 @@ def niveles():
     t = [Tramo(tronco),
          Tramo(suave([(50, 105), (36, 75), (22, 32)]), 0, f),
          Tramo(suave([(50, 105), (64, 75), (78, 32)]), 0, f)]
-    nuevo(4, "Dos caminos", "Arrastra desde una ficha ya puesta para abrir otra rama.", "bifurcador",
+    nuevo(4, "Dos caminos", "Haz sonar [b]las dos campanas[/b]: arrastra desde una ficha puesta para abrir otra rama.", "bifurcador",
           Nivel(ANCHO, ALTO, (50, 150), [Campana("a", (22, 32)), Campana("b", (78, 32))]), t, 12)
 
     # 5. Respiro: eslalon largo y satisfactorio
     muros5 = [((0, 115), (60, 115)), ((40, 75), (100, 75))]
     t = [Tramo(suave([(80, 150), (78, 122), (62, 102), (35, 92), (24, 72), (30, 48), (50, 28)]))]
-    nuevo(5, "Eslalon", "Sin prisa: disfruta de la caída.", None,
+    nuevo(5, "Eslalon", "Un respiro: baja por el [b]eslalon[/b] y disfruta de la caída.", None,
           Nivel(ANCHO, ALTO, (80, 150), [Campana("a", (50, 28))], muros=muros5), t, 20)
 
     # 6. Campanas numeradas: el orden importa
     c6 = [Campana("1", (72, 30), "numerada", 1), Campana("2", (28, 100), "numerada", 2)]
     t = [Tramo(suave([(50, 150), (62, 105), (72, 55), (72, 30), (60, 18), (42, 25), (32, 50), (28, 75), (28, 100)]))]
-    nuevo(6, "Primero la 1", "Las campanas numeradas suenan en orden: la 1 antes que la 2.", "campanas numeradas",
+    nuevo(6, "Primero la 1", "Las campanas numeradas suenan [b]en orden[/b]: la 1 antes que la 2.", "campanas numeradas",
           Nivel(ANCHO, ALTO, (50, 150), c6), t, 10,
           ingenuos=[("la cercana primero", [Tramo(suave([(50, 150), (28, 100), (45, 60), (72, 30)]))], "orden")])
 
@@ -134,7 +134,7 @@ def niveles():
     t = [Tramo(tronco),
          Tramo(suave([(50, 110), (35, 80), (35, 50), (50, 25)]), 0, f),
          Tramo(suave([(50, 110), (65, 80), (65, 50), (50, 25)]), 0, f)]
-    nuevo(7, "La campana doble", "Necesita dos golpes a la vez: dos ramas igual de largas.", "campana doble",
+    nuevo(7, "La campana doble", "Haz sonar la [b]campana doble[/b]: las dos ramas tienen que llegar a la vez.", "campana doble",
           Nivel(ANCHO, ALTO, (50, 150), [Campana("d", (50, 25), "doble")]), t, 10,
           ingenuos=[("un solo camino", [Tramo([(50, 150), (50, 25)])], "solo llegó una rama")])
 
@@ -145,7 +145,7 @@ def niveles():
     larga = suave([a, (30, 80), (32, 50), (50, 32), (74, 30)])
     corta = igualar(a, d, longitud(larga), signo=1)
     t = [Tramo(tronco), Tramo(larga, 0, f), Tramo(corta, 0, f)]
-    nuevo(8, "El que espera", "La longitud es el tiempo: alarga el camino corto para que lleguen juntos.", None,
+    nuevo(8, "El que espera", "La [b]longitud es el tiempo[/b]: alarga el camino corto para que las dos ramas lleguen juntas.", None,
           Nivel(ANCHO, ALTO, (50, 150), [Campana("d", (74, 30), "doble")]), t, 8,
           ingenuos=[("rama corta recta", [Tramo(tronco), Tramo(larga, 0, f), Tramo([a, d], 0, f)], "no llegaron a la vez")])
 
@@ -158,7 +158,7 @@ def niveles():
     rodeo = igualar(a, d, longitud(directa) + 16, signo=1)
     directa = igualar(a, d, longitud(rodeo), signo=-1)
     t = [Tramo(tronco), Tramo(directa, 0, f), Tramo(rodeo, 0, f)]
-    nuevo(9, "Una sola salida", "Pasa el hueco y divide después.", None,
+    nuevo(9, "Una sola salida", "Solo hay un hueco: pásalo y [b]divide después[/b] hacia la campana doble.", None,
           Nivel(ANCHO, ALTO, (50, 150), [Campana("d", (64, 24), "doble")], muros=[muro9]), t, 6,
           ingenuos=[("recto contra el muro", [Tramo([(50, 150), (64, 24)])], "choca con un muro")])
 
@@ -171,7 +171,7 @@ def niveles():
     der = igualar(a, d, longitud(izq), signo=1)
     lado = suave([a, (32, 100), (14, 96)])
     t = [Tramo(tronco), Tramo(izq, 0, f), Tramo(der, 0, f), Tramo(lado, 0, f)]
-    nuevo(10, "Gran Tramo: la plaza", "Todo lo aprendido: una campana y una doble, con pocas fichas de sobra.", None,
+    nuevo(10, "Gran Tramo: la plaza", "Haz sonar [b]la campana y la doble[/b] con pocas fichas de sobra.", None,
           Nivel(ANCHO, ALTO, (50, 150), [Campana("s", (14, 96)), Campana("d", (55, 24), "doble")], muros=[muro10]), t, 5,
           ingenuos=[("sin la campana del lado", [Tramo(tronco), Tramo(izq, 0, f), Tramo(der, 0, f)], "no llegó")])
     return lista

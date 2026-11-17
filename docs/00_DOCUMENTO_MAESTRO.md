@@ -168,6 +168,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: pantalla de partida jugable en el ordenador con los 10 niveles (18/11/2026)
 - [x] Fase 8: sonidos propios, vibración, cámara lenta, registro local y protocolo de la prueba de la puerta 0 (18/11/2026)
 - [x] Fase 8: fuentes, icono provisional y APK de prueba para Android generado y verificado (18/11/2026)
+- [x] Fase 8: pantalla de juego con el diseño Dominó Pop acordado (18/11/2026)
 - [ ] Fase 8: instalar el APK en un Android y hacer la prueba de la puerta 0 con 10–15 personas
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal
