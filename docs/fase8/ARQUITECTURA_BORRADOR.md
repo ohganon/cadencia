@@ -129,5 +129,6 @@ godot/
 - ~~Instalar Godot 4.7.2~~ **Hecho** (17/11/2026).
 - ~~Diseñar los 10 niveles de la entrega 1~~ **Hecho** (17/11/2026), con casos compartidos en JSON.
 - ~~Port de `sim.py` a GDScript~~ **Hecho**: pasa los 30 casos compartidos. Falta portar el reto diario y los códigos del Taller (entregas 3 y 4).
-- **Siguiente:** la escena de partida de la entrega 1: dibujar con el dedo, tumbar, animación de la caída y los 10 niveles.
+- ~~Escena de partida de la entrega 1~~ **Hecha** (18/11/2026): dibujar con el dedo, ramas desde cualquier ficha, límite de fichas, aviso de curva cerrada, caída animada, campanas que suenan (visualmente), resultado con estrellas, X donde se para la cadena con su explicación, pista en fantasma, deshacer, lista de niveles y progreso guardado. 77 pruebas sin pantalla y capturas automáticas revisadas.
+- **Para cerrar la entrega 1:** sonido (fichas y campana, con licencia comercial), fuentes Lilita One y Nunito (SIL OFL; descargarlas requiere permiso), y generar el APK para probarlo en un Android (plantillas de exportación de 1,2 GB y SDK de Android: requieren permiso).
 - **Ajustar en el prototipo** los valores de la simulación (PASO, GIRO_MAXIMO, RADIO_CAMPANA, TOLERANCIA_DOBLE): ahora son una hipótesis razonable, no un dato.

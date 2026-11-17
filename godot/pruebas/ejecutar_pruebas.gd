@@ -1,41 +1,150 @@
-## Ejecuta los casos compartidos con la versión de Python y termina con código 0 si todos pasan.
+## Pruebas del proyecto sin pantalla. Termina con código 0 si todo pasa.
 ##
 ## Uso (desde la raíz del repositorio):
 ##   Godot_v4.7.2-stable_win64_console.exe --headless --path godot --script res://pruebas/ejecutar_pruebas.gd
 ##
+## 1. Todos los scripts compilan.
+## 2. Casos compartidos con Python: la simulación da exactamente los mismos resultados.
+## 3. Partida: cada nivel se supera dibujando su solución como lo haría un dedo; límite de fichas,
+##    enganche y deshacer.
+## 4. Progreso: guardar, cargar y archivo dañado.
+##
 ## Es un ejecutor mínimo sin dependencias. GUT se añadirá cuando haga falta probar escenas.
 extends SceneTree
 
-## Se carga en tiempo de ejecución para poder salir con error si no compila (con preload,
-## un fallo de compilación dejaría Godot esperando sin terminar).
-var sim: GDScript
+const SCRIPTS := ["res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd",
+	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd"]
+
+var fallos := 0
+var pasadas := 0
 
 
 func _init() -> void:
-	sim = load("res://nucleo/simulacion.gd")
-	if sim == null or not sim.can_instantiate():
-		printerr("simulacion.gd no compila: revisa los errores de arriba")
-		quit(3)
+	# Se cargan en tiempo de ejecución: si un script no compila, se informa y se sale con error en
+	# lugar de quedarse esperando (que es lo que pasa con preload).
+	for ruta in SCRIPTS:
+		var s: GDScript = load(ruta)
+		comprobar(s != null and s.can_instantiate(), "compila " + ruta)
+	if fallos > 0:
+		terminar()
 		return
-	var texto := FileAccess.get_file_as_string("res://datos/casos_compartidos.json")
-	var datos = JSON.parse_string(texto)
+	var sim: GDScript = load("res://nucleo/simulacion.gd")
+	var partida: GDScript = load("res://nucleo/partida.gd")
+	var progreso: GDScript = load("res://nucleo/progreso.gd")
+	casos_compartidos(sim)
+	pruebas_partida(partida)
+	pruebas_progreso(progreso)
+	terminar()
+
+
+func terminar() -> void:
+	print("%d pruebas correctas, %d fallos" % [pasadas, fallos])
+	quit(0 if fallos == 0 else 1)
+
+
+func comprobar(condicion: bool, nombre: String, detalle := "") -> void:
+	if condicion:
+		pasadas += 1
+		print("ok    ", nombre)
+	else:
+		fallos += 1
+		print("FALLA ", nombre)
+		if detalle != "":
+			print("      ", detalle)
+
+
+func leer_json(ruta: String):
+	return JSON.parse_string(FileAccess.get_file_as_string(ruta))
+
+
+# ---------------------------------------------------------------- 2. casos compartidos
+
+func casos_compartidos(sim: GDScript) -> void:
+	var datos = leer_json("res://datos/casos_compartidos.json")
+	comprobar(datos != null and datos["casos"].size() > 0, "hay casos compartidos")
 	if datos == null:
-		printerr("No se pudo leer res://datos/casos_compartidos.json")
-		quit(2)
 		return
-	var fallos := 0
 	for caso in datos["casos"]:
 		var obtenido: Dictionary = sim.simular(caso["nivel"], caso["tramos"])
-		if iguales(obtenido, caso["esperado"]):
-			print("ok    ", caso["nombre"])
-		else:
-			fallos += 1
-			print("FALLA ", caso["nombre"])
-			print("      esperado: ", JSON.stringify(caso["esperado"]))
-			print("      obtenido: ", JSON.stringify(obtenido))
-	var total: int = datos["casos"].size()
-	print("%d de %d casos iguales que en Python" % [total - fallos, total])
-	quit(0 if fallos == 0 and total > 0 else 1)
+		comprobar(iguales(obtenido, caso["esperado"]), "igual que Python: " + caso["nombre"],
+			"esperado %s\n      obtenido %s" % [JSON.stringify(caso["esperado"]), JSON.stringify(obtenido)])
+
+
+# ---------------------------------------------------------------- 3. partida
+
+func dibujar(p, puntos: Array) -> void:
+	p.empezar(puntos[0])
+	for q in puntos.slice(1):
+		p.seguir(q)
+	p.terminar()
+
+
+## Pasa el trazo por puntos cada `cada` unidades, como llegan los eventos del dedo.
+func densificar(puntos: Array, cada: float) -> Array:
+	var r := [puntos[0]]
+	for i in range(1, puntos.size()):
+		var a: Array = puntos[i - 1]
+		var b: Array = puntos[i]
+		var d := Vector2(b[0] - a[0], b[1] - a[1]).length()
+		var n := maxi(1, int(ceil(d / cada)))
+		for k in range(1, n + 1):
+			r.append([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n])
+	return r
+
+
+func pruebas_partida(Partida: GDScript) -> void:
+	var niveles: Array = leer_json("res://datos/niveles_entrega1.json")["niveles"]
+	comprobar(niveles.size() == 10, "hay 10 niveles")
+	for n in niveles:
+		for cada in [0.0, 1.3]:     # los puntos tal cual y un dedo que manda un punto cada 1,3 unidades
+			var p = Partida.new(n["nivel"])
+			for tr in n["solucion"]:
+				dibujar(p, tr["puntos"] if cada == 0.0 else densificar(tr["puntos"], cada))
+			var r: Dictionary = p.tumbar()["resultado"]
+			comprobar(r["exito"] and p.tramos.size() == n["solucion"].size(),
+				"nivel %d se supera dibujando la solución%s" % [n["id"], "" if cada == 0.0 else " con el dedo"],
+				JSON.stringify(r))
+			if cada == 0.0:
+				comprobar(Partida.estrellas(r, int(n["nivel"]["m"])) == 2, "nivel %d: la solución da 2 estrellas" % n["id"])
+
+	var corto: Dictionary = niveles[0]["nivel"].duplicate(true)
+	corto["f"] = 10                  # nivel 1 con solo 10 fichas, para probar el límite
+	var p = Partida.new(corto)
+	comprobar(not p.empezar([90.0, 10.0]), "no se puede empezar lejos de la ficha amarilla")
+	comprobar(p.empezar([51.0, 149.0]), "se engancha cerca de la ficha amarilla")
+	for y in range(148, -10, -1):
+		p.seguir([50.0, float(y)])
+	p.terminar()
+	comprobar(p.usadas() <= p.disponibles(), "el trazo se para al gastar las fichas (%d de %d)" % [p.usadas(), p.disponibles()])
+	comprobar(p.usadas() >= p.disponibles() - 1, "y llega hasta casi la última ficha")
+	comprobar(p.empezar([50.0, 120.0]) and p.tramos[-1]["padre"] == 0, "una rama engancha con una ficha puesta")
+	p.terminar()
+	comprobar(p.tramos.size() == 1, "una rama demasiado corta se descarta")
+	p.deshacer()
+	comprobar(p.tramos.is_empty() and p.usadas() == 0, "deshacer quita el último tramo")
+
+
+# ---------------------------------------------------------------- 4. progreso
+
+func pruebas_progreso(Progreso: GDScript) -> void:
+	var ruta := "user://prueba_progreso.json"
+	if FileAccess.file_exists(ruta):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
+	var a = Progreso.new(ruta)
+	comprobar(a.total() == 0 and a.abierto(1) and not a.abierto(2), "sin archivo se empieza de cero")
+	a.registrar(1, 2)
+	a.registrar(1, 1)
+	a.registrar(2, 1)
+	var b = Progreso.new(ruta)
+	comprobar(b.de(1) == 2 and b.de(2) == 1 and b.abierto(3) and b.total() == 3, "guarda y carga, y nunca baja estrellas")
+	var f := FileAccess.open(ruta, FileAccess.WRITE)
+	f.store_string("{esto no es json")
+	f.close()
+	var c = Progreso.new(ruta)
+	comprobar(c.total() == 0, "un archivo dañado no rompe el juego")
+	for r in [ruta, "user://prueba_progreso.anterior.json"]:
+		if FileAccess.file_exists(r):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(r))
 
 
 ## Igualdad profunda. JSON convierte todos los números en float, así que 3 y 3.0 son iguales.

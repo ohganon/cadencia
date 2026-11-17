@@ -8,7 +8,7 @@
   {
    "id": 1,
    "titulo": "Primer empujón",
-   "ayuda": "Dibuja con el dedo desde la ficha amarilla hasta la campana y pulsa Tumbar.",
+   "ayuda": "Dibuja con el dedo desde la ficha amarilla hasta la campana y pulsa «¡A tumbar!».",
    "pieza_nueva": "campana",
    "nivel": {
     "v": 1,

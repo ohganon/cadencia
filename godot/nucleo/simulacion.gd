@@ -107,7 +107,15 @@ static func puerta_abierta(p: Array, tic: int) -> bool:
 
 # ---------------------------------------------------------------- simulación
 
+## Resultado de la caída (el mismo diccionario que sim.simular en Python).
 static func simular(nivel: Dictionary, tramos: Array) -> Dictionary:
+	return simular_detalle(nivel, tramos)["resultado"]
+
+
+## Como simular(), pero devuelve también lo necesario para animar la caída:
+## {resultado, fichas: [[x, y]...] por tramo, tics: tic de cada ficha, caidas: última ficha que cae
+## en cada tramo (-1 si no cae ninguna)}. No forma parte de la especificación compartida.
+static func simular_detalle(nivel: Dictionary, tramos: Array) -> Dictionary:
 	var fichas_por_tramo := []
 	var tics := []
 	for idx in tramos.size():
@@ -116,13 +124,13 @@ static func simular(nivel: Dictionary, tramos: Array) -> Dictionary:
 		var base: int
 		if tr["padre"] == null:
 			if dist(f[0], nivel["i"]) > PASO:
-				return _resultado(nivel, [], {}, {"tramo": idx, "ficha": 0, "motivo": "no empieza en el inicio"})
+				return _detalle(_resultado(nivel, [], {}, {"tramo": idx, "ficha": 0, "motivo": "no empieza en el inicio"}), [], [], [])
 			base = -1
 		else:
 			var padre := int(tr["padre"])
 			var desde := int(tr["desde"])
 			if padre >= idx or desde >= fichas_por_tramo[padre].size():
-				return _resultado(nivel, [], {}, {"tramo": idx, "ficha": 0, "motivo": "bifurcador no válido"})
+				return _detalle(_resultado(nivel, [], {}, {"tramo": idx, "ficha": 0, "motivo": "bifurcador no válido"}), [], [], [])
 			base = tics[padre][desde]
 		fichas_por_tramo.append(f)
 		var t := []
@@ -134,7 +142,8 @@ static func simular(nivel: Dictionary, tramos: Array) -> Dictionary:
 	for f in fichas_por_tramo:
 		usadas += f.size()
 	if usadas > int(nivel["f"]):
-		return _resultado(nivel, fichas_por_tramo, {}, {"tramo": null, "ficha": null, "motivo": "faltan fichas"}, usadas)
+		return _detalle(_resultado(nivel, fichas_por_tramo, {}, {"tramo": null, "ficha": null, "motivo": "faltan fichas"}, usadas),
+			fichas_por_tramo, tics, [])
 
 	# Recorrer cada tramo y encontrar dónde se para (si se para)
 	var caidas := []
@@ -182,7 +191,11 @@ static func simular(nivel: Dictionary, tramos: Array) -> Dictionary:
 					lista.append([tics[idx][j], idx])
 					break
 		llegadas[c[0]] = lista
-	return _resultado(nivel, fichas_por_tramo, llegadas, parada, usadas)
+	return _detalle(_resultado(nivel, fichas_por_tramo, llegadas, parada, usadas), fichas_por_tramo, tics, caidas)
+
+
+static func _detalle(resultado: Dictionary, fichas: Array, tics: Array, caidas: Array) -> Dictionary:
+	return {"resultado": resultado, "fichas": fichas, "tics": tics, "caidas": caidas}
 
 
 static func _resultado(nivel: Dictionary, fichas: Array, llegadas: Dictionary, parada, usadas := -1) -> Dictionary:

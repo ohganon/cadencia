@@ -88,7 +88,7 @@ def niveles():
 
     # 1. Dibujar y empujar
     t = [Tramo([(50, 150), (50, 30)])]
-    nuevo(1, "Primer empujón", "Dibuja con el dedo desde la ficha amarilla hasta la campana y pulsa Tumbar.",
+    nuevo(1, "Primer empujón", "Dibuja con el dedo desde la ficha amarilla hasta la campana y pulsa «¡A tumbar!».",
           "campana", Nivel(ANCHO, ALTO, (50, 150), [Campana("a", (50, 30))]), t, 15)
 
     # 2. Curvas suaves para esquivar un muro

@@ -165,7 +165,8 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: 10 niveles de la entrega 1 con solución verificada y 30 casos compartidos para el port a Godot (17/11/2026)
 - [x] Fase 8: Godot 4.7.2 instalado con permiso del cliente; SHA-512 y firma comprobados (17/11/2026)
 - [x] Fase 8: simulación portada a GDScript; da los mismos resultados que Python en los 30 casos (17/11/2026)
-- [ ] Fase 8: escena de partida y prototipo en el móvil (entrega 1)
+- [x] Fase 8: pantalla de partida jugable en el ordenador con los 10 niveles (18/11/2026)
+- [ ] Fase 8: sonido, fuentes y APK para probarlo en un Android (entrega 1)
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal
 - [ ] Antes de monetizar: consulta fiscal con un gestor (alta, IVA intracomunitario, W-8BEN)
