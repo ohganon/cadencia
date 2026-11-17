@@ -224,7 +224,9 @@ Depth is a small cartoon offset: **a solid ink shadow 3 px straight down** under
   - Each item has a preview strip: the theme's screen colour, "Aa" in its display font, a tile and a primary-colour bar.
   - The theme name sits under the strip, with "Por defecto" under Dominó Pop.
   - The selected item has a 2 px accent ring and a check.
+  - Club themes carry a small «Club» tag. Dominó Pop reads «Gratis · por defecto».
   - It is a radio group. The change applies instantly and is saved locally.
+  - Trying a Club theme without the Club shows the try-out notice at the bottom (see Monetisation).
 
 ## Theme system (for Godot)
 
@@ -251,7 +253,12 @@ Components read only these keys, so adding a theme never touches layout. Texture
 
 Fonts for every theme are SIL OFL from Google Fonts and are recorded in `docs/legal/REGISTRO_ASSETS.md`.
 
-**Monetisation note (pending client decision).** Themes are cosmetic, so they can be free, unlocked by progress, or included in Club Cadencia without breaching the legal framework (no paid randomness, price shown in euros). They must not be sold through a paid currency or in random packs.
+**Monetisation (decided 17/11/2026).**
+- Dominó Pop is free. The other ten themes are part of Club Cadencia.
+- A non-subscriber can **try any Club theme for free**. While trying it, a notice shows the price and two buttons of equal size: «Unirme al Club» and «Ahora no». «Ahora no» returns the game to Dominó Pop.
+- If a subscription ends, the game returns to Dominó Pop and nothing else is lost.
+- The one-time «Sin anuncios» purchase was removed: the Club is the only way to remove ads.
+- Themes are never sold through a paid currency or in random packs (legal framework LR-04, LR-06, LR-07).
 
 ## Do's and Don'ts
 

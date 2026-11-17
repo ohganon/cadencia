@@ -185,4 +185,4 @@ Se regenera con `python -X utf8 docs/fase6/scripts/generar_catalogo.py` (Playwri
 - rendimiento en móviles reales;
 - cambio de tema dentro de Godot.
 
-**Pendiente de decisión del cliente:** si los temas son gratis, se desbloquean jugando o forman parte del Club Cadencia. Las tres opciones son legales mientras no haya moneda de pago ni sobres aleatorios.
+**Decidido por el cliente (17/11/2026):** los 10 temas van en el Club Cadencia y Dominó Pop sigue gratis. El jugador puede probar cualquier tema antes de pagar; mientras lo prueba, un aviso le ofrece el Club con «Unirme al Club» y «Ahora no» del mismo tamaño. Detalle y efecto en el modelo financiero: [Fase 5, sección 10](../../fase5/INFORME_FASE5_Monetizacion.md).

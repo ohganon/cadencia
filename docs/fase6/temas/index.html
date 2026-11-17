@@ -84,7 +84,7 @@ canvas.quieto{cursor:default}
 .cifra{font-family:var(--fd);font-weight:var(--wd);font-size:2.3rem;line-height:1;font-variant-numeric:tabular-nums;margin:6px 0 2px}
 .dos{display:flex;gap:8px;margin-top:12px}
 .dos .b{flex:1;padding:11px 8px;font-size:.85rem}
-.ventana .b.s{background:var(--sec-v,transparent);color:var(--ventana-t);border-color:var(--ventana-t)}
+.ventana .b.s,.prueba .b.s{background:var(--sec-v,transparent);color:var(--ventana-t);border:1.5px solid var(--ventana-t);box-shadow:none}
 .ops{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left}
 .op{padding:10px;border-radius:calc(var(--rventana) - 6px);background:var(--op);border:var(--borde-op);font-size:.72rem;line-height:1.3;color:var(--ventana-s);min-height:86px;display:flex;flex-direction:column;gap:3px}
 .op b{font-size:.86rem;color:var(--ventana-t);font-weight:800;line-height:1.15}
@@ -93,7 +93,8 @@ canvas.quieto{cursor:default}
 
 /* Ajustes › Apariencia (pantalla del juego) */
 .ap-nota{margin:2px 16px 12px;font-size:.78rem;line-height:1.4;color:var(--suave)}
-.ap-lista{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 16px;margin:0;list-style:none;overflow:hidden}
+.ap-lista{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;align-content:start;gap:8px;padding:6px 14px 16px;margin:0;list-style:none;overflow:auto;scrollbar-width:none}
+.ap-lista::-webkit-scrollbar{display:none}
 .ap{position:relative;width:100%;font:inherit;text-align:left;cursor:pointer;padding:5px 5px 7px;border-radius:calc(var(--rpanel) - 2px);background:var(--panel);color:var(--panel-t);border:var(--borde-panel);display:flex;flex-direction:column;gap:5px}
 .ap .vista{position:relative;height:38px;border-radius:calc(var(--rpanel) - 5px);overflow:hidden;display:flex;align-items:center;padding:0 8px;gap:7px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 .ap .vista span{font-size:1.05rem;line-height:1}
@@ -103,6 +104,14 @@ canvas.quieto{cursor:default}
 .ap .vista b{width:14px;height:6px;border-radius:3px}
 .ap .nom{font-family:var(--fu);font-size:.72rem;font-weight:700;padding:0 3px;line-height:1.2}
 .ap .nom small{display:block;font-weight:500;opacity:.75;font-size:.66rem}
+.ap .club{position:absolute;bottom:8px;right:7px;font-family:var(--fu);font-size:.58rem;font-weight:800;letter-spacing:.04em;line-height:1;padding:3px 5px;border-radius:4px;background:rgba(0,0,0,.62);color:#fff}
+.prueba{margin:0 10px 10px;padding:14px 14px 12px;border-radius:var(--rventana);background:var(--ventana);color:var(--ventana-t);border:var(--borde-ventana);box-shadow:var(--sombra-ventana),0 -12px 24px -14px rgba(0,0,0,.35)}
+.prueba .titulo{font-size:1.05rem;margin:0 0 4px}
+.prueba p{margin:0 0 4px;font-size:.74rem;line-height:1.35;color:var(--ventana-s)}
+.prueba .precio{font-weight:700;color:var(--ventana-t)}
+.prueba .dos{margin-top:10px}
+.prueba .dos .b{text-decoration:none;text-align:center;display:grid;place-items:center}
+.ficha .club-nota{display:block;font-size:.85rem;font-weight:700;color:var(--acento);margin:0 0 10px}
 .ap[aria-checked="true"]{box-shadow:0 0 0 2px var(--acento)}
 .ap[aria-checked="true"]::after{content:"";position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--acento) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
 
@@ -146,7 +155,7 @@ canvas.quieto{cursor:default}
 <body>
 <header class="cabeza">
   <h1 class="titulo">Temas</h1>
-  <p>El jugador elige el aspecto en <b>Ajustes › Apariencia</b>. Cadencia arranca con Dominó Pop; los otros diez cambian colores, letras y tono, nunca las reglas, los niveles ni el progreso. Elige uno aquí o desde la pantalla de Apariencia del teléfono.</p>
+  <p>El jugador elige el aspecto en <b>Ajustes › Apariencia</b>. Cadencia arranca con Dominó Pop, que es gratis. Los otros diez vienen con el Club Cadencia y se pueden probar antes de pagar. Cambian colores, letras y tono, nunca las reglas, los niveles ni el progreso. Elige uno aquí o desde la pantalla de Apariencia del teléfono.</p>
   <ul class="selector" id="selector" aria-label="Tema"></ul>
 </header>
 <main id="raiz" aria-live="polite"></main>
@@ -167,7 +176,7 @@ const ICO = {
 };
 
 /* Textos base; cada tema cambia solo los que definen su tono */
-const BASE = { barrio:'Barrio 1', nombreBarrio:'La Plaza', jugar:'Jugar nivel 5', nivel:'Nivel 5', meta:'Haz sonar la campana doble: las dos ramas deben llegar a la vez.', ya:'Tumbar', superado:'Nivel superado', dato:'fichas · tu mejor marca', repetir:'Repetir', siguiente:'Siguiente', sinTitulo:'Sin cuerda', sinSub:'Recuperas una cada 30 min. La siguiente en 12:40.', anuncio:'Ver anuncio', anuncioS:'+3 cuerdas. Quedan 9 hoy.', esperar:'Esperar', esperarS:'Te avisamos si quieres.', gratis:'Jugar gratis', gratisS:'Reto del día, Taller o Libre.', club:'Club Cadencia', clubS:'Cuerda sin límite. 4,99 €/mes.', aviso:'Arrastra desde el botón de inicio para dibujar.', exito:'Las dos ramas llegaron a la vez.', casi:'No llegó. Prueba otra vez.', una:'Solo llegó una rama.', apTitulo:'Apariencia', apNota:'Cambia colores y letras. Tus niveles, estrellas y cuerda no cambian.' };
+const BASE = { barrio:'Barrio 1', nombreBarrio:'La Plaza', jugar:'Jugar nivel 5', nivel:'Nivel 5', meta:'Haz sonar la campana doble: las dos ramas deben llegar a la vez.', ya:'Tumbar', superado:'Nivel superado', dato:'fichas · tu mejor marca', repetir:'Repetir', siguiente:'Siguiente', sinTitulo:'Sin cuerda', sinSub:'Recuperas una cada 30 min. La siguiente en 12:40.', anuncio:'Ver anuncio', anuncioS:'+3 cuerdas. Quedan 9 hoy.', esperar:'Esperar', esperarS:'Te avisamos si quieres.', gratis:'Jugar gratis', gratisS:'Reto del día, Taller o Libre.', club:'Club Cadencia', clubS:'Cuerda sin límite. 4,99 €/mes.', aviso:'Arrastra desde el botón de inicio para dibujar.', exito:'Las dos ramas llegaron a la vez.', casi:'No llegó. Prueba otra vez.', una:'Solo llegó una rama.', apTitulo:'Apariencia', apNota:'Dominó Pop es gratis. Los demás temas vienen con el Club: tócalos para probarlos.', pruebaT:'Probando', pruebaS:'Los 10 temas vienen con el Club Cadencia, junto a la cuerda ilimitada y sin anuncios. Tus niveles y estrellas no cambian.', unirme:'Unirme al Club', ahoraNo:'Ahora no' };
 
 const TEMAS = [
  { id:'pop', nombre:'Dominó Pop', defecto:true,
@@ -196,7 +205,7 @@ const TEMAS = [
    desc:'Un juego para respirar: degradados de atardecer, fichas blancas mate con sombra larga, mucho espacio y una sola nota de color por barrio. Texto mínimo y tranquilo.',
    fd:'"Jost",sans-serif', fu:'"Jost",sans-serif',
    v:{'--fondo':'linear-gradient(180deg,#f3d6c8 0%,#d9cfe0 55%,#c6cbe0 100%)','--pantalla':'linear-gradient(180deg,#f6dccd 0%,#e2d4e3 50%,#cdd0e6 100%)','--texto':'#3a3550','--suave':'#5c5775','--acento':'#d0603f','--linea':'rgba(58,53,80,.16)','--marco':'#2c2840','--panel':'rgba(255,255,255,.6)','--borde-panel':'1px solid rgba(255,255,255,.8)','--rpanel':'20px','--wd':300,'--lsd':'.01em','--chip':'rgba(255,255,255,.62)','--prim':'#3a3550','--prim-t':'#fbf6f2','--prim-sombra':'0 10px 24px -12px rgba(58,53,80,.6)','--sec':'rgba(255,255,255,.72)','--sec-t':'#3a3550','--sec-borde':'0','--wb':500,'--lsb':'.04em','--rb':'999px','--rredondo':'999px','--nodo-h':'#ffffff','--nodo-h-t':'#3a3550','--nodo-c':'rgba(255,255,255,.38)','--nodo-c-t':'#7a7594','--nodo-sombra':'0 0 0 10px rgba(255,255,255,.35)','--borde-tablero':'1px solid rgba(255,255,255,.8)','--sombra-tablero':'0 18px 40px -22px rgba(58,53,80,.45)','--aviso':'rgba(255,255,255,.82)','--aviso-t':'#3a3550','--velo':'rgba(205,200,225,.55)','--ventana':'rgba(255,255,255,.94)','--ventana-t':'#3a3550','--ventana-s':'#5c5775','--rventana':'28px','--sombra-ventana':'0 30px 60px -24px rgba(58,53,80,.45)','--op':'#f4eff4','--sec-v':'#ece6f0','--op-club':'#3a3550','--op-club-t':'#fbf6f2'},
-   t:{ barrio:'Primer barrio', nombreBarrio:'La plaza', jugar:'Continuar', meta:'Dos caminos, una campana. Que lleguen juntos.', ya:'Soltar', superado:'Todo encaja', dato:'fichas', repetir:'Otra vez', siguiente:'Seguir', sinTitulo:'La cuerda descansa', sinSub:'Vuelve una cada media hora. La próxima, en 12:40.', anuncio:'Un anuncio', anuncioS:'Tres cuerdas más. Nueve hoy.', esperarS:'Te avisamos.', gratis:'Jugar libre', gratisS:'Reto, taller o lienzo libre.', club:'Club', clubS:'Sin límite. 4,99 € al mes.', aviso:'Dibuja desde el punto de inicio.', exito:'Juntas. Todo encaja.', casi:'Casi. Otra vez, con calma.', una:'Solo llegó una.', apNota:'Cambia los colores y las letras. Lo demás sigue igual.' },
+   t:{ barrio:'Primer barrio', nombreBarrio:'La plaza', jugar:'Continuar', meta:'Dos caminos, una campana. Que lleguen juntos.', ya:'Soltar', superado:'Todo encaja', dato:'fichas', repetir:'Otra vez', siguiente:'Seguir', sinTitulo:'La cuerda descansa', sinSub:'Vuelve una cada media hora. La próxima, en 12:40.', anuncio:'Un anuncio', anuncioS:'Tres cuerdas más. Nueve hoy.', esperarS:'Te avisamos.', gratis:'Jugar libre', gratisS:'Reto, taller o lienzo libre.', club:'Club', clubS:'Sin límite. 4,99 € al mes.', aviso:'Dibuja desde el punto de inicio.', exito:'Juntas. Todo encaja.', casi:'Casi. Otra vez, con calma.', una:'Solo llegó una.', apNota:'Dominó Pop es libre. Los demás llegan con el Club; tócalos para probarlos.', pruebaT:'Probando' },
    tono:['Soltar','Todo encaja','Casi. Otra vez, con calma'],
    L:{tablero:'rgba(255,255,255,.45)',punto:'rgba(58,53,80,.06)',ficha:'#ffffff',pip:'#3a3550',cae:'#e0775a',caida:'rgba(58,53,80,.22)',borde:'rgba(58,53,80,.08)',sombra:'rgba(58,53,80,.18)',campana:'#e0775a',badajo:'#3a3550',halo:'rgba(224,119,90,.22)',inicio:'#3a3550',inicioIco:'#fbf6f2',cifra:'rgba(0,0,0,0)',cifraT:'#5c5775',fuente:'500 10px Jost'},
    estrella:'#e0775a', camino:'#ffffff', caminoNo:'rgba(255,255,255,.45)',
@@ -229,7 +238,7 @@ const TEMAS = [
    desc:'Papel de arroz gris, trazos de tinta sumi y un sello bermellón como único color. Mucho vacío, ritmo pausado y textos muy breves.',
    fd:'"Shippori Mincho",serif', fu:'"Zen Kaku Gothic New",sans-serif',
    v:{'--fondo':'#e9e8e3','--pantalla':'#edece7','--texto':'#1c1c1c','--suave':'#55544f','--acento':'#c8372d','--linea':'rgba(28,28,28,.16)','--marco':'#1c1c1c','--panel':'rgba(255,255,255,.55)','--chip':'rgba(28,28,28,.06)','--prim':'#1c1c1c','--prim-t':'#edece7','--sec':'transparent','--sec-t':'#1c1c1c','--wd':500,'--rb':'0','--rredondo':'0','--rnodo':'50%','--rpanel':'2px','--rventana':'2px','--rchip':'2px','--nodo-h':'#1c1c1c','--nodo-h-t':'#edece7','--nodo-c':'transparent','--nodo-c-t':'#8a8983','--nodo-borde':'1px solid rgba(28,28,28,.3)','--nodo-sombra':'0 0 0 6px rgba(200,55,45,.15)','--aviso':'rgba(237,236,231,.92)','--aviso-t':'#1c1c1c','--velo':'rgba(233,232,227,.72)','--ventana':'#f6f5f1','--ventana-t':'#1c1c1c','--ventana-s':'#55544f','--borde-ventana':'1px solid rgba(28,28,28,.2)','--op':'#ecebe6','--op-club':'#c8372d','--op-club-t':'#fff','--sombra-ventana':'none'},
-   t:{ ya:'Soltar', superado:'Armonía', casi:'Aún no. Respira y vuelve.', sinTitulo:'La cuerda reposa', exito:'Dos caminos, un sonido.', jugar:'Continuar', apNota:'Cambia el color y la letra. El camino es el mismo.' },
+   t:{ ya:'Soltar', superado:'Armonía', casi:'Aún no. Respira y vuelve.', sinTitulo:'La cuerda reposa', exito:'Dos caminos, un sonido.', jugar:'Continuar', apNota:'Dominó Pop es libre. Los demás llegan con el Club. Pruébalos.' },
    tono:['Soltar','Armonía','Aún no. Respira y vuelve.'],
    L:{tablero:'#f3f2ed',punto:'rgba(28,28,28,.05)',ficha:'#1c1c1c',pip:'#edece7',cae:'#c8372d',caida:'rgba(28,28,28,.25)',borde:'rgba(0,0,0,0)',sombra:'rgba(0,0,0,.12)',campana:'#1c1c1c',badajo:'#c8372d',halo:'rgba(200,55,45,.15)',inicio:'#c8372d',inicioIco:'#fff',cifra:'rgba(0,0,0,0)',cifraT:'#7a7973',fuente:'500 10px "Zen Kaku Gothic New"'},
    estrella:'#c8372d', camino:'#1c1c1c', caminoNo:'rgba(28,28,28,.2)',
@@ -251,7 +260,7 @@ const TEMAS = [
    desc:'Web sin maquillaje: gris hormigón, bordes negros gruesos, sombras duras y un verde ácido para la acción. Directo y muy reconocible en redes.',
    fd:'"Familjen Grotesk",sans-serif', fu:'"Familjen Grotesk",sans-serif',
    v:{'--fondo':'#c9c9c4','--pantalla':'#d6d6d1','--texto':'#000','--suave':'#2b2b2b','--acento':'#000','--linea':'#000','--marco':'#000','--panel':'#fff','--chip':'#fff','--borde-chip':'2px solid #000','--rchip':'0','--prim':'#c6ff00','--prim-t':'#000','--prim-borde':'2px solid #000','--prim-sombra':'4px 4px 0 #000','--sec':'#fff','--sec-t':'#000','--sec-borde':'2px solid #000','--wd':700,'--lsd':'-.02em','--wb':700,'--ttb':'uppercase','--lsb':'.02em','--rb':'0','--rredondo':'0','--rnodo':'0','--rpanel':'0','--rventana':'0','--borde-panel':'2px solid #000','--borde-tablero':'2px solid #000','--sombra-tablero':'6px 6px 0 #000','--nodo-h':'#fff','--nodo-h-t':'#000','--nodo-borde':'2px solid #000','--nodo-c':'#bdbdb8','--nodo-c-t':'#555','--nodo-sombra':'4px 4px 0 #000','--aviso':'#000','--aviso-t':'#c6ff00','--velo':'rgba(201,201,196,.8)','--ventana':'#fff','--ventana-t':'#000','--ventana-s':'#2b2b2b','--borde-ventana':'2px solid #000','--sombra-ventana':'8px 8px 0 #000','--op':'#e6e6e1','--borde-op':'2px solid #000','--op-club':'#c6ff00','--borde-op-club':'2px solid #000','--op-club-t':'#000'},
-   t:{ superado:'Hecho.', casi:'Error: no llegó. Reintentar.', sinTitulo:'Cuerda = 0', exito:'OK. Sincronizado.', jugar:'Nivel 5 →', apTitulo:'Tema', apNota:'Solo cambia el aspecto. Progreso intacto.' },
+   t:{ superado:'Hecho.', casi:'Error: no llegó. Reintentar.', sinTitulo:'Cuerda = 0', exito:'OK. Sincronizado.', jugar:'Nivel 5 →', apTitulo:'Tema', apNota:'Pop: gratis. Resto: Club. Toca para probar.', pruebaT:'Prueba:' },
    tono:['Tumbar','Hecho.','Error: no llegó. Reintentar.'],
    L:{tablero:'#ffffff',punto:'rgba(0,0,0,.07)',ficha:'#fff',pip:'#000',cae:'#c6ff00',caida:'#9a9a95',borde:'#000',sombra:'rgba(0,0,0,0)',campana:'#000',badajo:'#c6ff00',halo:'rgba(198,255,0,.35)',inicio:'#000',inicioIco:'#c6ff00',cifra:'#000',cifraT:'#c6ff00',fuente:'700 10px "Familjen Grotesk"'},
    estrella:'#000', camino:'#000', caminoNo:'#9a9a95',
@@ -309,7 +318,9 @@ function render(T){
   const ops=`<div class="ops"><div class="op"><b>${x.anuncio}</b>${x.anuncioS}</div><div class="op"><b>${x.esperar}</b>${x.esperarS}</div><div class="op"><b>${x.gratis}</b>${x.gratisS}</div><div class="op club"><b>${x.club}</b>${x.clubS}</div></div>`;
   const apariencia=TEMAS.map(O=>`<li><button class="ap" role="radio" aria-checked="${O.id===T.id}" data-tema="${O.id}">
       <span class="vista" style="background:${O.v['--pantalla']};--pip:${O.L.pip}"><span style="font-family:${O.fd.replace(/"/g,"'")};font-weight:${O.v['--wd']||700};color:${O.v['--texto']}">Aa</span><i style="background:${O.L.ficha};box-shadow:0 0 0 1px ${O.L.borde}"></i><b style="background:${O.v['--prim']}"></b></span>
-      <span class="nom">${O.nombre}${O.defecto?'<small>Por defecto</small>':''}</span></button></li>`).join('');
+      ${O.defecto?'':'<span class="club">Club</span>'}<span class="nom">${O.nombre}${O.defecto?'<small>Gratis · por defecto</small>':''}</span></button></li>`).join('');
+  const prueba=T.defecto?'':`<div class="prueba" role="region" aria-label="Tema del Club en prueba"><div class="titulo">${x.pruebaT} «${T.nombre}»</div><p>${x.pruebaS}</p><p class="precio">4,99 €/mes o 29,99 €/año</p>
+      <div class="dos"><a class="b p" href="../tablero/index.html#h-mas">${x.unirme}</a><button class="b s" data-tema-vuelve>${x.ahoraNo}</button></div></div>`;
   return `
   <section class="fila" aria-label="Pantallas principales">
     <figure class="fig"><div class="movil"><div class="pant">${hud('3/5 · 12:40',`<span class="chip">${est()}41</span>`)}${inicio(false)}</div></div><figcaption>Inicio</figcaption></figure>
@@ -335,10 +346,10 @@ function render(T){
     <figure class="fig g"><div class="movil g"><div class="pant">
       <div class="hud"><button class="b s redondo" style="width:38px;height:38px" aria-label="Volver a Ajustes">${ICO.atras}</button><span class="hueco" style="text-align:center"><span class="titulo" style="font-size:1.2rem">${x.apTitulo}</span></span><span style="width:38px"></span></div>
       <p class="ap-nota">${x.apNota}</p>
-      <ul class="ap-lista" role="radiogroup" aria-label="Tema del juego">${apariencia}</ul>
-    </div></div><figcaption>Ajustes › Apariencia: aquí elige el jugador</figcaption></figure>
+      <ul class="ap-lista" role="radiogroup" aria-label="Tema del juego">${apariencia}</ul>${prueba}
+    </div></div><figcaption>${T.defecto?'Ajustes › Apariencia: aquí elige el jugador':'Ajustes › Apariencia: probando un tema del Club'}</figcaption></figure>
     <div class="ficha">
-      <h2 class="titulo">${T.nombre}</h2>${T.defecto?'<span class="pordefecto">Tema por defecto</span>':''}
+      <h2 class="titulo">${T.nombre}</h2>${T.defecto?'<span class="pordefecto">Tema por defecto · gratis</span>':'<span class="club-nota">Incluido en el Club Cadencia · se puede probar gratis</span>'}
       <p>${T.desc}</p>
       <div class="colores" role="img" aria-label="Paleta: ${T.paleta.map(p=>p[0]).join(', ')}">${T.paleta.map(([n,h])=>`<span style="background:${h}" title="${n} ${h}"></span>`).join('')}</div>
       <dl><dt>Colores</dt><dd>${T.paleta.map(([n,h])=>`${n} ${h}`).join(' · ')}</dd><dt>Letras</dt><dd>${T.letras}. SIL OFL.</dd><dt>Tono</dt><dd>${T.tono.map(s=>`«${s}»`).join(' · ')}</dd></dl>
@@ -415,6 +426,7 @@ function aplicar(id, foco){
     if(!m.reduce){let hecho=false;observador=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!hecho){hecho=true;setTimeout(m.tumbar,450);}}),{threshold:.5});observador.observe(sec.querySelector('[data-lienzo]'));}
   });
   raiz.querySelectorAll('.ap').forEach(btn=>btn.addEventListener('click',()=>aplicar(btn.dataset.tema,'ap')));
+  const vuelve=raiz.querySelector('[data-tema-vuelve]'); if(vuelve) vuelve.addEventListener('click',()=>aplicar('pop','ap'));
   if(foco==='ap'){const a=raiz.querySelector(`.ap[data-tema="${T.id}"]`);if(a)a.focus({preventScroll:true});}
   if(foco==='sel'){const a=selector.querySelector(`[data-tema="${T.id}"]`);if(a)a.focus({preventScroll:true});}
 }

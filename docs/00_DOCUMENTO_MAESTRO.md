@@ -118,8 +118,8 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - **Plan B:** Brote (jardín de autómatas), si el dibujo no funciona en el prototipo.
 - **Monetización (Fase 5, pendiente de aprobación):**
   - **Cuerda**: cada nivel nuevo cuesta 1, los reintentos son gratis; 5 como máximo, 1 cada 30 minutos; +3 por anuncio recompensado (máximo 10 al día). Afecta sobre todo al jugador comprometido.
-  - **Club Cadencia**: 4,99 €/mes o 29,99 €/año; cuerda ilimitada, sin anuncios y extras.
-  - **Sin anuncios**: 7,99 €.
+  - **Club Cadencia**: 4,99 €/mes o 29,99 €/año; cuerda ilimitada, sin anuncios, los 10 temas de aspecto y extras. Es la única forma de quitar los anuncios.
+  - **Packs de fichas**: 1,99–3,99 €. ~~Sin anuncios a 7,99 €~~, eliminado el 17/11/2026.
   - Intersticiales limitados. Sin banners.
 
 ## 6. Arquitectura
@@ -152,6 +152,8 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 6: mundo visual «La Banda del Pueblo» (elegido por el cliente), tablero de estilo jugable, auditoría (5/100) y registro de recursos
 - [x] Fase 6: «La Banda del Pueblo» rechazada por el cliente (17/11/2026)
 - [x] Fase 6: rediseño «Dominó Pop» a partir de 222 pines de Pinterest, tablero jugable rehecho y DESIGN.md
+- [x] Fase 6: selección final de 11 temas seleccionables (Dominó Pop v2 por defecto), página de temas y CATALOGO_TEMAS.pdf
+- [x] Revisión de la Fase 5 (17/11/2026): los 10 temas pasan al Club y se elimina el pago único «Sin anuncios»; modelo recalculado
 - [ ] **Aprobación del rediseño** (Pull Request en GitHub)
 - [ ] Verificar la licencia de godot-iap (MIT o AGPLv3) y la alternativa para iOS
 - [ ] Búsqueda de marca del nombre "Cadencia" (EUIPO, OEPM, tiendas)

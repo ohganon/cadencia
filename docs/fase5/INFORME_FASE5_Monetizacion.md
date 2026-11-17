@@ -1,7 +1,7 @@
 # FASE 5 — Modelo de negocio y monetización de Cadencia
 
 **Fecha:** 16/11/2026
-**Estado:** entregado, **pendiente de aprobación**
+**Estado:** aprobado. **Revisado el 17/11/2026** (sección 10): los temas pasan al Club y se elimina el pago único «Sin anuncios»
 **Coste:** 0 €
 
 **Directriz del cliente:** *"Buscamos monetizar bien el juego"*. El límite de energía debe incentivar el premium.
@@ -23,8 +23,9 @@
 2. **Club Cadencia (suscripción)** [HIPÓTESIS de precio, justificada con los datos de la Fase 2]:
    - **4,99 €/mes o 29,99 €/año**;
    - prueba de 7 días **solo en el plan anual**, con aviso antes del cobro;
-   - incluye: **cuerda ilimitada**, sin anuncios, pistas ilimitadas, archivo de retos diarios, capítulos extra y un estilo de ficha exclusivo cada mes.
-3. **Pagos únicos:** **"Sin anuncios" a 7,99 €** y **packs cosméticos a 1,99–3,99 €**. Todos **en euros**, sin moneda virtual.
+   - incluye: **cuerda ilimitada**, **sin anuncios**, **los 10 temas de aspecto** (Dominó Pop sigue gratis), pistas ilimitadas, archivo de retos diarios, capítulos extra y un estilo de ficha exclusivo cada mes.
+   - **Es la única forma de quitar los anuncios** (revisión del 17/11/2026).
+3. **Pagos únicos:** solo **packs de fichas a 1,99–3,99 €** (estilo de ficha y su sonido). Todos **en euros**, sin moneda virtual. ~~«Sin anuncios» a 7,99 €~~ se elimina en la revisión del 17/11/2026.
 4. **Publicidad:**
    - **AdMob** para el lanzamiento: hay un plugin gratuito y con licencia MIT para Godot 4 (Poing Studios).
    - **AppLovin MAX** se evaluará al llegar a unos 10.000 jugadores diarios; también tiene **plugin oficial de Godot con licencia MIT**.
@@ -126,7 +127,7 @@ Fuentes:
 
 | Opción | Ventaja | Inconveniente | Decisión |
 |---|---|---|---|
-| A. Solo "sin anuncios" (pago único) | Sencilla y bien aceptada | Ingresos únicos; no cubre el contenido continuo | ✅ **Se incluye** como alternativa barata |
+| A. Solo "sin anuncios" (pago único) | Sencilla y bien aceptada | Ingresos únicos; no cubre el contenido continuo; resta un motivo para suscribirse | ❌ **Eliminada el 17/11/2026** (sección 10). Se puede añadir más adelante si los datos lo piden |
 | B. Suscripción "Club" | Ingresos recurrentes, encaja con el contenido infinito (Caída del Día, eventos, capítulos extra) | Exige aportar valor continuo (directriz 3.1.2 de Apple) | ✅ **Producto principal** |
 | C. Pase de temporada | Muy extendido (20 de 50 juegos) | Más complejo; riesgo de presión por tiempo | ⏸ **Más adelante**: con camino gratuito y vendido en euros |
 | D. Suscripción semanal | Convierte bien (Meowdoku, Magic Tiles) | 3,99 €/semana equivale a unos 207 €/año. Mal visto en cuanto a transparencia y compras de las que el jugador se arrepiente | ❌ No se ofrece |
@@ -140,6 +141,7 @@ Fuentes:
 | **Pistas ilimitadas** | No: las pistas gratis siguen disponibles (3 al día más las de anuncio) |
 | **Archivo completo de la Caída del Día** | No: es contenido extra, no la progresión principal |
 | **Capítulos extra "Taller del Maestro"** (fuera de la historia principal) | No: contenido adicional |
+| **Los 10 temas de aspecto** (Mesa de juego, Calma premium, Gráfico y limpio, Cine negro, Tinta japonesa, Bauhaus, Brutalista, Risografía, Nocturno, Nórdico). Dominó Pop es gratis para todos | No: solo cambian el aspecto |
 | **Un estilo de ficha y un sonido exclusivos cada mes** (cosmético) | No |
 | **Herramientas ampliadas del Taller** (tableros más grandes, más piezas) | No |
 
@@ -164,8 +166,8 @@ Fuentes:
 | **Club mensual** | **4,99 €** | Por debajo de la mediana del rango (2,99–9,99 €). En España el precio importa, y por encima de NYT Games hay más valor (cuerda ilimitada) |
 | **Club anual** | **29,99 €** (equivale a 2,50 €/mes, un 50 % menos) | Dentro del rango de 22,99–49,99 €. Una buena oferta anual mejora la retención del suscriptor |
 | **Prueba** | **7 días, solo en el plan anual** | Según RevenueCat, las pruebas más largas convierten mejor (42,5 % con 17–32 días frente a 25,5 % con 4 días o menos, en todas las categorías). **7 días es un equilibrio** para un juego. **Aviso dentro de la app 24 horas antes del cobro** (DFA: nada de "trampas de suscripción") |
-| **Sin anuncios** (pago único) | **7,99 €** | En la media del mercado (6,99–9,99 €). Quita intersticiales, pero **no** da cuerda ilimitada: así protege el valor del Club |
-| **Packs cosméticos** | **1,99–3,99 €** | Estilos de ficha y sonidos. Precio en euros, sin aleatoriedad |
+| ~~**Sin anuncios** (pago único)~~ | ~~7,99 €~~ | **Eliminado el 17/11/2026.** Quitar los anuncios pasa a ser solo del Club (sección 10) |
+| **Packs de fichas** | **1,99–3,99 €** | Estilos de ficha con su sonido al caer, válidos en cualquier tema. Precio en euros, sin aleatoriedad. Catálogo inicial propuesto en la sección 8 |
 
 Fuente de las pruebas: [RevenueCat, State of Subscription Apps 2026](https://www.revenuecat.com/state-of-subscription-apps-2026/). Sus datos de juegos son de pago; uso la cifra general como referencia.
 
@@ -193,6 +195,7 @@ Fuente de las pruebas: [RevenueCat, State of Subscription Apps 2026](https://www
 |---|---|---|
 | **Cuando se acaba la cuerda** | Pantalla con **4 opciones del mismo tamaño**: anuncio (+3), esperar (con tiempo visible), jugar gratis a otro modo, Club | **Rechazar no se presenta como un error** (Anexo I de la DFA). Nada de "¡solo hoy!" (LR-06) |
 | **Ajustes y tienda** | Página informativa | Precio, renovación y cancelación **muy visibles** |
+| **Ajustes › Apariencia** (añadido el 17/11/2026) | Los temas del Club llevan la etiqueta «Club». El jugador sin Club **puede probar** cualquier tema sin pagar; mientras lo prueba, un aviso le ofrece el Club con «Ahora no» igual de visible | Probar no tiene límite de tiempo falso ni cuenta atrás (LR-06). Si se deja el Club, el juego vuelve a Dominó Pop sin perder nada más, y se avisa en la página del Club |
 | **Tras completar un "Gran Tramo"** | Mención discreta del Club, una vez por capítulo | Nunca a pantalla completa ni de forma insistente (Anexo I: "insistir") |
 | **Nunca** | Durante una partida, tras un fallo, o con mensajes del tipo "¡Compra ya!" | LR-07, LR-11 |
 
@@ -246,20 +249,22 @@ Script reproducible: [modelo_financiero.py](modelo_financiero.py). Resultados: [
 
 ### 5.2 Resultados (€ al mes)
 
+Recalculado el 17/11/2026 sin el pago único «Sin anuncios» (sección 10).
+
 | Escenario | DAU | MAU | Suscriptores | Impresiones/mes | Anuncios €/mes | Suscripción €/mes | Compras €/mes | **Ingresos €/mes** | Costes €/mes | **Beneficio €/mes** | ARPDAU € | ARPPU €/mes | LTV 180 d € | % anuncios |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Conservador | 1.000 | 6.667 | 33 | 88.200 | 370 | 95 | 61 | **526** | 139 | **387** | 0,018 | 2,91 | 0,09 | 70,4 |
-| Conservador | 10.000 | 66.667 | 333 | 882.000 | 3.704 | 947 | 607 | **5.259** | 359 | **4.900** | 0,018 | 2,91 | 0,09 | 70,4 |
-| Conservador | 50.000 | 333.333 | 1.667 | 4.410.000 | 18.522 | 4.736 | 3.036 | **26.294** | 409 | **25.885** | 0,018 | 2,91 | 0,09 | 70,4 |
-| Conservador | 100.000 | 666.667 | 3.333 | 8.820.000 | 37.044 | 9.473 | 6.071 | **52.588** | 509 | **52.079** | 0,018 | 2,91 | 0,09 | 70,4 |
-| Intermedio | 1.000 | 5.000 | 50 | 130.950 | 825 | 142 | 91 | **1.058** | 139 | **919** | 0,035 | 2,91 | 0,33 | 78,0 |
-| Intermedio | 10.000 | 50.000 | 500 | 1.309.500 | 8.250 | 1.421 | 911 | **10.581** | 359 | **10.222** | 0,035 | 2,91 | 0,33 | 78,0 |
-| Intermedio | 50.000 | 250.000 | 2.500 | 6.547.500 | 41.249 | 7.105 | 4.554 | **52.907** | 409 | **52.498** | 0,035 | 2,91 | 0,33 | 78,0 |
-| Intermedio | 100.000 | 500.000 | 5.000 | 13.095.000 | 82.498 | 14.209 | 9.107 | **105.815** | 509 | **105.306** | 0,035 | 2,91 | 0,33 | 78,0 |
-| Optimista | 1.000 | 4.000 | 80 | 171.360 | 1.439 | 227 | 121 | **1.788** | 139 | **1.649** | 0,060 | 2,91 | 0,90 | 80,5 |
-| Optimista | 10.000 | 40.000 | 800 | 1.713.600 | 14.394 | 2.273 | 1.214 | **17.882** | 359 | **17.523** | 0,060 | 2,91 | 0,90 | 80,5 |
-| Optimista | 50.000 | 200.000 | 4.000 | 8.568.000 | 71.971 | 11.367 | 6.071 | **89.410** | 409 | **89.001** | 0,060 | 2,91 | 0,90 | 80,5 |
-| Optimista | 100.000 | 400.000 | 8.000 | 17.136.000 | 143.942 | 22.735 | 12.143 | **178.820** | 509 | **178.311** | 0,060 | 2,91 | 0,90 | 80,5 |
+| Conservador | 1.000 | 6.667 | 33 | 88.200 | 370 | 95 | 25 | **490** | 139 | **351** | 0,016 | 2,57 | 0,09 | 75,5 |
+| Conservador | 10.000 | 66.667 | 333 | 882.000 | 3.704 | 947 | 253 | **4.905** | 359 | **4.545** | 0,016 | 2,57 | 0,09 | 75,5 |
+| Conservador | 50.000 | 333.333 | 1.667 | 4.410.000 | 18.522 | 4.736 | 1.265 | **24.523** | 409 | **24.114** | 0,016 | 2,57 | 0,09 | 75,5 |
+| Conservador | 100.000 | 666.667 | 3.333 | 8.820.000 | 37.044 | 9.473 | 2.530 | **49.047** | 509 | **48.537** | 0,016 | 2,57 | 0,09 | 75,5 |
+| Intermedio | 1.000 | 5.000 | 50 | 130.950 | 825 | 142 | 38 | **1.005** | 139 | **866** | 0,034 | 2,57 | 0,31 | 82,1 |
+| Intermedio | 10.000 | 50.000 | 500 | 1.309.500 | 8.250 | 1.421 | 379 | **10.050** | 359 | **9.691** | 0,034 | 2,57 | 0,31 | 82,1 |
+| Intermedio | 50.000 | 250.000 | 2.500 | 6.547.500 | 41.249 | 7.105 | 1.897 | **50.251** | 409 | **49.842** | 0,034 | 2,57 | 0,31 | 82,1 |
+| Intermedio | 100.000 | 500.000 | 5.000 | 13.095.000 | 82.498 | 14.209 | 3.795 | **100.502** | 509 | **99.993** | 0,034 | 2,57 | 0,31 | 82,1 |
+| Optimista | 1.000 | 4.000 | 80 | 171.360 | 1.439 | 227 | 46 | **1.712** | 139 | **1.573** | 0,057 | 2,62 | 0,86 | 84,1 |
+| Optimista | 10.000 | 40.000 | 800 | 1.713.600 | 14.394 | 2.273 | 455 | **17.123** | 359 | **16.764** | 0,057 | 2,62 | 0,86 | 84,1 |
+| Optimista | 50.000 | 200.000 | 4.000 | 8.568.000 | 71.971 | 11.367 | 2.277 | **85.615** | 409 | **85.206** | 0,057 | 2,62 | 0,86 | 84,1 |
+| Optimista | 100.000 | 400.000 | 8.000 | 17.136.000 | 143.942 | 22.735 | 4.554 | **171.231** | 509 | **170.722** | 0,057 | 2,62 | 0,86 | 84,1 |
 
 ### 5.3 Cómo interpretarlo
 
@@ -282,7 +287,7 @@ Script reproducible: [modelo_financiero.py](modelo_financiero.py). Resultados: [
 ## 6. Decisiones tomadas
 
 1. **Energía "Cuerda"**: 5 como máximo, 1 cada 30 minutos, solo para niveles nuevos de la campaña, con +3 por anuncio (máximo 10 al día), sin consumo en los primeros 15 niveles. **Se calibrará con pruebas A/B dentro de un rango ético**, igual para todos.
-2. **Club Cadencia** a 4,99 €/mes o 29,99 €/año, con prueba de 7 días solo en el anual. **Sin anuncios** a 7,99 €. Cosméticos a 1,99–3,99 €.
+2. **Club Cadencia** a 4,99 €/mes o 29,99 €/año, con prueba de 7 días solo en el anual. Incluye los 10 temas y es la única forma de quitar los anuncios. Packs de fichas a 1,99–3,99 €. ~~Sin anuncios a 7,99 €~~ (eliminado el 17/11/2026).
 3. **AdMob** (plugin MIT de Poing Studios) para la versión 1.0. **AppLovin MAX** (plugin oficial MIT) a partir de unos 10.000 jugadores diarios.
 4. **Sin banners, sin suscripción semanal y sin moneda virtual de pago.**
 5. **Crecimiento 100 % orgánico** al principio. La publicidad de pago solo si el valor de vida real supera al coste de adquisición.
@@ -311,6 +316,69 @@ Script reproducible: [modelo_financiero.py](modelo_financiero.py). Resultados: [
 - Paleta, tipografías (con licencia OFL), estilo del juguete de madera, personajes (Tilde, Pío), escenarios (barrios), interfaz, animaciones (sobre todo **la caída**), partículas, sonido (los clics de las fichas y las campanas) y música (con licencias compatibles).
 - Usaremos las skills **impeccable** y **ai-slop-design-auditor**, comprobando antes sus instrucciones.
 - **Registro de recursos y licencias.**
+
+---
+
+## 10. Revisión del 17/11/2026: temas en el Club y sin «Sin anuncios»
+
+**Decisiones del cliente:**
+1. **Los 10 temas de aspecto van en el Club.** Dominó Pop, el tema por defecto, sigue siendo gratis para todos.
+2. **Se elimina el pago único «Sin anuncios»** (7,99 €). El Club es la única forma de quitar los anuncios.
+
+### 10.1 La tienda queda así
+
+| Producto | Precio | Incluye |
+|---|---|---|
+| **Club Cadencia mensual** | 4,99 € | Cuerda ilimitada, sin anuncios, los 10 temas, pistas ilimitadas, archivo de la Caída del Día, capítulos extra, un estilo de ficha al mes y Taller ampliado |
+| **Club Cadencia anual** | 29,99 € (2,50 €/mes) | Lo mismo. Prueba de 7 días solo en este plan, con aviso 24 h antes del cobro |
+| **Packs de fichas** | 1,99–3,99 € | Estilos de ficha con su sonido, comprados una vez y para siempre |
+
+**Catálogo inicial de packs propuesto** [HIPÓTESIS, se decidirá con el arte final]:
+
+| Pack | Precio |
+|---|---|
+| Maderas (haya, nogal, roble) | 2,99 € |
+| Cristal y cerámica | 2,99 € |
+| Dulces (chocolate, galleta) | 1,99 € |
+| Neón | 1,99 € |
+
+Funcionan con cualquier tema. Sin sobres sorpresa ni moneda virtual (LR-04).
+
+### 10.2 Efecto en el modelo financiero
+
+**Cambio en el modelo:** las compras únicas pasan a ser solo packs de fichas (ticket medio de 2,5 € y menos compradores). **La conversión al Club se deja igual**, sin sumar el efecto de los temas. Es la lectura prudente.
+
+| Escenario (10.000 jugadores diarios) | Ingresos antes | Ingresos ahora | Diferencia | Suscriptores que faltan para compensar |
+|---|---|---|---|---|
+| Conservador | 5.259 € | 4.905 € | −6,7 % | +125 (+37 %) |
+| Intermedio | 10.581 € | 10.050 € | −5,0 % | +187 (+37 %) |
+| Optimista | 17.882 € | 17.123 € | −4,2 % | +267 (+33 %) |
+
+**Corrección a lo que se dijo en la conversación:** el ahorro de anuncios por sí solo **no compensa** la venta perdida.
+- Un comprador de «Sin anuncios» dejaba unos **6,06 € netos** de una vez.
+- Si sigue jugando con anuncios, sus intersticiales recuperan entre 0,014 y 0,058 € al día.
+- Para igualar los 6,06 € tiene que seguir jugando **entre 105 y 421 días**, según el escenario.
+
+**La decisión sale a cuenta si el Club gana suscriptores:**
+- Basta con que **alrededor del 27 %** de quienes habrían pagado «Sin anuncios» elijan el Club anual en su lugar.
+- A escala global, el Club tiene que crecer **un tercio** (+33–37 %).
+
+Es plausible, porque ahora el Club concentra tres razones fuertes para pagar: cuerda ilimitada, ningún anuncio y los 10 temas. **Pero es una hipótesis, no un dato.**
+
+**Cómo se valida (analítica de la Fase 9):**
+- conversión al Club;
+- quién prueba temas y cuántos se suscriben después;
+- abandono de los jugadores que ven muchos anuncios.
+
+**Si tras el lanzamiento la conversión no sube**, se puede añadir «Sin anuncios» como pago único. Añadirlo es fácil; quitarlo una vez publicado molesta a los jugadores.
+
+### 10.3 Nuevo punto de venta: Ajustes › Apariencia
+
+Está diseñado en [docs/fase6/temas/index.html](../fase6/temas/index.html):
+- Los temas del Club llevan la etiqueta «Club».
+- **Al tocar uno, el jugador lo prueba en todo el juego sin pagar.**
+- Mientras lo prueba, un aviso abajo le recuerda que el tema es del Club, con el precio visible y dos botones del mismo tamaño: «Unirme al Club» y «Ahora no». «Ahora no» devuelve el juego a Dominó Pop.
+- Sin cuentas atrás, sin «¡solo hoy!» y sin insistir (Anexo I de la DFA, LR-06 y LR-07).
 
 ---
 
