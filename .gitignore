@@ -8,10 +8,9 @@ __pycache__/
 *.pyc
 .venv/
 
-# Godot (para cuando empiece el desarrollo)
+# Godot. Como recomienda Godot 4: se versionan export_presets.cfg y los *.import.
+# Las contraseñas de exportación van en .godot/export_credentials.cfg, que no se sube.
 .godot/
-*.import
-export_presets.cfg
 android/build/
 
 # Secretos: NUNCA se suben

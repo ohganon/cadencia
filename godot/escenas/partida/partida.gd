@@ -2,7 +2,8 @@
 ##
 ## La interfaz se construye en código para que se pueda revisar como texto. Estilo Dominó Pop
 ## (DESIGN.md): fondo azul piscina, botón principal verde, el resto marfil, ventanas marfil sobre
-## un velo azul. Fuentes: de momento la de Godot; Lilita One y Nunito (SIL OFL) están pendientes.
+## un velo azul. Fuentes: Lilita One para títulos y botones, Nunito para el resto (las dos SIL OFL;
+## las licencias están junto a los archivos, en res://fuentes/).
 ##
 ## Modo demostración, para capturas automáticas (ver godot/README.md):
 ##   Godot_v4.7.2-stable_win64_console.exe --path godot --resolution 540x960 -- --demo=7 --captura=C:/ruta/prefijo [--incompleto | --recto]
@@ -74,6 +75,8 @@ var _pista_paso := 0
 var _fallos_nivel := 0          # fallos seguidos en este nivel (a los 5 se destaca la cámara lenta)
 var _abierto_en := 0            # ms en que se abrió el nivel
 var _sonidos := {}              # nombre -> AudioStreamPlayer
+var fuente_titulos: Font        # Lilita One
+var fuente_texto: Font          # Nunito 700
 
 
 func _ready() -> void:
@@ -334,7 +337,25 @@ func _cerrar_ventanas() -> void:
 
 # ---------------------------------------------------------------- construcción de la interfaz
 
+func _fuentes() -> void:
+	var nunito: FontFile = load("res://fuentes/Nunito-wght.ttf")
+	var lilita: FontFile = load("res://fuentes/LilitaOne-Regular.ttf")
+	var texto := FontVariation.new()
+	texto.base_font = nunito
+	var ts := TextServerManager.get_primary_interface()
+	texto.variation_opentype = {ts.name_to_tag("wght"): 700}
+	fuente_texto = texto
+	var titulos := FontVariation.new()
+	titulos.base_font = lilita
+	titulos.fallbacks = [texto]          # signos que Lilita no tiene
+	fuente_titulos = titulos
+	var tema := Theme.new()
+	tema.default_font = fuente_texto
+	theme = tema
+
+
 func _construir() -> void:
+	_fuentes()
 	var fondo := ColorRect.new()
 	fondo.color = AZUL
 	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -358,11 +379,11 @@ func _construir() -> void:
 	var b_niveles := _boton("Niveles", false)
 	b_niveles.pressed.connect(_abrir_lista)
 	arriba.add_child(b_niveles)
-	titulo = _etiqueta(30, Color.WHITE)
+	titulo = _etiqueta(30, Color.WHITE, true)
 	titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	titulo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	arriba.add_child(titulo)
-	estrellas_hud = _etiqueta(26, Color.WHITE)
+	estrellas_hud = _etiqueta(26, Color.WHITE, true)
 	arriba.add_child(estrellas_hud)
 
 	ayuda = _etiqueta(22, TEXTO_CLARO)
@@ -421,7 +442,7 @@ func _construir() -> void:
 	var caja := VBoxContainer.new()
 	caja.add_theme_constant_override("separation", 14)
 	ventana.add_child(caja)
-	ventana_titulo = _etiqueta(40, TINTA)
+	ventana_titulo = _etiqueta(42, TINTA, true)
 	ventana_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ventana_estrellas = _etiqueta(48, AMARILLO.darkened(0.15))
 	ventana_estrellas.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -445,7 +466,7 @@ func _construir() -> void:
 	var caja_lista := VBoxContainer.new()
 	caja_lista.add_theme_constant_override("separation", 16)
 	lista_niveles.add_child(caja_lista)
-	var t := _etiqueta(36, TINTA)
+	var t := _etiqueta(36, TINTA, true)
 	t.text = "La Plaza"
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	caja_lista.add_child(t)
@@ -498,8 +519,10 @@ func _ventana() -> PanelContainer:
 	return v
 
 
-func _etiqueta(tam: int, color: Color) -> Label:
+func _etiqueta(tam: int, color: Color, titular := false) -> Label:
 	var l := Label.new()
+	if titular:
+		l.add_theme_font_override("font", fuente_titulos)
 	l.add_theme_font_size_override("font_size", tam)
 	l.add_theme_color_override("font_color", color)
 	return l
@@ -534,6 +557,7 @@ func _estilo_boton(b: Button, color: Color, labio: Color, tam: int) -> void:
 			s.border_width_bottom = 0
 		b.add_theme_stylebox_override(estado, s)
 	b.add_theme_font_size_override("font_size", tam)
+	b.add_theme_font_override("font", fuente_titulos)
 	for clave in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(clave, TINTA)
 	b.add_theme_color_override("font_disabled_color", Color("#43557f"))
