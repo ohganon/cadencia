@@ -124,7 +124,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 
 ## 6. Arquitectura
 
-*No definida. Se decide en la Fase 8.*
+**Borrador adelantado (17/11/2026), pendiente de aprobar la Fase 7:** [fase8/ARQUITECTURA_BORRADOR.md](fase8/ARQUITECTURA_BORRADOR.md). La simulación de referencia en Python con 22 pruebas está en [prototipos/simulacion/](../prototipos/simulacion/).
 
 ## 7. Tareas
 
