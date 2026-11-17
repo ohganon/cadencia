@@ -5,7 +5,7 @@
 ## Histórico: «La Banda del Pueblo»
 
 **Fecha:** 16/11/2026
-**Estado:** entregada a falta de tus decisiones sobre la auditoría (sección 9)
+**Estado:** **aprobada el 17/11/2026**. La versión vigente es la del rediseño ([rediseno/INFORME_REDISENO.md](rediseno/INFORME_REDISENO.md))
 **Coste:** 0 €
 
 **Entregables**

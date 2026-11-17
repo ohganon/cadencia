@@ -59,9 +59,9 @@ docs/
 | 3. Psicología, retención y monetización | ✅ |
 | 4. Concepto original (Dingfall) | ✅ |
 | 5. Modelo de negocio | ✅ |
-| 6. Dirección de arte | 🔄 Rediseño «Dominó Pop» pendiente de aprobación (DESIGN.md incluido) |
-| 7. Viralidad y marketing | ⏸ |
-| 8. Arquitectura y desarrollo en Godot | ⏸ |
+| 6. Dirección de arte | ✅ |
+| 7. Viralidad y marketing | ✅ |
+| 8. Arquitectura y desarrollo en Godot | 🔄 En curso |
 | 9. Pruebas y optimización | ⏸ |
 
 ## Herramientas reproducibles

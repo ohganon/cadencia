@@ -1,7 +1,7 @@
 # FASE 7: Viralidad y marketing
 
 **Fecha:** 17/11/2026
-**Estado:** entregado, **pendiente de aprobación**
+**Estado:** **aprobado por el cliente el 17/11/2026**
 **Coste:** 0 €
 
 **Directriz del cliente:** adquisición orgánica, sin campañas de pago, y nada que pueda causar problemas legales.

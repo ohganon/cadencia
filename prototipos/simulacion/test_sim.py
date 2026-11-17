@@ -35,7 +35,7 @@ class Reparto(unittest.TestCase):
     def test_numero_de_fichas_solo_depende_de_la_longitud(self):
         # Lección del 16/11/2026: el mismo recorrido con distinta densidad de puntos da las mismas fichas
         for n in (2, 5, 37, 200):
-            self.assertEqual(len(repartir(linea((0, 0), (100, 0), n))), round(100 / sim.PASO) + 1)
+            self.assertEqual(len(repartir(linea((0, 0), (100, 0), n))), math.floor(100 / sim.PASO + 0.5) + 1)
 
     def test_fichas_equidistantes(self):
         f = repartir([(0, 0), (30, 0), (30, 40)])            # longitud 70
@@ -139,6 +139,15 @@ class Numeradas(unittest.TestCase):
         self.assertIn("orden", r["motivos"])
 
 
+class Portabilidad(unittest.TestCase):
+    def test_coseno_del_giro_maximo(self):
+        self.assertAlmostEqual(sim.COS_GIRO_MAXIMO, math.cos(sim.GIRO_MAXIMO), places=15)
+
+    def test_redondeo_de_medios_hacia_arriba(self):
+        # 12,5 unidades = 2,5 pasos: Python round() daría 2 (al par); la regla común da 3
+        self.assertEqual(len(repartir(linea((0, 0), (12.5, 0)))), 4)
+
+
 class Determinismo(unittest.TestCase):
     def test_mismo_trazo_mismo_resultado(self):
         a = simular(nivel_doble(), arbol_simetrico())
@@ -184,6 +193,38 @@ class RetoDiarioYTaller(unittest.TestCase):
         bomba = "DING1-" + base64.urlsafe_b64encode(zlib.compress(b" " * 5_000_000, 9)).decode().rstrip("=")
         with self.assertRaises(ValueError):
             sim.nivel_de_codigo(bomba)
+
+
+class NivelesEntrega1(unittest.TestCase):
+    """Los 10 niveles de la entrega 1 y los casos compartidos con la versión de Godot."""
+
+    def test_json_al_dia(self):
+        import niveles_entrega1 as gen
+        archivos = gen.exportar(gen.niveles())
+        for destino in gen.DESTINOS:
+            for nombre, contenido in archivos.items():
+                with self.subTest(str(destino / nombre)):
+                    self.assertEqual((destino / nombre).read_text(encoding="utf-8"), contenido,
+                                     "ejecuta: python -X utf8 niveles_entrega1.py")
+
+    def test_niveles_validos(self):
+        import niveles_entrega1 as gen
+        lista = gen.niveles()
+        self.assertEqual([n["id"] for n in lista], list(range(1, 11)))
+        self.assertEqual(gen.validar(lista), [])
+
+    def test_casos_compartidos(self):
+        import json
+        import niveles_entrega1 as gen
+        datos = json.loads((gen.DATOS / "casos_compartidos.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(datos["casos"]), 20 + len(gen.casos_reglas()))   # 10 soluciones, 8 intentos, 2 de borde y las reglas
+        for caso in datos["casos"]:
+            with self.subTest(caso["nombre"]):
+                n = sim.nivel_de_dict(caso["nivel"])
+                tramos = [Tramo([tuple(p) for p in t["puntos"]], t["padre"], t["desde"]) for t in caso["tramos"]]
+                # JSON convierte las tuplas en listas: se compara en la misma forma
+                obtenido = json.loads(json.dumps(simular(n, tramos)))
+                self.assertEqual(obtenido, caso["esperado"])
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 # DOCUMENTO MAESTRO — Proyecto de videojuego móvil · Dingfall
 
 **Última actualización:** 17/11/2026
-**Fase actual:** Fases 1–5 **aprobadas** (Fase 5 revisada el 17/11/2026). Fase 6: selección final de 11 temas, pendiente de aprobar en el Pull Request. **Fase 7 (marketing) entregada el 17/11/2026, pendiente de aprobación**
+**Fase actual:** Fases 1–7 **aprobadas** (6 y 7 el 17/11/2026). **Fase 8 (arquitectura y desarrollo) en curso.**
 
 > **Requisito transversal del cliente (16/11/2026):** mantener a los usuarios enganchados **sin asumir riesgos legales ni de otro tipo**. Es de obligado cumplimiento: [legal/MARCO_CUMPLIMIENTO_LEGAL.md](legal/MARCO_CUMPLIMIENTO_LEGAL.md) (líneas rojas LR-01 a LR-15).
 
@@ -59,9 +59,9 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 | 3. Psicología, retención y monetización | ✅ Aprobada (16/11/2026) | [fase3/INFORME_FASE3_Biblioteca_Mecanismos.md](fase3/INFORME_FASE3_Biblioteca_Mecanismos.md) |
 | 4. Concepto original | ✅ Aprobada (16/11/2026): Cadencia, hoy Dingfall | [fase4/INFORME_FASE4_Concepto.md](fase4/INFORME_FASE4_Concepto.md) |
 | 5. Modelo de negocio | ✅ Aprobada; revisada el 17/11/2026 (temas en el Club, sin «Sin anuncios») | [fase5/INFORME_FASE5_Monetizacion.md](fase5/INFORME_FASE5_Monetizacion.md) |
-| 6. Dirección de arte | 🔄 11 temas seleccionables, Dominó Pop v2 por defecto (17/11/2026). Pendiente de aprobar el Pull Request | [fase6/rediseno/INFORME_REDISENO.md](fase6/rediseno/INFORME_REDISENO.md) · [fase6/temas/index.html](fase6/temas/index.html) · [DESIGN.md](../DESIGN.md) |
-| 7. Viralidad y marketing | ✅ Entregada (17/11/2026), esperando aprobación | [fase7/INFORME_FASE7_Marketing.md](fase7/INFORME_FASE7_Marketing.md) |
-| 8. Arquitectura y desarrollo | ⏸ Pendiente | — |
+| 6. Dirección de arte | ✅ Aprobada (17/11/2026): 11 temas seleccionables, Dominó Pop v2 por defecto | [fase6/rediseno/INFORME_REDISENO.md](fase6/rediseno/INFORME_REDISENO.md) · [fase6/temas/index.html](fase6/temas/index.html) · [DESIGN.md](../DESIGN.md) |
+| 7. Viralidad y marketing | ✅ Aprobada (17/11/2026) | [fase7/INFORME_FASE7_Marketing.md](fase7/INFORME_FASE7_Marketing.md) |
+| 8. Arquitectura y desarrollo | 🔄 En curso desde el 17/11/2026 | [fase8/ARQUITECTURA_BORRADOR.md](fase8/ARQUITECTURA_BORRADOR.md) |
 | 9. Pruebas y optimización | ⏸ Pendiente | — |
 
 ## 4. Hallazgos clave acumulados
@@ -124,7 +124,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 
 ## 6. Arquitectura
 
-**Borrador adelantado (17/11/2026), pendiente de aprobar la Fase 7:** [fase8/ARQUITECTURA_BORRADOR.md](fase8/ARQUITECTURA_BORRADOR.md). La simulación de referencia en Python con 22 pruebas está en [prototipos/simulacion/](../prototipos/simulacion/).
+**Arquitectura de trabajo (Fase 8 en curso desde el 17/11/2026):** [fase8/ARQUITECTURA_BORRADOR.md](fase8/ARQUITECTURA_BORRADOR.md). La simulación de referencia en Python con 22 pruebas está en [prototipos/simulacion/](../prototipos/simulacion/).
 
 ## 7. Tareas
 
@@ -154,14 +154,18 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 6: rediseño «Dominó Pop» a partir de 222 pines de Pinterest, tablero jugable rehecho y DESIGN.md
 - [x] Fase 6: selección final de 11 temas seleccionables (Dominó Pop v2 por defecto), página de temas y CATALOGO_TEMAS.pdf
 - [x] Revisión de la Fase 5 (17/11/2026): los 10 temas pasan al Club y se elimina el pago único «Sin anuncios»; modelo recalculado
-- [ ] **Aprobación del rediseño** (Pull Request en GitHub)
+- [x] **Aprobación del rediseño y de la Fase 6** (17/11/2026). Falta fusionar el Pull Request #1
 - [x] Licencia de godot-iap verificada: MIT (repositorio hyodotdev/openiap; cubre iOS y Android). 17/11/2026
 - [x] Búsqueda de marca de «Cadencia» (17/11/2026): conflicto con una solicitud en la OEPM en la clase 41 y con el juego «Cadence» (2026). Se recomienda «Dingfall» (fase7/NOMBRE_Y_MARCA.md)
 - [x] **Nombre elegido por el cliente (17/11/2026): Dingfall.** La suscripción se llama **Dingclub**. Villa Cadencia se mantiene como lugar del juego
 - [ ] Antes de usar el nombre en público: búsqueda de marcas parecidas, dominio y usuarios en redes
 - [x] Fase 7: nombre y marca, fichas ASO en español e inglés, plan de TikTok, plan de lanzamiento y kit de prensa
 - [ ] **Decisión del cliente:** nombre del equipo y tipo de cuenta de desarrollador
-- [ ] Aprobación de la Fase 7
+- [x] Aprobación de la Fase 7 (17/11/2026)
+- [x] Fase 8: 10 niveles de la entrega 1 con solución verificada y 30 casos compartidos para el port a Godot (17/11/2026)
+- [x] Fase 8: Godot 4.7.2 instalado con permiso del cliente; SHA-512 y firma comprobados (17/11/2026)
+- [x] Fase 8: simulación portada a GDScript; da los mismos resultados que Python en los 30 casos (17/11/2026)
+- [ ] Fase 8: escena de partida y prototipo en el móvil (entrega 1)
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal
 - [ ] Antes de monetizar: consulta fiscal con un gestor (alta, IVA intracomunitario, W-8BEN)

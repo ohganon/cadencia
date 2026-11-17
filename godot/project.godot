@@ -1,0 +1,22 @@
+; Proyecto de Godot de Dingfall (Fase 8, entrega 1).
+; Motor: Godot 4.7.2 (MIT).
+
+config_version=5
+
+[application]
+
+config/name="Dingfall"
+config/description="Puzle de dominó: dibuja la cadena y haz sonar las campanas."
+config/features=PackedStringArray("4.7", "Mobile")
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[rendering]
+
+renderer/rendering_method="mobile"

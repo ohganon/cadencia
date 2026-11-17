@@ -1,7 +1,7 @@
 # Rediseño de la UI: «Dominó Pop»
 
 **Fecha:** 17/11/2026
-**Estado:** pendiente de aprobación del cliente
+**Estado:** **aprobado por el cliente el 17/11/2026**
 
 **Sustituye a:** «La Banda del Pueblo» (rechazada por el cliente). La dirección anterior y su auditoría quedan en el historial de Git, en la rama `main` antes de este cambio.
 

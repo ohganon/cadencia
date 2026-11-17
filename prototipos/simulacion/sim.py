@@ -20,6 +20,12 @@ Reglas (Fase 4, sección 4.3):
   campanas numeradas (deben sonar en orden).
 
 Todo es determinista: sin azar, sin reloj y sin dependencias externas.
+
+Portabilidad (la versión de Godot debe dar resultados idénticos bit a bit):
+- distancias con sqrt(dx*dx + dy*dy), nunca hypot;
+- redondeo con floor(x + 0.5): Python redondea .5 al par y GDScript hacia arriba;
+- curvas comparando cosenos con COS_GIRO_MAXIMO, sin acos;
+- módulo de las puertas siempre positivo (posmod en GDScript).
 """
 from __future__ import annotations
 
@@ -33,6 +39,9 @@ from dataclasses import dataclass, field
 
 PASO = 5.0                 # separación entre fichas, en unidades del tablero
 GIRO_MAXIMO = math.radians(55)   # giro máximo entre dos fichas seguidas antes de romperse
+# cos(55°) escrito como literal: así Python y GDScript comparan contra el mismo número exacto,
+# sin depender de cómo calcula cos/acos la biblioteca matemática de cada plataforma.
+COS_GIRO_MAXIMO = 0.573576436351046
 RADIO_CAMPANA = 6.0        # una ficha a esta distancia o menos activa la campana
 TOLERANCIA_DOBLE = 1       # tics de diferencia permitidos en la campana doble
 
@@ -40,7 +49,8 @@ TOLERANCIA_DOBLE = 1       # tics de diferencia permitidos en la campana doble
 # ---------------------------------------------------------------- geometría
 
 def _dist(a, b):
-    return math.hypot(b[0] - a[0], b[1] - a[1])
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    return math.sqrt(dx * dx + dy * dy)
 
 
 def longitud(puntos):
@@ -50,13 +60,13 @@ def longitud(puntos):
 def repartir(puntos, paso=PASO):
     """Reparte un trazo en fichas equidistantes a lo largo del recorrido.
 
-    Devuelve round(L / paso) + 1 fichas (mínimo 2 si hay longitud), con la primera en el
+    Devuelve floor(L / paso + 0.5) + 1 fichas (mínimo 2 si hay longitud), con la primera en el
     inicio y la última en el final del trazo. No depende de cuántos puntos tenga el trazo.
     """
     if len(puntos) < 2 or longitud(puntos) == 0:
         return [tuple(puntos[0])] if puntos else []
     total = longitud(puntos)
-    n = max(2, round(total / paso) + 1)
+    n = max(2, math.floor(total / paso + 0.5) + 1)
     fichas, s, acum = [], 1, 0.0
     for k in range(n):
         objetivo = total * k / (n - 1)
@@ -87,14 +97,15 @@ def _cruza(p1, p2, q1, q2):
            (o3 == 0 and sobre(q1, q2, p1)) or (o4 == 0 and sobre(q1, q2, p2))
 
 
-def _giro(a, b, c):
-    """Ángulo de giro (radianes) entre los vectores a→b y b→c."""
-    v1, v2 = (b[0] - a[0], b[1] - a[1]), (c[0] - b[0], c[1] - b[1])
-    n1, n2 = math.hypot(*v1), math.hypot(*v2)
+def _curva_cerrada(a, b, c):
+    """¿El giro entre a→b y b→c supera GIRO_MAXIMO? Se compara el coseno para no usar acos."""
+    v1x, v1y = b[0] - a[0], b[1] - a[1]
+    v2x, v2y = c[0] - b[0], c[1] - b[1]
+    n1 = math.sqrt(v1x * v1x + v1y * v1y)
+    n2 = math.sqrt(v2x * v2x + v2y * v2y)
     if n1 == 0 or n2 == 0:
-        return 0.0
-    cos = max(-1.0, min(1.0, (v1[0] * v2[0] + v1[1] * v2[1]) / (n1 * n2)))
-    return math.acos(cos)
+        return False
+    return (v1x * v2x + v1y * v2y) / (n1 * n2) < COS_GIRO_MAXIMO
 
 
 # ---------------------------------------------------------------- modelo
@@ -182,7 +193,7 @@ def simular(nivel: Nivel, tramos: list[Tramo]):
             x, y = f[j]
             if not (0 <= x <= nivel.ancho and 0 <= y <= nivel.alto):
                 motivo = "sale del tablero"
-            elif j >= 2 and _giro(f[j - 2], f[j - 1], f[j]) > GIRO_MAXIMO:
+            elif j >= 2 and _curva_cerrada(f[j - 2], f[j - 1], f[j]):
                 motivo = "curva demasiado cerrada"
             elif any(_cruza(f[j - 1], f[j], m[0], m[1]) for m in nivel.muros):
                 motivo = "choca con un muro"

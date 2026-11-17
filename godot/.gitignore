@@ -1,0 +1,4 @@
+# Caché que Godot regenera al abrir el proyecto
+.godot/
+# Exportaciones (APK, AAB, IPA): no se versionan
+/exportaciones/

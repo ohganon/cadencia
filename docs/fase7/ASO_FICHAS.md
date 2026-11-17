@@ -1,7 +1,7 @@
 # Fichas de App Store y Google Play (ASO)
 
 **Fecha:** 17/11/2026
-**Estado:** borrador para aprobar
+**Estado:** aprobado (17/11/2026). Los textos se revisan con el juego real antes de publicarlos (sección 6)
 **Idiomas:** español (España) e inglés (EE. UU.), los dos mercados prioritarios
 
 **Nombre usado en este borrador: «Dingfall»** (ver [NOMBRE_Y_MARCA.md](NOMBRE_Y_MARCA.md)). Si el cliente elige otro, solo cambia la palabra de marca: las palabras clave están pensadas para no depender de ella.
