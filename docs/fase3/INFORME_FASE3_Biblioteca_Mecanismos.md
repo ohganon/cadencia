@@ -176,7 +176,7 @@
 **2. Evidencia científica: moderada a sólida**
 - Nunes y Drèze (2006), *Journal of Consumer Research* 32(4):504–512. En un túnel de lavado, una tarjeta de **10 sellos con 2 ya marcados** se completó más (34 %) que una de **8 sellos sin marcar** (19 %), aunque ambas requerían 8 compras.
 - Kivetz et al. (2006) replican el efecto ("progreso ilusorio"). [Columbia](https://business.columbia.edu/insights/chazen-global-insights/goal-gradient-hypothesis-resurrected-purchase-acceleration)
-- Nunes y Drèze se citan como **ref. clásica**: no he encontrado un enlace verificado en esta fase. **Los porcentajes del 34 % y el 19 % están citados de memoria** y deben comprobarse con el artículo original.
+- Nunes y Drèze (2006): **referencia verificada el 17/11/2026** con su DOI, [10.1086/500480](https://doi.org/10.1086/500480) ([ficha en RePEc](https://ideas.repec.org/a/oup/jconrs/v32y2006i4p504-512.html)). El resumen confirma el efecto. **Los porcentajes del 34 % y el 19 % siguen sin confirmar**: el texto completo es de pago.
 
 **3. Aplicación a videojuegos**
 - Un primer nivel del pase ya completado, colecciones que empiezan con algunas piezas, una "racha" que empieza en 1 al instalar.
@@ -287,7 +287,7 @@
 - La motivación para **completar un conjunto**. Combina el gradiente de meta, la competencia (completar) y la identidad o el estatus (mostrar).
 
 **2. Evidencia científica: moderada**
-- La literatura sobre el coleccionismo en psicología social (por ejemplo, McIntosh y Schmeichel, 2004, *Leisure Sciences*, **ref. pendiente de verificar con enlace**) describe la búsqueda, la adquisición y la exhibición como fuentes de satisfacción.
+- La literatura sobre el coleccionismo en psicología social (por ejemplo, McIntosh y Schmeichel, 2004, *Leisure Sciences* 26(1):85–97, [DOI 10.1080/01490400490272639](https://doi.org/10.1080/01490400490272639), verificada el 17/11/2026) describe la búsqueda, la adquisición y la exhibición como fuentes de satisfacción.
 - **En juegos, la evidencia es sobre todo de la industria:** el gran rendimiento de los álbumes de MONOPOLY GO!, la Pokédex o los álbumes de Royal Match.
 
 **3. Aplicación a videojuegos**
@@ -470,7 +470,7 @@ Además de las métricas de negocio, mediremos **que el enganche sea sano**:
 ## 7. Riesgos y aspectos pendientes
 
 - **Riesgo:** algunas cifras de la industria (Duolingo, por ejemplo) no están revisadas por pares. Las he usado solo como ejemplos, no como evidencia.
-- **Pendiente:** verificar con enlace la referencia de McIntosh y Schmeichel (2004) sobre el coleccionismo. Las obras clásicas (Csikszentmihalyi, Kahneman y Tversky, Festinger, Ferster y Skinner, Hull) se citan sin enlace.
+- **Verificadas el 17/11/2026:** McIntosh y Schmeichel (2004) y Nunes y Drèze (2006), con DOI. Las obras clásicas (Csikszentmihalyi, Kahneman y Tversky, Festinger, Ferster y Skinner, Hull) se siguen citando como referencias conocidas, sin enlace.
 - **Contexto clínico:** el trastorno por videojuego está reconocido en la CIE-11 de la OMS. Su prevalencia varía según el método (un metaanálisis de 53 estudios advierte de que las cifras están **infladas por problemas de medición**, Stevens et al., 2021, [PubMed](https://pubmed.ncbi.nlm.nih.gov/33028074/)). **Nuestro diseño no debe empujar hacia ese patrón**, de ahí las métricas de la sección 6.
 
 ## 8. Próximos pasos (sujetos a tu aprobación)
@@ -497,5 +497,5 @@ Además de las métricas de negocio, mediremos **que el enganche sea sano**:
 - Hamari, Koivisto y Sarsa (2014) — [PDF](https://www.lescahiersdelinnovation.com/wp-content/uploads/2019/06/2014-hamari_et_al-does_gamification_work.pdf)
 - Deci, Koestner y Ryan (1999) — [PDF](https://depts.washington.edu/techdocs/papers/deciExtrinsicRewardsAndIntrinsicMotivation99.pdf)
 - Clasificaciones y comparación social — [Estudio, PMC8046219](https://pmc.ncbi.nlm.nih.gov/articles/PMC8046219)
-- Pendientes de enlace: Nunes y Drèze (2006), McIntosh y Schmeichel (2004), y las obras clásicas
+- Con DOI desde el 17/11/2026: [Nunes y Drèze (2006)](https://doi.org/10.1086/500480) y [McIntosh y Schmeichel (2004)](https://doi.org/10.1080/01490400490272639). Sin enlace: las obras clásicas
 - Stevens et al. (2021), prevalencia del trastorno por videojuego — [PubMed](https://pubmed.ncbi.nlm.nih.gov/33028074/)

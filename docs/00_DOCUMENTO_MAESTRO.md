@@ -155,9 +155,9 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 6: selección final de 11 temas seleccionables (Dominó Pop v2 por defecto), página de temas y CATALOGO_TEMAS.pdf
 - [x] Revisión de la Fase 5 (17/11/2026): los 10 temas pasan al Club y se elimina el pago único «Sin anuncios»; modelo recalculado
 - [ ] **Aprobación del rediseño** (Pull Request en GitHub)
-- [ ] Verificar la licencia de godot-iap (MIT o AGPLv3) y la alternativa para iOS
+- [x] Licencia de godot-iap verificada: MIT (repositorio hyodotdev/openiap; cubre iOS y Android). 17/11/2026
 - [ ] Búsqueda de marca del nombre "Cadencia" (EUIPO, OEPM, tiendas)
-- [ ] Verificar con enlace Nunes y Drèze (2006) y McIntosh y Schmeichel (2004)
+- [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal
 - [ ] Antes de monetizar: consulta fiscal con un gestor (alta, IVA intracomunitario, W-8BEN)
 - [ ] Fase 5: resolver el conflicto entre energía o intentos y "pagar para avanzar" (DFA art. 16)

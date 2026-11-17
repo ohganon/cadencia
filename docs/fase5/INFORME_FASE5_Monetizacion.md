@@ -301,7 +301,7 @@ Recalculado el 17/11/2026 sin el pago único «Sin anuncios» (sección 10).
 | Conversión al Club inferior al 0,5 % | Medio | El modelo aguanta: los anuncios son el 70–80 % de los ingresos |
 | La DFA endurece las reglas sobre la energía | Medio | Diseño ya defendible (camino gratuito real y modos sin límite). Revisión trimestral |
 | Integración de plugins (AdMob, compras) con fallos en Godot | Medio | Prototipo técnico temprano (entregas 9–11) |
-| **Licencia del plugin de compras godot-iap** (las fuentes indican MIT o AGPLv3) | Medio | **Verificar el archivo LICENSE.** Alternativa en Android: el plugin oficial GodotGooglePlayBilling. Para iOS hay que confirmar la alternativa en la Fase 8 |
+| **Licencia del plugin de compras godot-iap** | ✅ Resuelto (17/11/2026) | **Verificado: MIT.** El repositorio vigente es [hyodotdev/openiap](https://github.com/hyodotdev/openiap/tree/main/libraries/godot-iap) ([LICENSE](https://raw.githubusercontent.com/hyodotdev/openiap/main/libraries/godot-iap/LICENSE)); cubre iOS (StoreKit 2) y Android (Google Play Billing). Su dependencia SwiftGodot también tiene licencia tipo MIT. Hay que incluir los avisos de licencia en los créditos |
 
 ## 8. Pendiente
 
@@ -387,7 +387,7 @@ Está diseñado en [docs/fase6/temas/index.html](../fase6/temas/index.html):
 **Plugins para Godot**
 - [Plugin AdMob de Poing Studios (GitHub)](https://www.Github.com/poingstudios/godot-admob-plugin) · [Godot Asset Store](https://store.godotengine.org/asset/poingstudios/admob/)
 - [AppLovin MAX para Godot (GitHub)](https://github.com/AppLovin/AppLovin-MAX-Godot) · [Documentación de integración](https://developers.applovin.com/en/max/godot/overview/integration)
-- [godot-iap (compras integradas)](https://hyochan.github.io/godot-iap) · [Documentación de Godot: compras en Android](https://docs.godotengine.org/en/4.4/tutorials/platform/android/android_in_app_purchases.html)
+- [godot-iap (compras integradas), repositorio vigente](https://github.com/hyodotdev/openiap/tree/main/libraries/godot-iap) · [Documentación de Godot: compras en Android](https://docs.godotengine.org/en/4.4/tutorials/platform/android/android_in_app_purchases.html)
 
 **Comisiones de las tiendas**
 - [RevenueCat, Small Business Program](https://www.revenuecat.com/blog/engineering/small-business-program)
