@@ -93,7 +93,7 @@ Corregido durante el rediseño:
 
 ## 7. Tres alternativas menos "divertidas" (17/11/2026)
 
-El cliente valoró «Dominó Pop» como **mucho mejor**, pero lo ve **demasiado saturado en el mercado** y pidió algo más diferente y menos "divertido". Pidió ver las tres direcciones propuestas: **[../variantes/index.html](../variantes/index.html)**.
+El cliente valoró «Dominó Pop» como **mucho mejor**, pero lo ve **demasiado saturado en el mercado** y pidió algo más diferente y menos "divertido". Pidió ver las tres direcciones propuestas: **[../variantes/favoritas/index.html](../variantes/favoritas/index.html)** (guardadas como favoritas el 17/11/2026).
 
 | Dirección | Idea | Fuentes (SIL OFL) | Tono de los textos |
 |---|---|---|---|
@@ -104,3 +104,26 @@ El cliente valoró «Dominó Pop» como **mucho mejor**, pero lo ve **demasiado 
 Cada dirección tiene su propia **demo jugable**, el inicio con el mapa, el nivel superado y la ventana sin cuerda (cuatro opciones del mismo tamaño). Todas respetan el marco legal.
 
 **Pendiente:** que el cliente elija una (o una mezcla). Después actualizaré `DESIGN.md` y el tablero principal con la dirección elegida.
+
+## 8. Favoritas guardadas y segunda tanda de 10 (17/11/2026)
+
+**Las tres direcciones anteriores le gustaron al cliente** y quedan guardadas aparte en [../variantes/favoritas/index.html](../variantes/favoritas/index.html).
+
+**El cliente pidió 10 diseños más.** Están en **[../variantes/tanda-2/index.html](../variantes/tanda-2/index.html)**. La página de entrada a todas las variantes es [../variantes/index.html](../variantes/index.html).
+
+| # | Dirección | Fuentes (SIL OFL) | Tono |
+|---|---|---|---|
+| 1 | Cine negro | Bebas Neue + Barlow | «Acción», «Caso cerrado» |
+| 2 | Tinta japonesa | Shippori Mincho + Zen Kaku Gothic New | «Soltar», «Armonía» |
+| 3 | Art déco | Marcellus SC + Josefin Sans | «Adelante», «Magnífico» |
+| 4 | Bauhaus | League Spartan | «Tumbar», «Forma completa» |
+| 5 | Brutalista | Familjen Grotesk | «Hecho.», «Error: no llegó. Reintentar.» |
+| 6 | Risografía | Bricolage Grotesque | «¡Allá va!», «¡Impreso!» |
+| 7 | Nocturno | Red Hat Display + Red Hat Text | «Encender», «Constelación completa» |
+| 8 | Terracota mediterránea | Gloock + Mulish | «¡Venga!», «¡Olé!», «Hora de la siesta» |
+| 9 | Nórdico | Figtree | «Tumbar», «Bien hecho», «Pausa» |
+| 10 | Cuaderno | Caveat + Patrick Hand | «¡Allá va!», «¡Resuelto!» |
+
+Cada una tiene una partida jugable, el inicio con el mapa, el nivel superado y la ventana sin cuerda con cuatro opciones del mismo tamaño.
+
+**Comprobado** en el navegador: escritorio (1440 px) y móvil (375 px), sin desbordamiento horizontal, y las 10 demos se tumban solas.
