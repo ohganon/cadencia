@@ -59,8 +59,6 @@ func _ready() -> void:
 	# Los mismos ajustes de accesibilidad que en la partida (solo se leen)
 	var ajustes: Dictionary = Progreso.new().ajustes
 	tablero.aplicar_accesibilidad(ajustes)
-	if ajustes.get("texto_grande", false):
-		ayuda.add_theme_font_size_override("font_size", 31)
 	var estado := get_node_or_null("/root/Estado")
 	var nivel: Dictionary = estado.borrador if estado != null and not estado.borrador.is_empty() else Taller.cargar_borrador()
 	tablero.editar_nivel(nivel.duplicate(true))
@@ -327,7 +325,7 @@ func _construir_codigos() -> void:
 	campo_codigo.placeholder_text = "DING1-…"
 	campo_codigo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	campo_codigo.custom_minimum_size = Vector2(0, 76)
-	campo_codigo.add_theme_font_size_override("font_size", 26)
+	campo_codigo.add_theme_font_size_override("font_size", Temas.tam(26))
 	campo_codigo.add_theme_color_override("font_color", TINTA)
 	var sc := StyleBoxFlat.new()
 	sc.bg_color = Color(TINTA, 0.06)
@@ -365,7 +363,7 @@ func _etiqueta(tam: int, color: Color, titular := false) -> Label:
 	var l := Label.new()
 	if titular:
 		l.add_theme_font_override("font", fuente_titulos)
-	l.add_theme_font_size_override("font_size", tam)
+	l.add_theme_font_size_override("font_size", Temas.tam(tam))
 	l.add_theme_color_override("font_color", color)
 	return l
 

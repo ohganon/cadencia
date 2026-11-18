@@ -13,16 +13,45 @@ const RUTA := "res://datos/temas.json"
 const POR_DEFECTO := "pop"
 const Iconos = preload("res://escenas/comun/iconos.gd")
 
+## Alto contraste en la interfaz (Ajustes › Accesibilidad): pantalla negra, ventanas y botones
+## blancos con tinta negra y amarillo para lo principal. Manda sobre el tema elegido; el tablero
+## tiene su propia paleta de alto contraste (escenas/partida/tablero.gd).
+const UI_CONTRASTE := {"pantalla": "#000000", "texto": "#ffffff", "suave": "#e6e6e6", "marco": "#000000",
+	"chip": "#ffffff", "chip_t": "#000000", "prim": "#ffd400", "prim_t": "#000000", "prim_labio": "#c9a700",
+	"sec": "#ffffff", "sec_t": "#000000", "sec_labio": "#cccccc", "nodo_h": "#ffd400", "nodo_c": "#5c5c5c",
+	"ventana": "#ffffff", "ventana_t": "#000000", "ventana_s": "#1f1f1f", "velo": "#000000cc",
+	"estrella": "#ffd400", "camino": "#ffffff", "camino_no": "#7a7a7a"}
+## Texto grande (Ajustes › Accesibilidad): todos los textos de la interfaz, un 15 % más grandes
+const ESCALA_GRANDE := 1.15
+
 static var _todos: Array = []
 static var activo: Dictionary = {}     # tema en uso, con los colores ya convertidos
+static var alto_contraste := false
+static var texto_grande := false
 
 
 ## Cambia el tema activo (no lo guarda: eso lo hace quien tenga el progreso abierto).
 static func usar(id) -> void:
 	activo = de(id)
+	if alto_contraste:
+		for clave in UI_CONTRASTE:
+			activo["ui"][clave] = Color(UI_CONTRASTE[clave])
+		activo["sombra_solida"] = true
 	# Los iconos se dibujan con funciones estáticas: se les da la tinta y la estrella del tema
 	Iconos.tinta = ui("marco")
 	Iconos.estrella = ui("estrella")
+
+
+## Aplica los ajustes de accesibilidad que afectan a toda la interfaz y vuelve a preparar el tema.
+static func accesibilidad(ajustes: Dictionary) -> void:
+	alto_contraste = ajustes.get("alto_contraste", false)
+	texto_grande = ajustes.get("texto_grande", false)
+	usar(id_activo() if not activo.is_empty() else POR_DEFECTO)
+
+
+## Tamaño de letra con el ajuste de texto grande.
+static func tam(n: int) -> int:
+	return int(round(n * ESCALA_GRANDE)) if texto_grande else n
 
 
 static func _activo() -> Dictionary:

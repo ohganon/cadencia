@@ -181,16 +181,15 @@ func _ir_taller() -> void:
 	get_tree().change_scene_to_file(ESCENA_TALLER)
 
 
-## Ajustes de accesibilidad: alto contraste y reducir movimiento en el tablero, y texto grande en la
-## tarjeta del objetivo y la ventana de resultado.
+## Ajustes de accesibilidad del tablero (alto contraste y reducir movimiento) y tamaños de la tarjeta
+## del objetivo y la ventana de resultado. El resto de la interfaz los toma de nucleo/temas.gd.
 func aplicar_accesibilidad() -> void:
 	tablero.aplicar_accesibilidad(progreso.ajustes)
-	var grande: bool = progreso.ajustes.get("texto_grande", false)
 	for clave in ["normal_font_size", "bold_font_size"]:
-		objetivo.add_theme_font_size_override(clave, 34 if grande else 29)
-	ventana_dato.add_theme_font_size_override("font_size", 40 if grande else 36)
-	ventana_detalle.add_theme_font_size_override("font_size", 31 if grande else 27)
-	ventana_premio_texto.add_theme_font_size_override("font_size", 31 if grande else 28)
+		objetivo.add_theme_font_size_override(clave, Temas.tam(29))
+	ventana_dato.add_theme_font_size_override("font_size", Temas.tam(36))
+	ventana_detalle.add_theme_font_size_override("font_size", Temas.tam(27))
+	ventana_premio_texto.add_theme_font_size_override("font_size", Temas.tam(28))
 
 
 func _al_volver() -> void:
@@ -532,6 +531,7 @@ func _construir() -> void:
 	hud.add_child(titulo)
 	pastilla = Pastilla.new()
 	pastilla.fuente = fuente_negrita
+	pastilla.nombre_accesible = "Fichas que quedan"
 	pastilla.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	pastilla.tooltip_text = "Fichas que quedan"
 	hud.add_child(pastilla)
@@ -554,8 +554,8 @@ func _construir() -> void:
 	objetivo.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	objetivo.add_theme_font_override("normal_font", fuente_texto)
 	objetivo.add_theme_font_override("bold_font", fuente_negrita)
-	objetivo.add_theme_font_size_override("normal_font_size", 29)
-	objetivo.add_theme_font_size_override("bold_font_size", 29)
+	objetivo.add_theme_font_size_override("normal_font_size", Temas.tam(29))
+	objetivo.add_theme_font_size_override("bold_font_size", Temas.tam(29))
 	objetivo.add_theme_color_override("default_color", TINTA)
 	objetivo.add_theme_constant_override("line_separation", 4)
 	objetivo.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -699,7 +699,7 @@ func _etiqueta(tam: int, color: Color, titular := false) -> Label:
 	var l := Label.new()
 	if titular:
 		l.add_theme_font_override("font", fuente_titulos)
-	l.add_theme_font_size_override("font_size", tam)
+	l.add_theme_font_size_override("font_size", Temas.tam(tam))
 	l.add_theme_color_override("font_color", color)
 	return l
 

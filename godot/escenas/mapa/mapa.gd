@@ -15,6 +15,7 @@ extends Control
 const Progreso = preload("res://nucleo/progreso.gd")
 const Temas = preload("res://nucleo/temas.gd")
 const Fuentes = preload("res://escenas/comun/fuentes.gd")
+const Pestana = preload("res://escenas/comun/pestana.gd")
 const Registro = preload("res://nucleo/registro.gd")
 const Cuerda = preload("res://nucleo/cuerda.gd")
 const BotonPop = preload("res://escenas/comun/boton_pop.gd")
@@ -96,6 +97,9 @@ func _ready() -> void:
 	elif estado != null and estado.pendiente.get("modo") == "apariencia":
 		estado.pendiente = {}
 		_abrir_apariencia()
+	elif estado != null and estado.pendiente.get("modo") == "ajustes":
+		estado.pendiente = {}
+		_abrir_ajustes()
 	_demo_si_toca()
 
 
@@ -304,6 +308,13 @@ func _colocar_nodos() -> void:
 			b.color_fondo = BLOQUEADO
 			b.color_labio = BLOQUEADO
 			b.sin_sombra = true
+		var e: int = progreso.de(id)
+		if es_actual:
+			b.nombre_accesible = "Nivel %d, el que toca" % id + (", %d de 3 estrellas" % e if hecho else "")
+		elif hecho:
+			b.nombre_accesible = "Nivel %d, %d de 3 estrellas" % [id, e]
+		else:
+			b.nombre_accesible = "Nivel %d, cerrado" % id
 		if hecho or es_actual:
 			b.pulsado.connect(_jugar.bind(i))
 		else:
@@ -350,6 +361,7 @@ func _construir() -> void:
 	columna.add_child(hud)
 	pastilla_cuerda = Pastilla.new()
 	pastilla_cuerda.icono = "llave"
+	pastilla_cuerda.nombre_accesible = "Cuerda"
 	pastilla_cuerda.color_icono = ESTRELLA
 	pastilla_cuerda.fuente = fuente_negrita
 	hud.add_child(pastilla_cuerda)
@@ -358,6 +370,7 @@ func _construir() -> void:
 	hud.add_child(hueco)
 	pastilla_estrellas = Pastilla.new()
 	pastilla_estrellas.icono = "estrella"
+	pastilla_estrellas.nombre_accesible = "Estrellas"
 	pastilla_estrellas.color_icono = ESTRELLA
 	pastilla_estrellas.fuente = fuente_negrita
 	hud.add_child(pastilla_estrellas)
@@ -428,7 +441,9 @@ func _barra_abajo() -> Control:
 	for k in pestanas.size():
 		var p: Array = pestanas[k]
 		var activa := k == 0
-		var celda := VBoxContainer.new()
+		var celda := Pestana.new()
+		celda.nombre = p[0]
+		celda.activa = activa
 		celda.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		celda.add_theme_constant_override("separation", 2)
 		celda.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -454,9 +469,7 @@ func _barra_abajo() -> Control:
 		celda.add_child(l)
 		var accion: Callable = p[2]
 		if accion.is_valid():
-			celda.gui_input.connect(func(e):
-				if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT and not e.pressed:
-					accion.call())
+			celda.pulsado.connect(accion)
 		barra.add_child(celda)
 	return barra
 
@@ -528,6 +541,14 @@ func _construir_ajustes() -> void:
 		var b := _boton(par[1], false, 30)
 		b.pulsado.connect(func():
 			progreso.ajustar(clave, not progreso.ajustes.get(clave, false))
+			if clave in ["alto_contraste", "texto_grande"]:
+				# Cambian toda la interfaz: se vuelve a construir el mapa con la ventana abierta
+				Temas.accesibilidad(progreso.ajustes)
+				var estado := get_node_or_null("/root/Estado")
+				if estado != null:
+					estado.pendiente = {"modo": "ajustes"}
+				get_tree().reload_current_scene()
+				return
 			_textos_ajustes())
 		botones_accesibilidad[clave] = b
 		caja.add_child(b)
@@ -675,7 +696,7 @@ func _etiqueta(tam: int, color: Color, titular := false) -> Label:
 	var l := Label.new()
 	if titular:
 		l.add_theme_font_override("font", fuente_titulos)
-	l.add_theme_font_size_override("font_size", tam)
+	l.add_theme_font_size_override("font_size", Temas.tam(tam))
 	l.add_theme_color_override("font_color", color)
 	return l
 

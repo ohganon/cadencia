@@ -23,8 +23,21 @@ var SOMBRA_SOLIDA: bool = Temas.sombra_solida()
 const SOMBRA := 3.0
 const MANTENER := 0.6
 
-@export var texto := ""
+@export var texto := "":
+	set(v):
+		texto = v
+		queue_accessibility_update()
 @export var icono := ""
+## Lo que dice el lector de pantalla. Si está vacío, el texto del botón o el nombre de su icono.
+var nombre_accesible := "":
+	set(v):
+		nombre_accesible = v
+		queue_accessibility_update()
+## Nombres de los botones que solo llevan icono, para el lector de pantalla
+const NOMBRES_ICONO := {"volver": "Volver", "adelante": "Siguiente", "deshacer": "Deshacer. Mantén pulsado para borrar todo",
+	"bombilla": "Pista", "lento": "Cámara lenta", "inicio": "Inicio de la cadena", "campana_simple": "Campana",
+	"campana": "Campana", "doble": "Campana doble", "numerada": "Campana numerada", "dorada": "Campana dorada",
+	"muro": "Muro", "puerta": "Puerta de vaivén", "goma": "Goma", "llave": "Ajustes", "estrella": "Estrellas"}
 @export var principal := false
 @export var redondo := false        # cuadrado con radio 16 (botón de icono); con `circular`, círculo
 @export var circular := false
@@ -33,6 +46,7 @@ const MANTENER := 0.6
 	set(v):
 		desactivado = v
 		queue_redraw()
+		queue_accessibility_update()
 ## Colores propios (para los nodos de nivel: amarillo, verde o bloqueado)
 var color_fondo := Color(0, 0, 0, 0)
 var color_labio := Color(0, 0, 0, 0)
@@ -50,19 +64,33 @@ var _tiempo_pulsado := -1.0
 
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	focus_mode = Control.FOCUS_NONE
+	# Con el dedo no se queda «seleccionado»; el lector de pantalla sí puede llegar a él
+	focus_mode = Control.FOCUS_ACCESSIBILITY
+
+
+func nombre_para_lector() -> String:
+	if nombre_accesible != "":
+		return nombre_accesible
+	if texto != "":
+		return texto
+	return NOMBRES_ICONO.get(icono, icono)
 
 
 func _get_minimum_size() -> Vector2:
 	var f := _fuente()
 	var ancho := 0.0
 	if texto != "":
-		ancho = f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam_fuente).x + 48
+		ancho = f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, _tf()).x + 48
 	if icono != "":
 		ancho += 52
 	if texto == "":
 		return Vector2(56, 56)        # solo icono: manda el tamaño que le dé la pantalla
 	return Vector2(maxf(ancho, 96.0), 96.0)
+
+
+## Tamaño de letra con el ajuste de texto grande.
+func _tf() -> int:
+	return Temas.tam(tam_fuente)
 
 
 func _fuente() -> Font:
@@ -71,6 +99,10 @@ func _fuente() -> Font:
 
 func _gui_input(evento: InputEvent) -> void:
 	if desactivado:
+		return
+	if evento.is_action_pressed("ui_accept"):
+		pulsado.emit()
+		accept_event()
 		return
 	if evento is InputEventMouseButton and evento.button_index == MOUSE_BUTTON_LEFT:
 		if evento.pressed:
@@ -98,6 +130,15 @@ func _process(delta: float) -> void:
 
 
 func _notification(que: int) -> void:
+	if que == NOTIFICATION_ACCESSIBILITY_UPDATE:
+		# Para el lector de pantalla (TalkBack, VoiceOver, Narrador): es un botón, con su nombre
+		var ae := get_accessibility_element()
+		if ae.is_valid():
+			DisplayServer.accessibility_update_set_role(ae, DisplayServer.ROLE_BUTTON)
+			DisplayServer.accessibility_update_set_name(ae, nombre_para_lector())
+			DisplayServer.accessibility_update_set_flag(ae, DisplayServer.FLAG_DISABLED, desactivado)
+			DisplayServer.accessibility_update_add_action(ae, DisplayServer.ACTION_CLICK, _pulsado_por_lector)
+		return
 	if que == NOTIFICATION_MOUSE_EXIT and _hundido:
 		_hundido = false
 		_tiempo_pulsado = -1.0
@@ -165,7 +206,7 @@ func _draw() -> void:
 
 	var centro := Rect2(dentro.position, dentro.size - Vector2(0, alto_labio))
 	var f := _fuente()
-	var ancho_texto := f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam_fuente).x if texto != "" else 0.0
+	var ancho_texto := f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, _tf()).x if texto != "" else 0.0
 	var lado_icono := minf(centro.size.y * 0.5, 48.0)
 	var hueco := 12.0 if texto != "" and icono != "" else 0.0
 	var total := ancho_texto + (lado_icono if icono != "" else 0.0) + hueco
@@ -175,8 +216,8 @@ func _draw() -> void:
 		Iconos.dibujar(self, icono, r, Color(0, 0, 0, 0), color_texto)
 		x += lado_icono + hueco
 	if texto != "":
-		var base := centro.get_center().y + (f.get_ascent(tam_fuente) - f.get_descent(tam_fuente)) / 2
-		draw_string(f, Vector2(x, base), texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam_fuente, color_texto)
+		var base := centro.get_center().y + (f.get_ascent(_tf()) - f.get_descent(_tf())) / 2
+		draw_string(f, Vector2(x, base), texto, HORIZONTAL_ALIGNMENT_LEFT, -1, _tf(), color_texto)
 
 
 func _caja(color: Color, radio: int) -> StyleBoxFlat:
@@ -194,3 +235,8 @@ func _anillo(radio: int) -> StyleBoxFlat:
 	s.set_border_width_all(4)
 	s.set_corner_radius_all(radio)
 	return s
+
+
+func _pulsado_por_lector(_datos) -> void:
+	if not desactivado:
+		pulsado.emit()

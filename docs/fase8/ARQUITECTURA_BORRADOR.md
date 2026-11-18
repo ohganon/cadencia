@@ -109,7 +109,7 @@ godot/
 | 3 | Generador y Caída del Día | — |
 | 4 | Taller con códigos | — |
 | 5 | Los 11 temas y la prueba de temas ✅ (18/11/2026: datos en `godot/datos/temas.json`, tema activo en `nucleo/temas.gd`, letras de cada tema en `escenas/comun/fuentes.gd`) | — |
-| 6 | Accesibilidad completa (alto contraste, tamaño de interfaz, reducción de movimiento) | — |
+| 6 | Accesibilidad completa (alto contraste, tamaño de interfaz, reducción de movimiento) ✅ (18/11/2026: también lector de pantalla con AccessKit de Godot; falta probarlo con TalkBack y VoiceOver; el tablero en sí no se puede jugar sin ver) | — |
 | 7 | Anuncios recompensados e intersticiales (AdMob) con su consentimiento | — |
 | 8 | Club y packs de fichas (godot-iap) | Puerta 1: prueba cerrada |
 | 9 | Analítica y panel de juego responsable | Puerta 2: lanzamiento suave |

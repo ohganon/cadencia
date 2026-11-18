@@ -14,7 +14,7 @@ extends SceneTree
 
 const SCRIPTS := ["res://nucleo/temas.gd", "res://autoload/tema.gd", "res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
-	"res://escenas/comun/iconos.gd", "res://escenas/comun/fuentes.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd",
+	"res://escenas/comun/iconos.gd", "res://escenas/comun/fuentes.gd", "res://escenas/comun/pestana.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd",
 	"res://autoload/estado.gd", "res://escenas/taller/tablero_editor.gd", "res://escenas/taller/taller.gd",
 	"res://nucleo/cuerda.gd", "res://escenas/mapa/camino.gd", "res://escenas/mapa/mapa.gd"]
 
@@ -168,6 +168,30 @@ func pruebas_temas(Temas: GDScript) -> void:
 	comprobar(Temas.texto("ya", "") == "Encender" and Temas.ui("pantalla") == Color("#0e1430"), "el tema activo cambia colores y textos")
 	comprobar(Temas.contraste(Temas.tinta_sobre(Temas.ui("nodo_h")), Temas.ui("nodo_h")) >= 4.5, "la tinta sobre un nodo se elige legible")
 	Temas.usar("pop")
+	# Alto contraste y texto grande en toda la interfaz
+	Temas.accesibilidad({"alto_contraste": true, "texto_grande": true})
+	for id in ["pop", "nocturno", "calma"]:
+		Temas.usar(id)
+		comprobar(Temas.contraste(Temas.ui("texto"), Temas.ui("pantalla")) >= 7.0
+			and Temas.contraste(Temas.ui("ventana_t"), Temas.ui("ventana")) >= 7.0
+			and Temas.contraste(Temas.ui("prim_t"), Temas.ui("prim")) >= 7.0
+			and Temas.contraste(Temas.tinta_sobre(Temas.ui("nodo_c")), Temas.ui("nodo_c")) >= 4.5,
+			"%s con alto contraste: textos y botones a 7:1 o más" % id)
+	comprobar(Temas.tam(30) == 35 and Temas.tam(36) == 41, "el texto grande agranda los textos un 15 %")
+	Temas.accesibilidad({})
+	Temas.usar("pop")
+	comprobar(Temas.tam(30) == 30 and Temas.ui("pantalla") == Color("#2462d6"), "y al quitarlo todo vuelve a ser como antes")
+	# Lector de pantalla: todos los botones de solo icono tienen nombre
+	var BotonPop: GDScript = load("res://escenas/comun/boton_pop.gd")
+	var sin_nombre := []
+	for icono in ["volver", "adelante", "deshacer", "bombilla", "lento", "inicio", "campana_simple", "doble", "numerada",
+			"dorada", "muro", "puerta", "goma"]:
+		var b = BotonPop.new()
+		b.icono = icono
+		if b.nombre_para_lector() == icono:
+			sin_nombre.append(icono)
+		b.free()
+	comprobar(sin_nombre.is_empty(), "los botones de solo icono tienen nombre para el lector de pantalla", str(sin_nombre))
 
 
 func terminar() -> void:
