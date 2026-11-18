@@ -1,14 +1,18 @@
-## Progreso del jugador: estrellas por nivel. Se guarda en el propio teléfono (user://).
+## Progreso del jugador: estrellas por nivel, cuerda y ajustes. Se guarda en el propio teléfono (user://).
 ##
 ## Sin datos personales. Si el archivo falta o está dañado, se empieza de cero sin romper nada;
 ## antes de sobrescribir se guarda una copia del archivo anterior.
 extends RefCounted
+
+const Cuerda = preload("res://nucleo/cuerda.gd")
 
 const RUTA := "user://progreso.json"
 const VERSION := 1
 
 var estrellas := {}     # id de nivel (String) -> 0..3
 var ajustes := {"sonido": true, "vibracion": true}
+var cuerda := {"n": Cuerda.MAXIMO, "t": 0}
+var en_curso := 0        # nivel nuevo ya pagado y aún sin superar (no se vuelve a cobrar)
 var ruta := RUTA
 
 
@@ -20,6 +24,8 @@ func _init(ruta_archivo: String = RUTA) -> void:
 func cargar() -> void:
 	estrellas = {}
 	ajustes = {"sonido": true, "vibracion": true}
+	cuerda = {"n": Cuerda.MAXIMO, "t": 0}
+	en_curso = 0
 	if not FileAccess.file_exists(ruta):
 		return
 	var json := JSON.new()
@@ -37,6 +43,10 @@ func cargar() -> void:
 	if typeof(e) == TYPE_DICTIONARY:
 		for k in e:
 			estrellas[str(k)] = clampi(int(e[k]), 0, 3)
+	var c = datos.get("cuerda", {})
+	if typeof(c) == TYPE_DICTIONARY and c.has("n") and c.has("t"):
+		cuerda = {"n": clampi(int(c["n"]), 0, Cuerda.MAXIMO), "t": int(c["t"])}
+	en_curso = int(datos.get("en_curso", 0))
 
 
 func guardar() -> void:
@@ -46,15 +56,22 @@ func guardar() -> void:
 	if f == null:
 		push_warning("No se pudo guardar el progreso en %s" % ruta)
 		return
-	f.store_string(JSON.stringify({"version": VERSION, "estrellas": estrellas, "ajustes": ajustes}, " "))
+	f.store_string(JSON.stringify({"version": VERSION, "estrellas": estrellas, "ajustes": ajustes,
+		"cuerda": cuerda, "en_curso": en_curso}, " "))
 
 
 ## Guarda las estrellas de un nivel solo si mejoran las que ya tenía. `id` es el número del nivel o
 ## una clave de texto (por ejemplo «dia:2026-11-18» para la Caída del Día).
 func registrar(id, n: int) -> void:
 	var k := str(id)
+	var cambia := false
 	if n > int(estrellas.get(k, 0)):
 		estrellas[k] = n
+		cambia = true
+	if n > 0 and typeof(id) == TYPE_INT and id == en_curso:
+		en_curso = 0
+		cambia = true
+	if cambia:
 		guardar()
 
 
@@ -75,5 +92,35 @@ func abierto(id: int) -> bool:
 func total() -> int:
 	var s := 0
 	for k in estrellas:
-		s += int(estrellas[k])
+		if not str(k).begins_with("dia:"):
+			s += int(estrellas[k])
 	return s
+
+
+# ---------------------------------------------------------------- cuerda
+
+func cuerdas(ahora: int) -> int:
+	return Cuerda.al_dia(cuerda, ahora)["n"]
+
+
+func falta_cuerda(ahora: int) -> int:
+	return Cuerda.falta(cuerda, ahora)
+
+
+## ¿Cuesta cuerda empezar este nivel ahora? Solo los nuevos (sin superar), a partir del 16, y no si
+## ya se pagó al entrar antes.
+func cobra(id: int) -> bool:
+	return Cuerda.necesita(id) and de(id) == 0 and en_curso != id
+
+
+## Empieza un nivel de la campaña: cobra la cuerda si toca. Devuelve false si no queda cuerda.
+func empezar(id: int, ahora: int) -> bool:
+	if not cobra(id):
+		return true
+	var nueva := Cuerda.gastar(cuerda, ahora)
+	if nueva.is_empty():
+		return false
+	cuerda = nueva
+	en_curso = id
+	guardar()
+	return true

@@ -26,6 +26,7 @@ const Iconos = preload("res://escenas/comun/iconos.gd")
 const RetoDiario = preload("res://nucleo/reto_diario.gd")
 const Taller = preload("res://nucleo/taller.gd")
 const ESCENA_TALLER := "res://escenas/taller/taller.tscn"
+const ESCENA_MAPA := "res://escenas/mapa/mapa.tscn"
 
 const AZUL := Color("#2462d6")
 const TINTA := Color("#142554")
@@ -86,12 +87,6 @@ var ventana_premio: HBoxContainer
 var ventana_premio_texto: Label
 var boton_repetir: Control
 var boton_siguiente: Control
-var lista_niveles: PanelContainer
-var rejilla: GridContainer
-var boton_sonido: Control
-var boton_diario: Control
-var boton_vibracion: Control
-var resumen_prueba: Label
 var fuente_titulos: Font        # Lilita One
 var fuente_texto: Font          # Nunito 700
 var fuente_negrita: Font        # Nunito 900
@@ -102,7 +97,7 @@ var _sonidos := {}              # nombre -> AudioStreamPlayer
 
 
 func _ready() -> void:
-	var datos = JSON.parse_string(FileAccess.get_file_as_string("res://datos/niveles_entrega1.json"))
+	var datos = JSON.parse_string(FileAccess.get_file_as_string("res://datos/barrio_1.json"))
 	niveles = datos["niveles"]
 	# En el modo demostración el progreso va a un archivo aparte: nunca toca el del jugador
 	var demo := false
@@ -114,9 +109,15 @@ func _ready() -> void:
 	ruta_taller = "user://demo_taller.json" if demo else Taller.RUTA
 	_construir()
 	var estado := get_node_or_null("/root/Estado")
-	if estado != null and not estado.pendiente.is_empty():
-		cargar_taller(estado.pendiente)          # viene del Taller: probar o jugar un código
+	var pendiente: Dictionary = estado.pendiente if estado != null else {}
+	if estado != null:
 		estado.pendiente = {}
+	if pendiente.get("modo") == "campana":
+		cargar(int(pendiente["indice"]))         # viene del mapa (la cuerda ya se cobró allí)
+	elif pendiente.get("modo") == "diario":
+		cargar_diario()
+	elif pendiente.get("modo") in ["prueba", "codigo"]:
+		cargar_taller(pendiente)                  # viene del Taller: probar o jugar un código
 	else:
 		var primero := 0
 		for n in niveles:
@@ -166,7 +167,7 @@ func _al_volver() -> void:
 	if modo_taller != "":
 		_ir_taller()
 	else:
-		_abrir_lista()
+		get_tree().change_scene_to_file(ESCENA_MAPA)
 
 
 func _abrir(n: Dictionary, texto_titulo: String) -> void:
@@ -357,7 +358,15 @@ func _al_siguiente() -> void:
 		_copiar(RetoDiario.texto_compartir(actual["fecha"], bool(r["exito"]), int(r["fichas_usadas"]), e, _pista_paso > 0))
 		_tipo_boton(boton_siguiente, "¡Copiado!", true)
 		return
-	cargar(indice + 1)
+	# El siguiente nivel de la campaña: si es nuevo y no queda cuerda, el mapa muestra las opciones
+	var siguiente := indice + 1
+	if not progreso.empezar(int(niveles[siguiente]["id"]), int(Time.get_unix_time_from_system())):
+		var estado := get_node_or_null("/root/Estado")
+		if estado != null:
+			estado.pendiente = {"modo": "sin_cuerda"}
+		get_tree().change_scene_to_file(ESCENA_MAPA)
+		return
+	cargar(siguiente)
 
 
 func _al_deshacer() -> void:
@@ -392,39 +401,6 @@ func _al_lento() -> void:
 	boton_lento.queue_redraw()
 
 
-func _al_sonido() -> void:
-	progreso.ajustar("sonido", not progreso.ajustes["sonido"])
-	_textos_ajustes()
-
-
-func _al_vibracion() -> void:
-	progreso.ajustar("vibracion", not progreso.ajustes["vibracion"])
-	_textos_ajustes()
-
-
-func _textos_ajustes() -> void:
-	boton_sonido.texto = "Sonido: " + ("sí" if progreso.ajustes["sonido"] else "no")
-	boton_vibracion.texto = "Vibración: " + ("sí" if progreso.ajustes["vibracion"] else "no")
-	for b in [boton_sonido, boton_vibracion]:
-		b.update_minimum_size()
-		b.queue_redraw()
-
-
-## Para quien dirige la prueba: intentos por nivel, leídos del registro local.
-func _al_resumen() -> void:
-	var s: Dictionary = registro.resumen()
-	var lineas := ["Nivel · intentos · hasta superarlo · pistas"]
-	for n in niveles:
-		var k := str(int(n["id"]))
-		if s.has(k):
-			var r: Dictionary = s[k]
-			lineas.append("%s · %d · %s · %d" % [k, r["intentos"], str(r["intentos_hasta_superar"]) if r["superado"] else "sin superar", r["pistas"]])
-	if lineas.size() == 1:
-		lineas.append("Aún no hay partidas registradas.")
-	resumen_prueba.text = "\n".join(lineas)
-	resumen_prueba.visible = not resumen_prueba.visible
-
-
 func _al_caer(cuantas: int) -> void:
 	# Como mucho dos clics por tic, con un poco de variación para que no suene a metralleta
 	for k in mini(cuantas, 2):
@@ -453,54 +429,9 @@ func _sonar(nombre: String, tono := 1.0, volumen_db := 0.0) -> void:
 	r.play()
 
 
-func _abrir_lista() -> void:
-	for h in rejilla.get_children():
-		h.queue_free()
-	var actual_marcado := false
-	for i in niveles.size():
-		var id := int(niveles[i]["id"])
-		var e: int = progreso.de(id)
-		var abierto: bool = progreso.abierto(id)
-		var celda := VBoxContainer.new()
-		celda.add_theme_constant_override("separation", 2)
-		celda.alignment = BoxContainer.ALIGNMENT_CENTER
-		var b := _boton(str(id), false, 40)
-		b.circular = true
-		b.custom_minimum_size = Vector2(104, 104)
-		if e > 0:
-			b.color_fondo = AMARILLO
-			b.color_labio = LABIO_AMARILLO
-		elif abierto and not actual_marcado:
-			b.color_fondo = VERDE           # el nivel que toca ahora
-			b.color_labio = LABIO_VERDE
-			actual_marcado = true
-		else:
-			b.color_fondo = BLOQUEADO
-			b.color_labio = LABIO_BLOQUEADO
-		if abierto:
-			b.pulsado.connect(cargar.bind(i))
-		else:
-			b.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		celda.add_child(b)
-		var est := _etiqueta(26, LABIO_AMARILLO if e > 0 else TINTA_SUAVE, true)
-		est.text = "★".repeat(e) if e > 0 else " "
-		est.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		celda.add_child(est)
-		rejilla.add_child(celda)
-	var hoy: int = progreso.de("dia:" + RetoDiario.hoy_utc())
-	boton_diario.texto = "Caída del Día" + ("  " + "★".repeat(hoy) if hoy > 0 else "")
-	boton_diario.update_minimum_size()
-	_textos_ajustes()
-	velo.visible = true
-	lista_niveles.reset_size()
-	lista_niveles.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
-	lista_niveles.visible = true
-
-
 func _cerrar_ventanas() -> void:
 	velo.visible = false
 	ventana.visible = false
-	lista_niveles.visible = false
 
 
 # ---------------------------------------------------------------- construcción de la interfaz
@@ -649,7 +580,6 @@ func _construir() -> void:
 	add_child(velo)
 
 	_construir_resultado()
-	_construir_lista()
 
 
 func _construir_resultado() -> void:
@@ -691,52 +621,6 @@ func _construir_resultado() -> void:
 	aire.custom_minimum_size = Vector2(0, 8)
 	for h in [ventana_titulo, ventana_estrellas, ventana_dato, ventana_detalle, ventana_premio, aire, fila]:
 		caja.add_child(h)
-
-
-func _construir_lista() -> void:
-	lista_niveles = _ventana()
-	lista_niveles.custom_minimum_size = Vector2(640, 0)
-	var caja := VBoxContainer.new()
-	caja.add_theme_constant_override("separation", 18)
-	lista_niveles.add_child(caja)
-	var t := _etiqueta(52, TINTA, true)
-	t.text = "La Plaza"
-	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	caja.add_child(t)
-	rejilla = GridContainer.new()
-	rejilla.columns = 5
-	rejilla.add_theme_constant_override("h_separation", 14)
-	rejilla.add_theme_constant_override("v_separation", 6)
-	rejilla.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	caja.add_child(rejilla)
-	boton_diario = _boton("Caída del Día", false, 34)
-	boton_diario.icono = "campana"
-	boton_diario.pulsado.connect(func(): cargar_diario())
-	caja.add_child(boton_diario)
-	var boton_taller := _boton("Taller", false, 34)
-	boton_taller.icono = "muro"
-	boton_taller.pulsado.connect(_ir_taller)
-	caja.add_child(boton_taller)
-	var ajustes := HBoxContainer.new()
-	ajustes.add_theme_constant_override("separation", 16)
-	ajustes.alignment = BoxContainer.ALIGNMENT_CENTER
-	boton_sonido = _boton("Sonido: sí", false, 28)
-	boton_sonido.pulsado.connect(_al_sonido)
-	boton_vibracion = _boton("Vibración: sí", false, 28)
-	boton_vibracion.pulsado.connect(_al_vibracion)
-	ajustes.add_child(boton_sonido)
-	ajustes.add_child(boton_vibracion)
-	caja.add_child(ajustes)
-	var b_resumen := _boton("Resumen de la prueba", false, 28)
-	b_resumen.pulsado.connect(_al_resumen)
-	caja.add_child(b_resumen)
-	resumen_prueba = _etiqueta(24, TINTA_SUAVE)
-	resumen_prueba.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	resumen_prueba.visible = false
-	caja.add_child(resumen_prueba)
-	var cerrar := _boton("Volver al nivel", true, 36)
-	cerrar.pulsado.connect(_cerrar_ventanas)
-	caja.add_child(cerrar)
 
 
 func _caja(color: Color, radio: int, borde: int, margenes := Vector4.ZERO) -> StyleBoxFlat:
@@ -804,6 +688,16 @@ func _demo_si_toca() -> void:
 	for a in OS.get_cmdline_user_args():
 		var partes: PackedStringArray = a.trim_prefix("--").split("=", true, 1)
 		args[partes[0]] = partes[1] if partes.size() > 1 else "1"
+	if args.has("demo-mapa") and args.has("entrar"):
+		# Llegada desde la demostración del mapa: comprobar que se abrió el nivel que tocaba
+		await get_tree().create_timer(0.4).timeout
+		await _capturar(args.get("captura", "user://captura") + "_3_partida.png")
+		print("DEMO desde el mapa: ", titulo.text, ", cuerdas ", progreso.cuerdas(int(Time.get_unix_time_from_system())))
+		for r in ["user://demo_progreso.json", "user://demo_progreso.anterior.json", "user://demo_registro.jsonl"]:
+			if FileAccess.file_exists(r):
+				DirAccess.remove_absolute(ProjectSettings.globalize_path(r))
+		get_tree().quit()
+		return
 	if not args.has("demo"):
 		return
 	var prefijo: String = args.get("captura", "user://captura")
@@ -849,11 +743,6 @@ func _demo_si_toca() -> void:
 		await get_tree().create_timer(0.2).timeout
 		await _capturar(prefijo + "_5_publicado.png")
 		print("DEMO código: ", ultimo_copiado)
-	if args.has("lista"):
-		_cerrar_ventanas()
-		_abrir_lista()
-		await get_tree().create_timer(0.2).timeout
-		await _capturar(prefijo + "_5_lista.png")
 	print("DEMO resultado: ", JSON.stringify(tablero.resultado()))
 	for r in ["user://demo_progreso.json", "user://demo_progreso.anterior.json", "user://demo_registro.jsonl", "user://demo_taller.json"]:
 		if FileAccess.file_exists(r):

@@ -17,4 +17,6 @@ python -X utf8 -m unittest -v test_generador                      # 8 pruebas
 
 **Dificultad prevista (0–1):** restricciones (campanas, numeradas, dobles), ramas, muros, margen de fichas y atajos. De cada semilla se generan varios candidatos y se elige el más cercano a la dificultad pedida. Los pesos son una hipótesis: se calibran con datos reales en la Fase 9.
 
+**Barrio 1, La Plaza** (`barrio.py`): los 10 niveles hechos a mano más 10 generados (11–20) con semillas fijas y la regla de ritmo de la Fase 4: subida con picos, un respiro (14), preparación y el Gran Tramo (20). Escribe `godot/datos/barrio_1.json`.
+
 **Caída del Día:** el calendario se genera aquí y viaja con el juego (`godot/datos/caida_del_dia.json`, unos 570 KB al año). Así el nivel de cada día es idéntico en todos los teléfonos sin servidor y sin depender de que Godot y Python generen igual. El ritmo semanal va de fácil el lunes a más reto el fin de semana (`RITMO`). Hay que regenerarlo antes de que se acabe el año del calendario, en una actualización del juego.

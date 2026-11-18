@@ -6,6 +6,7 @@ Motor: **Godot 4.7.2** (MIT). Arquitectura en [docs/fase8/ARQUITECTURA_BORRADOR.
 |---|---|
 | `nucleo/` | Código sin nodos visuales: `simulacion.gd` (port exacto de `prototipos/simulacion/sim.py`), `partida.gd` (dibujar tramos, ramas y límite de fichas), `progreso.gd` (estrellas y ajustes guardados en el teléfono) y `registro.gd` (registro local de intentos para las pruebas, sin datos personales) |
 | `escenas/comun/` | Piezas de Dominó Pop: botón con borde, sombra y labio (`boton_pop.gd`), pastilla del HUD, fila de estrellas e iconos dibujados con código a partir de los SVG de la maqueta |
+| `escenas/mapa/` | Pantalla de inicio: el mapa del barrio con el camino de fichas, la cuerda, «Jugar», la barra de abajo, «Sin cuerda» y Ajustes |
 | `escenas/taller/` | Taller: editor de niveles (`tablero_editor.gd`) y pantalla con herramientas, «Probar» y «Códigos» |
 | `autoload/` | `estado.gd` (autoload «Estado»): el nivel del Taller que se abre al cambiar de pantalla y el borrador |
 | `escenas/partida/` | Pantalla de juego de la entrega 1: tablero, dedo, caída animada, resultado y lista de niveles |
@@ -17,7 +18,7 @@ Motor: **Godot 4.7.2** (MIT). Arquitectura en [docs/fase8/ARQUITECTURA_BORRADOR.
 
 ## Jugar en el ordenador
 
-Abre Godot, pulsa **Importar**, elige `godot/project.godot` y pulsa **Ejecutar** (F5). Con el ratón se dibuja igual que con el dedo.
+Abre Godot, pulsa **Importar**, elige `godot/project.godot` y pulsa **Ejecutar** (F5). Empieza en el mapa de La Plaza. Con el ratón se dibuja igual que con el dedo.
 
 ## Pruebas (desde la raíz del repositorio)
 
@@ -25,7 +26,7 @@ Abre Godot, pulsa **Importar**, elige `godot/project.godot` y pulsa **Ejecutar**
 Godot_v4.7.2-stable_win64_console.exe --headless --path godot --script res://pruebas/ejecutar_pruebas.gd
 ```
 
-154 pruebas: que todos los scripts compilan, que los sonidos cargan, los 30 casos compartidos con Python, que cada nivel se supera dibujando su solución (también punto a punto, como un dedo), el límite de fichas, el enganche, deshacer, el guardado del progreso y los ajustes, que el registro de pruebas no guarda nada más de lo previsto, que Godot supera los 365 niveles de la Caída del Día con su solución y su marca exacta, y los códigos del Taller: abre los de Python, rechaza 16 códigos rotos o manipulados, ida y vuelta, formato estable y lista de guardados. Termina con código 0 si todo pasa.
+175 pruebas: que todos los scripts compilan, que los sonidos cargan, los 30 casos compartidos con Python, que cada nivel se supera dibujando su solución (también punto a punto, como un dedo), el límite de fichas, el enganche, deshacer, el guardado del progreso y los ajustes, que el registro de pruebas no guarda nada más de lo previsto, que Godot supera los 365 niveles de la Caída del Día con su solución y su marca exacta, y los códigos del Taller: abre los de Python, rechaza 16 códigos rotos o manipulados, ida y vuelta, formato estable y lista de guardados; las reglas de la cuerda (gratis hasta el nivel 15, sin cobrar dos veces, repetir gratis, recarga y reloj hacia atrás) y los 20 niveles de La Plaza. Termina con código 0 si todo pasa.
 
 ## Generar el APK de prueba (Android)
 
@@ -47,4 +48,4 @@ Herramientas instaladas en este equipo (fuera del repositorio): Java 17 (Temurin
 Godot_v4.7.2-stable_win64_console.exe --path godot --resolution 540x960 -- --demo=7 --captura=C:/ruta/prefijo
 ```
 
-Abre una ventana, dibuja la solución del nivel, la tumba y guarda 4 capturas (vacío, dibujado, cayendo y resultado). Con `--taller --publicar` prueba el nivel como si fuera del Taller y lo publica; con `--codigo=DING1-…` juega un código recibido. El editor tiene su propia demo: `... res://escenas/taller/taller.tscn -- --demo-taller --captura=…`. Con `--diario --fecha=2026-11-18` juega la Caída del Día de esa fecha y con `--lista` añade una captura de la lista de niveles. Con `--incompleto` dibuja solo el primer tramo y con `--recto` una línea recta a la primera campana, para ver los fallos. Usa un progreso aparte y lo borra al terminar, y nunca toca el portapapeles ni el borrador del Taller.
+Abre una ventana, dibuja la solución del nivel, la tumba y guarda 4 capturas (vacío, dibujado, cayendo y resultado). Con `--taller --publicar` prueba el nivel como si fuera del Taller y lo publica; con `--codigo=DING1-…` juega un código recibido. El mapa: `-- --demo-mapa --superados=15 [--sin-cuerda | --entrar]`. El editor tiene su propia demo: `... res://escenas/taller/taller.tscn -- --demo-taller --captura=…`. Con `--diario --fecha=2026-11-18` juega la Caída del Día de esa fecha y con `--lista` añade una captura de la lista de niveles. Con `--incompleto` dibuja solo el primer tramo y con `--recto` una línea recta a la primera campana, para ver los fallos. Usa un progreso aparte y lo borra al terminar, y nunca toca el portapapeles ni el borrador del Taller.

@@ -161,7 +161,9 @@ func _gui_input(evento: InputEvent) -> void:
 # ---------------------------------------------------------------- dibujo
 
 func _draw() -> void:
-	if partida == null:
+	# En el primer fotograma el tablero aún mide 0 px: no hay nada que dibujar (y los textos
+	# de las campanas numeradas saldrían con tamaño 0)
+	if partida == null or size.x < 2.0 or size.y < 2.0:
 		return
 	_medir()
 	var nivel: Dictionary = partida.nivel

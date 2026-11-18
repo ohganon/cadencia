@@ -15,7 +15,8 @@ extends SceneTree
 const SCRIPTS := ["res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
 	"res://escenas/comun/iconos.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd",
-	"res://autoload/estado.gd", "res://escenas/taller/tablero_editor.gd", "res://escenas/taller/taller.gd"]
+	"res://autoload/estado.gd", "res://escenas/taller/tablero_editor.gd", "res://escenas/taller/taller.gd",
+	"res://nucleo/cuerda.gd", "res://escenas/mapa/camino.gd", "res://escenas/mapa/mapa.gd"]
 
 var fallos := 0
 var pasadas := 0
@@ -40,7 +41,59 @@ func _init() -> void:
 	pruebas_sonidos()
 	pruebas_reto(load("res://nucleo/reto_diario.gd"), sim)
 	pruebas_taller(load("res://nucleo/taller.gd"), sim)
+	pruebas_cuerda(load("res://nucleo/cuerda.gd"), progreso)
+	pruebas_barrio(sim)
 	terminar()
+
+
+func pruebas_cuerda(Cuerda: GDScript, Progreso: GDScript) -> void:
+	var t0 := 1_800_000_000
+	var llena := {"n": 5, "t": 0}
+	comprobar(Cuerda.al_dia(llena, t0)["n"] == 5 and Cuerda.falta(llena, t0) == 0, "llena: 5 cuerdas y nada que esperar")
+	var c: Dictionary = Cuerda.gastar(llena, t0)
+	comprobar(c["n"] == 4 and Cuerda.falta(c, t0) == 1800, "al gastar desde llena empieza la recarga de 30 minutos")
+	comprobar(Cuerda.al_dia(c, t0 + 1799)["n"] == 4 and Cuerda.al_dia(c, t0 + 1800)["n"] == 5, "a los 30 minutos vuelve una cuerda")
+	var vacia := {"n": 0, "t": t0}
+	comprobar(Cuerda.gastar(vacia, t0).is_empty(), "sin cuerda no se puede gastar")
+	comprobar(Cuerda.al_dia(vacia, t0 + 3 * 1800 + 60)["n"] == 3 and Cuerda.falta(vacia, t0 + 3 * 1800 + 60) == 1740,
+		"tras 1 h 31 min hay 3 cuerdas y faltan 29 min para la cuarta")
+	comprobar(Cuerda.al_dia(vacia, t0 + 100 * 1800)["n"] == 5, "nunca pasa del máximo")
+	comprobar(Cuerda.al_dia({"n": 2, "t": t0}, t0 - 5000)["n"] == 2, "si el reloj va hacia atrás no se pierde cuerda")
+	comprobar(Cuerda.reloj(760) == "12:40", "el contador se ve como 12:40")
+	# Reglas de la Fase 5 sobre el progreso
+	var ruta := "user://prueba_cuerda.json"
+	if FileAccess.file_exists(ruta):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
+	var p = Progreso.new(ruta)
+	comprobar(not p.cobra(1) and not p.cobra(15), "los niveles 1–15 no gastan cuerda")
+	comprobar(p.cobra(16), "el nivel 16, nuevo, gasta cuerda")
+	comprobar(p.empezar(16, t0) and p.cuerdas(t0) == 4, "empezar el 16 cuesta una cuerda")
+	comprobar(p.empezar(16, t0 + 10) and p.cuerdas(t0 + 10) == 4, "salir y volver a entrar sin superarlo no cobra otra vez")
+	p.registrar(16, 2)
+	comprobar(not p.cobra(16) and p.empezar(16, t0 + 20) and p.cuerdas(t0 + 20) == 4, "repetir un nivel superado es gratis")
+	for id in [17, 18, 19, 20]:
+		p.registrar(id - 1, 1)
+		p.empezar(id, t0 + 30)
+	comprobar(p.cuerdas(t0 + 30) == 0, "cinco niveles nuevos gastan las cinco cuerdas")
+	p.registrar(20, 1)
+	var q = Progreso.new(ruta)
+	comprobar(q.cuerdas(t0 + 30) == 0 and q.cuerdas(t0 + 30 + 1800) == 1, "la cuerda se guarda y se recarga al volver a abrir")
+	comprobar(q.total() == p.total(), "las estrellas de la Caída del Día no cuentan para el barrio")
+	for r in [ruta, "user://prueba_cuerda.anterior.json"]:
+		if FileAccess.file_exists(r):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(r))
+
+
+func pruebas_barrio(sim: GDScript) -> void:
+	var b = leer_json("res://datos/barrio_1.json")
+	comprobar(b != null and b["niveles"].size() == 20, "La Plaza tiene 20 niveles")
+	var mal := []
+	for k in b["niveles"].size():
+		var n: Dictionary = b["niveles"][k]
+		var r: Dictionary = sim.simular(n["nivel"], n["solucion"])
+		if int(n["id"]) != k + 1 or not r["exito"] or int(r["fichas_usadas"]) != int(n["nivel"]["m"]):
+			mal.append(n["id"])
+	comprobar(mal.is_empty(), "los 20 niveles del barrio se superan con su solución y su marca", str(mal))
 
 
 func terminar() -> void:

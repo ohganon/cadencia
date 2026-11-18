@@ -108,7 +108,7 @@ func _volver() -> void:
 	var estado := get_node_or_null("/root/Estado")
 	if estado != null:
 		estado.pendiente = {}
-	get_tree().change_scene_to_file(ESCENA_PARTIDA)
+	get_tree().change_scene_to_file("res://escenas/mapa/mapa.tscn")
 
 
 # ---------------------------------------------------------------- códigos

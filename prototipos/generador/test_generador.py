@@ -89,5 +89,18 @@ class CaidaDelDia(unittest.TestCase):
         self.assertEqual(godot.read_bytes(), DATOS.read_bytes())
 
 
+class Barrio(unittest.TestCase):
+    def test_barrio_al_dia_y_con_solucion(self):
+        import barrio
+        texto = json.dumps(barrio.barrio(), ensure_ascii=False, indent=1) + "\n"
+        self.assertEqual(barrio.SALIDA.read_text(encoding="utf-8"), texto, "ejecuta: python -X utf8 barrio.py")
+        d = json.loads(texto)
+        self.assertEqual([n["id"] for n in d["niveles"]], list(range(1, 21)))
+        for n in d["niveles"]:
+            r = simular(sim.nivel_de_dict(n["nivel"]), tramos_de(n["solucion"]))
+            self.assertTrue(r["exito"], n["id"])
+            self.assertEqual(r["fichas_usadas"], n["nivel"]["m"])
+
+
 if __name__ == "__main__":
     unittest.main()

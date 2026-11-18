@@ -54,6 +54,16 @@ static func dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color := Color(0,
 			bombilla.append(Vector2(9.5, 16))
 			bombilla.append(bombilla[0])
 			_trazos(ci, rect, [[Vector2(9, 18), Vector2(15, 18)], [Vector2(10, 21), Vector2(14, 21)], bombilla])
+		"llave":                          # llave de dar cuerda: dos asas, el vástago y los dientes
+			var asas := []
+			for lado in [-1, 1]:
+				var asa := []
+				for k in range(0, 25):
+					var a := TAU * k / 24.0
+					asa.append(Vector2(12 + lado * 4 + cos(a) * 4, 9 + sin(a) * 2.6))
+				asas.append(asa)
+			_trazos(ci, rect, asas + [[Vector2(12, 9), Vector2(12, 21)], [Vector2(12, 16), Vector2(15, 16)],
+				[Vector2(12, 19.5), Vector2(15, 19.5)]])
 		"inicio":                         # el empujador verde con su triángulo
 			var c := rect.get_center()
 			var r := rect.size.x * 0.42

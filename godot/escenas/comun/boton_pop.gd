@@ -36,6 +36,7 @@ const MANTENER := 0.6
 var color_fondo := Color(0, 0, 0, 0)
 var color_labio := Color(0, 0, 0, 0)
 var fuente: Font
+var sin_sombra := false      # los nodos cerrados del mapa no tienen sombra (DESIGN.md)
 var resaltado := false:
 	set(v):
 		resaltado = v
@@ -111,7 +112,7 @@ func _draw() -> void:
 	var baja := SOMBRA if _hundido else 0.0
 	var cuerpo := Rect2(Vector2(0, baja), size - Vector2(0, SOMBRA))
 	var radio := int(minf(cuerpo.size.x, cuerpo.size.y) / 2) if circular else 16
-	if not _hundido:
+	if not _hundido and not sin_sombra:
 		draw_style_box(_caja(TINTA, radio), Rect2(Vector2(0, SOMBRA), cuerpo.size))
 	draw_style_box(_caja(TINTA, radio), cuerpo)                         # borde de 2 px
 	var dentro := cuerpo.grow(-2)
