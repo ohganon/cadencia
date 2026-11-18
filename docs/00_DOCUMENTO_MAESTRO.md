@@ -160,7 +160,8 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] **Nombre elegido por el cliente (17/11/2026): Dingfall.** La suscripción se llama **Dingclub**. Villa Cadencia se mantiene como lugar del juego
 - [ ] Antes de usar el nombre en público: búsqueda de marcas parecidas, dominio y usuarios en redes
 - [x] Fase 7: nombre y marca, fichas ASO en español e inglés, plan de TikTok, plan de lanzamiento y kit de prensa
-- [ ] **Decisión del cliente:** nombre del equipo y tipo de cuenta de desarrollador
+- [x] **Decidido por el cliente (18/11/2026): nombre del desarrollador.** En App Store, cuenta personal: aparece el nombre del cliente. En Google Play, el nombre de desarrollador es **«Dingfall Games»** (TMview y web sin coincidencias; se descartaron «Zoom Games», con marcas y estudios con ese nombre, y «Ding Games», con marcas parecidas en juegos)
+- [ ] Antes de crear las cuentas: datos de contacto que se publicarán como comerciante en la UE (se puede usar un apartado de correos) y consulta con el gestor. Con cuenta personal en Google Play hace falta la prueba cerrada de 12 personas durante 14 días
 - [x] Aprobación de la Fase 7 (17/11/2026)
 - [x] Fase 8: 10 niveles de la entrega 1 con solución verificada y 30 casos compartidos para el port a Godot (17/11/2026)
 - [x] Fase 8: Godot 4.7.2 instalado con permiso del cliente; SHA-512 y firma comprobados (17/11/2026)

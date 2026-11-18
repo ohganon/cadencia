@@ -9,7 +9,7 @@
 | Dato | Valor |
 |---|---|
 | Nombre | Dingfall |
-| Estudio | *(nombre del equipo, por decidir)*, 3 personas, España |
+| Estudio | Dingfall Games (en App Store figura el nombre personal del desarrollador), 3 personas, España |
 | Plataformas | iOS y Android |
 | Motor | Godot 4 (código abierto, MIT) |
 | Fecha de lanzamiento | *(por fijar)* |

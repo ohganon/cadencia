@@ -53,8 +53,8 @@
 ## 4. Decisiones que necesito del cliente
 
 1. ~~**Nombre:** Dingfall, Chimefall u otro.~~ **Decidido: Dingfall** (17/11/2026).
-2. **Nombre del equipo o estudio** para la ficha de la tienda y la prensa.
-3. **Cuenta de desarrollador:** personal o de empresa. En Google Play, las cuentas personales nuevas necesitan la prueba cerrada de 12 probadores durante 14 días (marco legal). Afecta al calendario.
+2. ~~**Nombre del equipo o estudio**~~ **Decidido** (18/11/2026): en Google Play, «Dingfall Games»; en App Store, cuenta personal con el nombre del cliente.
+3. **Cuenta de desarrollador:** en App Store, personal (decidido el 18/11/2026); en Google Play, falta confirmar si personal o de empresa. En Google Play, las cuentas personales nuevas necesitan la prueba cerrada de 12 probadores durante 14 días (marco legal). Afecta al calendario.
 4. **Quién graba y publica** los 3 vídeos semanales. Sostenerlo cuesta unas horas a la semana.
 
 ## 5. Riesgos
