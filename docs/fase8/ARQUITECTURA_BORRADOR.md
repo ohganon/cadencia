@@ -108,7 +108,7 @@ godot/
 | 2 | Mapa, progreso, estrellas, cuerda (sin anuncios aún) y guardado | — |
 | 3 | Generador y Caída del Día | — |
 | 4 | Taller con códigos | — |
-| 5 | Los 11 temas y la prueba de temas | — |
+| 5 | Los 11 temas y la prueba de temas ✅ (18/11/2026: datos en `godot/datos/temas.json`, tema activo en `nucleo/temas.gd`; faltan las fuentes propias de cada tema) | — |
 | 6 | Accesibilidad completa (alto contraste, tamaño de interfaz, reducción de movimiento) | — |
 | 7 | Anuncios recompensados e intersticiales (AdMob) con su consentimiento | — |
 | 8 | Club y packs de fichas (godot-iap) | Puerta 1: prueba cerrada |

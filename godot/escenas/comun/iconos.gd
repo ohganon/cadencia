@@ -4,12 +4,17 @@
 ## Uso: Iconos.dibujar(canvas_item, "estrella", rect) dentro de un _draw().
 extends RefCounted
 
-const TINTA := Color("#142554")
+const TINTA_POP := Color("#142554")
 const MARFIL := Color("#fffdf6")
 const AMARILLO := Color("#ffc83d")
 const CORAL := Color("#ff5470")
 const APAGADA := Color("#c9d6f2")
 const BLANCO := Color.WHITE
+
+## Las pone el autoload Tema: tinta de los contornos y color de la estrella conseguida
+static var tinta := TINTA_POP
+static var estrella := AMARILLO
+static var _t := TINTA_POP        # tinta de la llamada en curso
 
 # Puntos de la estrella del SVG (caja de 40 × 40)
 const ESTRELLA := [Vector2(20, 3.5), Vector2(25.1, 13.9), Vector2(36.5, 15.6), Vector2(28.2, 23.6),
@@ -22,10 +27,18 @@ const CAMPANA := [Vector2(20, 5), Vector2(15.4, 6.2), Vector2(12, 9.2), Vector2(
 
 
 ## Dibuja el icono `tipo` ajustado a `rect`. `color` cambia el relleno principal cuando tiene sentido.
-static func dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color := Color(0, 0, 0, 0)) -> void:
+## `tinta`, si se da, sustituye a la del tema (por ejemplo, el color del texto de un botón).
+static func dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color := Color(0, 0, 0, 0), tinta_propia := Color(0, 0, 0, 0)) -> void:
+	var previa := _t
+	_t = tinta_propia if tinta_propia.a > 0 else tinta
+	_dibujar(ci, tipo, rect, color)
+	_t = previa
+
+
+static func _dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color: Color) -> void:
 	match tipo:
 		"estrella":
-			_forma(ci, ESTRELLA, 40.0, rect, AMARILLO if color.a == 0 else color, 2.4)
+			_forma(ci, ESTRELLA, 40.0, rect, estrella if color.a == 0 else color, 2.4)
 		"estrella_apagada":
 			_forma(ci, ESTRELLA, 40.0, rect, APAGADA, 2.4)
 		"campana":
@@ -33,7 +46,7 @@ static func dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color := Color(0,
 			var e := rect.size.x / 40.0
 			var c := rect.position + Vector2(20, 32) * e
 			ci.draw_circle(c, 3.5 * e, CORAL)
-			ci.draw_arc(c, 3.5 * e, 0, TAU, 20, TINTA, maxf(1.0, 2.4 * e), true)
+			ci.draw_arc(c, 3.5 * e, 0, TAU, 20, _t, maxf(1.0, 2.4 * e), true)
 		"ficha":
 			_ficha(ci, rect)
 		"volver":
@@ -45,10 +58,10 @@ static func dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color := Color(0,
 			var a := rect.position + Vector2(3, 13) * e
 			var b := rect.position + Vector2(21, 13) * e
 			ci.draw_line(a, b, Color("#c98a4b"), 4.0 * e, true)
-			ci.draw_line(a, b, TINTA, 1.2 * e, true)
+			ci.draw_line(a, b, _t, 1.2 * e, true)
 			for poste in [a, b]:
-				ci.draw_circle(poste, 2.4 * e, TINTA)
-			ci.draw_arc(rect.position + Vector2(12, 13) * e, 6.5 * e, PI * 1.15, PI * 1.85, 12, TINTA, maxf(1.2, 1.6 * e), true)
+				ci.draw_circle(poste, 2.4 * e, _t)
+			ci.draw_arc(rect.position + Vector2(12, 13) * e, 6.5 * e, PI * 1.15, PI * 1.85, 12, _t, maxf(1.2, 1.6 * e), true)
 		"deshacer":
 			var arco := [Vector2(4, 9), Vector2(14, 9)]
 			for k in range(1, 13):        # semicírculo de radio 6 centrado en (14, 15), por la derecha
@@ -79,15 +92,15 @@ static func dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color := Color(0,
 			var c := rect.get_center()
 			var r := rect.size.x * 0.42
 			ci.draw_circle(c, r, Color("#3ddc6b"))
-			ci.draw_arc(c, r, 0, TAU, 32, TINTA, maxf(1.5, rect.size.x * 0.06), true)
+			ci.draw_arc(c, r, 0, TAU, 32, _t, maxf(1.5, rect.size.x * 0.06), true)
 			var e := rect.size.x / 40.0
 			ci.draw_colored_polygon(PackedVector2Array([c + Vector2(-5, -8) * e, c + Vector2(9, 0) * e, c + Vector2(-5, 8) * e]), BLANCO)
 		"doble":
 			var lado := rect.size.x * 0.72
-			dibujar(ci, "campana", Rect2(rect.position + Vector2(0, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
-			dibujar(ci, "campana", Rect2(rect.position + Vector2(rect.size.x - lado, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
+			_dibujar(ci, "campana", Rect2(rect.position + Vector2(0, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
+			_dibujar(ci, "campana", Rect2(rect.position + Vector2(rect.size.x - lado, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
 		"numerada":
-			dibujar(ci, "campana", rect, CORAL)
+			_dibujar(ci, "campana", rect, CORAL)
 			var f := ThemeDB.fallback_font
 			var tam := int(rect.size.x * 0.34)
 			var medida := f.get_string_size("1", HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
@@ -96,9 +109,9 @@ static func dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color := Color(0,
 		"muro":
 			var a := rect.position + rect.size * Vector2(0.18, 0.78)
 			var b := rect.position + rect.size * Vector2(0.82, 0.22)
-			ci.draw_line(a, b, TINTA, rect.size.x * 0.16, true)
-			ci.draw_circle(a, rect.size.x * 0.08, TINTA)
-			ci.draw_circle(b, rect.size.x * 0.08, TINTA)
+			ci.draw_line(a, b, _t, rect.size.x * 0.16, true)
+			ci.draw_circle(a, rect.size.x * 0.08, _t)
+			ci.draw_circle(b, rect.size.x * 0.08, _t)
 		"goma":
 			var e := rect.size.x / 24.0
 			var cuerpo := PackedVector2Array([Vector2(4, 15), Vector2(12, 7), Vector2(20, 15), Vector2(14, 21), Vector2(10, 21)])
@@ -108,9 +121,9 @@ static func dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color := Color(0,
 			ci.draw_colored_polygon(p, Color("#ff9fb0"))
 			var borde := p.duplicate()
 			borde.append(p[0])
-			ci.draw_polyline(borde, TINTA, maxf(1.5, 2.2 * e), true)
-			ci.draw_line(rect.position + Vector2(8, 11) * e, rect.position + Vector2(16, 19) * e, TINTA, maxf(1.5, 2.2 * e), true)
-			ci.draw_line(rect.position + Vector2(10, 21) * e, rect.position + Vector2(21, 21) * e, TINTA, maxf(1.5, 2.2 * e), true)
+			ci.draw_polyline(borde, _t, maxf(1.5, 2.2 * e), true)
+			ci.draw_line(rect.position + Vector2(8, 11) * e, rect.position + Vector2(16, 19) * e, _t, maxf(1.5, 2.2 * e), true)
+			ci.draw_line(rect.position + Vector2(10, 21) * e, rect.position + Vector2(21, 21) * e, _t, maxf(1.5, 2.2 * e), true)
 		"lento":                          # caracol sencillo: espiral y cuerpo
 			var espiral := []
 			for k in range(0, 40):
@@ -127,7 +140,7 @@ static func _forma(ci: CanvasItem, puntos: Array, caja: float, rect: Rect2, rell
 	ci.draw_colored_polygon(p, relleno)
 	var borde := p.duplicate()
 	borde.append(p[0])
-	ci.draw_polyline(borde, TINTA, maxf(1.0, trazo * e), true)
+	ci.draw_polyline(borde, _t, maxf(1.0, trazo * e), true)
 
 
 static func _trazos(ci: CanvasItem, rect: Rect2, lineas: Array) -> void:
@@ -136,9 +149,9 @@ static func _trazos(ci: CanvasItem, rect: Rect2, lineas: Array) -> void:
 		var p := PackedVector2Array()
 		for v in linea:
 			p.append(rect.position + v * e)
-		ci.draw_polyline(p, TINTA, maxf(1.5, 2.6 * e), true)
+		ci.draw_polyline(p, _t, maxf(1.5, 2.6 * e), true)
 		for extremo in [p[0], p[p.size() - 1]]:      # puntas redondeadas
-			ci.draw_circle(extremo, maxf(0.75, 1.3 * e), TINTA)
+			ci.draw_circle(extremo, maxf(0.75, 1.3 * e), _t)
 
 
 static func _ficha(ci: CanvasItem, rect: Rect2) -> void:
@@ -147,9 +160,9 @@ static func _ficha(ci: CanvasItem, rect: Rect2) -> void:
 	var o := rect.position + (rect.size - Vector2(24, 40) * e) / 2
 	var caja := StyleBoxFlat.new()
 	caja.bg_color = MARFIL
-	caja.border_color = TINTA
+	caja.border_color = _t
 	caja.set_border_width_all(maxi(1, int(round(2.4 * e))))
 	caja.set_corner_radius_all(int(5 * e))
 	ci.draw_style_box(caja, Rect2(o + Vector2(2, 2) * e, Vector2(20, 36) * e))
-	ci.draw_circle(o + Vector2(12, 11) * e, 2.6 * e, TINTA)
-	ci.draw_circle(o + Vector2(12, 29) * e, 2.6 * e, TINTA)
+	ci.draw_circle(o + Vector2(12, 11) * e, 2.6 * e, _t)
+	ci.draw_circle(o + Vector2(12, 29) * e, 2.6 * e, _t)

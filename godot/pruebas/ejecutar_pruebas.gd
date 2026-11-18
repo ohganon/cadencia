@@ -12,7 +12,7 @@
 ## Es un ejecutor mínimo sin dependencias. GUT se añadirá cuando haga falta probar escenas.
 extends SceneTree
 
-const SCRIPTS := ["res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
+const SCRIPTS := ["res://nucleo/temas.gd", "res://autoload/tema.gd", "res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
 	"res://escenas/comun/iconos.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd",
 	"res://autoload/estado.gd", "res://escenas/taller/tablero_editor.gd", "res://escenas/taller/taller.gd",
@@ -43,6 +43,7 @@ func _init() -> void:
 	pruebas_taller(load("res://nucleo/taller.gd"), sim)
 	pruebas_cuerda(load("res://nucleo/cuerda.gd"), progreso)
 	pruebas_barrio(sim)
+	pruebas_temas(load("res://nucleo/temas.gd"))
 	terminar()
 
 
@@ -111,6 +112,47 @@ func pruebas_barrio(sim: GDScript) -> void:
 			var recta: Dictionary = sim.simular(n22["nivel"], [{"puntos": [n22["nivel"]["i"], n22["nivel"]["c"][0][1]], "padre": null, "desde": 0}])
 			comprobar(not recta["exito"] and recta["parada"]["motivo"] == "puerta cerrada", "en el nivel 22 la línea recta encuentra la puerta cerrada")
 		primero += 20
+
+
+## Los 11 temas: datos completos, Dominó Pop gratis y por defecto, y contrastes mínimos.
+func pruebas_temas(Temas: GDScript) -> void:
+	var todos: Array = Temas.todos()
+	comprobar(todos.size() == 11, "hay 11 temas")
+	comprobar(todos[0]["id"] == "pop" and not todos[0]["club"], "Dominó Pop es el primero y es gratis")
+	var club := 0
+	for t in todos:
+		if t["club"]:
+			club += 1
+	comprobar(club == 10, "los otros diez son del Club")
+	var claves_ui := ["pantalla", "texto", "suave", "marco", "chip", "chip_t", "prim", "prim_t", "prim_labio", "sec",
+		"sec_t", "sec_labio", "nodo_h", "nodo_c", "ventana", "ventana_t", "ventana_s", "velo", "estrella", "camino", "camino_no"]
+	var claves_tablero := ["tablero", "tinta", "punto", "ficha", "pip", "borde_ficha", "sombra", "cae", "caida",
+		"campana", "dorada", "inicio", "inicio_ico", "cifra", "cifra_t", "borde"]
+	for datos in todos:
+		var tema: Dictionary = Temas.de(datos["id"])
+		var faltan := []
+		for k in claves_ui:
+			if typeof(tema["ui"].get(k)) != TYPE_COLOR:
+				faltan.append(k)
+		for k in claves_tablero:
+			if typeof(tema["tablero"].get(k)) != TYPE_COLOR:
+				faltan.append(k)
+		comprobar(faltan.is_empty(), "%s: tiene todos los colores" % datos["id"], str(faltan))
+		var ui: Dictionary = tema["ui"]
+		var tab: Dictionary = tema["tablero"]
+		var fondo_tablero: Color = ui["pantalla"].blend(tab["tablero"])
+		comprobar(Temas.contraste(ui["ventana_t"], ui["ventana"]) >= 4.5, "%s: el texto de las ventanas se lee (4,5:1)" % datos["id"])
+		comprobar(Temas.contraste(ui["texto"], ui["pantalla"]) >= 4.5, "%s: el texto de la pantalla se lee (4,5:1)" % datos["id"])
+		comprobar(Temas.contraste(ui["prim_t"], ui["prim"]) >= 3.0, "%s: el botón principal se lee (3:1, letra grande)" % datos["id"])
+		comprobar(Temas.contraste(tab["tinta"], fondo_tablero) >= 3.0, "%s: muros y postes se ven sobre el tablero" % datos["id"])
+		comprobar(Temas.contraste(tab["ficha"], fondo_tablero) >= 1.3 or tab["borde_ficha"].a > 0.3 or tab["sombra"].a >= 0.15,
+			"%s: las fichas se distinguen del tablero (color, borde o sombra)" % datos["id"])
+	Temas.usar("no-existe")
+	comprobar(Temas.id_activo() == "pop", "un tema desconocido vuelve a Dominó Pop")
+	Temas.usar("nocturno")
+	comprobar(Temas.texto("ya", "") == "Encender" and Temas.ui("pantalla") == Color("#0e1430"), "el tema activo cambia colores y textos")
+	comprobar(Temas.contraste(Temas.tinta_sobre(Temas.ui("nodo_h")), Temas.ui("nodo_h")) >= 4.5, "la tinta sobre un nodo se elige legible")
+	Temas.usar("pop")
 
 
 func terminar() -> void:
@@ -233,6 +275,9 @@ func pruebas_progreso(Progreso: GDScript) -> void:
 	tablero.aplicar_accesibilidad({})
 	comprobar(tablero.TINTA == Color("#142554") and not tablero.reducir_movimiento, "y vuelve a Dominó Pop")
 	tablero.free()
+	e.tema = "nocturno"
+	e.guardar()
+	comprobar(Progreso.new(ruta).tema == "nocturno", "el tema elegido se guarda en el progreso")
 	for r in [ruta, "user://prueba_progreso.anterior.json"]:
 		if FileAccess.file_exists(r):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(r))

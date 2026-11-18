@@ -178,6 +178,8 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: Barrio 2, El Puerto, con la puerta de vaivén (generador, tablero, Taller y mapa de dos barrios) (18/11/2026)
 - [x] Fase 8: tercera estrella con la campana dorada en los 40 niveles de los barrios (18/11/2026)
 - [x] Fase 8: accesibilidad: alto contraste, reducir movimiento, texto grande y símbolos además de colores (18/11/2026)
+- [x] Fase 8: los 11 temas en Ajustes › Apariencia; los del Club se pueden usar gratis mientras el Club no exista, con un aviso que lo dice tal cual (18/11/2026)
+- [ ] Fase 8: fuentes propias de cada tema (Manrope, Jost, Archivo, Bebas Neue, Barlow, Shippori Mincho, Zen Kaku Gothic New, League Spartan, Familjen Grotesk, Bricolage Grotesque, Red Hat, Figtree). Hasta descargarlas (con permiso del cliente; todas son OFL de Google Fonts, a verificar), todos los temas usan Lilita One y Nunito
 - [ ] **TODO (decisión del cliente, 18/11/2026): pasada estética** con animaciones, sombreado y efectos. Se hace después de desarrollar el juego. Lista en fase8/ARQUITECTURA_BORRADOR.md, sección 6 bis
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal

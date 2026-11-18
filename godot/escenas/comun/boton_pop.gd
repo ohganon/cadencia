@@ -10,15 +10,16 @@ signal pulsado
 signal mantenido          # se mantiene pulsado 0,6 s (por ejemplo, para borrar todo)
 
 const Iconos = preload("res://escenas/comun/iconos.gd")
+const Temas = preload("res://nucleo/temas.gd")
 
-const TINTA := Color("#142554")
-const VERDE := Color("#3ddc6b")
-const LABIO_VERDE := Color("#22a552")
-const MARFIL := Color("#fffdf6")
-const LABIO_MARFIL := Color("#d9e2f2")
-const DESACTIVADO := Color("#b7c4df")
-const LABIO_DESACTIVADO := Color("#97a7c8")
-const TEXTO_DESACTIVADO := Color("#43557f")
+# Colores y forma del tema activo (nucleo/temas.gd)
+var TINTA: Color = Temas.ui("marco")
+var VERDE: Color = Temas.ui("prim")
+var LABIO_VERDE: Color = Temas.ui("prim_labio")
+var MARFIL: Color = Temas.ui("sec")
+var LABIO_MARFIL: Color = Temas.ui("sec_labio")
+var RADIO: int = Temas.numero("radio_boton", 16)
+var SOMBRA_SOLIDA: bool = Temas.sombra_solida()
 const SOMBRA := 3.0
 const MANTENER := 0.6
 
@@ -43,6 +44,7 @@ var resaltado := false:
 		queue_redraw()
 
 var _hundido := false
+var _en_ventana = null            # se averigua al dibujar: ¿está dentro de una ventana?
 var _tiempo_pulsado := -1.0
 
 
@@ -102,29 +104,65 @@ func _notification(que: int) -> void:
 		queue_redraw()
 
 
+## ¿Está el botón dentro de una ventana (meta «ventana» en algún antecesor)? Los botones
+## transparentes de algunos temas cambian de tinta dentro de las ventanas, como en la maqueta.
+func _dentro_de_ventana() -> bool:
+	if _en_ventana == null:
+		_en_ventana = false
+		var n := get_parent()
+		while n != null:
+			if n.has_meta("ventana"):
+				_en_ventana = true
+				break
+			n = n.get_parent()
+	return _en_ventana
+
+
 func _draw() -> void:
 	var fondo := VERDE if principal else MARFIL
 	var labio := LABIO_VERDE if principal else LABIO_MARFIL
+	var color_texto: Color = Temas.ui("prim_t") if principal else Temas.ui("sec_t")
 	if color_fondo.a > 0:
 		fondo = color_fondo
 		labio = color_labio
+		color_texto = Temas.tinta_sobre(fondo)
+	if fondo.a < 0.5 and _dentro_de_ventana():
+		color_texto = Temas.ui("ventana_t")
 	if desactivado:
-		fondo = DESACTIVADO
-		labio = LABIO_DESACTIVADO
-	var baja := SOMBRA if _hundido else 0.0
-	var cuerpo := Rect2(Vector2(0, baja), size - Vector2(0, SOMBRA))
-	var radio := int(minf(cuerpo.size.x, cuerpo.size.y) / 2) if circular else 16
-	if not _hundido and not sin_sombra:
-		draw_style_box(_caja(TINTA, radio), Rect2(Vector2(0, SOMBRA), cuerpo.size))
-	draw_style_box(_caja(TINTA, radio), cuerpo)                         # borde de 2 px
+		# Apagado: el mismo botón, mezclado con el fondo de la pantalla (vale para todos los temas)
+		var pantalla := Temas.ui("pantalla")
+		fondo = fondo.lerp(pantalla, 0.55) if fondo.a >= 0.5 else fondo
+		labio = labio.lerp(pantalla, 0.55) if labio.a >= 0.5 else labio
+		color_texto = Color(color_texto, 0.45)
+	# Botón sin fondo (algunos temas): solo el contorno, del color del texto
+	var borde := TINTA if fondo.a >= 0.5 else color_texto
+	# Temas planos: sin sombra sólida ni labio; al pulsar, el fondo se oscurece un poco
+	var sombra := SOMBRA if SOMBRA_SOLIDA else 0.0
+	if _hundido and not SOMBRA_SOLIDA:
+		fondo = fondo.darkened(0.12) if fondo.a >= 0.5 else Color(color_texto, 0.12)
+	if not SOMBRA_SOLIDA:
+		labio = fondo
+	var baja := sombra if _hundido else 0.0
+	var cuerpo := Rect2(Vector2(0, baja), size - Vector2(0, sombra))
+	var mitad := int(minf(cuerpo.size.x, cuerpo.size.y) / 2)
+	var radio := mitad if circular else mini(RADIO, mitad)
+	if not _hundido and not sin_sombra and sombra > 0:
+		draw_style_box(_caja(TINTA, radio), Rect2(Vector2(0, sombra), cuerpo.size))
 	var dentro := cuerpo.grow(-2)
-	draw_style_box(_caja(labio, radio - 2), dentro)                      # labio
-	var alto_labio := 2.0 if _hundido else 4.0
-	draw_style_box(_caja(fondo, radio - 2), Rect2(dentro.position, dentro.size - Vector2(0, alto_labio)))
+	var alto_labio := (2.0 if _hundido else 4.0) if SOMBRA_SOLIDA else 0.0
+	if fondo.a >= 0.5:
+		draw_style_box(_caja(borde, radio), cuerpo)                     # borde de 2 px
+		draw_style_box(_caja(labio, radio - 2), dentro)                  # labio
+		draw_style_box(_caja(fondo, radio - 2), Rect2(dentro.position, dentro.size - Vector2(0, alto_labio)))
+	else:
+		# Sin fondo (o casi): solo el contorno, con lo que haya detrás a la vista
+		var s := _caja(fondo, radio)
+		s.border_color = borde
+		s.set_border_width_all(2)
+		draw_style_box(s, cuerpo)
 	if resaltado:
 		draw_style_box(_anillo(radio + 4), cuerpo.grow(5))
 
-	var color_texto := TEXTO_DESACTIVADO if desactivado else TINTA
 	var centro := Rect2(dentro.position, dentro.size - Vector2(0, alto_labio))
 	var f := _fuente()
 	var ancho_texto := f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam_fuente).x if texto != "" else 0.0
@@ -134,7 +172,7 @@ func _draw() -> void:
 	var x := centro.position.x + (centro.size.x - total) / 2
 	if icono != "":
 		var r := Rect2(Vector2(x, centro.get_center().y - lado_icono / 2), Vector2(lado_icono, lado_icono))
-		Iconos.dibujar(self, icono, r)
+		Iconos.dibujar(self, icono, r, Color(0, 0, 0, 0), color_texto)
 		x += lado_icono + hueco
 	if texto != "":
 		var base := centro.get_center().y + (f.get_ascent(tam_fuente) - f.get_descent(tam_fuente)) / 2
@@ -152,7 +190,7 @@ func _caja(color: Color, radio: int) -> StyleBoxFlat:
 func _anillo(radio: int) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
 	s.draw_center = false
-	s.border_color = Color.WHITE
+	s.border_color = Temas.ui("texto")
 	s.set_border_width_all(4)
 	s.set_corner_radius_all(radio)
 	return s

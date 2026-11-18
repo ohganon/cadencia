@@ -13,6 +13,7 @@
 extends Control
 
 const Progreso = preload("res://nucleo/progreso.gd")
+const Temas = preload("res://nucleo/temas.gd")
 const Registro = preload("res://nucleo/registro.gd")
 const Cuerda = preload("res://nucleo/cuerda.gd")
 const BotonPop = preload("res://escenas/comun/boton_pop.gd")
@@ -22,17 +23,21 @@ const Camino = preload("res://escenas/mapa/camino.gd")
 
 const ESCENA_PARTIDA := "res://escenas/partida/partida.tscn"
 const ESCENA_TALLER := "res://escenas/taller/taller.tscn"
-const AZUL := Color("#2462d6")
-const TINTA := Color("#142554")
-const TINTA_SUAVE := Color("#3a4f86")
-const TEXTO_CLARO := Color("#e8f0ff")
-const MARFIL := Color("#fffdf6")
-const VERDE := Color("#3ddc6b")
-const LABIO_VERDE := Color("#22a552")
-const AMARILLO := Color("#ffc83d")
-const LABIO_AMARILLO := Color("#d9a21f")
-const BLOQUEADO := Color("#9db4e6")
-const VELO := Color(0.039, 0.11, 0.314, 0.55)
+# Colores del tema activo (nucleo/temas.gd)
+var AZUL: Color = Temas.ui("pantalla")
+var TINTA: Color = Temas.ui("ventana_t")
+var TINTA_SUAVE: Color = Temas.ui("ventana_s")
+var TEXTO_CLARO: Color = Temas.ui("suave")
+var MARFIL: Color = Temas.ui("ventana")
+var VERDE: Color = Temas.ui("prim")
+var LABIO_VERDE: Color = Temas.ui("prim_labio")
+var AMARILLO: Color = Temas.ui("nodo_h")
+var LABIO_AMARILLO: Color = Temas.ui("nodo_h").darkened(0.15)
+var BLOQUEADO: Color = Temas.ui("nodo_c")
+var VELO: Color = Temas.ui("velo")
+var TEXTO: Color = Temas.ui("texto")          # texto sobre la pantalla
+var MARCO: Color = Temas.ui("marco")          # borde y sombra de las ventanas
+var ESTRELLA: Color = Temas.ui("estrella")
 const ALTO_TRAMO := 190.0
 
 var niveles: Array = []          # toda la campaña, barrio tras barrio
@@ -54,6 +59,9 @@ var velo: ColorRect
 var ventana_cuerda: PanelContainer
 var texto_espera: Label
 var ventana_ajustes: PanelContainer
+var ventana_apariencia: PanelContainer
+var boton_apariencia: Control
+var aviso_prueba: Control            # aviso honesto cuando el tema elegido es del Club
 var boton_sonido: Control
 var boton_vibracion: Control
 var botones_accesibilidad := {}     # clave del ajuste -> botón
@@ -83,6 +91,9 @@ func _ready() -> void:
 	if estado != null and estado.pendiente.get("modo") == "sin_cuerda":
 		estado.pendiente = {}
 		_mostrar_sin_cuerda()
+	elif estado != null and estado.pendiente.get("modo") == "apariencia":
+		estado.pendiente = {}
+		_abrir_apariencia()
 	_demo_si_toca()
 
 
@@ -153,6 +164,27 @@ func _cerrar_ventanas() -> void:
 	velo.visible = false
 	ventana_cuerda.visible = false
 	ventana_ajustes.visible = false
+	ventana_apariencia.visible = false
+
+
+func _abrir_apariencia() -> void:
+	ventana_ajustes.visible = false
+	velo.visible = true
+	ventana_apariencia.visible = true
+	_centrar(ventana_apariencia)
+
+
+## Cambia de tema y vuelve a construir el mapa con sus colores (con la ventana de Apariencia abierta).
+func _elegir_tema(id: String) -> void:
+	if id == Temas.id_activo():
+		return
+	progreso.tema = id
+	progreso.guardar()
+	Temas.usar(id)
+	var estado := get_node_or_null("/root/Estado")
+	if estado != null:
+		estado.pendiente = {"modo": "apariencia"}
+	get_tree().reload_current_scene()
 
 
 func _abrir_ajustes() -> void:
@@ -173,6 +205,7 @@ func _centrar(v: Control) -> void:
 
 
 func _textos_ajustes() -> void:
+	boton_apariencia.texto = "Apariencia: " + Temas.activo.get("nombre", "")
 	boton_sonido.texto = "Sonido: " + ("sí" if progreso.ajustes["sonido"] else "no")
 	boton_vibracion.texto = "Vibración: " + ("sí" if progreso.ajustes["vibracion"] else "no")
 	for par in ACCESIBILIDAD:
@@ -180,7 +213,7 @@ func _textos_ajustes() -> void:
 		b.texto = "%s: %s" % [par[1], "sí" if progreso.ajustes.get(par[0], false) else "no"]
 		b.update_minimum_size()
 		b.queue_redraw()
-	for b in [boton_sonido, boton_vibracion]:
+	for b in [boton_sonido, boton_vibracion, boton_apariencia]:
 		b.update_minimum_size()
 		b.queue_redraw()
 
@@ -323,7 +356,7 @@ func _construir() -> void:
 	columna.add_child(hud)
 	pastilla_cuerda = Pastilla.new()
 	pastilla_cuerda.icono = "llave"
-	pastilla_cuerda.color_icono = AMARILLO
+	pastilla_cuerda.color_icono = ESTRELLA
 	pastilla_cuerda.fuente = fuente_negrita
 	hud.add_child(pastilla_cuerda)
 	var hueco := Control.new()
@@ -331,7 +364,7 @@ func _construir() -> void:
 	hud.add_child(hueco)
 	pastilla_estrellas = Pastilla.new()
 	pastilla_estrellas.icono = "estrella"
-	pastilla_estrellas.color_icono = AMARILLO
+	pastilla_estrellas.color_icono = ESTRELLA
 	pastilla_estrellas.fuente = fuente_negrita
 	hud.add_child(pastilla_estrellas)
 
@@ -344,7 +377,7 @@ func _construir() -> void:
 	fila_cinta.add_child(cinta)
 	etiqueta_barrio = _etiqueta(24, TEXTO_CLARO)
 	cinta.add_child(etiqueta_barrio)
-	etiqueta_nombre = _etiqueta(56, Color.WHITE, true)
+	etiqueta_nombre = _etiqueta(56, TEXTO, true)
 	cinta.add_child(etiqueta_nombre)
 	flecha_izq = _boton("", false)
 	flecha_izq.icono = "volver"
@@ -362,7 +395,7 @@ func _construir() -> void:
 	flecha_der.pulsado.connect(_cambiar_barrio.bind(1))
 	fila_cinta.add_child(flecha_izq)
 	fila_cinta.add_child(flecha_der)
-	aviso_cerrado = _etiqueta(28, Color.WHITE)
+	aviso_cerrado = _etiqueta(28, TEXTO)
 	aviso_cerrado.add_theme_font_override("font", fuente_negrita)
 	aviso_cerrado.visible = false
 	columna.add_child(aviso_cerrado)
@@ -389,6 +422,7 @@ func _construir() -> void:
 	add_child(velo)
 	_construir_sin_cuerda()
 	_construir_ajustes()
+	_construir_apariencia()
 
 
 ## Barra de abajo (DESIGN.md: la pestaña activa se marca con una pastilla marfil y no se eleva).
@@ -415,9 +449,10 @@ func _barra_abajo() -> Control:
 				s.bg_color = MARFIL
 				s.set_corner_radius_all(999)
 				icono.draw_style_box(s, Rect2(c - Vector2(46, 28), Vector2(92, 56)))
-			Iconos.dibujar(icono, tipo, Rect2(c - Vector2(20, 20), Vector2(40, 40))))
+			Iconos.dibujar(icono, tipo, Rect2(c - Vector2(20, 20), Vector2(40, 40)), Color(0, 0, 0, 0),
+				Temas.tinta_sobre(MARFIL) if activa else TEXTO_CLARO))
 		celda.add_child(icono)
-		var l := _etiqueta(22, Color.WHITE if activa else TEXTO_CLARO)
+		var l := _etiqueta(22, TEXTO if activa else TEXTO_CLARO)
 		if activa:
 			l.add_theme_font_override("font", fuente_negrita)
 		l.text = p[0]
@@ -438,7 +473,7 @@ func _construir_sin_cuerda() -> void:
 	caja.add_theme_constant_override("separation", 16)
 	ventana_cuerda.add_child(caja)
 	var t := _etiqueta(52, TINTA, true)
-	t.text = "Sin cuerda"
+	t.text = Temas.texto("sinTitulo", "Sin cuerda")
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	caja.add_child(t)
 	var d := _etiqueta(28, TINTA_SUAVE)
@@ -471,6 +506,9 @@ func _construir_ajustes() -> void:
 	t.text = "Ajustes"
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	caja.add_child(t)
+	boton_apariencia = _boton("Apariencia", false, 32)
+	boton_apariencia.pulsado.connect(_abrir_apariencia)
+	caja.add_child(boton_apariencia)
 	boton_sonido = _boton("Sonido: sí", false, 32)
 	boton_sonido.pulsado.connect(func():
 		progreso.ajustar("sonido", not progreso.ajustes["sonido"])
@@ -503,14 +541,128 @@ func _construir_ajustes() -> void:
 		caja.add_child(h)
 
 
+## Ajustes › Apariencia: los 11 temas en dos columnas. Dominó Pop es gratis; los demás son del
+## Dingclub. Como el Club aún no existe, se pueden usar gratis, y el aviso lo dice tal cual: sin
+## cuentas atrás ni precios de algo que no se puede comprar.
+func _construir_apariencia() -> void:
+	ventana_apariencia = _ventana()
+	var caja := VBoxContainer.new()
+	caja.add_theme_constant_override("separation", 14)
+	ventana_apariencia.add_child(caja)
+	var t := _etiqueta(48, TINTA, true)
+	t.text = "Apariencia"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caja.add_child(t)
+	var nota := _etiqueta(24, TINTA_SUAVE)
+	nota.text = "Solo cambia el aspecto: tus niveles y estrellas se quedan."
+	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	nota.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	nota.custom_minimum_size = Vector2(560, 0)
+	caja.add_child(nota)
+	var rejilla := GridContainer.new()
+	rejilla.columns = 2
+	rejilla.add_theme_constant_override("h_separation", 12)
+	rejilla.add_theme_constant_override("v_separation", 8)
+	caja.add_child(rejilla)
+	for datos in Temas.todos():
+		rejilla.add_child(_muestra_tema(Temas.de(datos["id"])))
+	if Temas.activo.get("club", false):
+		aviso_prueba = _aviso_prueba()
+		caja.add_child(aviso_prueba)
+	var cerrar := _boton("Volver al mapa", true, 34)
+	cerrar.pulsado.connect(_cerrar_ventanas)
+	caja.add_child(cerrar)
+
+
+## Botón de un tema: una miniatura con su pantalla, su tablero y tres fichas, el nombre y si es
+## gratis o del Club. El tema en uso lleva un anillo y una marca.
+func _muestra_tema(tema: Dictionary) -> Control:
+	var c := Control.new()
+	c.custom_minimum_size = Vector2(284, 88)
+	c.mouse_filter = Control.MOUSE_FILTER_STOP
+	var id: String = tema["id"]
+	var elegido := id == Temas.id_activo()
+	c.gui_input.connect(func(e: InputEvent):
+		if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT and not e.pressed:
+			_elegir_tema(id))
+	c.draw.connect(func():
+		var ui: Dictionary = tema["ui"]
+		var tab: Dictionary = tema["tablero"]
+		var caja := StyleBoxFlat.new()
+		caja.bg_color = Color(TINTA, 0.06)
+		caja.set_corner_radius_all(14)
+		caja.border_color = TINTA if elegido else Color(TINTA, 0.18)
+		caja.set_border_width_all(4 if elegido else 2)
+		c.draw_style_box(caja, Rect2(Vector2.ZERO, c.size))
+		# Miniatura: pantalla, tablero y tres fichas de pie (la del medio, cayendo)
+		var mini := Rect2(Vector2(9, 9), Vector2(70, 70))
+		var fondo := StyleBoxFlat.new()
+		fondo.bg_color = ui["pantalla"]
+		fondo.set_corner_radius_all(10)
+		c.draw_style_box(fondo, mini)
+		var tablero := StyleBoxFlat.new()
+		tablero.bg_color = tab["tablero"]
+		tablero.set_corner_radius_all(6)
+		c.draw_style_box(tablero, mini.grow(-9))
+		for k in 3:
+			var ficha := Rect2(mini.position + Vector2(19 + k * 12, 22), Vector2(8, 22))
+			var cuerpo := StyleBoxFlat.new()
+			cuerpo.bg_color = tab["cae"] if k == 1 else tab["ficha"]
+			cuerpo.set_corner_radius_all(3)
+			if tab["borde_ficha"].a > 0.3:
+				cuerpo.border_color = tab["borde_ficha"]
+				cuerpo.set_border_width_all(1)
+			c.draw_style_box(cuerpo, ficha)
+		c.draw_circle(mini.position + Vector2(15, 54), 5, tab["inicio"])
+		c.draw_circle(mini.position + Vector2(55, 54), 5, tab["campana"])
+		var f := fuente_titulos
+		c.draw_string(f, Vector2(90, 40), tema["nombre"], HORIZONTAL_ALIGNMENT_LEFT, c.size.x - 94, 23, TINTA)
+		var etiqueta := "Gratis · por defecto" if not tema["club"] else "Dingclub"
+		c.draw_string(fuente_texto, Vector2(90, 70), etiqueta, HORIZONTAL_ALIGNMENT_LEFT, c.size.x - 94 - (30 if elegido else 0), 19, TINTA_SUAVE)
+		if elegido:
+			var m := Vector2(c.size.x - 20, c.size.y - 20)
+			c.draw_circle(m, 12, TINTA)
+			c.draw_polyline(PackedVector2Array([m + Vector2(-6, 0), m + Vector2(-2, 5), m + Vector2(6, -5)]), MARFIL, 3.0, true))
+	return c
+
+
+## Aviso de la prueba: el tema es del Club, que aún no está abierto, así que se puede usar gratis.
+func _aviso_prueba() -> Control:
+	var panel := PanelContainer.new()
+	var s := StyleBoxFlat.new()
+	s.bg_color = Color(TINTA, 0.06)
+	s.set_corner_radius_all(14)
+	s.content_margin_left = 20
+	s.content_margin_right = 20
+	s.content_margin_top = 14
+	s.content_margin_bottom = 14
+	panel.add_theme_stylebox_override("panel", s)
+	var caja := VBoxContainer.new()
+	caja.add_theme_constant_override("separation", 10)
+	panel.add_child(caja)
+	var titulo := _etiqueta(30, TINTA, true)
+	titulo.text = "Probando «%s»" % Temas.activo.get("nombre", "")
+	caja.add_child(titulo)
+	var texto := _etiqueta(23, TINTA_SUAVE)
+	texto.text = "Este tema será del Dingclub, que todavía no está abierto. Mientras tanto, úsalo gratis todo lo que quieras."
+	texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	texto.custom_minimum_size = Vector2(540, 0)
+	caja.add_child(texto)
+	var volver := _boton("Volver a Dominó Pop", false, 28)
+	volver.pulsado.connect(func(): _elegir_tema(Temas.POR_DEFECTO))
+	caja.add_child(volver)
+	return panel
+
+
 func _ventana() -> PanelContainer:
 	var v := PanelContainer.new()
+	v.set_meta("ventana", true)
 	var s := StyleBoxFlat.new()
 	s.bg_color = MARFIL
-	s.set_corner_radius_all(22)
+	s.set_corner_radius_all(Temas.numero("radio_ventana", 22))
 	s.set_border_width_all(2)
-	s.border_color = TINTA
-	s.shadow_color = TINTA
+	s.border_color = MARCO
+	s.shadow_color = MARCO
 	s.shadow_offset = Vector2(0, 4)
 	s.shadow_size = 1
 	s.content_margin_left = 32
@@ -580,6 +732,12 @@ func _demo_si_toca() -> void:
 		await get_tree().create_timer(0.3).timeout
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png(prefijo + "_3_ajustes.png")
+	if args.has("apariencia"):
+		_cerrar_ventanas()
+		_abrir_apariencia()
+		await get_tree().create_timer(0.3).timeout
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_png(prefijo + "_4_apariencia.png")
 	print("DEMO mapa: actual ", _actual + 1, " cuerdas ", progreso.cuerdas(ahora()))
 	if args.has("entrar"):
 		_jugar(_actual)          # cambia a la partida; allí se hace la captura y se cierra

@@ -16,6 +16,7 @@
 extends Control
 
 const Partida = preload("res://nucleo/partida.gd")
+const Temas = preload("res://nucleo/temas.gd")
 const Progreso = preload("res://nucleo/progreso.gd")
 const Registro = preload("res://nucleo/registro.gd")
 const Tablero = preload("res://escenas/partida/tablero.gd")
@@ -28,19 +29,23 @@ const Taller = preload("res://nucleo/taller.gd")
 const ESCENA_TALLER := "res://escenas/taller/taller.tscn"
 const ESCENA_MAPA := "res://escenas/mapa/mapa.tscn"
 
-const AZUL := Color("#2462d6")
-const TINTA := Color("#142554")
-const TINTA_SUAVE := Color("#3a4f86")
-const TEXTO_CLARO := Color("#e8f0ff")
-const MARFIL := Color("#fffdf6")
-const VERDE := Color("#3ddc6b")
-const LABIO_VERDE := Color("#22a552")
-const AMARILLO := Color("#ffc83d")
-const LABIO_AMARILLO := Color("#d9a21f")
-const BLOQUEADO := Color("#9db4e6")
-const LABIO_BLOQUEADO := Color("#8299cc")
-const PUNTO := Color("#cfe0ff")
-const VELO := Color(0.039, 0.11, 0.314, 0.55)      # rgba(10,28,80,.55)
+# Colores del tema activo (nucleo/temas.gd)
+var AZUL: Color = Temas.ui("pantalla")
+var TINTA: Color = Temas.ui("ventana_t")
+var TINTA_SUAVE: Color = Temas.ui("ventana_s")
+var TEXTO_CLARO: Color = Temas.ui("suave")
+var MARFIL: Color = Temas.ui("ventana")
+var VERDE: Color = Temas.ui("prim")
+var LABIO_VERDE: Color = Temas.ui("prim_labio")
+var AMARILLO: Color = Temas.ui("nodo_h")
+var LABIO_AMARILLO: Color = Temas.ui("nodo_h").darkened(0.15)
+var BLOQUEADO: Color = Temas.ui("nodo_c")
+var LABIO_BLOQUEADO: Color = Temas.ui("nodo_c")
+var PUNTO: Color = Temas.ui("nodo_h")
+var VELO: Color = Temas.ui("velo")
+var TEXTO: Color = Temas.ui("texto")          # texto sobre la pantalla
+var MARCO: Color = Temas.ui("marco")          # borde y sombra de las ventanas
+var ESTRELLA: Color = Temas.ui("estrella")
 
 ## Cómo se explica cada fallo. Frases cortas, sin culpar y recordando que reintentar es gratis.
 const EXPLICACIONES := {
@@ -243,7 +248,7 @@ func _al_terminar_caida() -> void:
 		var antes: int = progreso.de(clave) if modo_taller == "" else 0
 		if modo_taller == "":
 			progreso.registrar(clave, e)
-		ventana_titulo.text = "¡Nivel superado!"
+		ventana_titulo.text = Temas.texto("superado", "¡Nivel superado!")
 		ventana_estrellas.maximo = Partida.maximo_estrellas(n["nivel"])
 		ventana_estrellas.conseguidas = e
 		ventana_dato.text = "%d fichas" % int(r["fichas_usadas"])
@@ -424,8 +429,9 @@ func _al_lento() -> void:
 	tablero.velocidad = 0.5 if tablero.velocidad == 1.0 else 1.0
 	var lento: bool = tablero.velocidad < 1.0
 	boton_lento.texto = "Lento: sí" if lento else "Lento"
-	boton_lento.color_fondo = PUNTO if lento else Color(0, 0, 0, 0)
-	boton_lento.color_labio = BLOQUEADO
+	# Siempre opaco: va encima del tablero, que en algunos temas (o con alto contraste) es claro
+	boton_lento.color_fondo = PUNTO if lento else MARFIL
+	boton_lento.color_labio = boton_lento.color_fondo.darkened(0.12)
 	boton_lento.resaltado = false
 	boton_lento.update_minimum_size()
 	boton_lento.queue_redraw()
@@ -520,7 +526,7 @@ func _construir() -> void:
 	volver.tooltip_text = "Niveles"
 	volver.pulsado.connect(_al_volver)
 	hud.add_child(volver)
-	titulo = _etiqueta(50, Color.WHITE, true)
+	titulo = _etiqueta(50, TEXTO, true)
 	titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hud.add_child(titulo)
@@ -568,6 +574,8 @@ func _construir() -> void:
 	tablero.suena.connect(_al_sonar_campana)
 	zona.add_child(tablero)
 	boton_lento = _boton("Lento", false, 28)
+	boton_lento.color_fondo = MARFIL
+	boton_lento.color_labio = MARFIL.darkened(0.12)
 	boton_lento.icono = "lento"
 	boton_lento.custom_minimum_size = Vector2(0, 76)
 	boton_lento.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 16)
@@ -593,7 +601,7 @@ func _construir() -> void:
 	boton_deshacer.tooltip_text = "Deshacer (mantén pulsado para borrar todo)"
 	boton_deshacer.pulsado.connect(_al_deshacer)
 	boton_deshacer.mantenido.connect(_al_borrar)
-	boton_tumbar = _boton("¡A tumbar!", true, 42)
+	boton_tumbar = _boton(Temas.texto("ya", "¡A tumbar!"), true, 42)
 	boton_tumbar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	boton_tumbar.custom_minimum_size = Vector2(0, 108)
 	boton_tumbar.pulsado.connect(_al_tumbar)
@@ -661,7 +669,7 @@ func _caja(color: Color, radio: int, borde: int, margenes := Vector4.ZERO) -> St
 	s.bg_color = color
 	s.set_corner_radius_all(radio)
 	s.set_border_width_all(borde)
-	s.border_color = TINTA
+	s.border_color = MARCO
 	s.content_margin_left = margenes.x
 	s.content_margin_top = margenes.y
 	s.content_margin_right = margenes.z
@@ -673,8 +681,9 @@ func _caja(color: Color, radio: int, borde: int, margenes := Vector4.ZERO) -> St
 ## Ventana marfil con borde de tinta y sombra sólida de 4 px (DESIGN.md › window).
 func _ventana() -> PanelContainer:
 	var v := PanelContainer.new()
-	var s := _caja(MARFIL, 22, 2, Vector4(32, 40, 32, 32))
-	s.shadow_color = TINTA
+	v.set_meta("ventana", true)
+	var s := _caja(MARFIL, Temas.numero("radio_ventana", 22), 2, Vector4(32, 40, 32, 32))
+	s.shadow_color = MARCO
 	s.shadow_offset = Vector2(0, 4)
 	s.shadow_size = 1
 	v.add_theme_stylebox_override("panel", s)

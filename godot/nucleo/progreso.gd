@@ -13,6 +13,7 @@ var estrellas := {}     # id de nivel (String) -> 0..3
 var ajustes := {"sonido": true, "vibracion": true, "alto_contraste": false, "reducir_movimiento": false, "texto_grande": false}
 var cuerda := {"n": Cuerda.MAXIMO, "t": 0}
 var en_curso := 0        # nivel nuevo ya pagado y aún sin superar (no se vuelve a cobrar)
+var tema := "pop"        # tema elegido en Ajustes › Apariencia (nucleo/temas.gd)
 var ruta := RUTA
 
 
@@ -26,6 +27,7 @@ func cargar() -> void:
 	ajustes = {"sonido": true, "vibracion": true, "alto_contraste": false, "reducir_movimiento": false, "texto_grande": false}
 	cuerda = {"n": Cuerda.MAXIMO, "t": 0}
 	en_curso = 0
+	tema = "pop"
 	if not FileAccess.file_exists(ruta):
 		return
 	var json := JSON.new()
@@ -47,6 +49,8 @@ func cargar() -> void:
 	if typeof(c) == TYPE_DICTIONARY and c.has("n") and c.has("t"):
 		cuerda = {"n": clampi(int(c["n"]), 0, Cuerda.MAXIMO), "t": int(c["t"])}
 	en_curso = int(datos.get("en_curso", 0))
+	if typeof(datos.get("tema")) == TYPE_STRING:
+		tema = datos["tema"]
 
 
 func guardar() -> void:
@@ -57,7 +61,7 @@ func guardar() -> void:
 		push_warning("No se pudo guardar el progreso en %s" % ruta)
 		return
 	f.store_string(JSON.stringify({"version": VERSION, "estrellas": estrellas, "ajustes": ajustes,
-		"cuerda": cuerda, "en_curso": en_curso}, " "))
+		"cuerda": cuerda, "en_curso": en_curso, "tema": tema}, " "))
 
 
 ## Guarda las estrellas de un nivel solo si mejoran las que ya tenía. `id` es el número del nivel o

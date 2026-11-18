@@ -4,9 +4,12 @@
 ## que coloca y conecta la pantalla del mapa.
 extends Control
 
-const TINTA := Color("#142554")
-const MARFIL := Color("#fffdf6")
-const CAIDA := Color("#c9d6f2")
+const Temas = preload("res://nucleo/temas.gd")
+
+# Colores del tema activo (nucleo/temas.gd)
+var TINTA: Color = Temas.ui("marco")
+var MARFIL: Color = Temas.ui("camino")
+var CAIDA: Color = Temas.ui("camino_no")
 const SEPARACION := 30.0           # píxeles entre fichas del camino
 
 var centros: Array = []            # posición de cada nodo, del primero al último

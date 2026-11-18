@@ -1,7 +1,8 @@
 ## Tablero de juego: dibuja el nivel, recoge el dedo y anima la caída.
 ##
 ## Todo se calcula en unidades lógicas (partida.gd y simulacion.gd); aquí solo se convierten a
-## píxeles para dibujar. Colores y medidas de Dominó Pop (DESIGN.md y docs/fase6/tablero/index.html).
+## píxeles para dibujar. Medidas de Dominó Pop (DESIGN.md y docs/fase6/tablero/index.html); los colores
+## son los del tema activo (nucleo/temas.gd), salvo con alto contraste.
 extends Control
 
 signal cambio                 # el dibujo ha cambiado (fichas usadas, botones)
@@ -11,25 +12,43 @@ signal suena(campana: Array)  # una campana acaba de sonar: [id, pos, tipo, nume
 
 const Sim = preload("res://nucleo/simulacion.gd")
 const Iconos = preload("res://escenas/comun/iconos.gd")
+const Temas = preload("res://nucleo/temas.gd")
 
 const DURACION_TIC := 0.075   # segundos que tarda en caer cada ficha
 const PAUSA_FINAL := 0.5
 
-# Paleta Dominó Pop (DESIGN.md). Son variables porque el modo de alto contraste las cambia.
-const PALETA_POP := {"HIELO": "#eaf3ff", "PUNTO": "#cfe0ff", "TINTA": "#142554", "MARFIL": "#fffdf6",
-	"CAYENDO": "#ffc83d", "CAIDA": "#c9d6f2", "CORAL": "#ff5470", "VERDE": "#3ddc6b", "PUERTA": "#c98a4b"}
 ## Alto contraste: fondo blanco, contornos negros y colores más saturados (contraste 7:1 o más con
-## el fondo en las piezas y las marcas).
+## el fondo en las piezas y las marcas). Manda sobre el tema.
 const PALETA_CONTRASTE := {"HIELO": "#ffffff", "PUNTO": "#e2e2e2", "TINTA": "#000000", "MARFIL": "#ffffff",
-	"CAYENDO": "#ffb000", "CAIDA": "#6f7f9f", "CORAL": "#c8002a", "VERDE": "#00873a", "PUERTA": "#7a3e00"}
-var HIELO := Color("#eaf3ff")
-var PUNTO := Color("#cfe0ff")
-var TINTA := Color("#142554")
-var MARFIL := Color("#fffdf6")
+	"PIP": "#000000", "BORDE_FICHA": "#000000", "SOMBRA_FICHA": "#00000000", "CAYENDO": "#ffb000",
+	"CAIDA": "#6f7f9f", "CAMPANA": "#c8002a", "DORADA": "#ffb000", "INICIO": "#00873a", "INICIO_ICO": "#ffffff",
+	"CIFRA": "#000000", "CIFRA_T": "#ffffff", "BORDE_TABLERO": "#000000", "ETIQUETA": "#ffffff",
+	"ETIQUETA_T": "#000000", "CORAL": "#c8002a", "VERDE": "#00873a", "PUERTA": "#7a3e00", "TINTA_SEM": "#000000"}
+# Colores del tema (se rellenan en aplicar_accesibilidad)
+var HIELO := Color("#eaf3ff")      # fondo del tablero
+var PUNTO := Color("#cfe0ff")      # rejilla de puntos
+var TINTA := Color("#142554")      # muros, postes y pista
+var MARFIL := Color("#fffdf6")     # ficha de pie
+var PIP := Color("#142554")        # puntos de la ficha
+var BORDE_FICHA := Color("#142554")
+var SOMBRA_FICHA := Color(0, 0, 0, 0)
 var CAYENDO := Color("#ffc83d")
 var CAIDA := Color("#c9d6f2")
+var CAMPANA := Color("#ff5470")
+var DORADA := Color("#ffc83d")
+var INICIO := Color("#3ddc6b")     # empujador
+var INICIO_ICO := Color("#142554")
+var CIFRA := Color("#142554")      # marcas de cuenta
+var CIFRA_T := Color.WHITE
+var BORDE_TABLERO := Color("#142554")
+var GROSOR_BORDE := 2
+var RADIO_TABLERO := 18
+var ETIQUETA := Color("#fffdf6")   # cartel de la puerta
+var ETIQUETA_T := Color("#142554")
+# Colores con significado (abierta / cerrada, bien / aviso): iguales en todos los temas
 var CORAL := Color("#ff5470")
 var VERDE := Color("#3ddc6b")
+var TINTA_SEM := Color("#142554")
 const BLANCO := Color.WHITE
 var PUERTA := Color("#c98a4b")     # madera de la puerta de vaivén
 ## Accesibilidad (Ajustes): sin efectos decorativos que se mueven. La información (la puerta que se
@@ -58,12 +77,37 @@ var _k := 1.0                 # píxeles por unidad lógica
 var _origen := Vector2.ZERO
 
 
-## Aplica los ajustes de accesibilidad guardados en el progreso.
+func _init() -> void:
+	aplicar_accesibilidad({})
+
+
+## Colores del tablero del tema activo.
+static func paleta_tema() -> Dictionary:
+	var p := {}
+	for par in [["HIELO", "tablero"], ["PUNTO", "punto"], ["TINTA", "tinta"], ["MARFIL", "ficha"], ["PIP", "pip"],
+			["BORDE_FICHA", "borde_ficha"], ["SOMBRA_FICHA", "sombra"], ["CAYENDO", "cae"], ["CAIDA", "caida"],
+			["CAMPANA", "campana"], ["DORADA", "dorada"], ["INICIO", "inicio"], ["INICIO_ICO", "inicio_ico"],
+			["CIFRA", "cifra"], ["CIFRA_T", "cifra_t"], ["BORDE_TABLERO", "borde"]]:
+		p[par[0]] = Temas.tablero(par[1])
+	p["ETIQUETA"] = Temas.ui("ventana")
+	p["ETIQUETA_T"] = Temas.ui("ventana_t")
+	p["CORAL"] = Color("#ff5470")
+	p["VERDE"] = Color("#3ddc6b")
+	p["PUERTA"] = Color("#c98a4b")
+	p["TINTA_SEM"] = Color("#142554")
+	return p
+
+
+## Aplica el tema y los ajustes de accesibilidad guardados en el progreso.
 func aplicar_accesibilidad(ajustes: Dictionary) -> void:
 	var contraste: bool = ajustes.get("alto_contraste", false)
-	var paleta: Dictionary = PALETA_CONTRASTE if contraste else PALETA_POP
+	var paleta := paleta_tema()
+	if contraste:
+		paleta.merge(PALETA_CONTRASTE, true)
 	for clave in paleta:
 		set(clave, Color(paleta[clave]))
+	GROSOR_BORDE = 2 if contraste else Temas.numero("grosor_borde", 2)
+	RADIO_TABLERO = clampi(Temas.numero("radio_ventana", 18), 0, 18)
 	TRAZO = 1.1 if contraste else 0.72
 	reducir_movimiento = ajustes.get("reducir_movimiento", false)
 	queue_redraw()
@@ -189,7 +233,7 @@ func _draw() -> void:
 	_medir()
 	var nivel: Dictionary = partida.nivel
 	var tablero := Rect2(_origen, Vector2(nivel["w"], nivel["h"]) * _k)
-	draw_style_box(_caja(HIELO, 18, TINTA, 2), tablero)
+	draw_style_box(_caja(HIELO, RADIO_TABLERO, BORDE_TABLERO, GROSOR_BORDE), tablero)
 	var paso := 24.0
 	var y := tablero.position.y + paso / 2
 	while y < tablero.end.y - 4.0:      # sin pisar el borde del tablero
@@ -261,13 +305,13 @@ func _cruces_de_puertas(todas: Array, tics: Array) -> void:
 					var color := VERDE if Sim.puerta_abierta(p, t) else CORAL
 					var c := a_pantalla(f[j])
 					draw_circle(c, MARCA_RADIO * 1.15 * _k, color)
-					draw_arc(c, MARCA_RADIO * 1.15 * _k, 0, TAU, 24, TINTA, maxf(1.0, 0.35 * _k), true)
+					draw_arc(c, MARCA_RADIO * 1.15 * _k, 0, TAU, 24, TINTA_SEM, maxf(1.0, 0.35 * _k), true)
 					var fuente := get_theme_default_font()
 					var tam := int(3.2 * _k)
 					var texto := str(t)
 					var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
 					draw_string(fuente, c + Vector2(-medida.x / 2, fuente.get_ascent(tam) / 2 - 0.15 * _k), texto,
-						HORIZONTAL_ALIGNMENT_LEFT, -1, tam, TINTA)
+						HORIZONTAL_ALIGNMENT_LEFT, -1, tam, TINTA_SEM)
 					_simbolo(c + Vector2(3.0, -3.0) * _k, "si" if Sim.puerta_abierta(p, t) else "no")
 					break
 
@@ -348,11 +392,18 @@ func _ficha(f: Array, j: int, estado: int, avance: float) -> void:
 			forma = _rect_redondo(c + eje * 1.4 * _k, eje, FICHA_ALTO * _k, FICHA_ANCHO * 0.9 * _k, radio)
 		_:
 			forma = _rect_redondo(c, eje, FICHA_ANCHO * _k, alto * _k, radio)
+	if SOMBRA_FICHA.a > 0:
+		var abajo := Vector2(0, 0.7 * _k)
+		var sombra := PackedVector2Array()
+		for v in forma:
+			sombra.append(v + abajo)
+		draw_colored_polygon(sombra, SOMBRA_FICHA)
 	draw_colored_polygon(forma, color)
-	draw_polyline(_cerrar(forma), TINTA, maxf(1.0, TRAZO * _k), true)
+	if BORDE_FICHA.a > 0:
+		draw_polyline(_cerrar(forma), BORDE_FICHA, maxf(1.0, TRAZO * _k), true)
 	if estado != 2:
-		draw_circle(c + n * alto * 0.22 * _k, 0.5 * _k, TINTA)
-		draw_circle(c - n * alto * 0.22 * _k, 0.5 * _k, TINTA)
+		draw_circle(c + n * alto * 0.22 * _k, 0.5 * _k, PIP)
+		draw_circle(c - n * alto * 0.22 * _k, 0.5 * _k, PIP)
 
 
 ## Ficha de la pista: solo el contorno, discontinuo y suave.
@@ -370,27 +421,29 @@ func _empujador(p: Array) -> void:
 	var r := EMPUJADOR * _k
 	if modo == Modo.EDITAR and partida.tramos.is_empty():
 		var pulso := 1.0 if reducir_movimiento else 0.5 + 0.5 * sin(Time.get_ticks_msec() / 260.0)
-		draw_circle(c, r + (1.2 + pulso * 1.6) * _k, Color(BLANCO, 0.35 + 0.25 * pulso))
+		draw_circle(c, r + (1.2 + pulso * 1.6) * _k, Color(INICIO, 0.2 + 0.2 * pulso))
 		if not reducir_movimiento:
 			queue_redraw()   # el pulso invita a empezar por aquí
-	draw_circle(c + Vector2(0, 1.07 * _k), r * 17.0 / 16.0, TINTA)
-	draw_circle(c, r, VERDE)
-	draw_arc(c, r, 0, TAU, 40, TINTA, maxf(1.5, 0.78 * _k), true)
+	var contorno := BORDE_FICHA if BORDE_FICHA.a >= 0.5 else Color(0, 0, 0, 0)
+	draw_circle(c + Vector2(0, 1.07 * _k), r * 17.0 / 16.0, contorno if contorno.a > 0 else Color(0, 0, 0, 0.3))
+	draw_circle(c, r, INICIO)
+	if contorno.a > 0:
+		draw_arc(c, r, 0, TAU, 40, contorno, maxf(1.5, 0.78 * _k), true)
 	var e := _k / 2.8
-	draw_colored_polygon(PackedVector2Array([c + Vector2(-5, -7) * e, c + Vector2(8, 0) * e, c + Vector2(-5, 7) * e]), BLANCO)
+	draw_colored_polygon(PackedVector2Array([c + Vector2(-5, -7) * e, c + Vector2(8, 0) * e, c + Vector2(-5, 7) * e]), INICIO_ICO)
 
 
 func _marca_cuenta(f: Array, j: int, numero: int) -> void:
 	var eje := _direccion(f, j)
 	var n := Vector2(-eje.y, eje.x)
 	var c := a_pantalla(f[j]) + n * (FICHA_ALTO / 2 + MARCA_RADIO + 0.4) * _k
-	draw_circle(c, MARCA_RADIO * _k, TINTA)
+	draw_circle(c, MARCA_RADIO * _k, CIFRA)
 	var fuente := get_theme_default_font()
 	var tam := int(3.2 * _k)
 	var texto := str(numero)
 	var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
 	draw_string(fuente, c + Vector2(-medida.x / 2, fuente.get_ascent(tam) / 2 - 0.15 * _k), texto,
-		HORIZONTAL_ALIGNMENT_LEFT, -1, tam, BLANCO)
+		HORIZONTAL_ALIGNMENT_LEFT, -1, tam, CIFRA_T)
 
 
 func _campana(c: Array) -> void:
@@ -402,7 +455,7 @@ func _campana(c: Array) -> void:
 		var t := _tiempo - int(sono) * DURACION_TIC
 		var halo := 0.6 if reducir_movimiento else clampf(1.0 - t / 0.8, 0.0, 1.0)
 		draw_circle(centro, (Sim.RADIO_CAMPANA + 2.0 + 3.0 * (1.0 - halo)) * _k, Color(CAYENDO, 0.35 + 0.4 * halo))
-	draw_arc(centro, Sim.RADIO_CAMPANA * _k, 0, TAU, 40, Color(CORAL, 0.4), maxf(1.0, 0.25 * _k), true)
+	draw_arc(centro, Sim.RADIO_CAMPANA * _k, 0, TAU, 40, Color(CAMPANA, 0.4), maxf(1.0, 0.25 * _k), true)
 	var tipo: String = c[2]
 	var lado := 9.0 * _k
 	var cajas := [Rect2(centro - Vector2(lado, lado) / 2, Vector2(lado, lado))]
@@ -413,24 +466,25 @@ func _campana(c: Array) -> void:
 	if tipo == "dorada":
 		# La dorada brilla con suavidad para que se vea que es especial (y opcional)
 		var brillo := 0.5 if reducir_movimiento else 0.5 + 0.5 * sin(Time.get_ticks_msec() / 420.0)
-		draw_circle(centro, (Sim.RADIO_CAMPANA + 0.6 + brillo) * _k, Color(CAYENDO, 0.18 + 0.12 * brillo))
+		draw_circle(centro, (Sim.RADIO_CAMPANA + 0.6 + brillo) * _k, Color(DORADA, 0.18 + 0.12 * brillo))
 		if modo == Modo.EDITAR and not reducir_movimiento:
 			queue_redraw()
 	for r in cajas:
-		Iconos.dibujar(self, "campana", r, CAYENDO if tipo == "dorada" else CORAL)
+		Iconos.dibujar(self, "campana", r, DORADA if tipo == "dorada" else CAMPANA)
 	if tipo == "dorada":
 		# Una estrella pequeña: se distingue por la forma, no solo por el color
 		var lado_e := 4.0 * _k
-		Iconos.dibujar(self, "estrella", Rect2(centro + Vector2(1.6, -5.4) * _k, Vector2(lado_e, lado_e)))
+		Iconos.dibujar(self, "estrella", Rect2(centro + Vector2(1.6, -5.4) * _k, Vector2(lado_e, lado_e)), DORADA)
 	if tipo == "numerada":
-		# El número va dentro de la campana, en blanco, para que ninguna ficha lo tape
+		# El número va dentro de la campana, con la tinta que mejor se lea sobre ella
 		var fuente := get_theme_default_font()
 		var tam := int(3.4 * _k)
 		var texto := str(int(c[3]))
 		var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
 		var base := centro + Vector2(-medida.x / 2, fuente.get_ascent(tam) / 2 - 0.6 * _k)
-		draw_string_outline(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, maxi(2, int(0.5 * _k)), TINTA)
-		draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, BLANCO)
+		var letra := Temas.sobre(CAMPANA, Color("#142554"), BLANCO)
+		draw_string_outline(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, maxi(2, int(0.5 * _k)), CAMPANA)
+		draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, letra)
 
 
 ## Pequeña insignia con forma (✓, ✗ o !) para que la información no dependa solo del color.
@@ -438,7 +492,7 @@ func _simbolo(c: Vector2, cual: String) -> void:
 	var r := 1.7 * _k
 	var fondo := VERDE if cual == "si" else CORAL
 	draw_circle(c, r, fondo)
-	draw_arc(c, r, 0, TAU, 20, TINTA, maxf(1.0, 0.3 * _k), true)
+	draw_arc(c, r, 0, TAU, 20, TINTA_SEM, maxf(1.0, 0.3 * _k), true)
 	var g := maxf(1.5, 0.45 * _k)
 	match cual:
 		"si":
@@ -498,8 +552,9 @@ func _puerta(p: Array) -> void:
 	x = clampf(x, _origen.x + 1.0 * _k, tablero_der - medida.x - 1.0 * _k)
 	var base := Vector2(x, minf(a.y, b.y) - 1.8 * _k)
 	var caja := Rect2(base - Vector2(0.8 * _k, fuente.get_ascent(tam) + 0.3 * _k), Vector2(medida.x + 1.6 * _k, tam + 0.6 * _k))
-	draw_style_box(_caja(Color(MARFIL, 0.94), 6, TINTA, 1), caja)
-	draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, VERDE.darkened(0.45) if abierta else TINTA)
+	draw_style_box(_caja(Color(ETIQUETA, 0.94), 6, ETIQUETA_T, 1), caja)
+	var verde := Temas.sobre(ETIQUETA, VERDE.darkened(0.45), VERDE)
+	draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, verde if abierta else ETIQUETA_T)
 
 
 ## Posición en pantalla (global) de la X donde se paró la cadena, o null si no se paró.
@@ -529,7 +584,7 @@ func _parada() -> void:
 		return
 	var c := a_pantalla(todas[i][j])
 	var lado := 2.4 * _k
-	draw_circle(c, 4.4 * _k, Color(BLANCO, 0.8))
+	draw_circle(c, 4.4 * _k, Color(HIELO, 0.85))
 	draw_line(c + Vector2(-lado, -lado), c + Vector2(lado, lado), CORAL, 0.9 * _k, true)
 	draw_line(c + Vector2(-lado, lado), c + Vector2(lado, -lado), CORAL, 0.9 * _k, true)
 	draw_arc(c, 4.4 * _k, 0, TAU, 32, CORAL, 0.5 * _k, true)

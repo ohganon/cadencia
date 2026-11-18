@@ -3,13 +3,14 @@
 extends Control
 
 const Iconos = preload("res://escenas/comun/iconos.gd")
+const Temas = preload("res://nucleo/temas.gd")
 
-const FONDO := Color(0.078, 0.145, 0.329, 0.38)      # rgba(20,37,84,.38)
-const MARFIL := Color("#fffdf6")
-const CLARO := Color("#e8f0ff")
+# Colores del tema activo (nucleo/temas.gd)
+var FONDO: Color = Temas.ui("chip")
+var TEXTO: Color = Temas.ui("chip_t")
 
 var icono := "ficha"
-var color_icono := MARFIL
+var color_icono: Color = Temas.ui("ventana")
 var texto := "":
 	set(v):
 		texto = v
@@ -48,11 +49,11 @@ func _draw() -> void:
 	draw_style_box(s, Rect2(Vector2.ZERO, size))
 	var c := Vector2(8 + 24, size.y / 2)
 	draw_circle(c, 24, color_icono)
-	Iconos.dibujar(self, icono, Rect2(c - Vector2(15, 15), Vector2(30, 30)))
+	Iconos.dibujar(self, icono, Rect2(c - Vector2(15, 15), Vector2(30, 30)), Color(0, 0, 0, 0), Temas.tinta_sobre(color_icono))
 	var f := _fuente()
 	var base := size.y / 2 + (f.get_ascent(tam) - f.get_descent(tam)) / 2
 	var x := c.x + 24 + 12
-	draw_string(f, Vector2(x, base), texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color.WHITE)
+	draw_string(f, Vector2(x, base), texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, TEXTO)
 	if subtexto != "":
 		x += f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x + 8
-		draw_string(f, Vector2(x, base), subtexto, HORIZONTAL_ALIGNMENT_LEFT, -1, int(tam * 0.75), CLARO)
+		draw_string(f, Vector2(x, base), subtexto, HORIZONTAL_ALIGNMENT_LEFT, -1, int(tam * 0.75), Color(TEXTO, 0.85))

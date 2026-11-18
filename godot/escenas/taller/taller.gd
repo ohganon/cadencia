@@ -8,19 +8,24 @@
 extends Control
 
 const Taller = preload("res://nucleo/taller.gd")
+const Temas = preload("res://nucleo/temas.gd")
 const Progreso = preload("res://nucleo/progreso.gd")
 const TableroEditor = preload("res://escenas/taller/tablero_editor.gd")
 const BotonPop = preload("res://escenas/comun/boton_pop.gd")
 const Iconos = preload("res://escenas/comun/iconos.gd")
 
 const ESCENA_PARTIDA := "res://escenas/partida/partida.tscn"
-const AZUL := Color("#2462d6")
-const TINTA := Color("#142554")
-const TINTA_SUAVE := Color("#3a4f86")
-const TEXTO_CLARO := Color("#e8f0ff")
-const MARFIL := Color("#fffdf6")
+# Colores del tema activo (nucleo/temas.gd)
+var AZUL: Color = Temas.ui("pantalla")
+var TINTA: Color = Temas.ui("ventana_t")
+var TINTA_SUAVE: Color = Temas.ui("ventana_s")
+var TEXTO_CLARO: Color = Temas.ui("suave")
+var MARFIL: Color = Temas.ui("ventana")
 const CORAL := Color("#ff5470")
-const VELO := Color(0.039, 0.11, 0.314, 0.55)
+var VELO: Color = Temas.ui("velo")
+var TEXTO: Color = Temas.ui("texto")          # texto sobre la pantalla
+var MARCO: Color = Temas.ui("marco")          # borde y sombra de las ventanas
+var ESTRELLA: Color = Temas.ui("estrella")
 
 const HERRAMIENTAS := [
 	["inicio", "Inicio: toca donde empieza la cadena."],
@@ -230,7 +235,7 @@ func _construir() -> void:
 	volver.custom_minimum_size = Vector2(96, 96)
 	volver.pulsado.connect(_volver)
 	hud.add_child(volver)
-	var titulo := _etiqueta(50, Color.WHITE, true)
+	var titulo := _etiqueta(50, TEXTO, true)
 	titulo.text = "Taller"
 	titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -291,12 +296,13 @@ func _construir() -> void:
 
 func _construir_codigos() -> void:
 	ventana = PanelContainer.new()
+	ventana.set_meta("ventana", true)
 	var s := StyleBoxFlat.new()
 	s.bg_color = MARFIL
-	s.set_corner_radius_all(22)
+	s.set_corner_radius_all(Temas.numero("radio_ventana", 22))
 	s.set_border_width_all(2)
-	s.border_color = TINTA
-	s.shadow_color = TINTA
+	s.border_color = MARCO
+	s.shadow_color = MARCO
 	s.shadow_offset = Vector2(0, 4)
 	s.shadow_size = 1
 	s.content_margin_left = 32
@@ -329,7 +335,7 @@ func _construir_codigos() -> void:
 	campo_codigo.add_theme_font_size_override("font_size", 26)
 	campo_codigo.add_theme_color_override("font_color", TINTA)
 	var sc := StyleBoxFlat.new()
-	sc.bg_color = Color.WHITE
+	sc.bg_color = Color(TINTA, 0.06)
 	sc.set_corner_radius_all(14)
 	sc.set_border_width_all(2)
 	sc.border_color = TINTA

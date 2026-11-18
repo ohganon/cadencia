@@ -4,16 +4,16 @@ Motor: **Godot 4.7.2** (MIT). Arquitectura en [docs/fase8/ARQUITECTURA_BORRADOR.
 
 | Carpeta | Contenido |
 |---|---|
-| `nucleo/` | Código sin nodos visuales: `simulacion.gd` (port exacto de `prototipos/simulacion/sim.py`), `partida.gd` (dibujar tramos, ramas y límite de fichas), `progreso.gd` (estrellas y ajustes guardados en el teléfono) y `registro.gd` (registro local de intentos para las pruebas, sin datos personales) |
+| `nucleo/` | Código sin nodos visuales: `simulacion.gd` (port exacto de `prototipos/simulacion/sim.py`), `partida.gd` (dibujar tramos, ramas y límite de fichas), `progreso.gd` (estrellas, ajustes y tema guardados en el teléfono), `temas.gd` (los 11 temas y el tema activo, que todas las pantallas leen al construirse) y `registro.gd` (registro local de intentos para las pruebas, sin datos personales) |
 | `escenas/comun/` | Piezas de Dominó Pop: botón con borde, sombra y labio (`boton_pop.gd`), pastilla del HUD, fila de estrellas e iconos dibujados con código a partir de los SVG de la maqueta |
-| `escenas/mapa/` | Pantalla de inicio: el mapa del barrio con el camino de fichas, la cuerda, «Jugar», la barra de abajo, «Sin cuerda» y Ajustes |
+| `escenas/mapa/` | Pantalla de inicio: el mapa del barrio con el camino de fichas, la cuerda, «Jugar», la barra de abajo, «Sin cuerda», Ajustes y Apariencia |
 | `escenas/taller/` | Taller: editor de niveles (`tablero_editor.gd`) y pantalla con herramientas, «Probar» y «Códigos» |
-| `autoload/` | `estado.gd` (autoload «Estado»): el nivel del Taller que se abre al cambiar de pantalla y el borrador |
+| `autoload/` | `estado.gd` (autoload «Estado»): el nivel del Taller que se abre al cambiar de pantalla y el borrador. `tema.gd` (autoload «Tema»): elige el tema guardado al arrancar |
 | `escenas/partida/` | Pantalla de juego de la entrega 1: tablero, dedo, caída animada, resultado y lista de niveles |
 | `iconos/` | Icono provisional (y su versión adaptable de Android), generado por `prototipos/icono/generar_icono.py` |
 | `fuentes/` | Lilita One y Nunito con sus licencias SIL OFL |
 | `sonidos/` | Sonidos propios generados por síntesis (`prototipos/sonido/generar_sonidos.py`). No se editan a mano |
-| `datos/` | Niveles, casos compartidos y el calendario de la Caída del Día. **No se editan a mano**: los generan `prototipos/simulacion/niveles_entrega1.py` y `prototipos/generador/generador.py` |
+| `datos/` | Niveles, casos compartidos, el calendario de la Caída del Día y los temas. **No se editan a mano**: los generan `prototipos/simulacion/niveles_entrega1.py`, `prototipos/generador/generador.py` y `prototipos/generador/temas.py` |
 | `pruebas/` | `ejecutar_pruebas.gd`: todas las pruebas sin pantalla |
 
 ## Jugar en el ordenador
@@ -48,4 +48,4 @@ Herramientas instaladas en este equipo (fuera del repositorio): Java 17 (Temurin
 Godot_v4.7.2-stable_win64_console.exe --path godot --resolution 540x960 -- --demo=7 --captura=C:/ruta/prefijo
 ```
 
-Abre una ventana, dibuja la solución del nivel, la tumba y guarda 4 capturas (vacío, dibujado, cayendo y resultado). Con `--taller --publicar` prueba el nivel como si fuera del Taller y lo publica; con `--codigo=DING1-…` juega un código recibido. El mapa: `-- --demo-mapa --superados=15 [--sin-cuerda | --entrar | --ver-barrio=2]`. Con `--ajustes`, la ventana de Ajustes. En la partida, `--contraste`, `--sin-movimiento` y `--texto-grande` activan la accesibilidad (en el progreso de la demo). Las demostraciones de partida (`--demo=N`) pasan solas del mapa a la pantalla de juego. El editor tiene su propia demo: `... res://escenas/taller/taller.tscn -- --demo-taller --captura=…`. Con `--diario --fecha=2026-11-18` juega la Caída del Día de esa fecha y con `--lista` añade una captura de la lista de niveles. Con `--incompleto` dibuja solo el primer tramo y con `--recto` una línea recta a la primera campana, para ver los fallos. Usa un progreso aparte y lo borra al terminar, y nunca toca el portapapeles ni el borrador del Taller.
+Abre una ventana, dibuja la solución del nivel, la tumba y guarda 4 capturas (vacío, dibujado, cayendo y resultado). Con `--taller --publicar` prueba el nivel como si fuera del Taller y lo publica; con `--codigo=DING1-…` juega un código recibido. El mapa: `-- --demo-mapa --superados=15 [--sin-cuerda | --entrar | --ver-barrio=2]`. Con `--ajustes`, la ventana de Ajustes, y con `--apariencia`, la de Apariencia. En cualquier demostración, `--tema=nocturno` (o el id de otro tema) cambia el tema sin guardar nada. En la partida, `--contraste`, `--sin-movimiento` y `--texto-grande` activan la accesibilidad (en el progreso de la demo). Las demostraciones de partida (`--demo=N`) pasan solas del mapa a la pantalla de juego. El editor tiene su propia demo: `... res://escenas/taller/taller.tscn -- --demo-taller --captura=…`. Con `--diario --fecha=2026-11-18` juega la Caída del Día de esa fecha y con `--lista` añade una captura de la lista de niveles. Con `--incompleto` dibuja solo el primer tramo y con `--recto` una línea recta a la primera campana, para ver los fallos. Usa un progreso aparte y lo borra al terminar, y nunca toca el portapapeles ni el borrador del Taller.
