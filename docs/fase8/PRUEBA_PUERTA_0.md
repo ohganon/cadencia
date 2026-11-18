@@ -39,7 +39,7 @@ Si **no** se pasa el primer umbral, no se avanza a la entrega 2: se revisan los 
 1. **Preparar:** el móvil cargado, el juego instalado y el progreso a cero (desinstalar y volver a instalar). Sonido activado.
 2. **Lo único que se dice:** «Es un juego de dominó en desarrollo. Juega como quieras. Si te apetece, piensa en voz alta.» **No se explica cómo se juega.** Si preguntan, se responde «¿qué crees tú?».
 3. **Mientras juega, el observador apunta** (hoja de la sección 5) sin ayudar. Solo se interviene si lleva más de 3 minutos atascado y frustrado; se anota como «ayuda del observador».
-4. **Al terminar el nivel 10** el juego dice «Has terminado los niveles de esta prueba. ¡Gracias por jugar!». **Aquí está la medida clave:** el observador se queda callado 10 segundos. ¿Pide más? ¿Pregunta si hay más niveles? ¿Vuelve a jugar alguno para sacar la segunda estrella? Se anota tal cual.
+4. **La sesión cubre los niveles 1–10**, los hechos a mano. Desde el 18/11/2026 el mapa tiene 20 niveles (11–20 del generador), así que el juego no se para solo en el 10: **al terminar el nivel 10, el observador dice únicamente «Hasta aquí la prueba»** y no añade nada. **Aquí está la medida clave:** se queda callado 10 segundos. ¿Pide más? ¿Pregunta si hay más niveles? ¿Sigue jugando el 11 por su cuenta o vuelve a alguno para sacar la segunda estrella? Se anota tal cual. (Si alguien sigue jugando sin preguntar, cuenta como «pide más».)
 5. **Cinco preguntas finales** (en este orden, sin sugerir respuestas):
    1. ¿De qué va el juego, con tus palabras?
    2. ¿Qué momento te ha gustado más?
