@@ -224,6 +224,12 @@ def casos_reglas():
         ("no empieza en el inicio", base, [Tramo([(40, 50), (110, 50)])]),
         ("bifurcador no válido", base, [Tramo([(10, 50), (110, 50)]), Tramo([(30, 50), (30, 90)], 0, 99)]),
         ("faltan fichas", Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], fichas=5), recta),
+        # La campana dorada es opcional: sin ella se supera igual; con una rama, también suena
+        ("dorada sin sonar", Nivel(200, 100, (10, 50), [Campana("a", (110, 50)), Campana("oro", (60, 90), "dorada")],
+                                   fichas=500), recta),
+        ("dorada sonando", Nivel(200, 100, (10, 50), [Campana("a", (110, 50)), Campana("oro", (60, 90), "dorada")],
+                                 fichas=500), recta + [Tramo([(60, 50), (60, 90)], 0, 10)]),
+        ("solo la dorada no basta", Nivel(200, 100, (10, 50), [Campana("oro", (110, 50), "dorada")], fichas=500), recta),
         ("curva demasiado cerrada", Nivel(200, 200, (10, 100), [Campana("a", (10, 150))], fichas=500),
          [Tramo([(10, 100), (100, 100), (10, 150)])]),
         ("rama de un bifurcador que no llegó a caer", Nivel(200, 100, (10, 50), [Campana("a", (110, 50))],

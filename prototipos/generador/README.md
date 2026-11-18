@@ -23,4 +23,6 @@ python -X utf8 -m unittest -v test_generador                      # 8 pruebas
 
 **Barrio 2, El Puerto** (`barrio.py`): presenta la puerta de vaivén. Del 21 al 23, a mano: la puerta (la recta funciona), esperar a que abra (la recta llega con la puerta cerrada) y dos puertas. Del 24 al 40, generados: puertas mezcladas con lo ya aprendido y dos respiros. Escribe `godot/datos/barrio_2.json`.
 
+**Campana dorada** (`poner_dorada`): la tercera estrella. Sale una rama de una ficha de la solución hacia un sitio alejado del camino, de muros y de puertas, sin cambiar cuándo suenan las demás campanas. La marca incluye esa rama, así que las tres estrellas se consiguen con la solución de referencia. Los 40 niveles de los barrios la llevan; la Caída del Día todavía no.
+
 **Caída del Día:** el calendario se genera aquí y viaja con el juego (`godot/datos/caida_del_dia.json`, unos 570 KB al año). Así el nivel de cada día es idéntico en todos los teléfonos sin servidor y sin depender de que Godot y Python generen igual. El ritmo semanal va de fácil el lunes a más reto el fin de semana (`RITMO`). Hay que regenerarlo antes de que se acabe el año del calendario, en una actualización del juego.

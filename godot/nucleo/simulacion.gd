@@ -231,7 +231,7 @@ static func _resultado(nivel: Dictionary, fichas: Array, llegadas: Dictionary, p
 					motivos[id] = "no llegó ninguna rama"
 		else:
 			estado[id] = ll[0][0] if not ll.is_empty() else null
-			if ll.is_empty():
+			if ll.is_empty() and c[2] != "dorada":      # la dorada es opcional: no es un fallo
 				motivos[id] = "no llegó"
 	var numeradas := []
 	for c in nivel["c"]:
@@ -252,10 +252,15 @@ static func _resultado(nivel: Dictionary, fichas: Array, llegadas: Dictionary, p
 					orden_ok = false
 			if not orden_ok:
 				motivos["orden"] = "las campanas numeradas sonaron en otro orden"
-	var todas_suenan: bool = not nivel["c"].is_empty()
-	for v in estado.values():
-		if v == null:
-			todas_suenan = false
+	# Hacen falta todas las campanas menos la dorada, que es opcional (da la tercera estrella)
+	var obligatorias := 0
+	var todas_suenan := true
+	for c in nivel["c"]:
+		if c[2] != "dorada":
+			obligatorias += 1
+			if estado[c[0]] == null:
+				todas_suenan = false
+	todas_suenan = todas_suenan and obligatorias > 0
 	var exito: bool = todas_suenan and orden_ok and usadas <= int(nivel["f"]) \
 		and not (parada != null and parada["motivo"] in PARADAS_SIN_EXITO)
 	return {"exito": exito, "fichas_usadas": usadas, "sobran": int(nivel["f"]) - usadas,

@@ -17,7 +17,7 @@ const MAXIMO_DESCOMPRIMIDO := 65536
 const MAXIMO_CODIGO := 20000
 const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
 	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200}
-const TIPOS_CAMPANA := ["simple", "doble", "numerada"]
+const TIPOS_CAMPANA := ["simple", "doble", "numerada", "dorada"]
 const RUTA := "user://taller.json"
 
 
@@ -115,6 +115,12 @@ static func validar_nivel(d: Dictionary) -> String:
 			numeros.append(int(x[3]))
 	if ids.size() != c.size():
 		return "Hay campanas repetidas."
+	var doradas := 0
+	for x in c:
+		if x[2] == "dorada":
+			doradas += 1
+	if doradas > 1 or doradas == c.size():
+		return "Como mucho una campana dorada, y no puede ser la única."
 	numeros.sort()
 	for k in numeros.size():
 		if numeros[k] != k + 1:

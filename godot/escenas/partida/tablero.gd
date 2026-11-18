@@ -386,8 +386,14 @@ func _campana(c: Array) -> void:
 		lado = 7.6 * _k
 		cajas = [Rect2(centro - Vector2(lado * 0.82, lado / 2), Vector2(lado, lado)),
 			Rect2(centro - Vector2(lado * 0.18, lado / 2), Vector2(lado, lado))]
+	if tipo == "dorada":
+		# La dorada brilla con suavidad para que se vea que es especial (y opcional)
+		var brillo := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 420.0)
+		draw_circle(centro, (Sim.RADIO_CAMPANA + 0.6 + brillo) * _k, Color(CAYENDO, 0.18 + 0.12 * brillo))
+		if modo == Modo.EDITAR:
+			queue_redraw()
 	for r in cajas:
-		Iconos.dibujar(self, "campana", r, CORAL)
+		Iconos.dibujar(self, "campana", r, CAYENDO if tipo == "dorada" else CORAL)
 	if tipo == "numerada":
 		# El número va dentro de la campana, en blanco, para que ninguna ficha lo tape
 		var fuente := get_theme_default_font()

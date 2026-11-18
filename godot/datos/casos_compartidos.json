@@ -5245,6 +5245,199 @@
    }
   },
   {
+   "nombre": "regla: dorada sin sonar",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ],
+     [
+      "oro",
+      [
+       60,
+       90
+      ],
+      "dorada",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": []
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 21,
+    "sobran": 479,
+    "campanas": {
+     "a": 19,
+     "oro": null
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
+   "nombre": "regla: dorada sonando",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ],
+     [
+      "oro",
+      [
+       60,
+       90
+      ],
+      "dorada",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": []
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       60,
+       50
+      ],
+      [
+       60,
+       90
+      ]
+     ],
+     "padre": 0,
+     "desde": 10
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 30,
+    "sobran": 470,
+    "campanas": {
+     "a": 19,
+     "oro": 18
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
+   "nombre": "regla: solo la dorada no basta",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "oro",
+      [
+       110,
+       50
+      ],
+      "dorada",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": []
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": false,
+    "fichas_usadas": 21,
+    "sobran": 479,
+    "campanas": {
+     "oro": 19
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
    "nombre": "regla: curva demasiado cerrada",
    "nivel": {
     "v": 1,

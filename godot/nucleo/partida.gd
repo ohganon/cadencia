@@ -116,12 +116,33 @@ func tumbar() -> Dictionary:
 	return Sim.simular_detalle(nivel, tramos)
 
 
-## 0 si no se supera; 1 si se supera; 2 si además no se pasa de la marca de fichas.
-## (La tercera estrella, la campana dorada, llega con los niveles definitivos.)
-static func estrellas(resultado: Dictionary, marca: int) -> int:
+## 0 si no se supera. Si se supera: 1, más 1 si no se pasa de la marca de fichas, más 1 si suena la
+## campana dorada (solo en los niveles que la tienen). Con la solución de referencia salen todas.
+static func estrellas(resultado: Dictionary, marca: int, nivel := {}) -> int:
 	if not resultado["exito"]:
 		return 0
-	return 2 if int(resultado["fichas_usadas"]) <= marca else 1
+	var e := 1
+	if int(resultado["fichas_usadas"]) <= marca:
+		e += 1
+	for c in nivel.get("c", []):
+		if c[2] == "dorada" and resultado["campanas"].get(c[0]) != null:
+			e += 1
+	return e
+
+
+## Estrellas posibles en un nivel: 3 si tiene campana dorada, 2 si no.
+static func maximo_estrellas(nivel: Dictionary) -> int:
+	for c in nivel.get("c", []):
+		if c[2] == "dorada":
+			return 3
+	return 2
+
+
+static func dorada_sono(resultado: Dictionary, nivel: Dictionary) -> bool:
+	for c in nivel.get("c", []):
+		if c[2] == "dorada" and resultado.get("campanas", {}).get(c[0]) != null:
+			return true
+	return false
 
 
 func _ficha_cercana(p: Array) -> Dictionary:

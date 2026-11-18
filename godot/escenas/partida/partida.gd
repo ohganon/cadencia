@@ -183,6 +183,9 @@ func _abrir(n: Dictionary, texto_titulo: String) -> void:
 	registro.anotar("nivel", {"nivel": int(n["id"])})
 	titulo.text = texto_titulo
 	objetivo.text = n["ayuda"]
+	# Mientras el jugador no haya conseguido ninguna tercera estrella, se le cuenta para qué sirve la dorada
+	if modo_taller == "" and not modo_diario and Partida.maximo_estrellas(n["nivel"]) == 3 and not progreso.estrellas.values().has(3):
+		objetivo.text += " [b]Extra:[/b] la campana dorada da la tercera estrella."
 	_cerrar_ventanas()
 	_actualizar()
 
@@ -209,7 +212,7 @@ func _al_terminar_caida() -> void:
 	var id := int(n["id"])
 	var clave = ("dia:" + n["fecha"]) if modo_diario else id
 	var marca := int(n["nivel"]["m"])
-	var e: int = Partida.estrellas(r, marca)
+	var e: int = Partida.estrellas(r, marca, n["nivel"])
 	registro.anotar("intento", {"nivel": id, "exito": bool(r["exito"]), "fichas": int(r["fichas_usadas"]),
 		"estrellas": e, "segundos": int((Time.get_ticks_msec() - _abierto_en) / 1000), "pistas": _pista_paso,
 		"lento": tablero.velocidad < 1.0, "motivo": _motivo(r)})
@@ -220,13 +223,17 @@ func _al_terminar_caida() -> void:
 		if modo_taller == "":
 			progreso.registrar(clave, e)
 		ventana_titulo.text = "¡Nivel superado!"
+		ventana_estrellas.maximo = Partida.maximo_estrellas(n["nivel"])
 		ventana_estrellas.conseguidas = e
 		ventana_dato.text = "%d fichas" % int(r["fichas_usadas"])
 		var de_que := "del día" if modo_diario else "del nivel"
-		if e >= 2:
+		if int(r["fichas_usadas"]) <= marca:
 			ventana_detalle.text = "Sin pasarte de la marca %s (%d)." % [de_que, marca]
 		else:
-			ventana_detalle.text = "La marca %s es %d: con menos fichas, segunda estrella." % [de_que, marca]
+			ventana_detalle.text = "La marca %s es %d: con menos fichas, una estrella más." % [de_que, marca]
+		if Partida.maximo_estrellas(n["nivel"]) == 3:
+			ventana_detalle.text += "\n¡Y sonó la campana dorada!" if Partida.dorada_sono(r, n["nivel"]) \
+				else "\nLa campana dorada da la tercera estrella."
 		if not modo_diario and indice == niveles.size() - 1:
 			ventana_detalle.text += "\nHas terminado los niveles de esta prueba. ¡Gracias por jugar!"
 		var ganadas := maxi(e - antes, 0)
@@ -356,7 +363,7 @@ func _al_siguiente() -> void:
 		return
 	if modo_diario:
 		var r: Dictionary = tablero.resultado()
-		var e: int = Partida.estrellas(r, int(actual["nivel"]["m"]))
+		var e: int = Partida.estrellas(r, int(actual["nivel"]["m"]), actual["nivel"])
 		_copiar(RetoDiario.texto_compartir(actual["fecha"], bool(r["exito"]), int(r["fichas_usadas"]), e, _pista_paso > 0))
 		_tipo_boton(boton_siguiente, "¡Copiado!", true)
 		return
@@ -416,6 +423,9 @@ func _al_sonar_campana(c: Array) -> void:
 		_sonar("campana", 1.335)          # una cuarta por encima: dos golpes a la vez
 	elif tipo == "numerada":
 		_sonar("campana", 1.0 + 0.125 * (int(c[3]) - 1))
+	elif tipo == "dorada":
+		_sonar("campana", 1.5)            # más aguda y brillante
+		_sonar("campana", 2.0, -6.0)
 	else:
 		_sonar("campana", 1.0)
 	if progreso.ajustes["vibracion"] and OS.has_feature("mobile"):

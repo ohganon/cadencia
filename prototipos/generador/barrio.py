@@ -83,10 +83,25 @@ def _generados(plan):
     return lista
 
 
+def _con_dorada(lista):
+    """Pone la campana dorada en cada nivel (semilla fija por nivel) y actualiza marca, fichas y
+    solución de referencia. Si en un nivel no cabe, se queda sin ella (y sin tercera estrella)."""
+    salida = []
+    for n in lista:
+        nivel = sim.nivel_de_dict(n["nivel"])
+        tramos = [Tramo([tuple(p) for p in t["puntos"]], t["padre"], t["desde"]) for t in n["solucion"]]
+        r = G.poner_dorada(nivel, tramos, 7919 * int(n["id"]))
+        if r is not None:
+            nivel, tramos = r
+            n = n | {"nivel": nivel_a_dict(nivel), "solucion": [tramo_a_dict(x) for x in tramos]}
+        salida.append(n)
+    return salida
+
+
 def barrio_1() -> dict:
     hechos = json.loads(exportar(niveles())["niveles_entrega1.json"])["niveles"]
     lista = [{k: n[k] for k in ("id", "titulo", "ayuda", "nivel", "solucion")} | {"origen": "a mano"} for n in hechos]
-    return {"version": 1, "barrio": 1, "nombre": "La Plaza", "niveles": lista + _generados(PLAN_1)}
+    return {"version": 1, "barrio": 1, "nombre": "La Plaza", "niveles": _con_dorada(lista + _generados(PLAN_1))}
 
 
 # ---------------------------------------------------------------- El Puerto: niveles de enseñanza
@@ -128,7 +143,7 @@ def ensenanza():
 
 
 def barrio_2() -> dict:
-    return {"version": 1, "barrio": 2, "nombre": "El Puerto", "niveles": ensenanza() + _generados(PLAN_2)}
+    return {"version": 1, "barrio": 2, "nombre": "El Puerto", "niveles": _con_dorada(ensenanza() + _generados(PLAN_2))}
 
 
 def archivos() -> dict:

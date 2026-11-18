@@ -148,6 +148,36 @@ class Portabilidad(unittest.TestCase):
         self.assertEqual(len(repartir(linea((0, 0), (12.5, 0)))), 4)
 
 
+class Dorada(unittest.TestCase):
+    def nivel(self):
+        return Nivel(200, 100, (10, 50), [Campana("a", (110, 50)), Campana("oro", (60, 90), "dorada")], fichas=500)
+
+    def test_no_hace_falta_para_superar(self):
+        r = simular(self.nivel(), [Tramo(linea((10, 50), (110, 50)))])
+        self.assertTrue(r["exito"])
+        self.assertIsNone(r["campanas"]["oro"])
+        self.assertNotIn("oro", r["motivos"])
+
+    def test_suena_si_llega_una_rama(self):
+        tronco = Tramo(linea((10, 50), (110, 50)))
+        rama = Tramo([(60, 50), (60, 90)], 0, 10)
+        r = simular(self.nivel(), [tronco, rama])
+        self.assertTrue(r["exito"])
+        self.assertIsNotNone(r["campanas"]["oro"])
+
+    def test_sola_no_basta(self):
+        n = Nivel(200, 100, (10, 50), [Campana("oro", (110, 50), "dorada")], fichas=500)
+        self.assertFalse(simular(n, [Tramo(linea((10, 50), (110, 50)))])["exito"])
+
+    def test_codigo_con_dorada(self):
+        n = Nivel(100, 160, (50, 150), [Campana("a", (50, 20)), Campana("oro", (20, 80), "dorada")], fichas=60, marca=30)
+        nivel, _ = sim.datos_de_codigo(sim.codigo_taller(n))
+        self.assertEqual(nivel, n)
+        dos = sim.nivel_a_dict(n)
+        dos["c"].append(["oro2", [80, 20], "dorada", 0])
+        self.assertNotEqual(sim.validar_nivel_taller(dos), "")
+
+
 class Determinismo(unittest.TestCase):
     def test_mismo_trazo_mismo_resultado(self):
         a = simular(nivel_doble(), arbol_simetrico())

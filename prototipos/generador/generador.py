@@ -296,6 +296,57 @@ def atajos(nivel: Nivel, limite=None):
     return resultado
 
 
+# ---------------------------------------------------------------- campana dorada
+
+def poner_dorada(nivel: Nivel, solucion: list, semilla: int, intentos=300):
+    """Añade la campana dorada (opcional, tercera estrella) a un nivel ya resuelto.
+
+    Sale una rama nueva de una ficha de la solución hacia un sitio alejado del camino principal: así
+    hay que ir a por ella a propósito. La rama no puede pararse (muro, puerta, borde) ni tocar otra
+    campana, y el camino principal no puede hacerla sonar de paso. La marca incluye esa rama, así que
+    las tres estrellas se consiguen con la solución de referencia; el margen de fichas se conserva.
+    Devuelve (nivel nuevo, solución nueva) o None si no encuentra un sitio.
+    """
+    rnd = random.Random(semilla)
+    margen = nivel.fichas - nivel.marca
+    fichas = [repartir(t.puntos) for t in solucion]
+    todas = [p for f in fichas for p in f]
+    for _ in range(intentos):
+        i = rnd.randrange(len(solucion))
+        if len(fichas[i]) < 8:
+            continue
+        j = rnd.randrange(3, len(fichas[i]) - 3)
+        base = fichas[i][j]
+        ang = rnd.uniform(0, 2 * math.pi)
+        largo = rnd.uniform(14, 28)
+        destino = (round(base[0] + math.cos(ang) * largo, 2), round(base[1] + math.sin(ang) * largo, 2))
+        if not _dentro(destino, 9):
+            continue
+        if min(math.dist(destino, p) for p in todas) < sim.RADIO_CAMPANA + 5:
+            continue
+        if any(math.dist(destino, c.pos) < 2 * sim.RADIO_CAMPANA + 3 for c in nivel.campanas):
+            continue
+        # Ni encima de un muro ni de una puerta: tiene que verse limpia
+        segmentos = list(nivel.muros) + [(p.a, p.b) for p in nivel.puertas]
+        if any(_distancia_segmento(destino, a, b) < sim.RADIO_CAMPANA + 2 for a, b in segmentos):
+            continue
+        rama = Tramo([(round(base[0], 3), round(base[1], 3)), destino], i, j)
+        campanas = nivel.campanas + [Campana("oro", destino, "dorada")]
+        nuevo = Nivel(nivel.ancho, nivel.alto, nivel.inicio, campanas, nivel.muros, nivel.puertas, fichas=10_000)
+        tramos = solucion + [rama]
+        r = simular(nuevo, tramos)
+        if not r["exito"] or r["parada"] is not None or r["campanas"]["oro"] is None:
+            continue
+        # Las demás campanas tienen que sonar igual que sin la rama (no altera el nivel)
+        antes = simular(Nivel(nivel.ancho, nivel.alto, nivel.inicio, nivel.campanas, nivel.muros, nivel.puertas, fichas=10_000), solucion)
+        if any(r["campanas"][c.id] != antes["campanas"][c.id] for c in nivel.campanas):
+            continue
+        nuevo.marca = r["fichas_usadas"]
+        nuevo.fichas = nuevo.marca + margen
+        return nuevo, tramos
+    return None
+
+
 # ---------------------------------------------------------------- puertas de vaivén
 
 TIPOS_PUERTA = ("puerta", "dos_puertas")

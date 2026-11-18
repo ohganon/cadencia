@@ -176,6 +176,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: Taller: crear, probar, publicar con código y jugar códigos de otros (18/11/2026)
 - [x] Fase 8: mapa del barrio, progreso y cuerda con las reglas de la Fase 5; La Plaza con 20 niveles (18/11/2026)
 - [x] Fase 8: Barrio 2, El Puerto, con la puerta de vaivén (generador, tablero, Taller y mapa de dos barrios) (18/11/2026)
+- [x] Fase 8: tercera estrella con la campana dorada en los 40 niveles de los barrios (18/11/2026)
 - [ ] **TODO (decisión del cliente, 18/11/2026): pasada estética** con animaciones, sombreado y efectos. Se hace después de desarrollar el juego. Lista en fase8/ARQUITECTURA_BORRADOR.md, sección 6 bis
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal

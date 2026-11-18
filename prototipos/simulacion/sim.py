@@ -18,6 +18,8 @@ Reglas (Fase 4, sección 4.3):
   tablero o al cruzar una puerta cerrada. El resultado dice dónde y por qué.
 - Objetivos: campana simple, campana doble (dos ramas distintas a la vez, con tolerancia) y
   campanas numeradas (deben sonar en orden).
+- La campana dorada es opcional: no hace falta para superar el nivel (ni da motivo de fallo si no
+  suena), pero su tic aparece en el resultado. Da la tercera estrella.
 
 Todo es determinista: sin azar, sin reloj y sin dependencias externas.
 
@@ -114,7 +116,7 @@ def _curva_cerrada(a, b, c):
 class Campana:
     id: str
     pos: tuple
-    tipo: str = "simple"        # "simple" | "doble" | "numerada"
+    tipo: str = "simple"        # "simple" | "doble" | "numerada" | "dorada" (opcional: da la tercera estrella)
     numero: int = 0             # solo para las numeradas
 
 
@@ -240,7 +242,7 @@ def _resultado(nivel, tramos, fichas, llegadas, parada, usadas=None):
                                 ("no llegaron a la vez" if ll else "no llegó ninguna rama")
         else:
             estado[c.id] = ll[0][0] if ll else None
-            if not ll:
+            if not ll and c.tipo != "dorada":        # la dorada es opcional: no hacerla sonar no es un fallo
                 motivos[c.id] = "no llegó"
     numeradas = sorted((c for c in nivel.campanas if c.tipo == "numerada"), key=lambda c: c.numero)
     orden_ok = True
@@ -249,7 +251,8 @@ def _resultado(nivel, tramos, fichas, llegadas, parada, usadas=None):
         orden_ok = all(tics_num[i] < tics_num[i + 1] for i in range(len(tics_num) - 1))
         if not orden_ok:
             motivos["orden"] = "las campanas numeradas sonaron en otro orden"
-    exito = bool(nivel.campanas) and all(v is not None for v in estado.values()) and orden_ok \
+    obligatorias = [c for c in nivel.campanas if c.tipo != "dorada"]
+    exito = bool(obligatorias) and all(estado[c.id] is not None for c in obligatorias) and orden_ok \
         and usadas <= nivel.fichas and not (parada and parada.get("motivo") in ("faltan fichas", "no empieza en el inicio", "bifurcador no válido"))
     return {"exito": exito, "fichas_usadas": usadas, "sobran": nivel.fichas - usadas,
             "campanas": estado, "parada": parada, "motivos": motivos}
@@ -291,7 +294,7 @@ PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
 # antes de jugarlo (godot/nucleo/taller.gd aplica exactamente las mismas reglas).
 LIMITES_TALLER = {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
                   "tramos": 8, "puntos": 600, "id": 8, "periodo": 200}
-TIPOS_CAMPANA = ("simple", "doble", "numerada")
+TIPOS_CAMPANA = ("simple", "doble", "numerada", "dorada")
 
 
 def _numero(x, minimo, maximo):
@@ -324,6 +327,9 @@ def validar_nivel_taller(d: dict) -> str:
                 numeros.append(int(x[3]))
         if len({x[0] for x in c}) != len(c):
             return "campanas repetidas"
+        doradas = sum(1 for x in c if x[2] == "dorada")
+        if doradas > 1 or doradas == len(c):
+            return "como mucho una campana dorada, y no puede ser la única"
         if sorted(numeros) != list(range(1, len(numeros) + 1)):
             return "las numeradas tienen que ir 1, 2, 3…"
         if not (isinstance(d["mu"], list) and len(d["mu"]) <= L["muros"]):
