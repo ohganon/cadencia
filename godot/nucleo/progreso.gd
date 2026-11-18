@@ -10,7 +10,7 @@ const RUTA := "user://progreso.json"
 const VERSION := 1
 
 var estrellas := {}     # id de nivel (String) -> 0..3
-var ajustes := {"sonido": true, "vibracion": true}
+var ajustes := {"sonido": true, "vibracion": true, "alto_contraste": false, "reducir_movimiento": false, "texto_grande": false}
 var cuerda := {"n": Cuerda.MAXIMO, "t": 0}
 var en_curso := 0        # nivel nuevo ya pagado y aún sin superar (no se vuelve a cobrar)
 var ruta := RUTA
@@ -23,7 +23,7 @@ func _init(ruta_archivo: String = RUTA) -> void:
 
 func cargar() -> void:
 	estrellas = {}
-	ajustes = {"sonido": true, "vibracion": true}
+	ajustes = {"sonido": true, "vibracion": true, "alto_contraste": false, "reducir_movimiento": false, "texto_grande": false}
 	cuerda = {"n": Cuerda.MAXIMO, "t": 0}
 	en_curso = 0
 	if not FileAccess.file_exists(ruta):

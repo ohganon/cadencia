@@ -8,6 +8,7 @@
 extends Control
 
 const Taller = preload("res://nucleo/taller.gd")
+const Progreso = preload("res://nucleo/progreso.gd")
 const TableroEditor = preload("res://escenas/taller/tablero_editor.gd")
 const BotonPop = preload("res://escenas/comun/boton_pop.gd")
 const Iconos = preload("res://escenas/comun/iconos.gd")
@@ -47,6 +48,11 @@ var fuente_negrita: Font
 
 func _ready() -> void:
 	_construir()
+	# Los mismos ajustes de accesibilidad que en la partida (solo se leen)
+	var ajustes: Dictionary = Progreso.new().ajustes
+	tablero.aplicar_accesibilidad(ajustes)
+	if ajustes.get("texto_grande", false):
+		ayuda.add_theme_font_size_override("font_size", 31)
 	var estado := get_node_or_null("/root/Estado")
 	var nivel: Dictionary = estado.borrador if estado != null and not estado.borrador.is_empty() else Taller.cargar_borrador()
 	tablero.editar_nivel(nivel.duplicate(true))

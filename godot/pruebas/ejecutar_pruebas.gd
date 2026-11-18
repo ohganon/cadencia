@@ -221,6 +221,18 @@ func pruebas_progreso(Progreso: GDScript) -> void:
 	c.ajustar("sonido", false)
 	var d = Progreso.new(ruta)
 	comprobar(d.ajustes["sonido"] == false and d.ajustes["vibracion"] == true, "los ajustes de sonido y vibración se guardan")
+	d.ajustar("alto_contraste", true)
+	d.ajustar("reducir_movimiento", true)
+	var e = Progreso.new(ruta)
+	comprobar(e.ajustes["alto_contraste"] and e.ajustes["reducir_movimiento"] and not e.ajustes["texto_grande"],
+		"los ajustes de accesibilidad se guardan (y empiezan desactivados)")
+	var tablero = load("res://escenas/partida/tablero.gd").new()
+	tablero.aplicar_accesibilidad(e.ajustes)
+	comprobar(tablero.TINTA == Color("#000000") and tablero.HIELO == Color("#ffffff") and tablero.reducir_movimiento,
+		"el tablero pasa a alto contraste y sin movimiento")
+	tablero.aplicar_accesibilidad({})
+	comprobar(tablero.TINTA == Color("#142554") and not tablero.reducir_movimiento, "y vuelve a Dominó Pop")
+	tablero.free()
 	for r in [ruta, "user://prueba_progreso.anterior.json"]:
 		if FileAccess.file_exists(r):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(r))

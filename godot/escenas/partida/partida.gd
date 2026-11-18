@@ -100,7 +100,10 @@ func _ready() -> void:
 	# La campaña: los barrios en orden (La Plaza 1–20, El Puerto 21–40)
 	niveles = []
 	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json"]:
-		niveles += JSON.parse_string(FileAccess.get_file_as_string(ruta))["niveles"]
+		var barrio = JSON.parse_string(FileAccess.get_file_as_string(ruta))
+		for n in barrio["niveles"]:
+			n["barrio"] = barrio["nombre"]          # para «+2 estrellas para El Puerto»
+		niveles += barrio["niveles"]
 	# En el modo demostración el progreso va a un archivo aparte: nunca toca el del jugador
 	var demo := false
 	for a in OS.get_cmdline_user_args():
@@ -110,6 +113,12 @@ func _ready() -> void:
 	reto = RetoDiario.new()
 	ruta_taller = "user://demo_taller.json" if demo else Taller.RUTA
 	_construir()
+	# Demostración: ajustes de accesibilidad pedidos por la línea de órdenes (en el progreso de demo)
+	for a in OS.get_cmdline_user_args():
+		for par in [["--contraste", "alto_contraste"], ["--sin-movimiento", "reducir_movimiento"], ["--texto-grande", "texto_grande"]]:
+			if demo and a == par[0]:
+				progreso.ajustes[par[1]] = true
+	aplicar_accesibilidad()
 	var estado := get_node_or_null("/root/Estado")
 	var pendiente: Dictionary = estado.pendiente if estado != null else {}
 	if estado != null:
@@ -163,6 +172,18 @@ func cargar_taller(p: Dictionary) -> void:
 
 func _ir_taller() -> void:
 	get_tree().change_scene_to_file(ESCENA_TALLER)
+
+
+## Ajustes de accesibilidad: alto contraste y reducir movimiento en el tablero, y texto grande en la
+## tarjeta del objetivo y la ventana de resultado.
+func aplicar_accesibilidad() -> void:
+	tablero.aplicar_accesibilidad(progreso.ajustes)
+	var grande: bool = progreso.ajustes.get("texto_grande", false)
+	for clave in ["normal_font_size", "bold_font_size"]:
+		objetivo.add_theme_font_size_override(clave, 34 if grande else 29)
+	ventana_dato.add_theme_font_size_override("font_size", 40 if grande else 36)
+	ventana_detalle.add_theme_font_size_override("font_size", 31 if grande else 27)
+	ventana_premio_texto.add_theme_font_size_override("font_size", 31 if grande else 28)
 
 
 func _al_volver() -> void:
@@ -238,7 +259,7 @@ func _al_terminar_caida() -> void:
 			ventana_detalle.text += "\nHas terminado los niveles de esta prueba. ¡Gracias por jugar!"
 		var ganadas := maxi(e - antes, 0)
 		ventana_premio.visible = ganadas > 0 and not modo_diario
-		ventana_premio_texto.text = "+%d %s para La Plaza" % [ganadas, "estrella" if ganadas == 1 else "estrellas"]
+		ventana_premio_texto.text = "+%d %s para %s" % [ganadas, "estrella" if ganadas == 1 else "estrellas", n.get("barrio", "La Plaza")]
 		if modo_taller == "prueba":
 			ventana_titulo.text = "¡Tu nivel funciona!"
 			ventana_detalle.text = "Al publicarlo, %d fichas será la marca y habrá 8 de margen." % int(r["fichas_usadas"])

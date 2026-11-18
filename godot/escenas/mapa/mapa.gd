@@ -56,6 +56,9 @@ var texto_espera: Label
 var ventana_ajustes: PanelContainer
 var boton_sonido: Control
 var boton_vibracion: Control
+var botones_accesibilidad := {}     # clave del ajuste -> botón
+const ACCESIBILIDAD := [["alto_contraste", "Alto contraste"], ["reducir_movimiento", "Reducir movimiento"],
+	["texto_grande", "Texto grande"]]
 var resumen_prueba: Label
 var fuente_titulos: Font
 var fuente_texto: Font
@@ -143,8 +146,7 @@ func _mostrar_sin_cuerda() -> void:
 	velo.visible = true
 	ventana_cuerda.visible = true
 	_hud_cuerda()
-	ventana_cuerda.reset_size()
-	ventana_cuerda.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
+	_centrar(ventana_cuerda)
 
 
 func _cerrar_ventanas() -> void:
@@ -158,13 +160,26 @@ func _abrir_ajustes() -> void:
 	resumen_prueba.visible = false
 	velo.visible = true
 	ventana_ajustes.visible = true
-	ventana_ajustes.reset_size()
-	ventana_ajustes.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
+	_centrar(ventana_ajustes)
+
+
+## Centra una ventana cuando ya ha recalculado su tamaño (los textos de los botones acaban de cambiar).
+func _centrar(v: Control) -> void:
+	# A mano: el preajuste de Godot centra con un tamaño mínimo antiguo si el contenido acaba de cambiar
+	await get_tree().process_frame
+	v.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	v.size = v.get_combined_minimum_size()
+	v.position = ((v.get_parent() as Control).size - v.size) / 2.0
 
 
 func _textos_ajustes() -> void:
 	boton_sonido.texto = "Sonido: " + ("sí" if progreso.ajustes["sonido"] else "no")
 	boton_vibracion.texto = "Vibración: " + ("sí" if progreso.ajustes["vibracion"] else "no")
+	for par in ACCESIBILIDAD:
+		var b: Control = botones_accesibilidad[par[0]]
+		b.texto = "%s: %s" % [par[1], "sí" if progreso.ajustes.get(par[0], false) else "no"]
+		b.update_minimum_size()
+		b.queue_redraw()
 	for b in [boton_sonido, boton_vibracion]:
 		b.update_minimum_size()
 		b.queue_redraw()
@@ -183,7 +198,7 @@ func _al_resumen() -> void:
 		lineas.append("Aún no hay partidas registradas.")
 	resumen_prueba.text = "\n".join(lineas)
 	resumen_prueba.visible = not resumen_prueba.visible
-	ventana_ajustes.reset_size()
+	_centrar(ventana_ajustes)
 
 
 # ---------------------------------------------------------------- mapa
@@ -471,7 +486,20 @@ func _construir_ajustes() -> void:
 	resumen_prueba.visible = false
 	var cerrar := _boton("Volver al mapa", true, 36)
 	cerrar.pulsado.connect(_cerrar_ventanas)
-	for h in [boton_sonido, boton_vibracion, b_resumen, resumen_prueba, cerrar]:
+	for h in [boton_sonido, boton_vibracion]:
+		caja.add_child(h)
+	var titulo_acc := _etiqueta(34, TINTA, true)
+	titulo_acc.text = "Accesibilidad"
+	caja.add_child(titulo_acc)
+	for par in ACCESIBILIDAD:
+		var clave: String = par[0]
+		var b := _boton(par[1], false, 30)
+		b.pulsado.connect(func():
+			progreso.ajustar(clave, not progreso.ajustes.get(clave, false))
+			_textos_ajustes())
+		botones_accesibilidad[clave] = b
+		caja.add_child(b)
+	for h in [b_resumen, resumen_prueba, cerrar]:
 		caja.add_child(h)
 
 
@@ -546,6 +574,12 @@ func _demo_si_toca() -> void:
 		await get_tree().create_timer(0.2).timeout
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png(prefijo + "_2_sin_cuerda.png")
+	if args.has("ajustes"):
+		progreso.ajustes["alto_contraste"] = true
+		_abrir_ajustes()
+		await get_tree().create_timer(0.3).timeout
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_png(prefijo + "_3_ajustes.png")
 	print("DEMO mapa: actual ", _actual + 1, " cuerdas ", progreso.cuerdas(ahora()))
 	if args.has("entrar"):
 		_jugar(_actual)          # cambia a la partida; allí se hace la captura y se cierra
