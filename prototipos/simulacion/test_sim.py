@@ -189,6 +189,54 @@ class RetoDiarioYTaller(unittest.TestCase):
             with self.assertRaises(ValueError):
                 sim.nivel_de_codigo(malo)
 
+    def test_codigo_con_solucion_de_los_10_niveles(self):
+        import niveles_entrega1 as gen
+        for n in gen.niveles():
+            with self.subTest(n["id"]):
+                codigo = sim.codigo_taller(n["nivel"], n["solucion"])
+                nivel, solucion = sim.datos_de_codigo(codigo)
+                self.assertEqual(nivel, n["nivel"])
+                self.assertTrue(simular(nivel, solucion)["exito"])
+                self.assertLess(len(codigo), 2500, "el código tiene que caber en un mensaje")
+
+    def test_python_abre_los_codigos_de_godot(self):
+        import json
+        import pathlib
+        import niveles_entrega1 as gen
+        ruta = pathlib.Path(__file__).resolve().parents[2] / "godot" / "datos" / "codigos_godot.json"
+        codigos = json.loads(ruta.read_text(encoding="utf-8"))["codigos"]
+        niveles = {n["id"]: n for n in gen.niveles()}
+        self.assertEqual(len(codigos), 10)
+        for c in codigos:
+            with self.subTest(c["id"]):
+                nivel, solucion = sim.datos_de_codigo(c["codigo"])
+                self.assertEqual(nivel, niveles[c["id"]]["nivel"])
+                self.assertTrue(simular(nivel, solucion)["exito"])
+
+    def test_codigos_que_se_salen_de_los_limites(self):
+        import json, zlib
+        def codigo(d):
+            return "DING1-" + base64.urlsafe_b64encode(zlib.compress(json.dumps(d).encode())).decode().rstrip("=")
+        base = sim.nivel_a_dict(Nivel(100, 160, (20, 150), [Campana("a", (50, 20))], fichas=40, marca=30))
+        malos = {
+            "fuera del tablero": {**base, "i": [500, 150]},
+            "sin campanas": {**base, "c": []},
+            "demasiadas campanas": {**base, "c": [[str(k), [50, 20], "simple", 0] for k in range(7)]},
+            "tipo raro": {**base, "c": [["a", [50, 20], "bomba", 0]]},
+            "numeradas sin el 1": {**base, "c": [["a", [50, 20], "numerada", 2]]},
+            "número infinito": {**base, "f": float("inf")},
+            "booleano como número": {**base, "f": True},
+            "demasiados muros": {**base, "mu": [[[1, 1], [2, 2]]] * 13},
+            "otro tablero": {**base, "w": 1000},
+            "solución que no llega": {**base, "s": [[[[20, 150], [20, 100]], None, 0]]},
+            "solución con padre imposible": {**base, "s": [[[[20, 150], [50, 20]], None, 0], [[[50, 20], [60, 20]], 5, 0]]},
+            "no es un objeto": [1, 2, 3],
+        }
+        for nombre, d in malos.items():
+            with self.subTest(nombre):
+                with self.assertRaises(ValueError):
+                    sim.datos_de_codigo(codigo(d))
+
     def test_bomba_de_descompresion(self):
         bomba = "DING1-" + base64.urlsafe_b64encode(zlib.compress(b" " * 5_000_000, 9)).decode().rstrip("=")
         with self.assertRaises(ValueError):

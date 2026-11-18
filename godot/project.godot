@@ -16,6 +16,10 @@ run/main_scene="res://escenas/partida/partida.tscn"
 config/icon="res://iconos/icono.png"
 config/features=PackedStringArray("4.7", "Mobile")
 
+[autoload]
+
+Estado="*res://autoload/estado.gd"
+
 [display]
 
 window/size/viewport_width=720

@@ -287,17 +287,97 @@ def nivel_de_dict(d: dict) -> Nivel:
 
 PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
 
+# Límites de un nivel del Taller. Un código es texto que llega de cualquiera: todo se comprueba
+# antes de jugarlo (godot/nucleo/taller.gd aplica exactamente las mismas reglas).
+LIMITES_TALLER = {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
+                  "tramos": 8, "puntos": 600, "id": 8, "periodo": 200}
+TIPOS_CAMPANA = ("simple", "doble", "numerada")
 
-def codigo_taller(n: Nivel) -> str:
-    """Código de texto para compartir un nivel del Taller sin servidor."""
-    datos = json.dumps(nivel_a_dict(n), separators=(",", ":"), sort_keys=True).encode()
+
+def _numero(x, minimo, maximo):
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x) and minimo <= x <= maximo
+
+
+def _punto(p, d):
+    return isinstance(p, (list, tuple)) and len(p) == 2 and _numero(p[0], 0, d["w"]) and _numero(p[1], 0, d["h"])
+
+
+def validar_nivel_taller(d: dict) -> str:
+    """Devuelve "" si el nivel es válido o el motivo por el que no lo es."""
+    L = LIMITES_TALLER
+    try:
+        if d.get("v") != 1 or d.get("w") != 100 or d.get("h") != 160:
+            return "versión o tablero desconocidos"
+        if not _punto(d["i"], d):
+            return "inicio fuera del tablero"
+        if not (_numero(d["f"], 2, L["fichas"]) and _numero(d["m"], 0, d["f"])):
+            return "número de fichas no válido"
+        c = d["c"]
+        if not (isinstance(c, list) and 1 <= len(c) <= L["campanas"]):
+            return "hacen falta entre 1 y 6 campanas"
+        numeros = []
+        for x in c:
+            if not (isinstance(x, list) and len(x) == 4 and isinstance(x[0], str) and 0 < len(x[0]) <= L["id"]
+                    and _punto(x[1], d) and x[2] in TIPOS_CAMPANA and _numero(x[3], 0, L["numeradas"])):
+                return "campana no válida"
+            if x[2] == "numerada":
+                numeros.append(int(x[3]))
+        if len({x[0] for x in c}) != len(c):
+            return "campanas repetidas"
+        if sorted(numeros) != list(range(1, len(numeros) + 1)):
+            return "las numeradas tienen que ir 1, 2, 3…"
+        if not (isinstance(d["mu"], list) and len(d["mu"]) <= L["muros"]):
+            return "demasiados muros"
+        for m in d["mu"]:
+            if not (isinstance(m, list) and len(m) == 2 and _punto(m[0], d) and _punto(m[1], d)):
+                return "muro no válido"
+        if not (isinstance(d["p"], list) and len(d["p"]) <= L["puertas"]):
+            return "demasiadas puertas"
+        for p in d["p"]:
+            if not (isinstance(p, list) and len(p) == 5 and _punto(p[0], d) and _punto(p[1], d)
+                    and _numero(p[2], 2, L["periodo"]) and _numero(p[3], 1, p[2]) and _numero(p[4], 0, L["periodo"])):
+                return "puerta no válida"
+    except (KeyError, TypeError, IndexError):
+        return "faltan datos del nivel"
+    return ""
+
+
+def _validar_solucion(s, d) -> str:
+    L = LIMITES_TALLER
+    if not (isinstance(s, list) and 1 <= len(s) <= L["tramos"]):
+        return "solución no válida"
+    for k, t in enumerate(s):
+        if not (isinstance(t, list) and len(t) == 3 and isinstance(t[0], list) and 2 <= len(t[0]) <= L["puntos"]
+                and all(_punto(p, d) for p in t[0])):
+            return "solución no válida"
+        if k == 0 and t[1] is not None or k > 0 and not (_numero(t[1], 0, k - 1) and _numero(t[2], 0, L["puntos"])):
+            return "solución no válida"
+    return ""
+
+
+def codigo_taller(n: Nivel, solucion: list | None = None) -> str:
+    """Código de texto para compartir un nivel del Taller sin servidor.
+
+    Con `solucion` (la del autor, que lo superó al probarlo), el código la lleva dentro: quien lo
+    recibe sabe que el nivel tiene solución y puede usarla de pista. Las coordenadas de la solución
+    se redondean a una décima.
+    """
+    d = nivel_a_dict(n)
+    if solucion is not None:
+        d["s"] = [[[[round(x, 1), round(y, 1)] for x, y in t.puntos], t.padre, t.desde] for t in solucion]
+    datos = json.dumps(d, separators=(",", ":"), sort_keys=True).encode()
     return PREFIJO_TALLER + base64.urlsafe_b64encode(zlib.compress(datos, 9)).decode().rstrip("=")
 
 
-def nivel_de_codigo(codigo: str) -> Nivel:
-    if not codigo.startswith(PREFIJO_TALLER):
+def datos_de_codigo(codigo: str):
+    """Abre un código del Taller y lo comprueba entero. Devuelve (Nivel, solución o None).
+
+    Lanza ValueError si el código está mal, es demasiado grande, se sale de los límites o trae una
+    solución que no supera el nivel.
+    """
+    if not isinstance(codigo, str) or not codigo.startswith(PREFIJO_TALLER) or len(codigo) > 20_000:
         raise ValueError("código no válido")
-    cuerpo = codigo[len(PREFIJO_TALLER):]
+    cuerpo = codigo[len(PREFIJO_TALLER):].strip()
     cuerpo += "=" * (-len(cuerpo) % 4)
     limite = 65536             # un nivel ocupa unos pocos KB; más es un código manipulado
     try:
@@ -308,6 +388,30 @@ def nivel_de_codigo(codigo: str) -> Nivel:
     if len(datos) > limite or dec.unconsumed_tail:
         raise ValueError("nivel demasiado grande")
     try:
-        return nivel_de_dict(json.loads(datos))
-    except (ValueError, KeyError, TypeError, IndexError) as e:
+        d = json.loads(datos)
+    except ValueError as e:
         raise ValueError("código no válido") from e
+    if not isinstance(d, dict):
+        raise ValueError("código no válido")
+    motivo = validar_nivel_taller(d)
+    if motivo:
+        raise ValueError(motivo)
+    nivel = nivel_de_dict(d)
+    solucion = None
+    if "s" in d:
+        motivo = _validar_solucion(d["s"], d)
+        if motivo:
+            raise ValueError(motivo)
+        # Godot escribe todos los números como decimales (0.0): padre y desde se pasan a enteros
+        solucion = [Tramo([tuple(p) for p in t[0]], None if t[1] is None else int(t[1]), int(t[2])) for t in d["s"]]
+        try:
+            exito = simular(nivel, solucion)["exito"]
+        except (TypeError, ValueError, IndexError, KeyError) as e:     # nunca un fallo sin controlar
+            raise ValueError("código no válido") from e
+        if not exito:
+            raise ValueError("la solución del código no supera el nivel")
+    return nivel, solucion
+
+
+def nivel_de_codigo(codigo: str) -> Nivel:
+    return datos_de_codigo(codigo)[0]

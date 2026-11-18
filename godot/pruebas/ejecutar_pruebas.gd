@@ -12,9 +12,10 @@
 ## Es un ejecutor mínimo sin dependencias. GUT se añadirá cuando haga falta probar escenas.
 extends SceneTree
 
-const SCRIPTS := ["res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd",
+const SCRIPTS := ["res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
-	"res://escenas/comun/iconos.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd"]
+	"res://escenas/comun/iconos.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd",
+	"res://autoload/estado.gd", "res://escenas/taller/tablero_editor.gd", "res://escenas/taller/taller.gd"]
 
 var fallos := 0
 var pasadas := 0
@@ -38,6 +39,7 @@ func _init() -> void:
 	pruebas_registro(load("res://nucleo/registro.gd"))
 	pruebas_sonidos()
 	pruebas_reto(load("res://nucleo/reto_diario.gd"), sim)
+	pruebas_taller(load("res://nucleo/taller.gd"), sim)
 	terminar()
 
 
@@ -196,6 +198,49 @@ func pruebas_reto(RetoDiario: GDScript, sim: GDScript) -> void:
 		"el texto para compartir lleva fecha y fichas, y ningún enlace", texto)
 	comprobar(RetoDiario.texto_compartir("2026-11-18", true, 47, 2, true).contains("con pista"),
 		"si se usó la pista, el texto para compartir lo dice")
+
+
+func pruebas_taller(Taller: GDScript, sim: GDScript) -> void:
+	# Python → Godot: abre los códigos válidos de Python y rechaza los malos
+	var datos = leer_json("res://datos/codigos_taller.json")
+	for v in datos["validos"]:
+		var r: Dictionary = Taller.decodificar(v["codigo"])
+		comprobar(r["ok"] and iguales(r["nivel"], v["nivel"]) and r["solucion"].size() == int(v["tramos_solucion"]),
+			"Godot abre el código de Python del " + v["nombre"], r["error"])
+	for m in datos["malos"]:
+		var r: Dictionary = Taller.decodificar(m["codigo"])
+		comprobar(not r["ok"] and r["error"] != "", "Godot rechaza el código «%s»" % m["nombre"], JSON.stringify(r))
+	# Godot → Godot: ida y vuelta, y el codificador no ha cambiado de formato
+	var niveles: Array = leer_json("res://datos/niveles_entrega1.json")["niveles"]
+	var propios = leer_json("res://datos/codigos_godot.json")
+	for k in niveles.size():
+		var n: Dictionary = niveles[k]
+		var codigo: String = Taller.codificar(n["nivel"], n["solucion"])
+		var r: Dictionary = Taller.decodificar(codigo)
+		comprobar(r["ok"] and iguales(r["nivel"], n["nivel"]), "ida y vuelta del nivel %d en Godot" % n["id"], r["error"])
+		comprobar(propios != null and propios["codigos"][k]["codigo"] == codigo,
+			"el código de Godot del nivel %d es el de siempre (mismo formato)" % n["id"])
+	# Solución del autor: simplificada sigue superando el nivel y el código queda más corto
+	var n7: Dictionary = niveles[6]
+	var dedo := []
+	for t in n7["solucion"]:
+		dedo.append({"puntos": densificar(t["puntos"], 0.8), "padre": t["padre"], "desde": t["desde"]})
+	var corta: Array = Taller.solucion_para_codigo(n7["nivel"], dedo)
+	comprobar(not corta.is_empty() and sim.simular(n7["nivel"], corta)["exito"], "la solución simplificada del autor sigue superando el nivel")
+	comprobar(Taller.codificar(n7["nivel"], corta).length() < Taller.codificar(n7["nivel"], dedo).length(),
+		"simplificar el trazo del dedo acorta el código")
+	# Lista de niveles guardados
+	var ruta := "user://prueba_taller.json"
+	if FileAccess.file_exists(ruta):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
+	Taller.guardar_en_lista({"codigo": "DING1-a", "titulo": "Uno", "propio": true}, ruta)
+	Taller.guardar_en_lista({"codigo": "DING1-b", "titulo": "Dos", "propio": false}, ruta)
+	Taller.guardar_en_lista({"codigo": "DING1-a", "titulo": "Uno otra vez", "propio": true}, ruta)
+	var lista: Array = Taller.cargar_lista(ruta)
+	comprobar(lista.size() == 2 and lista[0]["codigo"] == "DING1-b", "la lista guarda cada código una vez, el último arriba")
+	Taller.borrar_de_lista("DING1-b", ruta)
+	comprobar(Taller.cargar_lista(ruta).size() == 1, "se puede quitar un nivel de la lista")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
 
 
 func pruebas_sonidos() -> void:

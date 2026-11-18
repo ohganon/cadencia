@@ -24,6 +24,8 @@ const Pastilla = preload("res://escenas/comun/pastilla.gd")
 const Estrellas = preload("res://escenas/comun/estrellas.gd")
 const Iconos = preload("res://escenas/comun/iconos.gd")
 const RetoDiario = preload("res://nucleo/reto_diario.gd")
+const Taller = preload("res://nucleo/taller.gd")
+const ESCENA_TALLER := "res://escenas/taller/taller.tscn"
 
 const AZUL := Color("#2462d6")
 const TINTA := Color("#142554")
@@ -59,6 +61,8 @@ var niveles: Array = []
 var indice := 0
 var actual: Dictionary = {}     # el nivel en juego: uno de la campaña o la Caída del Día
 var modo_diario := false
+var modo_taller := ""           # "" (campaña o Caída del Día), "prueba", "codigo" o "publicado"
+var ruta_taller := Taller.RUTA
 var reto = null
 var partida = null
 var progreso = null
@@ -107,13 +111,19 @@ func _ready() -> void:
 	progreso = Progreso.new("user://demo_progreso.json" if demo else Progreso.RUTA)
 	registro = Registro.new("user://demo_registro.jsonl" if demo else Registro.RUTA)
 	reto = RetoDiario.new()
+	ruta_taller = "user://demo_taller.json" if demo else Taller.RUTA
 	_construir()
-	var primero := 0
-	for n in niveles:
-		if progreso.de(int(n["id"])) == 0:
-			break
-		primero = mini(primero + 1, niveles.size() - 1)
-	cargar(primero)
+	var estado := get_node_or_null("/root/Estado")
+	if estado != null and not estado.pendiente.is_empty():
+		cargar_taller(estado.pendiente)          # viene del Taller: probar o jugar un código
+		estado.pendiente = {}
+	else:
+		var primero := 0
+		for n in niveles:
+			if progreso.de(int(n["id"])) == 0:
+				break
+			primero = mini(primero + 1, niveles.size() - 1)
+		cargar(primero)
 	_demo_si_toca()
 
 
@@ -122,6 +132,7 @@ func _ready() -> void:
 func cargar(i: int) -> void:
 	indice = clampi(i, 0, niveles.size() - 1)
 	modo_diario = false
+	modo_taller = ""
 	_abrir(niveles[indice], "Nivel %d" % int(niveles[indice]["id"]))
 
 
@@ -131,8 +142,31 @@ func cargar_diario(fecha := "") -> void:
 	if e.is_empty():
 		return
 	modo_diario = true
+	modo_taller = ""
 	_abrir({"id": 0, "titulo": "Caída del Día", "ayuda": RetoDiario.objetivo(e["tipo"]), "nivel": e["nivel"],
 		"solucion": e["solucion"], "fecha": e["fecha_jugada"]}, "Caída del Día")
+
+
+## Un nivel del Taller: «prueba» (el autor prueba el suyo antes de publicarlo) o «codigo» (uno recibido).
+func cargar_taller(p: Dictionary) -> void:
+	modo_diario = false
+	modo_taller = p["modo"]
+	var prueba: bool = modo_taller == "prueba"
+	var titulo_texto := "Prueba del Taller" if prueba else "Nivel del Taller"
+	var ayuda := "Supera tu nivel para poder [b]compartirlo[/b]." if prueba else Taller.objetivo(p["nivel"])
+	_abrir({"id": 0, "titulo": titulo_texto, "ayuda": ayuda, "nivel": p["nivel"], "solucion": p.get("solucion", []),
+		"codigo": p.get("codigo", "")}, titulo_texto)
+
+
+func _ir_taller() -> void:
+	get_tree().change_scene_to_file(ESCENA_TALLER)
+
+
+func _al_volver() -> void:
+	if modo_taller != "":
+		_ir_taller()
+	else:
+		_abrir_lista()
 
 
 func _abrir(n: Dictionary, texto_titulo: String) -> void:
@@ -151,12 +185,14 @@ func _abrir(n: Dictionary, texto_titulo: String) -> void:
 
 
 func _actualizar() -> void:
-	var quedan: int = partida.disponibles() - partida.usadas()
-	pastilla.texto = str(quedan)
+	if modo_taller == "prueba":
+		pastilla.texto = str(partida.usadas())           # al probar no hay límite: se cuentan las usadas
+	else:
+		pastilla.texto = str(partida.disponibles() - partida.usadas())
 	var editando: bool = tablero.modo == Tablero.Modo.EDITAR
 	boton_tumbar.desactivado = not editando or partida.tramos.is_empty()
 	boton_deshacer.desactivado = not editando or partida.tramos.is_empty()
-	boton_pista.desactivado = not editando
+	boton_pista.desactivado = not editando or actual.get("solucion", []).is_empty()
 
 
 func _al_tumbar() -> void:
@@ -177,8 +213,9 @@ func _al_terminar_caida() -> void:
 	_sonar("superado" if e > 0 else "fallo")
 	if e > 0:
 		_fallos_nivel = 0
-		var antes: int = progreso.de(clave)
-		progreso.registrar(clave, e)
+		var antes: int = progreso.de(clave) if modo_taller == "" else 0
+		if modo_taller == "":
+			progreso.registrar(clave, e)
 		ventana_titulo.text = "¡Nivel superado!"
 		ventana_estrellas.conseguidas = e
 		ventana_dato.text = "%d fichas" % int(r["fichas_usadas"])
@@ -192,7 +229,17 @@ func _al_terminar_caida() -> void:
 		var ganadas := maxi(e - antes, 0)
 		ventana_premio.visible = ganadas > 0 and not modo_diario
 		ventana_premio_texto.text = "+%d %s para La Plaza" % [ganadas, "estrella" if ganadas == 1 else "estrellas"]
-		if modo_diario:
+		if modo_taller == "prueba":
+			ventana_titulo.text = "¡Tu nivel funciona!"
+			ventana_detalle.text = "Al publicarlo, %d fichas será la marca y habrá 8 de margen." % int(r["fichas_usadas"])
+			ventana_premio.visible = false
+			_tipo_boton(boton_siguiente, "Publicar código", true)
+			boton_siguiente.visible = true
+		elif modo_taller == "codigo":
+			ventana_premio.visible = false
+			_tipo_boton(boton_siguiente, "Volver al Taller", true)
+			boton_siguiente.visible = true
+		elif modo_diario:
 			# En la Caída del Día, «Siguiente» se convierte en compartir el resultado
 			ventana_titulo.text = "¡Caída del Día superada!"
 			_tipo_boton(boton_siguiente, "Copiar resultado", true)
@@ -221,7 +268,7 @@ func _al_terminar_caida() -> void:
 			ventana.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE, 30)
 		else:
 			ventana.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 30)
-	ventana_estrellas.visible = e > 0
+	ventana_estrellas.visible = e > 0 and modo_taller != "prueba"
 	ventana.reset_size()
 	ventana.visible = true
 	_actualizar()
@@ -255,6 +302,42 @@ func _explicacion(r: Dictionary) -> String:
 	return "La cadena no hizo sonar todas las campanas."
 
 
+var ultimo_copiado := ""
+
+
+## Copia al portapapeles del sistema. En el modo demostración no lo toca: solo lo recuerda.
+func _copiar(texto: String) -> void:
+	ultimo_copiado = texto
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--demo"):
+			return
+	DisplayServer.clipboard_set(texto)
+
+
+## Publica el nivel probado: la marca es lo que usó el autor, con 8 fichas de margen, y el código
+## lleva su solución (simplificada y comprobada). Se guarda en la lista y se copia al portapapeles.
+func _publicar() -> void:
+	var r: Dictionary = tablero.resultado()
+	var marca := int(r["fichas_usadas"])
+	var nivel: Dictionary = actual["nivel"].duplicate(true)
+	nivel["m"] = marca
+	nivel["f"] = mini(marca + 8, Taller.LIMITES["fichas"])
+	var solucion: Array = Taller.solucion_para_codigo(nivel, partida.tramos)
+	if solucion.is_empty():
+		ventana_detalle.text = "No se pudo preparar el código. Prueba a dibujar la solución otra vez."
+		return
+	var codigo := Taller.codificar(nivel, solucion)
+	var fecha := Time.get_date_string_from_system()
+	Taller.guardar_en_lista({"codigo": codigo, "titulo": "Mi nivel del " + fecha, "propio": true, "fecha": fecha}, ruta_taller)
+	_copiar(codigo)
+	modo_taller = "publicado"
+	ventana_titulo.text = "¡Código copiado!"
+	ventana_dato.text = "%d caracteres" % codigo.length()
+	ventana_detalle.text = "Pégalo en un mensaje para retar a quien quieras. También lo tienes en Taller › Códigos."
+	_tipo_boton(boton_siguiente, "Volver al Taller", true)
+	ventana.reset_size()
+
+
 func _al_repetir() -> void:
 	_cerrar_ventanas()
 	tablero.editar()
@@ -262,11 +345,16 @@ func _al_repetir() -> void:
 
 
 func _al_siguiente() -> void:
+	if modo_taller == "prueba":
+		_publicar()
+		return
+	if modo_taller in ["codigo", "publicado"]:
+		_ir_taller()
+		return
 	if modo_diario:
 		var r: Dictionary = tablero.resultado()
 		var e: int = Partida.estrellas(r, int(actual["nivel"]["m"]))
-		DisplayServer.clipboard_set(RetoDiario.texto_compartir(actual["fecha"], bool(r["exito"]), int(r["fichas_usadas"]), e,
-			_pista_paso > 0))
+		_copiar(RetoDiario.texto_compartir(actual["fecha"], bool(r["exito"]), int(r["fichas_usadas"]), e, _pista_paso > 0))
 		_tipo_boton(boton_siguiente, "¡Copiado!", true)
 		return
 	cargar(indice + 1)
@@ -466,7 +554,7 @@ func _construir() -> void:
 	volver.redondo = true
 	volver.custom_minimum_size = Vector2(96, 96)
 	volver.tooltip_text = "Niveles"
-	volver.pulsado.connect(_abrir_lista)
+	volver.pulsado.connect(_al_volver)
 	hud.add_child(volver)
 	titulo = _etiqueta(50, Color.WHITE, true)
 	titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -625,6 +713,10 @@ func _construir_lista() -> void:
 	boton_diario.icono = "campana"
 	boton_diario.pulsado.connect(func(): cargar_diario())
 	caja.add_child(boton_diario)
+	var boton_taller := _boton("Taller", false, 34)
+	boton_taller.icono = "muro"
+	boton_taller.pulsado.connect(_ir_taller)
+	caja.add_child(boton_taller)
 	var ajustes := HBoxContainer.new()
 	ajustes.add_theme_constant_override("separation", 16)
 	ajustes.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -718,6 +810,20 @@ func _demo_si_toca() -> void:
 	await get_tree().process_frame
 	if args.has("diario"):
 		cargar_diario(args.get("fecha", ""))
+	elif args.has("codigo"):
+		var abierto: Dictionary = Taller.decodificar(args["codigo"])
+		if not abierto["ok"]:
+			print("DEMO código rechazado: ", abierto["error"])
+			get_tree().quit(1)
+			return
+		cargar_taller({"modo": "codigo", "nivel": abierto["nivel"], "solucion": abierto["solucion"], "codigo": args["codigo"]})
+	elif args.has("taller"):
+		# Probar un nivel del Taller: el del nivel 8, sin límite de fichas, como si lo hubiera hecho el jugador
+		var n: Dictionary = niveles[int(args["demo"]) - 1]
+		var nivel: Dictionary = n["nivel"].duplicate(true)
+		nivel["f"] = 400
+		nivel["m"] = 0
+		cargar_taller({"modo": "prueba", "nivel": nivel, "solucion": n["solucion"]})
 	else:
 		cargar(int(args["demo"]) - 1)
 	await _capturar(prefijo + "_1_vacio.png")
@@ -738,13 +844,18 @@ func _demo_si_toca() -> void:
 	await tablero.caida_terminada
 	await get_tree().create_timer(0.6).timeout
 	await _capturar(prefijo + "_4_resultado.png")
+	if args.has("publicar"):
+		_al_siguiente()
+		await get_tree().create_timer(0.2).timeout
+		await _capturar(prefijo + "_5_publicado.png")
+		print("DEMO código: ", ultimo_copiado)
 	if args.has("lista"):
 		_cerrar_ventanas()
 		_abrir_lista()
 		await get_tree().create_timer(0.2).timeout
 		await _capturar(prefijo + "_5_lista.png")
 	print("DEMO resultado: ", JSON.stringify(tablero.resultado()))
-	for r in ["user://demo_progreso.json", "user://demo_progreso.anterior.json", "user://demo_registro.jsonl"]:
+	for r in ["user://demo_progreso.json", "user://demo_progreso.anterior.json", "user://demo_registro.jsonl", "user://demo_taller.json"]:
 		if FileAccess.file_exists(r):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(r))
 	get_tree().quit()

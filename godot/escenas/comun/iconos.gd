@@ -54,6 +54,42 @@ static func dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color := Color(0,
 			bombilla.append(Vector2(9.5, 16))
 			bombilla.append(bombilla[0])
 			_trazos(ci, rect, [[Vector2(9, 18), Vector2(15, 18)], [Vector2(10, 21), Vector2(14, 21)], bombilla])
+		"inicio":                         # el empujador verde con su triángulo
+			var c := rect.get_center()
+			var r := rect.size.x * 0.42
+			ci.draw_circle(c, r, Color("#3ddc6b"))
+			ci.draw_arc(c, r, 0, TAU, 32, TINTA, maxf(1.5, rect.size.x * 0.06), true)
+			var e := rect.size.x / 40.0
+			ci.draw_colored_polygon(PackedVector2Array([c + Vector2(-5, -8) * e, c + Vector2(9, 0) * e, c + Vector2(-5, 8) * e]), BLANCO)
+		"doble":
+			var lado := rect.size.x * 0.72
+			dibujar(ci, "campana", Rect2(rect.position + Vector2(0, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
+			dibujar(ci, "campana", Rect2(rect.position + Vector2(rect.size.x - lado, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
+		"numerada":
+			dibujar(ci, "campana", rect, CORAL)
+			var f := ThemeDB.fallback_font
+			var tam := int(rect.size.x * 0.34)
+			var medida := f.get_string_size("1", HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
+			var base := rect.get_center() + Vector2(-medida.x / 2, f.get_ascent(tam) * 0.42)
+			ci.draw_string(f, base, "1", HORIZONTAL_ALIGNMENT_LEFT, -1, tam, BLANCO)
+		"muro":
+			var a := rect.position + rect.size * Vector2(0.18, 0.78)
+			var b := rect.position + rect.size * Vector2(0.82, 0.22)
+			ci.draw_line(a, b, TINTA, rect.size.x * 0.16, true)
+			ci.draw_circle(a, rect.size.x * 0.08, TINTA)
+			ci.draw_circle(b, rect.size.x * 0.08, TINTA)
+		"goma":
+			var e := rect.size.x / 24.0
+			var cuerpo := PackedVector2Array([Vector2(4, 15), Vector2(12, 7), Vector2(20, 15), Vector2(14, 21), Vector2(10, 21)])
+			var p := PackedVector2Array()
+			for v in cuerpo:
+				p.append(rect.position + v * e)
+			ci.draw_colored_polygon(p, Color("#ff9fb0"))
+			var borde := p.duplicate()
+			borde.append(p[0])
+			ci.draw_polyline(borde, TINTA, maxf(1.5, 2.2 * e), true)
+			ci.draw_line(rect.position + Vector2(8, 11) * e, rect.position + Vector2(16, 19) * e, TINTA, maxf(1.5, 2.2 * e), true)
+			ci.draw_line(rect.position + Vector2(10, 21) * e, rect.position + Vector2(21, 21) * e, TINTA, maxf(1.5, 2.2 * e), true)
 		"lento":                          # caracol sencillo: espiral y cuerpo
 			var espiral := []
 			for k in range(0, 40):

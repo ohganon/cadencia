@@ -278,7 +278,46 @@ def exportar(lista):
     return {"niveles_entrega1.json": fmt(niveles_json),
             "casos_compartidos.json": fmt({"version": 1,
                                            "nota": "Casos que la versión de Godot debe reproducir exactamente. Generados por niveles_entrega1.py.",
-                                           "casos": casos})}
+                                           "casos": casos}),
+            "codigos_taller.json": fmt(codigos_taller(lista))}
+
+
+def _codigo_crudo(d) -> str:
+    """Código hecho a mano a partir de cualquier dato (para fabricar códigos malos a propósito)."""
+    import base64
+    import zlib
+    return "DING1-" + base64.urlsafe_b64encode(zlib.compress(json.dumps(d).encode(), 9)).decode().rstrip("=")
+
+
+def codigos_taller(lista):
+    """Códigos del Taller que Godot tiene que abrir igual que Python: los 10 niveles con su solución
+    (válidos) y una colección de códigos rotos o manipulados (que hay que rechazar)."""
+    import base64
+    import zlib
+    from sim import codigo_taller
+    validos = [{"nombre": f"nivel {n['id']}", "codigo": codigo_taller(n["nivel"], n["solucion"]),
+                "nivel": nivel_a_dict(n["nivel"]), "tramos_solucion": len(n["solucion"])} for n in lista]
+    base = nivel_a_dict(lista[0]["nivel"])
+    malos = {
+        "sin prefijo": "hola",
+        "prefijo de otra versión": "DING2-" + validos[0]["codigo"][6:],
+        "caracteres raros": "DING1-!!!!",
+        "no es zlib": "DING1-" + base64.urlsafe_b64encode(b"no es zlib").decode(),
+        "bomba de descompresión": "DING1-" + base64.urlsafe_b64encode(zlib.compress(b" " * 5_000_000, 9)).decode().rstrip("="),
+        "no es json": "DING1-" + base64.urlsafe_b64encode(zlib.compress(b"{esto no", 9)).decode().rstrip("="),
+        "no es un objeto": _codigo_crudo([1, 2, 3]),
+        "fuera del tablero": _codigo_crudo({**base, "i": [500, 150]}),
+        "sin campanas": _codigo_crudo({**base, "c": []}),
+        "demasiadas campanas": _codigo_crudo({**base, "c": [[str(k), [50, 20], "simple", 0] for k in range(7)]}),
+        "tipo de campana raro": _codigo_crudo({**base, "c": [["a", [50, 20], "bomba", 0]]}),
+        "numeradas sin el 1": _codigo_crudo({**base, "c": [["a", [50, 20], "numerada", 2]]}),
+        "booleano como número": _codigo_crudo({**base, "f": True}),
+        "demasiados muros": _codigo_crudo({**base, "mu": [[[1, 1], [2, 2]]] * 13}),
+        "otro tablero": _codigo_crudo({**base, "w": 1000}),
+        "solución que no llega": _codigo_crudo({**base, "s": [[[[50, 150], [50, 100]], None, 0]]}),
+    }
+    return {"version": 1, "nota": "Generado por niveles_entrega1.py. Godot debe abrir los válidos y rechazar los malos.",
+            "validos": validos, "malos": [{"nombre": k, "codigo": v} for k, v in malos.items()]}
 
 
 def main():
