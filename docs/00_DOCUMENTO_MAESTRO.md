@@ -177,6 +177,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: mapa del barrio, progreso y cuerda con las reglas de la Fase 5; La Plaza con 20 niveles (18/11/2026)
 - [x] Fase 8: Barrio 2, El Puerto, con la puerta de vaivén (generador, tablero, Taller y mapa de dos barrios) (18/11/2026)
 - [x] Fase 8: tercera estrella con la campana dorada en los 40 niveles de los barrios (18/11/2026)
+- [x] Fase 8: campana dorada en los 365 días de la Caída del Día (calendario regenerado) y como herramienta del Taller; para publicar un nivel con dorada, el autor tiene que hacerla sonar (18/11/2026)
 - [x] Fase 8: accesibilidad: alto contraste, reducir movimiento, texto grande y símbolos además de colores (18/11/2026)
 - [x] Fase 8: los 11 temas en Ajustes › Apariencia; los del Club se pueden usar gratis mientras el Club no exista, con un aviso que lo dice tal cual (18/11/2026)
 - [x] Fase 8: fuentes propias de cada tema (13 familias SIL OFL de google/fonts, descargadas con permiso del cliente; licencias comprobadas y guardadas en godot/fuentes) (18/11/2026)

@@ -33,6 +33,7 @@ const HERRAMIENTAS := [
 	["campana", "Campana: toca para ponerla."],
 	["doble", "Campana doble: necesita dos ramas a la vez."],
 	["numerada", "Numerada: suenan en el orden en que las pones."],
+	["dorada", "Dorada: opcional, da la tercera estrella. Solo una, y no puede ser la única."],
 	["muro", "Muro: arrastra el dedo para dibujarlo."],
 	["puerta", "Puerta: arrástrala para ponerla; tócala para cambiar cuándo se abre."],
 	["goma", "Goma: toca una campana, una puerta o un muro para quitarlo."],
@@ -239,14 +240,14 @@ func _construir() -> void:
 	hud.add_child(hueco)
 
 	var barra := HBoxContainer.new()
-	barra.add_theme_constant_override("separation", 12)
+	barra.add_theme_constant_override("separation", 8)
 	barra.alignment = BoxContainer.ALIGNMENT_CENTER
 	columna.add_child(barra)
 	for par in HERRAMIENTAS:
 		var b := _boton("", false)
-		b.icono = par[0]
+		b.icono = "campana_simple" if par[0] == "campana" else par[0]     # que no se confunda con la dorada
 		b.redondo = true
-		b.custom_minimum_size = Vector2(84, 84)      # siete herramientas caben en una fila
+		b.custom_minimum_size = Vector2(70, 70)      # las ocho herramientas caben en una fila
 		b.pulsado.connect(_elegir.bind(par[0]))
 		barra.add_child(b)
 		botones_herramienta[par[0]] = b
@@ -391,7 +392,7 @@ func _demo_si_toca() -> void:
 	await get_tree().process_frame
 	_al_vaciar()
 	# Un nivel como el 8: campana doble arriba a la derecha y un muro
-	var pasos := [["doble", [74.0, 30.0]], ["campana", [18.0, 70.0]], ["inicio", [50.0, 150.0]]]
+	var pasos := [["doble", [74.0, 30.0]], ["campana", [18.0, 70.0]], ["dorada", [22.0, 28.0]], ["inicio", [50.0, 150.0]]]
 	for p in pasos:
 		_elegir(p[0])
 		tablero._aplicar(p[1])

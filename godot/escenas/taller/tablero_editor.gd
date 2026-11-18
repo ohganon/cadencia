@@ -63,7 +63,7 @@ func _aplicar(p: Array) -> void:
 	match herramienta:
 		"inicio":
 			nivel["i"] = [snappedf(p[0], 0.1), snappedf(p[1], 0.1)]
-		"campana", "doble", "numerada":
+		"campana", "doble", "numerada", "dorada":
 			if campanas.size() >= LIMITES["campanas"]:
 				aviso.emit("Como mucho 6 campanas por nivel.")
 				return
@@ -74,6 +74,11 @@ func _aplicar(p: Array) -> void:
 				if Sim.dist(p, c[1]) < 2 * Sim.RADIO_CAMPANA:
 					aviso.emit("Ahí ya hay una campana.")
 					return
+			if herramienta == "dorada":
+				for c in campanas:
+					if c[2] == "dorada":
+						aviso.emit("Solo puede haber una campana dorada.")
+						return
 			var numero := 0
 			if herramienta == "numerada":
 				for c in campanas:

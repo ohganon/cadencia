@@ -553,12 +553,16 @@ RITMO = [("simple", 0.3), ("dos", 0.4), ("numeradas", 0.5), ("doble", 0.5), ("do
 
 
 def caida_del_dia(fecha) -> Generado:
-    """El nivel de un día: misma fecha UTC, mismo nivel para todo el mundo."""
+    """El nivel de un día: misma fecha UTC, mismo nivel para todo el mundo. Lleva campana dorada
+    (tercera estrella) siempre que quepa; la marca y la solución de referencia ya la incluyen."""
     semilla = sim.semilla_diaria(fecha)
     tipo, dificultad = RITMO[fecha.weekday()]
     for k in range(50):
         g = generar(semilla + k, tipo, dificultad)
         if g is not None:
+            con_dorada = poner_dorada(g.nivel, g.solucion, 7919 * (semilla + k) + 1)
+            if con_dorada is not None:
+                g.nivel, g.solucion = con_dorada
             return g
     raise RuntimeError(f"No se pudo generar la Caída del Día de {fecha}")
 

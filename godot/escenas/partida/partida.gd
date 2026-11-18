@@ -211,8 +211,9 @@ func _abrir(n: Dictionary, texto_titulo: String) -> void:
 	registro.anotar("nivel", {"nivel": int(n["id"])})
 	titulo.text = texto_titulo
 	objetivo.text = n["ayuda"]
-	# Mientras el jugador no haya conseguido ninguna tercera estrella, se le cuenta para qué sirve la dorada
-	if modo_taller == "" and not modo_diario and Partida.maximo_estrellas(n["nivel"]) == 3 and not progreso.estrellas.values().has(3):
+	# En la campaña, mientras el jugador no tenga ninguna tercera estrella, se le cuenta para qué sirve
+	# la dorada. En la Caída del Día, siempre (cada día es un nivel nuevo)
+	if modo_taller == "" and Partida.maximo_estrellas(n["nivel"]) == 3 and (modo_diario or not progreso.estrellas.values().has(3)):
 		objetivo.text += " [b]Extra:[/b] la campana dorada da la tercera estrella."
 	_cerrar_ventanas()
 	_actualizar()
@@ -267,7 +268,13 @@ func _al_terminar_caida() -> void:
 		var ganadas := maxi(e - antes, 0)
 		ventana_premio.visible = ganadas > 0 and not modo_diario
 		ventana_premio_texto.text = "+%d %s para %s" % [ganadas, "estrella" if ganadas == 1 else "estrellas", n.get("barrio", "La Plaza")]
-		if modo_taller == "prueba":
+		if modo_taller == "prueba" and Partida.maximo_estrellas(n["nivel"]) == 3 and not Partida.dorada_sono(r, n["nivel"]):
+			# Si el autor no hace sonar la dorada, su marca no la incluye y nadie podría sacar las 3 estrellas
+			ventana_titulo.text = "Falta la dorada"
+			ventana_detalle.text = "Tu nivel funciona. Para publicarlo, haz sonar también la campana dorada: así las tres estrellas se pueden conseguir."
+			ventana_premio.visible = false
+			boton_siguiente.visible = false
+		elif modo_taller == "prueba":
 			ventana_titulo.text = "¡Tu nivel funciona!"
 			ventana_detalle.text = "Al publicarlo, %d fichas será la marca y habrá 8 de margen." % int(r["fichas_usadas"])
 			ventana_premio.visible = false

@@ -325,11 +325,16 @@ func pruebas_reto(RetoDiario: GDScript, sim: GDScript) -> void:
 	var r = RetoDiario.new()
 	comprobar(r.niveles.size() == 365, "el calendario de la Caída del Día tiene 365 días")
 	var fallidos := []
+	var sin_tres := []
+	var Partida: GDScript = load("res://nucleo/partida.gd")
 	for e in r.niveles:
 		var res: Dictionary = sim.simular(e["nivel"], e["solucion"])
 		if not res["exito"] or int(res["fichas_usadas"]) != int(e["nivel"]["m"]):
 			fallidos.append(e["fecha"])
+		if Partida.maximo_estrellas(e["nivel"]) != 3 or Partida.estrellas(res, int(e["nivel"]["m"]), e["nivel"]) != 3:
+			sin_tres.append(e["fecha"])
 	comprobar(fallidos.is_empty(), "Godot supera los 365 niveles diarios con su solución y su marca", str(fallidos.slice(0, 5)))
+	comprobar(sin_tres.is_empty(), "los 365 días llevan campana dorada y su solución da las 3 estrellas", str(sin_tres.slice(0, 5)))
 	comprobar(r.de("2026-11-18")["fecha"] == "2026-11-18", "cada fecha del calendario da su nivel")
 	comprobar(r.de("2026-11-01")["fecha"] == r.niveles[0]["fecha"], "el primer día es el primero del calendario")
 	comprobar(r.de("2027-11-01")["fecha"] == "2026-11-01", "pasado el año, el calendario se repite igual para todos")
@@ -343,6 +348,10 @@ func pruebas_reto(RetoDiario: GDScript, sim: GDScript) -> void:
 
 
 func pruebas_taller(Taller: GDScript, sim: GDScript) -> void:
+	var con_dorada := {"c": [["a", [20, 20], "simple", 0], ["b", [80, 20], "dorada", 0]]}
+	var obj: String = Taller.objetivo(con_dorada)
+	comprobar(obj.contains("[b]la campana[/b]") and obj.contains("dorada da la tercera estrella"),
+		"el objetivo de un nivel del Taller cuenta la dorada aparte, como extra", obj)
 	# Python → Godot: abre los códigos válidos de Python y rechaza los malos
 	var datos = leer_json("res://datos/codigos_taller.json")
 	for v in datos["validos"]:

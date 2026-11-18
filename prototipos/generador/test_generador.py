@@ -80,6 +80,11 @@ class CaidaDelDia(unittest.TestCase):
             n = sim.nivel_de_dict(e["nivel"])
             r = simular(n, tramos_de(e["solucion"]))
             self.assertTrue(r["exito"], e["fecha"])
+            # La solución de referencia hace sonar la dorada sin pasarse de la marca: 3 estrellas
+            doradas = [c for c in n.campanas if c.tipo == "dorada"]
+            self.assertEqual(len(doradas), 1, e["fecha"])
+            self.assertIsNotNone(r["campanas"][doradas[0].id], e["fecha"])
+            self.assertLessEqual(r["fichas_usadas"], n.marca, e["fecha"])
         # Los primeros días coinciden con lo que genera el código actual
         for e in d["niveles"][:3]:
             g = G.caida_del_dia(dt.date.fromisoformat(e["fecha"]))

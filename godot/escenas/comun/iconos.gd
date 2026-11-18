@@ -99,6 +99,12 @@ static func _dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color: Color) ->
 			var lado := rect.size.x * 0.72
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(0, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(rect.size.x - lado, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
+		"campana_simple":                 # la campana normal, del color de las del tablero
+			_dibujar(ci, "campana", rect, CORAL)
+		"dorada":                         # campana dorada con su estrella (tercera estrella)
+			_dibujar(ci, "campana", Rect2(rect.position + Vector2(0, rect.size.y * 0.1), rect.size * 0.86), estrella)
+			var lado := rect.size.x * 0.46
+			_forma(ci, ESTRELLA, 40.0, Rect2(rect.position + Vector2(rect.size.x - lado, 0), Vector2(lado, lado)), estrella, 2.4)
 		"numerada":
 			_dibujar(ci, "campana", rect, CORAL)
 			var f := ThemeDB.fallback_font

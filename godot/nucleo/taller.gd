@@ -239,10 +239,12 @@ static func objetivo(nivel: Dictionary) -> String:
 	var simples := 0
 	var dobles := 0
 	var numeradas := 0
+	var dorada := false
 	for c in nivel["c"]:
 		match c[2]:
 			"doble": dobles += 1
 			"numerada": numeradas += 1
+			"dorada": dorada = true
 			_: simples += 1
 	var partes := []
 	if numeradas > 0:
@@ -251,7 +253,10 @@ static func objetivo(nivel: Dictionary) -> String:
 		partes.append("la [b]campana doble[/b] con dos ramas a la vez" if dobles == 1 else "las [b]campanas dobles[/b]")
 	if simples > 0:
 		partes.append("[b]la campana[/b]" if simples == 1 else "[b]las %d campanas[/b]" % simples)
-	return "Haz sonar " + ", ".join(partes) + "."
+	var texto := "Haz sonar " + ", ".join(partes) + "."
+	if dorada:
+		texto += " [b]Extra:[/b] la campana dorada da la tercera estrella."
+	return texto
 
 
 # ---------------------------------------------------------------- mis niveles
