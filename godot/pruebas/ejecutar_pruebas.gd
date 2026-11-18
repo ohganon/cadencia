@@ -85,15 +85,27 @@ func pruebas_cuerda(Cuerda: GDScript, Progreso: GDScript) -> void:
 
 
 func pruebas_barrio(sim: GDScript) -> void:
-	var b = leer_json("res://datos/barrio_1.json")
-	comprobar(b != null and b["niveles"].size() == 20, "La Plaza tiene 20 niveles")
-	var mal := []
-	for k in b["niveles"].size():
-		var n: Dictionary = b["niveles"][k]
-		var r: Dictionary = sim.simular(n["nivel"], n["solucion"])
-		if int(n["id"]) != k + 1 or not r["exito"] or int(r["fichas_usadas"]) != int(n["nivel"]["m"]):
-			mal.append(n["id"])
-	comprobar(mal.is_empty(), "los 20 niveles del barrio se superan con su solución y su marca", str(mal))
+	var primero := 1
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json"]:
+		var b = leer_json(ruta)
+		comprobar(b != null and b["niveles"].size() == 20, "%s tiene 20 niveles" % b["nombre"])
+		var mal := []
+		var con_puertas := 0
+		for k in b["niveles"].size():
+			var n: Dictionary = b["niveles"][k]
+			var r: Dictionary = sim.simular(n["nivel"], n["solucion"])
+			if int(n["id"]) != primero + k or not r["exito"] or int(r["fichas_usadas"]) != int(n["nivel"]["m"]):
+				mal.append(n["id"])
+			if not n["nivel"]["p"].is_empty():
+				con_puertas += 1
+		comprobar(mal.is_empty(), "los 20 niveles de %s se superan con su solución y su marca" % b["nombre"], str(mal))
+		if b["barrio"] == 2:
+			comprobar(con_puertas >= 10, "El Puerto tiene puertas de vaivén en la mayoría de niveles (%d)" % con_puertas)
+			# El nivel 22 enseña a esperar: en línea recta llega con la puerta cerrada
+			var n22: Dictionary = b["niveles"][1]
+			var recta: Dictionary = sim.simular(n22["nivel"], [{"puntos": [n22["nivel"]["i"], n22["nivel"]["c"][0][1]], "padre": null, "desde": 0}])
+			comprobar(not recta["exito"] and recta["parada"]["motivo"] == "puerta cerrada", "en el nivel 22 la línea recta encuentra la puerta cerrada")
+		primero += 20
 
 
 func terminar() -> void:

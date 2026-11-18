@@ -27,7 +27,8 @@ const HERRAMIENTAS := [
 	["doble", "Campana doble: necesita dos ramas a la vez."],
 	["numerada", "Numerada: suenan en el orden en que las pones."],
 	["muro", "Muro: arrastra el dedo para dibujarlo."],
-	["goma", "Goma: toca una campana o un muro para quitarlo."],
+	["puerta", "Puerta: arrástrala para ponerla; tócala para cambiar cuándo se abre."],
+	["goma", "Goma: toca una campana, una puerta o un muro para quitarlo."],
 ]
 
 var tablero: Control
@@ -240,7 +241,7 @@ func _construir() -> void:
 		var b := _boton("", false)
 		b.icono = par[0]
 		b.redondo = true
-		b.custom_minimum_size = Vector2(96, 96)
+		b.custom_minimum_size = Vector2(84, 84)      # siete herramientas caben en una fila
 		b.pulsado.connect(_elegir.bind(par[0]))
 		barra.add_child(b)
 		botones_herramienta[par[0]] = b
@@ -391,7 +392,10 @@ func _demo_si_toca() -> void:
 	tablero._muro_desde = [62.0, 44.0]
 	tablero._muro_hasta = [88.0, 44.0]
 	tablero._terminar_muro()
-	_elegir("muro")
+	_elegir("puerta")
+	tablero._muro_desde = [30.0, 100.0]
+	tablero._muro_hasta = [56.0, 100.0]
+	tablero._terminar_muro()
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(prefijo + "_1_editor.png")
 	_abrir_codigos()

@@ -35,7 +35,14 @@ const BLOQUEADO := Color("#9db4e6")
 const VELO := Color(0.039, 0.11, 0.314, 0.55)
 const ALTO_TRAMO := 190.0
 
-var niveles: Array = []
+var niveles: Array = []          # toda la campaña, barrio tras barrio
+var barrios: Array = []
+var _visible := 0                   # barrio que se está viendo
+var etiqueta_barrio: Label
+var etiqueta_nombre: Label
+var aviso_cerrado: Label
+var flecha_izq: Control
+var flecha_der: Control
 var progreso = null
 var registro = null
 var pastilla_cuerda: Control
@@ -59,7 +66,10 @@ var _reloj := 0.0
 
 
 func _ready() -> void:
-	niveles = JSON.parse_string(FileAccess.get_file_as_string("res://datos/barrio_1.json"))["niveles"]
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json"]:
+		var b = JSON.parse_string(FileAccess.get_file_as_string(ruta))
+		barrios.append(b)
+		niveles += b["niveles"]
 	for a in OS.get_cmdline_user_args():
 		_demo = _demo or a.begins_with("--demo")
 	progreso = Progreso.new("user://demo_progreso.json" if _demo else Progreso.RUTA)
@@ -91,6 +101,13 @@ func _refrescar() -> void:
 	for i in niveles.size():
 		if progreso.de(int(niveles[i]["id"])) > 0:
 			_actual = mini(i + 1, niveles.size() - 1)
+	# Se abre el mapa en el barrio del nivel que toca
+	var cuenta := 0
+	for k in barrios.size():
+		cuenta += barrios[k]["niveles"].size()
+		if _actual < cuenta:
+			_visible = k
+			break
 	_colocar_nodos()
 	_hud_cuerda()
 	pastilla_estrellas.texto = str(progreso.total())
@@ -171,30 +188,61 @@ func _al_resumen() -> void:
 
 # ---------------------------------------------------------------- mapa
 
+## Índices (en la lista de toda la campaña) de los niveles del barrio que se ve.
+func _rango_visible() -> Array:
+	var desde := 0
+	for k in _visible:
+		desde += barrios[k]["niveles"].size()
+	return range(desde, desde + barrios[_visible]["niveles"].size())
+
+
+## Un barrio se abre al superar el último nivel del anterior.
+func _barrio_abierto(k: int) -> bool:
+	if k == 0:
+		return true
+	var anterior: Array = barrios[k - 1]["niveles"]
+	return progreso.de(int(anterior[-1]["id"])) > 0
+
+
+func _cambiar_barrio(paso: int) -> void:
+	_visible = clampi(_visible + paso, 0, barrios.size() - 1)
+	_colocar_nodos()
+
+
 func _colocar_nodos() -> void:
 	for h in camino.get_children():
 		h.queue_free()
+	var rango := _rango_visible()
+	var abierto := _barrio_abierto(_visible)
+	etiqueta_barrio.text = "Barrio %d" % int(barrios[_visible]["barrio"])
+	etiqueta_nombre.text = barrios[_visible]["nombre"]
+	flecha_izq.desactivado = _visible == 0
+	flecha_der.desactivado = _visible == barrios.size() - 1
+	aviso_cerrado.visible = not abierto
+	if not abierto:
+		aviso_cerrado.text = "Termina %s para abrir %s." % [barrios[_visible - 1]["nombre"], barrios[_visible]["nombre"]]
 	var ancho: float = maxf(scroll.size.x, 600.0)
-	var alto := ALTO_TRAMO * niveles.size() + 120.0
+	var alto := ALTO_TRAMO * rango.size() + 120.0
 	camino.custom_minimum_size = Vector2(ancho, alto)
 	var centros := []
-	for i in niveles.size():
-		var x := ancho * (0.3 if i % 2 == 0 else 0.7)
-		var y := alto - 100.0 - i * ALTO_TRAMO
+	for k in rango.size():
+		var x := ancho * (0.3 if k % 2 == 0 else 0.7)
+		var y := alto - 100.0 - k * ALTO_TRAMO
 		centros.append(Vector2(x, y))
 	camino.centros = centros
-	camino.recorrido = _actual
+	camino.recorrido = clampi(_actual - rango[0], 0, rango.size()) if abierto else 0
 	camino.queue_redraw()
-	for i in niveles.size():
+	for k in rango.size():
+		var i: int = rango[k]
 		var id := int(niveles[i]["id"])
 		var hecho: bool = progreso.de(id) > 0
-		var es_actual := i == _actual
+		var es_actual: bool = i == _actual and abierto
 		var lado := 120.0 if es_actual else 96.0
 		var b := _boton(str(id), false, 46 if es_actual else 40)
 		b.circular = true
 		b.custom_minimum_size = Vector2(lado, lado)
 		b.size = Vector2(lado, lado)
-		b.position = centros[i] - Vector2(lado, lado) / 2
+		b.position = centros[k] - Vector2(lado, lado) / 2
 		if hecho and not es_actual:
 			b.color_fondo = AMARILLO
 			b.color_labio = LABIO_AMARILLO
@@ -211,9 +259,10 @@ func _colocar_nodos() -> void:
 		else:
 			b.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		camino.add_child(b)
-	# El nivel que toca, a la vista
+	# El nivel que toca, a la vista (o el principio del barrio)
 	await get_tree().process_frame
-	scroll.scroll_vertical = int(centros[_actual].y - scroll.size.y * 0.55)
+	var objetivo := clampi(_actual - rango[0], 0, rango.size() - 1) if abierto else 0
+	scroll.scroll_vertical = int(centros[objetivo].y - scroll.size.y * 0.55)
 
 
 # ---------------------------------------------------------------- interfaz
@@ -271,15 +320,37 @@ func _construir() -> void:
 	pastilla_estrellas.fuente = fuente_negrita
 	hud.add_child(pastilla_estrellas)
 
+	var fila_cinta := HBoxContainer.new()
+	fila_cinta.add_theme_constant_override("separation", 12)
+	columna.add_child(fila_cinta)
 	var cinta := VBoxContainer.new()
 	cinta.add_theme_constant_override("separation", 0)
-	columna.add_child(cinta)
-	var barrio := _etiqueta(24, TEXTO_CLARO)
-	barrio.text = "Barrio 1"
-	cinta.add_child(barrio)
-	var nombre := _etiqueta(56, Color.WHITE, true)
-	nombre.text = "La Plaza"
-	cinta.add_child(nombre)
+	cinta.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fila_cinta.add_child(cinta)
+	etiqueta_barrio = _etiqueta(24, TEXTO_CLARO)
+	cinta.add_child(etiqueta_barrio)
+	etiqueta_nombre = _etiqueta(56, Color.WHITE, true)
+	cinta.add_child(etiqueta_nombre)
+	flecha_izq = _boton("", false)
+	flecha_izq.icono = "volver"
+	flecha_izq.redondo = true
+	flecha_izq.custom_minimum_size = Vector2(84, 84)
+	flecha_izq.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	flecha_izq.tooltip_text = "Barrio anterior"
+	flecha_izq.pulsado.connect(_cambiar_barrio.bind(-1))
+	flecha_der = _boton("", false)
+	flecha_der.icono = "adelante"
+	flecha_der.redondo = true
+	flecha_der.custom_minimum_size = Vector2(84, 84)
+	flecha_der.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	flecha_der.tooltip_text = "Barrio siguiente"
+	flecha_der.pulsado.connect(_cambiar_barrio.bind(1))
+	fila_cinta.add_child(flecha_izq)
+	fila_cinta.add_child(flecha_der)
+	aviso_cerrado = _etiqueta(28, Color.WHITE)
+	aviso_cerrado.add_theme_font_override("font", fuente_negrita)
+	aviso_cerrado.visible = false
+	columna.add_child(aviso_cerrado)
 
 	scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -453,6 +524,10 @@ func _demo_si_toca() -> void:
 		var partes: PackedStringArray = a.trim_prefix("--").split("=", true, 1)
 		args[partes[0]] = partes[1] if partes.size() > 1 else "1"
 	if not args.has("demo-mapa"):
+		# Las demostraciones de partida (--demo=N) se hacen en su pantalla: el juego ahora empieza
+		# en el mapa, así que se las pasa allí (si no, la ventana se quedaría esperando sin cerrar)
+		if args.has("demo"):
+			get_tree().change_scene_to_file.call_deferred(ESCENA_PARTIDA)
 		return
 	var prefijo: String = args.get("captura", "user://mapa")
 	for id in range(1, int(args.get("superados", "0")) + 1):
@@ -460,6 +535,9 @@ func _demo_si_toca() -> void:
 	if args.has("sin-cuerda"):
 		progreso.cuerda = {"n": 0, "t": ahora() - 17 * 60}
 	_refrescar()
+	if args.has("ver-barrio"):
+		_visible = clampi(int(args["ver-barrio"]) - 1, 0, barrios.size() - 1)
+		_colocar_nodos()
 	await get_tree().create_timer(0.3).timeout
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(prefijo + "_1_mapa.png")

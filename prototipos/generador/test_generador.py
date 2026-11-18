@@ -92,14 +92,30 @@ class CaidaDelDia(unittest.TestCase):
 class Barrio(unittest.TestCase):
     def test_barrio_al_dia_y_con_solucion(self):
         import barrio
-        texto = json.dumps(barrio.barrio(), ensure_ascii=False, indent=1) + "\n"
-        self.assertEqual(barrio.SALIDA.read_text(encoding="utf-8"), texto, "ejecuta: python -X utf8 barrio.py")
-        d = json.loads(texto)
-        self.assertEqual([n["id"] for n in d["niveles"]], list(range(1, 21)))
-        for n in d["niveles"]:
-            r = simular(sim.nivel_de_dict(n["nivel"]), tramos_de(n["solucion"]))
-            self.assertTrue(r["exito"], n["id"])
-            self.assertEqual(r["fichas_usadas"], n["nivel"]["m"])
+        primero = 1
+        for nombre, texto in barrio.archivos().items():
+            self.assertEqual((barrio.DATOS / nombre).read_text(encoding="utf-8"), texto, "ejecuta: python -X utf8 barrio.py")
+            d = json.loads(texto)
+            self.assertEqual([n["id"] for n in d["niveles"]], list(range(primero, primero + 20)))
+            for n in d["niveles"]:
+                r = simular(sim.nivel_de_dict(n["nivel"]), tramos_de(n["solucion"]))
+                self.assertTrue(r["exito"], n["id"])
+                self.assertEqual(r["fichas_usadas"], n["nivel"]["m"])
+            primero += 20
+
+    def test_niveles_con_puertas(self):
+        for tipo in G.TIPOS_PUERTA:
+            for semilla in (41, 42, 43):
+                with self.subTest(tipo=tipo, semilla=semilla):
+                    g = G.generar(semilla, tipo, 0.6)
+                    self.assertIsNotNone(g)
+                    self.assertEqual(len(g.nivel.puertas), 1 if tipo == "puerta" else 2)
+                    self.assertTrue(simular(g.nivel, g.solucion)["exito"])
+                    # La línea recta por los huecos no sirve: llega a destiempo a alguna puerta
+                    self.assertEqual(G.atajos(g.nivel)["recto"], 0)
+                    huecos = sorted([((p.a[0] + p.b[0]) / 2, p.a[1]) for p in g.nivel.puertas], key=lambda h: -h[1])
+                    recta = simular(g.nivel, [Tramo([g.nivel.inicio] + huecos + [g.nivel.campanas[0].pos])])
+                    self.assertFalse(recta["exito"])
 
 
 if __name__ == "__main__":

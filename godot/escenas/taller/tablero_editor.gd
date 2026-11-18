@@ -8,7 +8,10 @@ signal editado
 signal aviso(texto: String)
 
 const Partida = preload("res://nucleo/partida.gd")
-const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12}
+const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6}
+## Ritmo de una puerta nueva: periodo 16 tics, abierta 5. Tocarla adelanta cuándo se abre.
+const PUERTA_NUEVA := [16, 5, 0]
+const PASO_FASE := 4
 const MURO_MINIMO := 6.0
 
 var herramienta := "campana"
@@ -39,12 +42,14 @@ func _gui_input(evento: InputEvent) -> void:
 	if evento is InputEventMouseButton and evento.button_index == MOUSE_BUTTON_LEFT:
 		var p := _limitar(a_logico(evento.position))
 		if evento.pressed:
-			if herramienta == "muro":
+			if herramienta == "puerta" and _cambiar_ritmo(p):
+				return
+			if herramienta in ["muro", "puerta"]:
 				_muro_desde = p
 				_muro_hasta = p
 			else:
 				_aplicar(p)
-		elif herramienta == "muro" and _muro_desde != null:
+		elif herramienta in ["muro", "puerta"] and _muro_desde != null:
 			_terminar_muro()
 		accept_event()
 	elif evento is InputEventMouseMotion and _muro_desde != null:
@@ -93,13 +98,21 @@ func _terminar_muro() -> void:
 	_muro_desde = null
 	_muro_hasta = null
 	queue_redraw()
+	var es_puerta := herramienta == "puerta"
 	if Sim.dist(a, b) < MURO_MINIMO:
-		aviso.emit("Arrastra el dedo para dibujar el muro.")
+		aviso.emit("Arrastra el dedo para dibujar la puerta." if es_puerta else "Arrastra el dedo para dibujar el muro.")
 		return
-	if nivel["mu"].size() >= LIMITES["muros"]:
-		aviso.emit("Como mucho 12 muros por nivel.")
-		return
-	nivel["mu"].append([[snappedf(a[0], 0.1), snappedf(a[1], 0.1)], [snappedf(b[0], 0.1), snappedf(b[1], 0.1)]])
+	var extremos := [[snappedf(a[0], 0.1), snappedf(a[1], 0.1)], [snappedf(b[0], 0.1), snappedf(b[1], 0.1)]]
+	if es_puerta:
+		if nivel["p"].size() >= LIMITES["puertas"]:
+			aviso.emit("Como mucho 6 puertas por nivel.")
+			return
+		nivel["p"].append(extremos + PUERTA_NUEVA.duplicate())
+	else:
+		if nivel["mu"].size() >= LIMITES["muros"]:
+			aviso.emit("Como mucho 12 muros por nivel.")
+			return
+		nivel["mu"].append(extremos)
 	_refrescar()
 	editado.emit()
 
@@ -122,6 +135,10 @@ func _borrar_cerca(p: Array) -> bool:
 				n += 1
 				c[3] = n
 		return true
+	var puerta := _puerta_cerca(p)
+	if puerta >= 0:
+		nivel["p"].remove_at(puerta)
+		return true
 	var muro := -1
 	var muro_d := 4.0
 	for k in nivel["mu"].size():
@@ -133,8 +150,32 @@ func _borrar_cerca(p: Array) -> bool:
 	if muro >= 0:
 		nivel["mu"].remove_at(muro)
 		return true
-	aviso.emit("Toca una campana o un muro para quitarlo.")
+	aviso.emit("Toca una campana, una puerta o un muro para quitarlo.")
 	return false
+
+
+func _puerta_cerca(p: Array) -> int:
+	var mejor := -1
+	var mejor_d := 4.0
+	for k in nivel["p"].size():
+		var d := _distancia_segmento(p, nivel["p"][k][0], nivel["p"][k][1])
+		if d < mejor_d:
+			mejor_d = d
+			mejor = k
+	return mejor
+
+
+## Tocar una puerta con la herramienta de puerta adelanta su apertura PASO_FASE tics.
+func _cambiar_ritmo(p: Array) -> bool:
+	var k := _puerta_cerca(p)
+	if k < 0:
+		return false
+	var puerta: Array = nivel["p"][k]
+	puerta[4] = posmod(int(puerta[4]) + PASO_FASE, int(puerta[2]))
+	aviso.emit("Ahora se abre en el tic %d de cada %d." % [int(puerta[4]), int(puerta[2])])
+	_refrescar()
+	editado.emit()
+	return true
 
 
 func _id_libre() -> String:

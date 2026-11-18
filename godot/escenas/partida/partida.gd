@@ -97,8 +97,10 @@ var _sonidos := {}              # nombre -> AudioStreamPlayer
 
 
 func _ready() -> void:
-	var datos = JSON.parse_string(FileAccess.get_file_as_string("res://datos/barrio_1.json"))
-	niveles = datos["niveles"]
+	# La campaña: los barrios en orden (La Plaza 1–20, El Puerto 21–40)
+	niveles = []
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json"]:
+		niveles += JSON.parse_string(FileAccess.get_file_as_string(ruta))["niveles"]
 	# En el modo demostración el progreso va a un archivo aparte: nunca toca el del jugador
 	var demo := false
 	for a in OS.get_cmdline_user_args():

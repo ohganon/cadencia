@@ -38,6 +38,17 @@ static func dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color := Color(0,
 			_ficha(ci, rect)
 		"volver":
 			_trazos(ci, rect, [[Vector2(15, 5), Vector2(8, 12), Vector2(15, 19)]])
+		"adelante":
+			_trazos(ci, rect, [[Vector2(9, 5), Vector2(16, 12), Vector2(9, 19)]])
+		"puerta":                         # puerta de vaivén: dos postes y la barra de madera
+			var e := rect.size.x / 24.0
+			var a := rect.position + Vector2(3, 13) * e
+			var b := rect.position + Vector2(21, 13) * e
+			ci.draw_line(a, b, Color("#c98a4b"), 4.0 * e, true)
+			ci.draw_line(a, b, TINTA, 1.2 * e, true)
+			for poste in [a, b]:
+				ci.draw_circle(poste, 2.4 * e, TINTA)
+			ci.draw_arc(rect.position + Vector2(12, 13) * e, 6.5 * e, PI * 1.15, PI * 1.85, 12, TINTA, maxf(1.2, 1.6 * e), true)
 		"deshacer":
 			var arco := [Vector2(4, 9), Vector2(14, 9)]
 			for k in range(1, 13):        # semicírculo de radio 6 centrado en (14, 15), por la derecha

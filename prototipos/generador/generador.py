@@ -249,6 +249,22 @@ def atajos(nivel: Nivel, limite=None):
             resultado[familia] += 1
         return r["exito"]
 
+    if nivel.puertas and not dobles:
+        # Por los huecos de las puertas (del inicio hacia arriba): en línea recta y con rodeos
+        huecos = sorted([((p.a[0] + p.b[0]) / 2, (p.a[1] + p.b[1]) / 2) for p in nivel.puertas], key=lambda h: -h[1])
+        destino = [c.pos for c in numeradas + libres]
+        recta = [ini] + huecos + destino
+        prueba([Tramo(recta)], "recto")
+        prueba([Tramo(suave(recta, 3))], "recto")
+        paradas = [ini] + huecos + destino
+        for off in (-28, -14, 14, 28):
+            for k in range(1, len(paradas)):
+                ruta = list(paradas)
+                a, b = paradas[k - 1], paradas[k]
+                medio = ((a[0] + b[0]) / 2 + off, (a[1] + b[1]) / 2)
+                ruta.insert(k, medio)
+                prueba([Tramo(suave(ruta, 3))], "codo")
+        return resultado
     if not dobles:
         # Un solo trazo que visita las campanas (numeradas en su orden; simples de cerca a lejos)
         visita = numeradas + sorted(libres, key=lambda c: math.dist(ini, c.pos))
@@ -280,10 +296,108 @@ def atajos(nivel: Nivel, limite=None):
     return resultado
 
 
+# ---------------------------------------------------------------- puertas de vaivén
+
+TIPOS_PUERTA = ("puerta", "dos_puertas")
+
+
+def _tic_cruce(tramo_puntos, a, b):
+    """Tic en que el tronco cruza el segmento a-b (la ficha j cae en el tic j), o None."""
+    f = repartir(tramo_puntos)
+    for j in range(1, len(f)):
+        if sim._cruza(f[j - 1], f[j], a, b):
+            return j
+    return None
+
+
+def fila_con_puerta(y, centro, ancho):
+    """Una fila de muro de lado a lado del tablero con un hueco cerrado por una puerta."""
+    a, b = (round(centro - ancho / 2, 2), y), (round(centro + ancho / 2, 2), y)
+    return [((0.0, y), a), (b, (float(ANCHO), y))], (a, b)
+
+
+def ritmo_para(rnd, tic_bueno, tics_malos, abierta):
+    """Busca periodo y fase para que la puerta esté abierta en `tic_bueno` y cerrada en todos los
+    `tics_malos` (los atajos). Devuelve (periodo, abierta, fase) o None."""
+    opciones = []
+    for periodo in range(max(abierta * 3, 10), 25):
+        for desfase in range(abierta):
+            fase = (tic_bueno - desfase) % periodo
+            if all((t - fase) % periodo >= abierta for t in tics_malos):
+                opciones.append((periodo, abierta, fase))
+    return rnd.choice(opciones) if opciones else None
+
+
+def _candidato_puertas(rnd, tipo, dificultad):
+    """Nivel con una o dos filas de muro cerradas por puertas: hay que pasar por el hueco justo
+    cuando la puerta está abierta. La solución da un rodeo; la línea recta llega a destiempo."""
+    n = 1 if tipo == "puerta" else 2
+    inicio = (round(rnd.uniform(25, 75), 2), round(rnd.uniform(142, 150), 2))
+    campana = (round(rnd.uniform(18, 82), 2), round(rnd.uniform(18, 32), 2))
+    filas_y = [round(rnd.uniform(70, 100), 2)] if n == 1 else [round(rnd.uniform(98, 115), 2), round(rnd.uniform(52, 68), 2)]
+    huecos = [(round(rnd.uniform(28, 72), 2), y) for y in filas_y]
+    ancho_hueco = rnd.uniform(16, 22)
+    # Solución: pasa por el centro de cada hueco, con rodeos laterales entre medias
+    puntos = [inicio]
+    previo = inicio
+    for h in huecos + [campana]:
+        medio_y = (previo[1] + h[1]) / 2
+        lado = rnd.choice([-1, 1])
+        rodeo = rnd.uniform(14, 30)
+        medio_x = min(ANCHO - 10, max(10, (previo[0] + h[0]) / 2 + lado * rodeo))
+        puntos += [(medio_x, medio_y), (h[0], h[1] + 7) if h != campana else h]
+        if h != campana:
+            puntos.append((h[0], h[1] - 7))
+        previo = h
+    solucion = [Tramo([(round(x, 3), round(y, 3)) for x, y in suave(puntos, 3)])]
+    if not all(_dentro(p, 3) for p in solucion[0].puntos):
+        return None
+    muros, puertas_seg = [], []
+    for (cx, y) in huecos:
+        m, p = fila_con_puerta(y, cx, ancho_hueco)
+        muros += m
+        puertas_seg.append(p)
+    nivel = Nivel(ANCHO, ALTO, inicio, [Campana("a", campana)], muros=muros, fichas=10_000)
+    if not simular(nivel, solucion)["exito"]:       # sin puertas, la solución pasa por los huecos
+        return None
+    # Ritmo de cada puerta: abierta para la solución, cerrada para la línea recta por los huecos
+    recta = [inicio] + list(huecos) + [campana]
+    abierta = 3 if dificultad >= 0.6 else (4 if dificultad >= 0.4 else 5)
+    puertas = []
+    for k, (a, b) in enumerate(puertas_seg):
+        t_sol = _tic_cruce(solucion[0].puntos, a, b)
+        t_recta = _tic_cruce(recta, a, b)
+        t_suave = _tic_cruce(suave(recta, 3), a, b)
+        if t_sol is None:
+            return None
+        malos = [t for t in (t_recta, t_suave) if t is not None]
+        r = ritmo_para(rnd, t_sol, malos, abierta)
+        if r is None and k > 0:
+            r = ritmo_para(rnd, t_sol, [], abierta)   # basta con que el atajo falle en la primera puerta
+        if r is None:
+            return None
+        puertas.append(sim.Puerta(a, b, *r))
+    nivel.puertas = puertas
+    r = simular(nivel, solucion)
+    if not r["exito"]:
+        return None
+    marca = r["fichas_usadas"]
+    margen = max(3, round(14 - dificultad * 10))
+    nivel.marca, nivel.fichas = marca, marca + margen
+    a = atajos(nivel)
+    if a["recto"] > 0:
+        return None
+    g = Generado(nivel, solucion, tipo, 0, 0.0, a["codo"] + a["horquilla"], {"atajos": a, "margen": margen})
+    g.dificultad = puntuar(g)
+    return g
+
+
 # ---------------------------------------------------------------- generador
 
 def _candidato(rnd, tipo, dificultad):
     """Un intento de nivel: topología, obstáculos y validación. Devuelve un Generado o None."""
+    if tipo in TIPOS_PUERTA:
+        return _candidato_puertas(rnd, tipo, dificultad)
     if tipo == "simple":
         base = _simple(rnd)
     elif tipo == "dos":
@@ -367,6 +481,7 @@ def generar(semilla: int, tipo: str | None = None, dificultad: float = 0.5, cand
 def puntuar(g: Generado) -> float:
     """Dificultad prevista entre 0 y 1. Pesos razonables, sin datos todavía (se calibran en la Fase 9)."""
     restricciones = sum(2 if c.tipo == "doble" else (1.5 if c.tipo == "numerada" else 1) for c in g.nivel.campanas)
+    restricciones += 1.5 * len(g.nivel.puertas)       # cada puerta obliga a llegar en su momento
     ramas = len(g.solucion)
     margen = g.info["margen"]
     p = 0.12 * restricciones + 0.06 * ramas + 0.05 * len(g.nivel.muros) + 0.02 * (14 - margen)
@@ -417,8 +532,9 @@ def main():
     ap.add_argument("--desde", default="2027-01-01")
     args = ap.parse_args()
     if args.muestra:
+        todos = TIPOS + TIPOS_PUERTA
         for k in range(args.muestra):
-            tipo = TIPOS[k % len(TIPOS)]
+            tipo = todos[k % len(todos)]
             g = generar(1000 + k, tipo, 0.5)
             if g is None:
                 print(f"{k:>2}. {tipo:<15} sin nivel válido")

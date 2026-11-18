@@ -58,6 +58,8 @@ func _get_minimum_size() -> Vector2:
 		ancho = f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam_fuente).x + 48
 	if icono != "":
 		ancho += 52
+	if texto == "":
+		return Vector2(56, 56)        # solo icono: manda el tamaño que le dé la pantalla
 	return Vector2(maxf(ancho, 96.0), 96.0)
 
 

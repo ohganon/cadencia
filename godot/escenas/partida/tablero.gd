@@ -25,6 +25,7 @@ const CAIDA := Color("#c9d6f2")
 const CORAL := Color("#ff5470")
 const VERDE := Color("#3ddc6b")
 const BLANCO := Color.WHITE
+const PUERTA := Color("#c98a4b")     # madera de la puerta de vaivén
 
 # Medidas de la maqueta, en unidades lógicas (allí 1 unidad = 2,8 px)
 const FICHA_ANCHO := 2.5      # de pie: grosor a lo largo del camino
@@ -182,8 +183,6 @@ func _draw() -> void:
 		draw_line(a_pantalla(m[0]), a_pantalla(m[1]), TINTA, 2.2 * _k, true)
 		draw_circle(a_pantalla(m[0]), 1.1 * _k, TINTA)
 		draw_circle(a_pantalla(m[1]), 1.1 * _k, TINTA)
-	for p in nivel["p"]:
-		_puerta(p)
 
 	if not pista.is_empty():
 		var fantasma := Sim.repartir(pista)
@@ -211,6 +210,9 @@ func _draw() -> void:
 	# Las campanas van encima de las fichas para que siempre se vean
 	for c in nivel["c"]:
 		_campana(c)
+	# Las puertas, encima de las fichas, para que se vea su ritmo
+	for p in nivel["p"]:
+		_puerta(p)
 
 	if modo == Modo.EDITAR:
 		var tics := _tics_de(todas)
@@ -220,8 +222,31 @@ func _draw() -> void:
 					_marca_cuenta(todas[i], j, tics[i][j])
 		for p in partida.curvas_cerradas():
 			draw_arc(a_pantalla(p), 3.4 * _k, 0, TAU, 28, CORAL, 0.6 * _k, true)
+		_cruces_de_puertas(todas, tics)
 	if modo == Modo.RESULTADO:
 		_parada()
+
+
+## Mientras se dibuja: dónde cruza el camino cada puerta y si en ese tic estará abierta (verde) o
+## cerrada (coral). Con las marcas de cuenta, permite planificar en vez de probar a ciegas.
+func _cruces_de_puertas(todas: Array, tics: Array) -> void:
+	for p in partida.nivel["p"]:
+		for i in todas.size():
+			var f: Array = todas[i]
+			for j in range(1, f.size()):
+				if Sim.cruza(f[j - 1], f[j], p[0], p[1]):
+					var t: int = tics[i][j]
+					var color := VERDE if Sim.puerta_abierta(p, t) else CORAL
+					var c := a_pantalla(f[j])
+					draw_circle(c, MARCA_RADIO * 1.15 * _k, color)
+					draw_arc(c, MARCA_RADIO * 1.15 * _k, 0, TAU, 24, TINTA, maxf(1.0, 0.35 * _k), true)
+					var fuente := get_theme_default_font()
+					var tam := int(3.2 * _k)
+					var texto := str(t)
+					var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
+					draw_string(fuente, c + Vector2(-medida.x / 2, fuente.get_ascent(tam) / 2 - 0.15 * _k), texto,
+						HORIZONTAL_ALIGNMENT_LEFT, -1, tam, TINTA)
+					break
 
 
 ## Tic en que cae cada ficha, igual que en la simulación: así la cuenta que se ve al dibujar es el
@@ -374,10 +399,55 @@ func _campana(c: Array) -> void:
 		draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, BLANCO)
 
 
+## Puerta de vaivén: cerrada es una barra de madera entre dos postes; abierta, sus dos hojas giran
+## hacia los lados. Mientras se dibuja, se abre y se cierra a su ritmo en tiempo real (un tic cada
+## DURACION_TIC); durante la caída sigue el tic de la cadena. Encima, cuándo se abre.
 func _puerta(p: Array) -> void:
 	var a := a_pantalla(p[0])
 	var b := a_pantalla(p[1])
-	draw_dashed_line(a, b, TINTA, 1.4 * _k, 2.0 * _k, true)
+	var tic := _tic_actual()
+	if modo == Modo.EDITAR:
+		tic = int(Time.get_ticks_msec() / (DURACION_TIC * 1000.0))
+		queue_redraw()                       # la puerta se mueve sola mientras se planifica
+	var abierta: bool = Sim.puerta_abierta(p, tic)
+	var eje := (b - a).normalized()
+	var normal := Vector2(-eje.y, eje.x)
+	var largo := a.distance_to(b)
+	if abierta:
+		# Dos hojas abiertas hacia el lado de la cadena, en tono suave
+		for extremo in [[a, eje], [b, -eje]]:
+			var desde: Vector2 = extremo[0]
+			var hacia: Vector2 = (extremo[1] * 0.35 + normal).normalized()
+			draw_line(desde, desde + hacia * largo * 0.42, Color(PUERTA, 0.7), 1.6 * _k, true)
+	else:
+		draw_line(a, b, PUERTA, 1.8 * _k, true)
+		draw_line(a, b, TINTA, 0.35 * _k, true)
+	for poste in [a, b]:
+		draw_circle(poste, 1.3 * _k, TINTA)
+	# Cuándo se abre: las tres primeras ventanas, en tics (las marcas de cuenta usan la misma escala)
+	var periodo := int(p[2])
+	var dura := int(p[3])
+	var inicio := posmod(int(p[4]), periodo)
+	var ventanas := []
+	for k in 3:
+		var t0 := inicio + k * periodo
+		ventanas.append("%d–%d" % [t0, t0 + dura - 1])
+	var fuente := get_theme_default_font()
+	var tam := int(3.0 * _k)
+	var texto := "abre " + " · ".join(ventanas)
+	var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
+	# Al lado del hueco (no encima: ahí va la marca de cruce), hacia el lado con más sitio
+	var izquierda := a if a.x < b.x else b
+	var derecha := b if a.x < b.x else a
+	var tablero_der := _origen.x + float(partida.nivel["w"]) * _k
+	var hueco_der := tablero_der - derecha.x
+	var hueco_izq := izquierda.x - _origen.x
+	var x := derecha.x + 1.6 * _k if hueco_der >= hueco_izq else izquierda.x - 1.6 * _k - medida.x
+	x = clampf(x, _origen.x + 1.0 * _k, tablero_der - medida.x - 1.0 * _k)
+	var base := Vector2(x, minf(a.y, b.y) - 1.8 * _k)
+	var caja := Rect2(base - Vector2(0.8 * _k, fuente.get_ascent(tam) + 0.3 * _k), Vector2(medida.x + 1.6 * _k, tam + 0.6 * _k))
+	draw_style_box(_caja(Color(MARFIL, 0.94), 6, TINTA, 1), caja)
+	draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, VERDE.darkened(0.45) if abierta else TINTA)
 
 
 ## Posición en pantalla (global) de la X donde se paró la cadena, o null si no se paró.
