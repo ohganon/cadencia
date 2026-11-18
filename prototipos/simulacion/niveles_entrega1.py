@@ -24,7 +24,7 @@ import math
 import pathlib
 import sys
 
-from sim import PASO, Campana, Espiral, Nivel, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
+from sim import PASO, Campana, Espiral, Muelle, Nivel, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
 
 ANCHO, ALTO = 100, 160
 DATOS = pathlib.Path(__file__).with_name("datos")
@@ -220,6 +220,10 @@ def casos_reglas():
 
     def doble(espirales):
         return Nivel(200, 100, (10, 50), [Campana("d", (60, 90), "doble")], fichas=500, espirales=espirales)
+    def con_muelle(salto, muro_antes=False, espiral=False):
+        muros = [((60, 0), (60, 100))] + ([((40, 0), (40, 100))] if muro_antes else [])
+        return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], muros=muros, fichas=500,
+                     muelles=[Muelle((55, 50), (65, 50), salto)], espirales=[Espiral((90, 50), 5)] if espiral else [])
     horquilla = [Tramo([(10, 50), (60, 50)]), Tramo([(60, 50), (40, 70), (60, 90)], 0, 10),
                  Tramo([(60, 50), (80, 70), (60, 90)], 0, 10)]
     return [
@@ -251,6 +255,17 @@ def casos_reglas():
         ("espiral en una rama desincroniza la doble", doble([Espiral((80, 70), 3)]), horquilla),
         ("espiral de 1 tic cabe en la tolerancia de la doble", doble([Espiral((80, 70), 1)]), horquilla),
         ("espiral en el tronco retrasa las dos ramas por igual", doble([Espiral((35, 50), 5)]), horquilla),
+        # Muelle: un muro de lado a lado en x = 60; la entrada está antes del muro y la salida, después
+        ("muelle salta el muro", con_muelle(6), [Tramo([(10, 50), (55, 50)]), Tramo([(65, 50), (110, 50)])]),
+        ("sin llegar a la entrada no sale nada", con_muelle(6), [Tramo([(10, 50), (40, 50)]), Tramo([(65, 50), (110, 50)])]),
+        ("un tramo que no empieza en la salida", con_muelle(6), [Tramo([(10, 50), (55, 50)]), Tramo([(72, 50), (110, 50)])]),
+        ("la entrada la toca una ficha que no cae", con_muelle(6, muro_antes=True),
+         [Tramo([(10, 50), (55, 50)]), Tramo([(65, 50), (110, 50)])]),
+        ("rama desde un tramo del muelle", Nivel(200, 100, (10, 50), [Campana("a", (110, 50)), Campana("b", (85, 85))],
+                                                 muros=[((60, 0), (60, 100))], fichas=500,
+                                                 muelles=[Muelle((55, 50), (65, 50), 4)]),
+         [Tramo([(10, 50), (55, 50)]), Tramo([(65, 50), (110, 50)]), Tramo([(85, 50), (85, 85)], 1, 4)]),
+        ("muelle y espiral se suman", con_muelle(3, espiral=True), [Tramo([(10, 50), (55, 50)]), Tramo([(65, 50), (110, 50)])]),
         ("rama de un bifurcador que no llegó a caer", Nivel(200, 100, (10, 50), [Campana("a", (110, 50))],
                                                             muros=[((40, 0), (40, 100))], fichas=500),
          [Tramo([(10, 50), (110, 50)]), Tramo([(60, 50), (60, 90)], 0, 10)]),

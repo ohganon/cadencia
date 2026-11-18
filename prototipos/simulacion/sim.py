@@ -23,6 +23,11 @@ Reglas (Fase 4, sección 4.3):
   cada tramo una sola vez; las ramas que salen después heredan el retraso por su bifurcador. No
   ocupa sitio ni para la cadena. La primera ficha de un tramo (el empujador o el bifurcador) no
   cuenta: ya contó en su tramo.
+- Muelle: lanza la cadena por encima de lo que haya (un muro, por ejemplo) a cambio de un tiempo
+  fijo. Tiene entrada, salida y `salto` en tics. Un tramo sin padre que empieza en la salida (a PASO
+  o menos) sale del muelle: su primera ficha cae `salto` tics después de la primera ficha que llega
+  a la entrada (a RADIO_MUELLE o menos) y cae de verdad, de cualquier tramo dibujado antes. Si no
+  llega ninguna, ese tramo no cae. La primera ficha de cada tramo no cuenta para la entrada.
 - La campana dorada es opcional: no hace falta para superar el nivel (ni da motivo de fallo si no
   suena), pero su tic aparece en el resultado. Da la tercera estrella.
 
@@ -51,6 +56,7 @@ GIRO_MAXIMO = math.radians(55)   # giro máximo entre dos fichas seguidas antes 
 COS_GIRO_MAXIMO = 0.573576436351046
 RADIO_CAMPANA = 6.0        # una ficha a esta distancia o menos activa la campana
 RADIO_ESPIRAL = 4.5        # una ficha a esta distancia o menos entra en la espiral de retardo
+RADIO_MUELLE = 4.5         # una ficha a esta distancia o menos de la entrada dispara el muelle
 TOLERANCIA_DOBLE = 1       # tics de diferencia permitidos en la campana doble
 
 
@@ -150,6 +156,14 @@ class Espiral:
 
 
 @dataclass
+class Muelle:
+    """Muelle: lo que llega a la entrada sale por la salida `salto` tics después."""
+    entrada: tuple
+    salida: tuple
+    salto: int
+
+
+@dataclass
 class Nivel:
     ancho: float
     alto: float
@@ -160,6 +174,7 @@ class Nivel:
     fichas: int = 60                                # fichas disponibles
     marca: int = 0                                  # fichas de la solución de referencia
     espirales: list = field(default_factory=list)
+    muelles: list = field(default_factory=list)
 
 
 @dataclass
@@ -187,36 +202,61 @@ def tics_tramo(nivel: Nivel, fichas: list, base: int) -> list:
     return tics
 
 
+def disparo_muelle(m: Muelle, fichas: list, tics: list, caidas: list):
+    """Tic de la primera ficha que llega a la entrada del muelle y cae de verdad, entre los tramos
+    ya resueltos (`caidas` tiene uno por tramo); None si no llega ninguna."""
+    mejor = None
+    for t in range(len(caidas)):
+        for j in range(1, caidas[t] + 1):
+            if _dist(fichas[t][j], m.entrada) <= RADIO_MUELLE and (mejor is None or tics[t][j] < mejor):
+                mejor = tics[t][j]
+    return mejor
+
+
 def simular(nivel: Nivel, tramos: list[Tramo]):
     """Simula la caída y devuelve un diccionario con el resultado.
 
     Claves: exito, fichas_usadas, sobran, campanas {id: tic o None}, parada (o None) y motivo
     del fallo de cada objetivo.
     """
-    fichas_por_tramo, tics = [], []
+    fichas_por_tramo, salidas = [], []      # salidas[idx]: muelle del que sale el tramo, o None
     for idx, tr in enumerate(tramos):
         f = repartir(tr.puntos)
+        salida = None
         if tr.padre is None:
             if _dist(f[0], nivel.inicio) > PASO:
-                return _resultado(nivel, tramos, [], {}, {"tramo": idx, "ficha": 0, "motivo": "no empieza en el inicio"})
-            base = -1
-        else:
-            if tr.padre >= idx or tr.desde >= len(fichas_por_tramo[tr.padre]):
-                return _resultado(nivel, tramos, [], {}, {"tramo": idx, "ficha": 0, "motivo": "bifurcador no válido"})
-            base = tics[tr.padre][tr.desde]
+                salida = next((k for k, m in enumerate(nivel.muelles) if _dist(f[0], m.salida) <= PASO), None)
+                if salida is None:
+                    return _resultado(nivel, tramos, [], {}, {"tramo": idx, "ficha": 0, "motivo": "no empieza en el inicio"})
+        elif tr.padre >= idx or tr.desde >= len(fichas_por_tramo[tr.padre]):
+            return _resultado(nivel, tramos, [], {}, {"tramo": idx, "ficha": 0, "motivo": "bifurcador no válido"})
         fichas_por_tramo.append(f)
-        tics.append(tics_tramo(nivel, f, base))
+        salidas.append(salida)
 
     usadas = sum(len(f) for f in fichas_por_tramo)
     if usadas > nivel.fichas:
         return _resultado(nivel, tramos, fichas_por_tramo, {}, {"tramo": None, "ficha": None, "motivo": "faltan fichas"}, usadas)
 
-    # Recorrer cada tramo y encontrar dónde se para (si se para)
-    caidas = []          # (tramo, índice de la última ficha que cae)
+    # Tramo a tramo, en el orden en que se dibujaron: cuándo cae cada ficha y dónde se para (si se
+    # para). Un tramo solo depende de los anteriores (su bifurcador o la entrada de su muelle).
+    tics, caidas = [], []          # caidas[idx]: índice de la última ficha que cae (-1: ninguna)
     parada = None
     for idx, f in enumerate(fichas_por_tramo):
-        if tramos[idx].padre is not None and caidas[tramos[idx].padre] < tramos[idx].desde:
-            caidas.append(-1)        # su bifurcador nunca cayó
+        tr = tramos[idx]
+        cae = True
+        if salidas[idx] is not None:
+            m = nivel.muelles[salidas[idx]]
+            disparo = disparo_muelle(m, fichas_por_tramo, tics, caidas)
+            base = -1 if disparo is None else disparo + m.salto - 1
+            cae = disparo is not None          # si nada llegó a la entrada, no sale nada
+        elif tr.padre is None:
+            base = -1
+        else:
+            base = tics[tr.padre][tr.desde]
+            cae = caidas[tr.padre] >= tr.desde  # su bifurcador tiene que haber caído
+        tics.append(tics_tramo(nivel, f, base))
+        if not cae:
+            caidas.append(-1)
             continue
         ultima = len(f) - 1
         for j in range(1, len(f)):
@@ -305,7 +345,8 @@ def nivel_a_dict(n: Nivel) -> dict:
             "c": [[c.id, list(c.pos), c.tipo, c.numero] for c in n.campanas],
             "mu": [[list(a), list(b)] for a, b in n.muros],
             "p": [[list(p.a), list(p.b), p.periodo, p.abierta, p.fase] for p in n.puertas]} | (
-        {"e": [[list(e.pos), e.retardo] for e in n.espirales]} if n.espirales else {})
+        {"e": [[list(e.pos), e.retardo] for e in n.espirales]} if n.espirales else {}) | (
+        {"ml": [[list(m.entrada), list(m.salida), m.salto] for m in n.muelles]} if n.muelles else {})
 
 
 def nivel_de_dict(d: dict) -> Nivel:
@@ -315,7 +356,8 @@ def nivel_de_dict(d: dict) -> Nivel:
                  [Campana(c[0], tuple(c[1]), c[2], c[3]) for c in d["c"]],
                  [(tuple(a), tuple(b)) for a, b in d["mu"]],
                  [Puerta(tuple(p[0]), tuple(p[1]), p[2], p[3], p[4]) for p in d["p"]],
-                 d["f"], d["m"], [Espiral(tuple(e[0]), int(e[1])) for e in d.get("e", [])])
+                 d["f"], d["m"], [Espiral(tuple(e[0]), int(e[1])) for e in d.get("e", [])],
+                 [Muelle(tuple(m[0]), tuple(m[1]), int(m[2])) for m in d.get("ml", [])])
 
 
 PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
@@ -323,7 +365,8 @@ PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
 # Límites de un nivel del Taller. Un código es texto que llega de cualquiera: todo se comprueba
 # antes de jugarlo (godot/nucleo/taller.gd aplica exactamente las mismas reglas).
 LIMITES_TALLER = {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
-                  "tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12}
+                  "tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12,
+                  "muelles": 4, "salto": 20}
 TIPOS_CAMPANA = ("simple", "doble", "numerada", "dorada")
 
 
@@ -379,6 +422,12 @@ def validar_nivel_taller(d: dict) -> str:
         for x in e:
             if not (isinstance(x, list) and len(x) == 2 and _punto(x[0], d) and _numero(x[1], 1, L["retardo"])):
                 return "espiral no válida"
+        ml = d.get("ml", [])
+        if not (isinstance(ml, list) and len(ml) <= L["muelles"]):
+            return "demasiados muelles"
+        for x in ml:
+            if not (isinstance(x, list) and len(x) == 3 and _punto(x[0], d) and _punto(x[1], d) and _numero(x[2], 1, L["salto"])):
+                return "muelle no válido"
     except (KeyError, TypeError, IndexError):
         return "faltan datos del nivel"
     return ""

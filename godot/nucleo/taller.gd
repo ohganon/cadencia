@@ -16,7 +16,7 @@ const PREFIJO := "DING1-"
 const MAXIMO_DESCOMPRIMIDO := 65536
 const MAXIMO_CODIGO := 20000
 const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
-	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12}
+	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12, "muelles": 4, "salto": 20}
 const TIPOS_CAMPANA := ["simple", "doble", "numerada", "dorada"]
 const RUTA := "user://taller.json"
 
@@ -143,6 +143,12 @@ static func validar_nivel(d: Dictionary) -> String:
 	for x in e:
 		if typeof(x) != TYPE_ARRAY or x.size() != 2 or not _punto(x[0], d) or not _numero(x[1], 1, LIMITES["retardo"]):
 			return "Hay una espiral que no es válida."
+	var ml = d.get("ml", [])
+	if typeof(ml) != TYPE_ARRAY or ml.size() > LIMITES["muelles"]:
+		return "Hay demasiados muelles."
+	for x in ml:
+		if typeof(x) != TYPE_ARRAY or x.size() != 3 or not _punto(x[0], d) or not _punto(x[1], d) or not _numero(x[2], 1, LIMITES["salto"]):
+			return "Hay un muelle que no es válido."
 	return ""
 
 

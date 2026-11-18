@@ -13,7 +13,8 @@
 ## Un nivel es el diccionario de nivel_a_dict() de Python:
 ##   {w, h, i: [x, y], f: fichas, m: marca, c: [[id, [x, y], tipo, numero]...],
 ##    mu: [[[x1, y1], [x2, y2]]...], p: [[[x1, y1], [x2, y2], periodo, abierta, fase]...],
-##    e: [[[x, y], retardo]...] (opcional: espirales de retardo)}
+##    e: [[[x, y], retardo]...] (opcional: espirales de retardo),
+##    ml: [[[entrada], [salida], salto]...] (opcional: muelles)}
 ## Un tramo es {puntos: [[x, y]...], padre: int o null, desde: int}.
 extends RefCounted
 
@@ -21,6 +22,7 @@ const PASO := 5.0
 const COS_GIRO_MAXIMO := 0.573576436351046   # cos(55°), el mismo literal que en sim.py
 const RADIO_CAMPANA := 6.0
 const RADIO_ESPIRAL := 4.5
+const RADIO_MUELLE := 4.5
 const TOLERANCIA_DOBLE := 1
 
 const PARADAS_SIN_EXITO := ["faltan fichas", "no empieza en el inicio", "bifurcador no válido"]
@@ -135,42 +137,76 @@ static func tics_tramo(nivel: Dictionary, fichas: Array, base: int) -> Array:
 	return tics
 
 
+## Muelle del que sale un tramo sin padre que no empieza en el inicio (-1 si ninguno).
+static func salida_de(nivel: Dictionary, primera: Array) -> int:
+	var muelles: Array = nivel.get("ml", [])
+	for k in muelles.size():
+		if dist(primera, muelles[k][1]) <= PASO:
+			return k
+	return -1
+
+
+## Tic de la primera ficha que llega a la entrada del muelle y cae de verdad, entre los tramos ya
+## resueltos (`caidas` tiene uno por tramo); -1 si no llega ninguna.
+static func disparo_muelle(m: Array, fichas: Array, tics: Array, caidas: Array) -> int:
+	var mejor := -1
+	for t in caidas.size():
+		for j in range(1, int(caidas[t]) + 1):
+			if dist(fichas[t][j], m[0]) <= RADIO_MUELLE and (mejor == -1 or tics[t][j] < mejor):
+				mejor = tics[t][j]
+	return mejor
+
+
 static func simular_detalle(nivel: Dictionary, tramos: Array) -> Dictionary:
 	var fichas_por_tramo := []
-	var tics := []
+	var salidas := []      # muelle del que sale cada tramo, o -1
 	for idx in tramos.size():
 		var tr: Dictionary = tramos[idx]
 		var f := repartir(tr["puntos"])
-		var base: int
+		var salida := -1
 		if tr["padre"] == null:
 			if dist(f[0], nivel["i"]) > PASO:
-				return _detalle(_resultado(nivel, [], {}, {"tramo": idx, "ficha": 0, "motivo": "no empieza en el inicio"}), [], [], [])
-			base = -1
+				salida = salida_de(nivel, f[0])
+				if salida < 0:
+					return _detalle(_resultado(nivel, [], {}, {"tramo": idx, "ficha": 0, "motivo": "no empieza en el inicio"}), [], [], [])
 		else:
 			var padre := int(tr["padre"])
 			var desde := int(tr["desde"])
 			if padre >= idx or desde >= fichas_por_tramo[padre].size():
 				return _detalle(_resultado(nivel, [], {}, {"tramo": idx, "ficha": 0, "motivo": "bifurcador no válido"}), [], [], [])
-			base = tics[padre][desde]
 		fichas_por_tramo.append(f)
-		tics.append(tics_tramo(nivel, f, base))
+		salidas.append(salida)
 
 	var usadas := 0
 	for f in fichas_por_tramo:
 		usadas += f.size()
 	if usadas > int(nivel["f"]):
 		return _detalle(_resultado(nivel, fichas_por_tramo, {}, {"tramo": null, "ficha": null, "motivo": "faltan fichas"}, usadas),
-			fichas_por_tramo, tics, [])
+			fichas_por_tramo, [], [])
 
-	# Recorrer cada tramo y encontrar dónde se para (si se para)
+	# Tramo a tramo, en el orden en que se dibujaron: cuándo cae cada ficha y dónde se para (si se
+	# para). Un tramo solo depende de los anteriores (su bifurcador o la entrada de su muelle).
+	var tics := []
 	var caidas := []
 	var parada = null
 	for idx in fichas_por_tramo.size():
 		var tr: Dictionary = tramos[idx]
-		if tr["padre"] != null and caidas[int(tr["padre"])] < int(tr["desde"]):
-			caidas.append(-1)   # su bifurcador nunca cayó
-			continue
 		var f: Array = fichas_por_tramo[idx]
+		var cae := true
+		var base := -1
+		if salidas[idx] >= 0:
+			var m: Array = nivel["ml"][salidas[idx]]
+			var disparo := disparo_muelle(m, fichas_por_tramo, tics, caidas)
+			cae = disparo >= 0          # si nada llegó a la entrada, no sale nada
+			if cae:
+				base = disparo + int(m[2]) - 1
+		elif tr["padre"] != null:
+			base = tics[int(tr["padre"])][int(tr["desde"])]
+			cae = caidas[int(tr["padre"])] >= int(tr["desde"])   # su bifurcador tiene que haber caído
+		tics.append(tics_tramo(nivel, f, base))
+		if not cae:
+			caidas.append(-1)
+			continue
 		var ultima := f.size() - 1
 		for j in range(1, f.size()):
 			var motivo := ""
