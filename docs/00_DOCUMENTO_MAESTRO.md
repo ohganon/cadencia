@@ -177,6 +177,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: mapa del barrio, progreso y cuerda con las reglas de la Fase 5; La Plaza con 20 niveles (18/11/2026)
 - [x] Fase 8: Barrio 2, El Puerto, con la puerta de vaivén (generador, tablero, Taller y mapa de dos barrios) (18/11/2026)
 - [x] Fase 8: tercera estrella con la campana dorada en los 40 niveles de los barrios (18/11/2026)
+- [x] Fase 8: Barrio 3, La Relojería (niveles 41–60), con la **espiral de retardo** (decisión del cliente, 18/11/2026: en vez del puente, porque las ramas ya se pueden cruzar y el puente obligaría a cambiar una regla base). Regla nueva en Python y Godot, generador, tablero y herramienta del Taller (18/11/2026)
 - [x] Fase 8: accesibilidad completa (entrega 6): alto contraste y texto grande en toda la interfaz, lector de pantalla en botones, pestañas y marcadores, y la primera vez se siguen los ajustes de accesibilidad del teléfono. Falta probarlo con TalkBack y VoiceOver en un teléfono real (18/11/2026)
 - [x] Fase 8: campana dorada en los 365 días de la Caída del Día (calendario regenerado) y como herramienta del Taller; para publicar un nivel con dorada, el autor tiene que hacerla sonar (18/11/2026)
 - [x] Fase 8: accesibilidad: alto contraste, reducir movimiento, texto grande y símbolos además de colores (18/11/2026)

@@ -1,6 +1,7 @@
 ## Tablero del editor del Taller: el mismo dibujo que en la partida, pero el dedo coloca piezas.
 ##
-## Herramientas: «inicio», «campana», «doble», «numerada», «muro» (arrastrar) y «goma».
+## Herramientas: «inicio», «campana», «doble», «numerada», «dorada», «muro» y «puerta» (arrastrar),
+## «espiral» (tocar para ponerla; tocarla otra vez cambia su retraso) y «goma».
 ## Cada cambio emite `editado`; la pantalla del Taller guarda el borrador y valida.
 extends "res://escenas/partida/tablero.gd"
 
@@ -8,7 +9,10 @@ signal editado
 signal aviso(texto: String)
 
 const Partida = preload("res://nucleo/partida.gd")
-const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6}
+const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "espirales": 4}
+## Retraso de una espiral nueva, y cuánto sube al tocarla (de 2 en 2 hasta 12, y vuelta a 2)
+const RETARDO_NUEVO := 4
+const RETARDO_MAXIMO := 12
 ## Ritmo de una puerta nueva: periodo 16 tics, abierta 5. Tocarla adelanta cuándo se abre.
 const PUERTA_NUEVA := [16, 5, 0]
 const PASO_FASE := 4
@@ -90,6 +94,20 @@ func _aplicar(p: Array) -> void:
 					return
 			var tipo := "simple" if herramienta == "campana" else herramienta
 			campanas.append([_id_libre(), [snappedf(p[0], 0.1), snappedf(p[1], 0.1)], tipo, numero])
+		"espiral":
+			if not nivel.has("e"):
+				nivel["e"] = []
+			var k := _espiral_cerca(p)
+			if k >= 0:
+				var e: Array = nivel["e"][k]
+				e[1] = int(e[1]) + 2 if int(e[1]) + 2 <= RETARDO_MAXIMO else 2
+				aviso.emit("Esta espiral retrasa %d tics." % int(e[1]))
+			elif nivel["e"].size() >= LIMITES["espirales"]:
+				aviso.emit("Como mucho 4 espirales por nivel.")
+				return
+			else:
+				nivel["e"].append([[snappedf(p[0], 0.1), snappedf(p[1], 0.1)], RETARDO_NUEVO])
+				aviso.emit("Retrasa %d tics lo que pase por ella. Tócala para cambiarlo." % RETARDO_NUEVO)
 		"goma":
 			if not _borrar_cerca(p):
 				return
@@ -144,6 +162,10 @@ func _borrar_cerca(p: Array) -> bool:
 	if puerta >= 0:
 		nivel["p"].remove_at(puerta)
 		return true
+	var espiral := _espiral_cerca(p)
+	if espiral >= 0:
+		nivel["e"].remove_at(espiral)
+		return true
 	var muro := -1
 	var muro_d := 4.0
 	for k in nivel["mu"].size():
@@ -155,7 +177,7 @@ func _borrar_cerca(p: Array) -> bool:
 	if muro >= 0:
 		nivel["mu"].remove_at(muro)
 		return true
-	aviso.emit("Toca una campana, una puerta o un muro para quitarlo.")
+	aviso.emit("Toca una campana, una puerta, una espiral o un muro para quitarlo.")
 	return false
 
 
@@ -181,6 +203,18 @@ func _cambiar_ritmo(p: Array) -> bool:
 	_refrescar()
 	editado.emit()
 	return true
+
+
+func _espiral_cerca(p: Array) -> int:
+	var mejor := -1
+	var mejor_d := Sim.RADIO_ESPIRAL + 2.0
+	var lista: Array = nivel.get("e", [])
+	for k in lista.size():
+		var d := Sim.dist(p, lista[k][0])
+		if d < mejor_d:
+			mejor_d = d
+			mejor = k
+	return mejor
 
 
 func _id_libre() -> String:

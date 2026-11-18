@@ -24,7 +24,7 @@ import math
 import pathlib
 import sys
 
-from sim import PASO, Campana, Nivel, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
+from sim import PASO, Campana, Espiral, Nivel, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
 
 ANCHO, ALTO = 100, 160
 DATOS = pathlib.Path(__file__).with_name("datos")
@@ -212,6 +212,16 @@ def casos_reglas():
         return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))],
                      puertas=[Puerta((60, 0), (60, 100), periodo=20, abierta=5, fase=fase)], fichas=500)
     base = Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], fichas=500)
+
+    def con_espiral(fase, espirales):
+        n = con_puerta(fase)
+        n.espirales = espirales
+        return n
+
+    def doble(espirales):
+        return Nivel(200, 100, (10, 50), [Campana("d", (60, 90), "doble")], fichas=500, espirales=espirales)
+    horquilla = [Tramo([(10, 50), (60, 50)]), Tramo([(60, 50), (40, 70), (60, 90)], 0, 10),
+                 Tramo([(60, 50), (80, 70), (60, 90)], 0, 10)]
     return [
         ("puerta abierta", con_puerta(8), recta),
         ("puerta cerrada", con_puerta(13), recta),
@@ -232,6 +242,15 @@ def casos_reglas():
         ("solo la dorada no basta", Nivel(200, 100, (10, 50), [Campana("oro", (110, 50), "dorada")], fichas=500), recta),
         ("curva demasiado cerrada", Nivel(200, 200, (10, 100), [Campana("a", (10, 150))], fichas=500),
          [Tramo([(10, 100), (100, 100), (10, 150)])]),
+        # Espiral de retardo: la recta cruza x = 60 en el tic 10 (puerta cerrada); pasando por una espiral
+        # de 4 tics en x = 35, llega en el 14, con la puerta abierta
+        ("espiral abre la puerta", con_espiral(13, [Espiral((35, 50), 4)]), recta),
+        ("espiral fuera del camino", con_espiral(13, [Espiral((35, 80), 4)]), recta),
+        ("espiral sobre el empujador no cuenta", con_espiral(13, [Espiral((10, 50), 4)]), recta),
+        ("dos espirales se suman", con_espiral(15, [Espiral((25, 50), 2), Espiral((45, 50), 4)]), recta),
+        ("espiral en una rama desincroniza la doble", doble([Espiral((80, 70), 3)]), horquilla),
+        ("espiral de 1 tic cabe en la tolerancia de la doble", doble([Espiral((80, 70), 1)]), horquilla),
+        ("espiral en el tronco retrasa las dos ramas por igual", doble([Espiral((35, 50), 5)]), horquilla),
         ("rama de un bifurcador que no llegó a caer", Nivel(200, 100, (10, 50), [Campana("a", (110, 50))],
                                                             muros=[((40, 0), (40, 100))], fichas=500),
          [Tramo([(10, 50), (110, 50)]), Tramo([(60, 50), (60, 90)], 0, 10)]),

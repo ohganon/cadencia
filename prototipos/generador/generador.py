@@ -35,7 +35,7 @@ AQUI = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(AQUI.parent / "simulacion"))
 
 import sim  # noqa: E402
-from sim import Campana, Nivel, Tramo, longitud, nivel_a_dict, repartir, simular  # noqa: E402
+from sim import Campana, Espiral, Nivel, Tramo, longitud, nivel_a_dict, repartir, simular  # noqa: E402
 from niveles_entrega1 import con_curva, igualar, suave, tramo_a_dict  # noqa: E402
 
 ANCHO, ALTO = 100, 160
@@ -326,19 +326,23 @@ def poner_dorada(nivel: Nivel, solucion: list, semilla: int, intentos=300):
             continue
         if any(math.dist(destino, c.pos) < 2 * sim.RADIO_CAMPANA + 3 for c in nivel.campanas):
             continue
+        if any(math.dist(destino, e.pos) < sim.RADIO_CAMPANA + sim.RADIO_ESPIRAL + 2 for e in nivel.espirales):
+            continue
         # Ni encima de un muro ni de una puerta: tiene que verse limpia
         segmentos = list(nivel.muros) + [(p.a, p.b) for p in nivel.puertas]
         if any(_distancia_segmento(destino, a, b) < sim.RADIO_CAMPANA + 2 for a, b in segmentos):
             continue
         rama = Tramo([(round(base[0], 3), round(base[1], 3)), destino], i, j)
         campanas = nivel.campanas + [Campana("oro", destino, "dorada")]
-        nuevo = Nivel(nivel.ancho, nivel.alto, nivel.inicio, campanas, nivel.muros, nivel.puertas, fichas=10_000)
+        nuevo = Nivel(nivel.ancho, nivel.alto, nivel.inicio, campanas, nivel.muros, nivel.puertas, fichas=10_000,
+                      espirales=nivel.espirales)
         tramos = solucion + [rama]
         r = simular(nuevo, tramos)
         if not r["exito"] or r["parada"] is not None or r["campanas"]["oro"] is None:
             continue
         # Las demás campanas tienen que sonar igual que sin la rama (no altera el nivel)
-        antes = simular(Nivel(nivel.ancho, nivel.alto, nivel.inicio, nivel.campanas, nivel.muros, nivel.puertas, fichas=10_000), solucion)
+        antes = simular(Nivel(nivel.ancho, nivel.alto, nivel.inicio, nivel.campanas, nivel.muros, nivel.puertas, fichas=10_000,
+                              espirales=nivel.espirales), solucion)
         if any(r["campanas"][c.id] != antes["campanas"][c.id] for c in nivel.campanas):
             continue
         nuevo.marca = r["fichas_usadas"]
@@ -350,6 +354,7 @@ def poner_dorada(nivel: Nivel, solucion: list, semilla: int, intentos=300):
 # ---------------------------------------------------------------- puertas de vaivén
 
 TIPOS_PUERTA = ("puerta", "dos_puertas")
+TIPOS_ESPIRAL = ("espiral", "espiral_doble")
 
 
 def _tic_cruce(tramo_puntos, a, b):
@@ -443,12 +448,116 @@ def _candidato_puertas(rnd, tipo, dificultad):
     return g
 
 
+# ---------------------------------------------------------------- espirales de retardo
+
+def _tics(nivel, tramos):
+    """Tic de cada ficha de cada tramo, como en la simulación (con espirales)."""
+    tics, fichas = [], []
+    for t in tramos:
+        f = repartir(t.puntos)
+        base = -1 if t.padre is None else tics[t.padre][t.desde]
+        tics.append(sim.tics_tramo(nivel, f, base))
+        fichas.append(f)
+    return tics, fichas
+
+
+def _tic_cruce_espiral(nivel, puntos, a, b):
+    tics, fichas = _tics(nivel, [Tramo(puntos)])
+    for j in range(1, len(fichas[0])):
+        if sim._cruza(fichas[0][j - 1], fichas[0][j], a, b):
+            return tics[0][j]
+    return None
+
+
+def _candidato_espiral(rnd, dificultad):
+    """Una fila de muro con puerta y una espiral a un lado del camino recto. La solución pasa por la
+    espiral y llega al hueco cuando la puerta se abre; la recta (y el mismo rodeo sin espiral)
+    llegan antes, con la puerta cerrada."""
+    inicio = (round(rnd.uniform(30, 70), 2), round(rnd.uniform(142, 150), 2))
+    campana = (round(rnd.uniform(18, 82), 2), round(rnd.uniform(18, 32), 2))
+    y = round(rnd.uniform(72, 98), 2)
+    hueco = (round(rnd.uniform(30, 70), 2), y)
+    ancho_hueco = rnd.uniform(16, 22)
+    medio_y = round((inicio[1] + y) / 2, 2)
+    recto_x = inicio[0] + (hueco[0] - inicio[0]) * (inicio[1] - medio_y) / (inicio[1] - y)
+    lado = rnd.choice([-1, 1])
+    ex = round(min(85, max(15, recto_x + lado * rnd.uniform(13, 22))), 2)
+    if abs(ex - recto_x) < 11:
+        return None
+    retardo = rnd.randint(4, 8)
+    espiral = Espiral((ex, medio_y), retardo)
+    puntos = suave([inicio, (ex, medio_y + 6), (ex, medio_y - 6), (hueco[0], y + 7), (hueco[0], y - 7), campana], 3)
+    solucion = [Tramo([(round(a, 3), round(b, 3)) for a, b in puntos])]
+    if not all(_dentro(q, 3) for q in solucion[0].puntos):
+        return None
+    muros, (pa, pb) = fila_con_puerta(y, hueco[0], ancho_hueco)
+    nivel = Nivel(ANCHO, ALTO, inicio, [Campana("a", campana)], muros=muros, fichas=10_000, espirales=[espiral])
+    tics, _ = _tics(nivel, solucion)
+    if tics[0][-1] != len(tics[0]) - 1 + retardo:          # la solución tiene que pasar por la espiral
+        return None
+    if not simular(nivel, solucion)["exito"]:
+        return None
+    t_sol = _tic_cruce_espiral(nivel, solucion[0].puntos, pa, pb)
+    recta = [inicio, hueco, campana]
+    malos = [_tic_cruce_espiral(nivel, recta, pa, pb), _tic_cruce_espiral(nivel, suave(recta, 3), pa, pb),
+             t_sol - retardo]
+    abierta = 3 if dificultad >= 0.6 else 4
+    ritmo = ritmo_para(rnd, t_sol, [m for m in malos if m is not None], abierta)
+    if ritmo is None:
+        return None
+    nivel.puertas = [sim.Puerta(pa, pb, *ritmo)]
+    r = simular(nivel, solucion)
+    if not r["exito"]:
+        return None
+    marca = r["fichas_usadas"]
+    margen = max(3, round(14 - dificultad * 10))
+    nivel.marca, nivel.fichas = marca, marca + margen
+    a = atajos(nivel)
+    if a["recto"] > 0:
+        return None
+    g = Generado(nivel, solucion, "espiral", 0, 0.0, a["codo"] + a["horquilla"], {"atajos": a, "margen": margen})
+    g.dificultad = puntuar(g)
+    return g
+
+
+def _doble_espiral(rnd):
+    """Campana doble con ramas de largo distinto: una espiral en la corta la retrasa justo lo que
+    le falta. Devuelve (inicio, campanas, tramos, espirales) o None."""
+    inicio = (rnd.uniform(35, 65), rnd.uniform(140, 150))
+    fork = (inicio[0] + rnd.uniform(-8, 8), rnd.uniform(100, 118))
+    d = (rnd.uniform(32, 68), rnd.uniform(22, 36))
+    tronco = _camino(rnd, inicio, fork, curvas=1, desvio=6)
+    f = len(repartir(tronco)) - 1
+    corto, largo = rnd.uniform(10, 14), rnd.uniform(26, 34)
+    lados = [(-1, corto), (1, largo)] if rnd.random() < 0.5 else [(-1, largo), (1, corto)]
+    ramas = {lado: _ruta_lateral(fork, d, lado, ancho, 0.0 if ancho == corto else rnd.uniform(6, 16)) for lado, ancho in lados}
+    tr = [Tramo(tronco), Tramo(ramas[-1], 0, f), Tramo(ramas[1], 0, f)]
+    t_izq, t_der = _llegada(tr, 1, d), _llegada(tr, 2, d)
+    if t_izq is None or t_der is None:
+        return None
+    retardo = abs(t_izq - t_der)
+    if not 3 <= retardo <= 10:
+        return None
+    k = 1 if t_izq < t_der else 2                       # la rama corta
+    fichas = repartir(tr[k].puntos)
+    j = round(len(fichas) * rnd.uniform(0.3, 0.5))
+    pos = (round(fichas[j][0], 2), round(fichas[j][1], 2))
+    # Que ni el tronco ni la otra rama pasen por la espiral, ni que esté pegada a la campana
+    otros = repartir(tr[0].puntos) + repartir(tr[3 - k].puntos)
+    if min(math.dist(pos, q) for q in otros) < sim.RADIO_ESPIRAL + 4 or math.dist(pos, d) < sim.RADIO_CAMPANA + 8:
+        return None
+    return inicio, [Campana("d", d, "doble")], tr, [Espiral(pos, retardo)]
+
+
 # ---------------------------------------------------------------- generador
 
 def _candidato(rnd, tipo, dificultad):
     """Un intento de nivel: topología, obstáculos y validación. Devuelve un Generado o None."""
     if tipo in TIPOS_PUERTA:
         return _candidato_puertas(rnd, tipo, dificultad)
+    if tipo == "espiral":
+        return _candidato_espiral(rnd, dificultad)
+    espirales = []
     if tipo == "simple":
         base = _simple(rnd)
     elif tipo == "dos":
@@ -457,6 +566,10 @@ def _candidato(rnd, tipo, dificultad):
         base = _numeradas(rnd)
     elif tipo == "doble":
         base = _doble(rnd)
+    elif tipo == "espiral_doble":
+        base = _doble_espiral(rnd)
+        if base is not None:
+            base, espirales = base[:3], base[3]
     else:
         base = _doble(rnd, extra=True)
     if base is None:
@@ -464,7 +577,7 @@ def _candidato(rnd, tipo, dificultad):
     inicio, campanas, tramos = base
     nivel = Nivel(ANCHO, ALTO, (round(inicio[0], 2), round(inicio[1], 2)),
                   [Campana(c.id, (round(c.pos[0], 2), round(c.pos[1], 2)), c.tipo, c.numero) for c in campanas],
-                  fichas=10_000)
+                  fichas=10_000, espirales=espirales)
     tramos = [Tramo([(round(x, 3), round(y, 3)) for x, y in t.puntos], t.padre, t.desde) for t in tramos]
     if not all(_dentro(p, 3) for t in tramos for p in t.puntos):
         return None
@@ -505,6 +618,11 @@ def _candidato(rnd, tipo, dificultad):
     a = atajos(nivel)
     if a["recto"] > 0:
         return None                   # se resuelve con una línea recta: demasiado fácil
+    if espirales:
+        # Sin la espiral la solución tiene que fallar: si no, la espiral sobra
+        sin = Nivel(nivel.ancho, nivel.alto, nivel.inicio, nivel.campanas, nivel.muros, nivel.puertas, fichas=10_000)
+        if simular(sin, tramos)["exito"]:
+            return None
     g = Generado(nivel, tramos, tipo, 0, 0.0, a["codo"] + a["horquilla"], {"atajos": a, "margen": margen})
     g.dificultad = puntuar(g)
     return g
@@ -533,6 +651,7 @@ def puntuar(g: Generado) -> float:
     """Dificultad prevista entre 0 y 1. Pesos razonables, sin datos todavía (se calibran en la Fase 9)."""
     restricciones = sum(2 if c.tipo == "doble" else (1.5 if c.tipo == "numerada" else 1) for c in g.nivel.campanas)
     restricciones += 1.5 * len(g.nivel.puertas)       # cada puerta obliga a llegar en su momento
+    restricciones += 1.0 * len(g.nivel.espirales)     # hay que ver que la espiral es la clave
     ramas = len(g.solucion)
     margen = g.info["margen"]
     p = 0.12 * restricciones + 0.06 * ramas + 0.05 * len(g.nivel.muros) + 0.02 * (14 - margen)

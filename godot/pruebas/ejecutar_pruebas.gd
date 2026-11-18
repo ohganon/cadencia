@@ -88,7 +88,7 @@ func pruebas_cuerda(Cuerda: GDScript, Progreso: GDScript) -> void:
 func pruebas_barrio(sim: GDScript) -> void:
 	var Partida: GDScript = load("res://nucleo/partida.gd")
 	var primero := 1
-	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json"]:
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json"]:
 		var b = leer_json(ruta)
 		comprobar(b != null and b["niveles"].size() == 20, "%s tiene 20 niveles" % b["nombre"])
 		var mal := []
@@ -111,6 +111,22 @@ func pruebas_barrio(sim: GDScript) -> void:
 			var n22: Dictionary = b["niveles"][1]
 			var recta: Dictionary = sim.simular(n22["nivel"], [{"puntos": [n22["nivel"]["i"], n22["nivel"]["c"][0][1]], "padre": null, "desde": 0}])
 			comprobar(not recta["exito"] and recta["parada"]["motivo"] == "puerta cerrada", "en el nivel 22 la línea recta encuentra la puerta cerrada")
+		if b["barrio"] == 3:
+			var con_espiral := 0
+			var sin_espiral_falla := []
+			for n in b["niveles"]:
+				if not n["nivel"].get("e", []).is_empty():
+					con_espiral += 1
+					var sin: Dictionary = n["nivel"].duplicate(true)
+					sin.erase("e")
+					if not sim.simular(sin, n["solucion"])["exito"]:
+						sin_espiral_falla.append(n["id"])
+			comprobar(con_espiral >= 10, "La Relojería tiene espirales en la mayoría de niveles (%d)" % con_espiral)
+			comprobar(sin_espiral_falla.size() == con_espiral, "en La Relojería la solución necesita su espiral (sin ella falla)",
+				str(sin_espiral_falla))
+			var n42: Dictionary = b["niveles"][1]
+			var recta42: Dictionary = sim.simular(n42["nivel"], [{"puntos": [n42["nivel"]["i"], n42["nivel"]["c"][0][1]], "padre": null, "desde": 0}])
+			comprobar(not recta42["exito"] and recta42["parada"]["motivo"] == "puerta cerrada", "en el nivel 42 la línea recta encuentra la puerta cerrada")
 		primero += 20
 
 
@@ -185,7 +201,7 @@ func pruebas_temas(Temas: GDScript) -> void:
 	var BotonPop: GDScript = load("res://escenas/comun/boton_pop.gd")
 	var sin_nombre := []
 	for icono in ["volver", "adelante", "deshacer", "bombilla", "lento", "inicio", "campana_simple", "doble", "numerada",
-			"dorada", "muro", "puerta", "goma"]:
+			"dorada", "muro", "puerta", "espiral", "goma"]:
 		var b = BotonPop.new()
 		b.icono = icono
 		if b.nombre_para_lector() == icono:

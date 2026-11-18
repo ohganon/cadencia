@@ -37,7 +37,7 @@ var nombre_accesible := "":
 const NOMBRES_ICONO := {"volver": "Volver", "adelante": "Siguiente", "deshacer": "Deshacer. Mantén pulsado para borrar todo",
 	"bombilla": "Pista", "lento": "Cámara lenta", "inicio": "Inicio de la cadena", "campana_simple": "Campana",
 	"campana": "Campana", "doble": "Campana doble", "numerada": "Campana numerada", "dorada": "Campana dorada",
-	"muro": "Muro", "puerta": "Puerta de vaivén", "goma": "Goma", "llave": "Ajustes", "estrella": "Estrellas"}
+	"muro": "Muro", "puerta": "Puerta de vaivén", "espiral": "Espiral de retardo", "goma": "Goma", "llave": "Ajustes", "estrella": "Estrellas"}
 @export var principal := false
 @export var redondo := false        # cuadrado con radio 16 (botón de icono); con `circular`, círculo
 @export var circular := false

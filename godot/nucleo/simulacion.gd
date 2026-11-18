@@ -12,13 +12,15 @@
 ##
 ## Un nivel es el diccionario de nivel_a_dict() de Python:
 ##   {w, h, i: [x, y], f: fichas, m: marca, c: [[id, [x, y], tipo, numero]...],
-##    mu: [[[x1, y1], [x2, y2]]...], p: [[[x1, y1], [x2, y2], periodo, abierta, fase]...]}
+##    mu: [[[x1, y1], [x2, y2]]...], p: [[[x1, y1], [x2, y2], periodo, abierta, fase]...],
+##    e: [[[x, y], retardo]...] (opcional: espirales de retardo)}
 ## Un tramo es {puntos: [[x, y]...], padre: int o null, desde: int}.
 extends RefCounted
 
 const PASO := 5.0
 const COS_GIRO_MAXIMO := 0.573576436351046   # cos(55°), el mismo literal que en sim.py
 const RADIO_CAMPANA := 6.0
+const RADIO_ESPIRAL := 4.5
 const TOLERANCIA_DOBLE := 1
 
 const PARADAS_SIN_EXITO := ["faltan fichas", "no empieza en el inicio", "bifurcador no válido"]
@@ -115,6 +117,24 @@ static func simular(nivel: Dictionary, tramos: Array) -> Dictionary:
 ## Como simular(), pero devuelve también lo necesario para animar la caída:
 ## {resultado, fichas: [[x, y]...] por tramo, tics: tic de cada ficha, caidas: última ficha que cae
 ## en cada tramo (-1 si no cae ninguna)}. No forma parte de la especificación compartida.
+## Tic en que cae cada ficha de un tramo: base + 1 + j, más el retraso de las espirales por las que
+## ya ha pasado (cada espiral, una vez por tramo; la primera ficha del tramo no cuenta).
+static func tics_tramo(nivel: Dictionary, fichas: Array, base: int) -> Array:
+	var tics := []
+	var extra := 0
+	var usadas := {}
+	var espirales: Array = nivel.get("e", [])
+	for j in fichas.size():
+		tics.append(base + 1 + j + extra)
+		if j == 0:
+			continue
+		for k in espirales.size():
+			if not usadas.has(k) and dist(fichas[j], espirales[k][0]) <= RADIO_ESPIRAL:
+				usadas[k] = true
+				extra += int(espirales[k][1])
+	return tics
+
+
 static func simular_detalle(nivel: Dictionary, tramos: Array) -> Dictionary:
 	var fichas_por_tramo := []
 	var tics := []
@@ -133,10 +153,7 @@ static func simular_detalle(nivel: Dictionary, tramos: Array) -> Dictionary:
 				return _detalle(_resultado(nivel, [], {}, {"tramo": idx, "ficha": 0, "motivo": "bifurcador no válido"}), [], [], [])
 			base = tics[padre][desde]
 		fichas_por_tramo.append(f)
-		var t := []
-		for j in f.size():
-			t.append(base + 1 + j)
-		tics.append(t)
+		tics.append(tics_tramo(nivel, f, base))
 
 	var usadas := 0
 	for f in fichas_por_tramo:

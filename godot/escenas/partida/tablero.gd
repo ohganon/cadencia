@@ -248,6 +248,10 @@ func _draw() -> void:
 		draw_circle(a_pantalla(m[0]), 1.1 * _k, TINTA)
 		draw_circle(a_pantalla(m[1]), 1.1 * _k, TINTA)
 
+	# Las espirales van debajo de las fichas: no ocupan sitio, la cadena pasa por encima
+	for e in nivel.get("e", []):
+		_espiral(e)
+
 	if not pista.is_empty():
 		var fantasma := Sim.repartir(pista)
 		for j in range(1, fantasma.size()):
@@ -289,6 +293,9 @@ func _draw() -> void:
 			draw_arc(c, 3.4 * _k, 0, TAU, 28, CORAL, 0.6 * _k, true)
 			_simbolo(c + Vector2(3.0, -3.0) * _k, "!")      # aviso con forma, no solo con color
 		_cruces_de_puertas(todas, tics)
+	# El aro y el retraso de cada espiral, encima de todo: si la cadena pasa por ella, se sigue viendo
+	for e in nivel.get("e", []):
+		_espiral_etiqueta(e)
 	if modo == Modo.RESULTADO:
 		_parada()
 
@@ -316,8 +323,9 @@ func _cruces_de_puertas(todas: Array, tics: Array) -> void:
 					break
 
 
-## Tic en que cae cada ficha, igual que en la simulación: así la cuenta que se ve al dibujar es el
-## orden real de caída, y las dos ramas de una campana doble muestran el mismo número al llegar.
+## Tic en que cae cada ficha, igual que en la simulación (con el retraso de las espirales): así la
+## cuenta que se ve al dibujar es el orden real de caída, y las dos ramas de una campana doble
+## muestran el mismo número al llegar.
 func _tics_de(todas: Array) -> Array:
 	var r := []
 	for i in todas.size():
@@ -327,10 +335,7 @@ func _tics_de(todas: Array) -> Array:
 			var desde := int(partida.tramos[i]["desde"])
 			if padre < r.size() and desde < r[padre].size():
 				base = r[padre][desde]
-		var t := []
-		for j in todas[i].size():
-			t.append(base + 1 + j)
-		r.append(t)
+		r.append(Sim.tics_tramo(partida.nivel, todas[i], base))
 	return r
 
 
@@ -555,6 +560,32 @@ func _puerta(p: Array) -> void:
 	draw_style_box(_caja(Color(ETIQUETA, 0.94), 6, ETIQUETA_T, 1), caja)
 	var verde := Temas.sobre(ETIQUETA, VERDE.darkened(0.45), VERDE)
 	draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, verde if abierta else ETIQUETA_T)
+
+
+## Espiral de retardo: una espiral dentro de su círculo y, al lado, cuántos tics retrasa («+4»).
+func _espiral(e: Array) -> void:
+	var c := a_pantalla(e[0])
+	var r := Sim.RADIO_ESPIRAL * _k
+	draw_circle(c, r, Color(DORADA, 0.22))
+	var puntos := PackedVector2Array()
+	for k in 49:
+		var a := k * 0.42
+		puntos.append(c + Vector2(cos(a), sin(a)) * r * 0.85 * k / 48.0)
+	draw_polyline(puntos, TINTA, maxf(1.2, 0.4 * _k), true)
+
+
+func _espiral_etiqueta(e: Array) -> void:
+	var c := a_pantalla(e[0])
+	var r := Sim.RADIO_ESPIRAL * _k
+	draw_arc(c, r, 0, TAU, 32, Color(DORADA, 0.9), maxf(1.5, 0.45 * _k), true)
+	var fuente := get_theme_default_font()
+	var tam := int(3.6 * _k)
+	var texto := "+%d" % int(e[1])
+	var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
+	var base := c + Vector2(-medida.x / 2, -r - 1.0 * _k)     # encima del aro, centrado
+	var caja := Rect2(base - Vector2(0.6 * _k, fuente.get_ascent(tam) + 0.2 * _k), Vector2(medida.x + 1.2 * _k, tam + 0.4 * _k))
+	draw_style_box(_caja(Color(ETIQUETA, 0.94), 6, ETIQUETA_T, 1), caja)
+	draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, ETIQUETA_T)
 
 
 ## Posición en pantalla (global) de la X donde se paró la cadena, o null si no se paró.

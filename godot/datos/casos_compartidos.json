@@ -5502,6 +5502,627 @@
    }
   },
   {
+   "nombre": "regla: espiral abre la puerta",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ],
+      20,
+      5,
+      13
+     ]
+    ],
+    "e": [
+     [
+      [
+       35,
+       50
+      ],
+      4
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 21,
+    "sobran": 479,
+    "campanas": {
+     "a": 23
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
+   "nombre": "regla: espiral fuera del camino",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ],
+      20,
+      5,
+      13
+     ]
+    ],
+    "e": [
+     [
+      [
+       35,
+       80
+      ],
+      4
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": false,
+    "fichas_usadas": 21,
+    "sobran": 479,
+    "campanas": {
+     "a": null
+    },
+    "parada": {
+     "tramo": 0,
+     "ficha": 10,
+     "tic": 10,
+     "motivo": "puerta cerrada"
+    },
+    "motivos": {
+     "a": "no llegó"
+    }
+   }
+  },
+  {
+   "nombre": "regla: espiral sobre el empujador no cuenta",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ],
+      20,
+      5,
+      13
+     ]
+    ],
+    "e": [
+     [
+      [
+       10,
+       50
+      ],
+      4
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": false,
+    "fichas_usadas": 21,
+    "sobran": 479,
+    "campanas": {
+     "a": null
+    },
+    "parada": {
+     "tramo": 0,
+     "ficha": 10,
+     "tic": 10,
+     "motivo": "puerta cerrada"
+    },
+    "motivos": {
+     "a": "no llegó"
+    }
+   }
+  },
+  {
+   "nombre": "regla: dos espirales se suman",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ],
+      20,
+      5,
+      15
+     ]
+    ],
+    "e": [
+     [
+      [
+       25,
+       50
+      ],
+      2
+     ],
+     [
+      [
+       45,
+       50
+      ],
+      4
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 21,
+    "sobran": 479,
+    "campanas": {
+     "a": 25
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
+   "nombre": "regla: espiral en una rama desincroniza la doble",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "d",
+      [
+       60,
+       90
+      ],
+      "doble",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [],
+    "e": [
+     [
+      [
+       80,
+       70
+      ],
+      3
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       60,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       60,
+       50
+      ],
+      [
+       40,
+       70
+      ],
+      [
+       60,
+       90
+      ]
+     ],
+     "padre": 0,
+     "desde": 10
+    },
+    {
+     "puntos": [
+      [
+       60,
+       50
+      ],
+      [
+       80,
+       70
+      ],
+      [
+       60,
+       90
+      ]
+     ],
+     "padre": 0,
+     "desde": 10
+    }
+   ],
+   "esperado": {
+    "exito": false,
+    "fichas_usadas": 35,
+    "sobran": 465,
+    "campanas": {
+     "d": null
+    },
+    "parada": null,
+    "motivos": {
+     "d": "no llegaron a la vez"
+    }
+   }
+  },
+  {
+   "nombre": "regla: espiral de 1 tic cabe en la tolerancia de la doble",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "d",
+      [
+       60,
+       90
+      ],
+      "doble",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [],
+    "e": [
+     [
+      [
+       80,
+       70
+      ],
+      1
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       60,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       60,
+       50
+      ],
+      [
+       40,
+       70
+      ],
+      [
+       60,
+       90
+      ]
+     ],
+     "padre": 0,
+     "desde": 10
+    },
+    {
+     "puntos": [
+      [
+       60,
+       50
+      ],
+      [
+       80,
+       70
+      ],
+      [
+       60,
+       90
+      ]
+     ],
+     "padre": 0,
+     "desde": 10
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 35,
+    "sobran": 465,
+    "campanas": {
+     "d": 22
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
+   "nombre": "regla: espiral en el tronco retrasa las dos ramas por igual",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "d",
+      [
+       60,
+       90
+      ],
+      "doble",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [],
+    "e": [
+     [
+      [
+       35,
+       50
+      ],
+      5
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       60,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       60,
+       50
+      ],
+      [
+       40,
+       70
+      ],
+      [
+       60,
+       90
+      ]
+     ],
+     "padre": 0,
+     "desde": 10
+    },
+    {
+     "puntos": [
+      [
+       60,
+       50
+      ],
+      [
+       80,
+       70
+      ],
+      [
+       60,
+       90
+      ]
+     ],
+     "padre": 0,
+     "desde": 10
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 35,
+    "sobran": 465,
+    "campanas": {
+     "d": 26
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
    "nombre": "regla: rama de un bifurcador que no llegó a caer",
    "nivel": {
     "v": 1,

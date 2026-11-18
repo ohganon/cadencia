@@ -123,5 +123,19 @@ class Barrio(unittest.TestCase):
                     self.assertFalse(recta["exito"])
 
 
+    def test_niveles_con_espiral(self):
+        for tipo in G.TIPOS_ESPIRAL:
+            for semilla in (51, 52, 53):
+                with self.subTest(tipo=tipo, semilla=semilla):
+                    g = G.generar(semilla, tipo, 0.6)
+                    self.assertIsNotNone(g)
+                    self.assertEqual(len(g.nivel.espirales), 1)
+                    self.assertTrue(simular(g.nivel, g.solucion)["exito"])
+                    self.assertEqual(G.atajos(g.nivel)["recto"], 0)
+                    # Sin la espiral, la solución de referencia ya no sirve: la espiral es la clave
+                    g.nivel.espirales = []
+                    self.assertFalse(simular(g.nivel, g.solucion)["exito"])
+
+
 if __name__ == "__main__":
     unittest.main()

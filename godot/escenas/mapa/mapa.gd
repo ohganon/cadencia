@@ -80,7 +80,7 @@ var _reloj := 0.0
 
 
 func _ready() -> void:
-	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json"]:
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json"]:
 		var b = JSON.parse_string(FileAccess.get_file_as_string(ruta))
 		barrios.append(b)
 		niveles += b["niveles"]

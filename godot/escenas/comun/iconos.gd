@@ -99,6 +99,13 @@ static func _dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color: Color) ->
 			var lado := rect.size.x * 0.72
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(0, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(rect.size.x - lado, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
+		"espiral":                        # espiral de retardo
+			var c := rect.get_center()
+			var puntos := []
+			for k in 41:
+				var a := k * 0.45
+				puntos.append((c - rect.position) / (rect.size.x / 24.0) + Vector2(cos(a), sin(a)) * 9.5 * k / 40.0)
+			_trazos(ci, rect, [puntos])
 		"campana_simple":                 # la campana normal, del color de las del tablero
 			_dibujar(ci, "campana", rect, CORAL)
 		"dorada":                         # campana dorada con su estrella (tercera estrella)

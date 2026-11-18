@@ -18,6 +18,11 @@ Reglas (Fase 4, sección 4.3):
   tablero o al cruzar una puerta cerrada. El resultado dice dónde y por qué.
 - Objetivos: campana simple, campana doble (dos ramas distintas a la vez, con tolerancia) y
   campanas numeradas (deben sonar en orden).
+- Espiral de retardo: cuando una ficha de un tramo entra en una espiral (a RADIO_ESPIRAL o
+  menos), las siguientes fichas de ese tramo caen `retardo` tics más tarde. Cada espiral retrasa
+  cada tramo una sola vez; las ramas que salen después heredan el retraso por su bifurcador. No
+  ocupa sitio ni para la cadena. La primera ficha de un tramo (el empujador o el bifurcador) no
+  cuenta: ya contó en su tramo.
 - La campana dorada es opcional: no hace falta para superar el nivel (ni da motivo de fallo si no
   suena), pero su tic aparece en el resultado. Da la tercera estrella.
 
@@ -45,6 +50,7 @@ GIRO_MAXIMO = math.radians(55)   # giro máximo entre dos fichas seguidas antes 
 # sin depender de cómo calcula cos/acos la biblioteca matemática de cada plataforma.
 COS_GIRO_MAXIMO = 0.573576436351046
 RADIO_CAMPANA = 6.0        # una ficha a esta distancia o menos activa la campana
+RADIO_ESPIRAL = 4.5        # una ficha a esta distancia o menos entra en la espiral de retardo
 TOLERANCIA_DOBLE = 1       # tics de diferencia permitidos en la campana doble
 
 
@@ -137,6 +143,13 @@ class Puerta:
 
 
 @dataclass
+class Espiral:
+    """Espiral de retardo: retrasa `retardo` tics el resto del tramo que pasa por ella."""
+    pos: tuple
+    retardo: int
+
+
+@dataclass
 class Nivel:
     ancho: float
     alto: float
@@ -146,6 +159,7 @@ class Nivel:
     puertas: list = field(default_factory=list)
     fichas: int = 60                                # fichas disponibles
     marca: int = 0                                  # fichas de la solución de referencia
+    espirales: list = field(default_factory=list)
 
 
 @dataclass
@@ -157,6 +171,21 @@ class Tramo:
 
 
 # ---------------------------------------------------------------- simulación
+
+def tics_tramo(nivel: Nivel, fichas: list, base: int) -> list:
+    """Tic en que cae cada ficha de un tramo: base + 1 + j, más el retraso de las espirales por
+    las que ya ha pasado."""
+    tics, extra, usadas = [], 0, set()
+    for j, p in enumerate(fichas):
+        tics.append(base + 1 + j + extra)
+        if j == 0:
+            continue
+        for k, e in enumerate(nivel.espirales):
+            if k not in usadas and _dist(p, e.pos) <= RADIO_ESPIRAL:
+                usadas.add(k)
+                extra += e.retardo
+    return tics
+
 
 def simular(nivel: Nivel, tramos: list[Tramo]):
     """Simula la caída y devuelve un diccionario con el resultado.
@@ -176,7 +205,7 @@ def simular(nivel: Nivel, tramos: list[Tramo]):
                 return _resultado(nivel, tramos, [], {}, {"tramo": idx, "ficha": 0, "motivo": "bifurcador no válido"})
             base = tics[tr.padre][tr.desde]
         fichas_por_tramo.append(f)
-        tics.append([base + 1 + j for j in range(len(f))])
+        tics.append(tics_tramo(nivel, f, base))
 
     usadas = sum(len(f) for f in fichas_por_tramo)
     if usadas > nivel.fichas:
@@ -275,7 +304,8 @@ def nivel_a_dict(n: Nivel) -> dict:
     return {"v": 1, "w": n.ancho, "h": n.alto, "i": list(n.inicio), "f": n.fichas, "m": n.marca,
             "c": [[c.id, list(c.pos), c.tipo, c.numero] for c in n.campanas],
             "mu": [[list(a), list(b)] for a, b in n.muros],
-            "p": [[list(p.a), list(p.b), p.periodo, p.abierta, p.fase] for p in n.puertas]}
+            "p": [[list(p.a), list(p.b), p.periodo, p.abierta, p.fase] for p in n.puertas]} | (
+        {"e": [[list(e.pos), e.retardo] for e in n.espirales]} if n.espirales else {})
 
 
 def nivel_de_dict(d: dict) -> Nivel:
@@ -285,7 +315,7 @@ def nivel_de_dict(d: dict) -> Nivel:
                  [Campana(c[0], tuple(c[1]), c[2], c[3]) for c in d["c"]],
                  [(tuple(a), tuple(b)) for a, b in d["mu"]],
                  [Puerta(tuple(p[0]), tuple(p[1]), p[2], p[3], p[4]) for p in d["p"]],
-                 d["f"], d["m"])
+                 d["f"], d["m"], [Espiral(tuple(e[0]), int(e[1])) for e in d.get("e", [])])
 
 
 PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
@@ -293,7 +323,7 @@ PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
 # Límites de un nivel del Taller. Un código es texto que llega de cualquiera: todo se comprueba
 # antes de jugarlo (godot/nucleo/taller.gd aplica exactamente las mismas reglas).
 LIMITES_TALLER = {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
-                  "tramos": 8, "puntos": 600, "id": 8, "periodo": 200}
+                  "tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12}
 TIPOS_CAMPANA = ("simple", "doble", "numerada", "dorada")
 
 
@@ -343,6 +373,12 @@ def validar_nivel_taller(d: dict) -> str:
             if not (isinstance(p, list) and len(p) == 5 and _punto(p[0], d) and _punto(p[1], d)
                     and _numero(p[2], 2, L["periodo"]) and _numero(p[3], 1, p[2]) and _numero(p[4], 0, L["periodo"])):
                 return "puerta no válida"
+        e = d.get("e", [])
+        if not (isinstance(e, list) and len(e) <= L["espirales"]):
+            return "demasiadas espirales"
+        for x in e:
+            if not (isinstance(x, list) and len(x) == 2 and _punto(x[0], d) and _numero(x[1], 1, L["retardo"])):
+                return "espiral no válida"
     except (KeyError, TypeError, IndexError):
         return "faltan datos del nivel"
     return ""

@@ -16,7 +16,7 @@ const PREFIJO := "DING1-"
 const MAXIMO_DESCOMPRIMIDO := 65536
 const MAXIMO_CODIGO := 20000
 const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
-	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200}
+	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12}
 const TIPOS_CAMPANA := ["simple", "doble", "numerada", "dorada"]
 const RUTA := "user://taller.json"
 
@@ -137,6 +137,12 @@ static func validar_nivel(d: Dictionary) -> String:
 				or not _numero(p[2], 2, LIMITES["periodo"]) or not _numero(p[3], 1, float(p[2]) if _numero(p[2], 2, LIMITES["periodo"]) else 1) \
 				or not _numero(p[4], 0, LIMITES["periodo"]):
 			return "Hay una puerta que no es válida."
+	var e = d.get("e", [])
+	if typeof(e) != TYPE_ARRAY or e.size() > LIMITES["espirales"]:
+		return "Hay demasiadas espirales."
+	for x in e:
+		if typeof(x) != TYPE_ARRAY or x.size() != 2 or not _punto(x[0], d) or not _numero(x[1], 1, LIMITES["retardo"]):
+			return "Hay una espiral que no es válida."
 	return ""
 
 
