@@ -23,6 +23,7 @@ const BotonPop = preload("res://escenas/comun/boton_pop.gd")
 const Pastilla = preload("res://escenas/comun/pastilla.gd")
 const Estrellas = preload("res://escenas/comun/estrellas.gd")
 const Iconos = preload("res://escenas/comun/iconos.gd")
+const RetoDiario = preload("res://nucleo/reto_diario.gd")
 
 const AZUL := Color("#2462d6")
 const TINTA := Color("#142554")
@@ -56,6 +57,9 @@ const EXPLICACIONES := {
 
 var niveles: Array = []
 var indice := 0
+var actual: Dictionary = {}     # el nivel en juego: uno de la campaña o la Caída del Día
+var modo_diario := false
+var reto = null
 var partida = null
 var progreso = null
 var registro = null
@@ -81,6 +85,7 @@ var boton_siguiente: Control
 var lista_niveles: PanelContainer
 var rejilla: GridContainer
 var boton_sonido: Control
+var boton_diario: Control
 var boton_vibracion: Control
 var resumen_prueba: Label
 var fuente_titulos: Font        # Lilita One
@@ -101,6 +106,7 @@ func _ready() -> void:
 		demo = demo or a.begins_with("--demo")
 	progreso = Progreso.new("user://demo_progreso.json" if demo else Progreso.RUTA)
 	registro = Registro.new("user://demo_registro.jsonl" if demo else Registro.RUTA)
+	reto = RetoDiario.new()
 	_construir()
 	var primero := 0
 	for n in niveles:
@@ -115,7 +121,22 @@ func _ready() -> void:
 
 func cargar(i: int) -> void:
 	indice = clampi(i, 0, niveles.size() - 1)
-	var n: Dictionary = niveles[indice]
+	modo_diario = false
+	_abrir(niveles[indice], "Nivel %d" % int(niveles[indice]["id"]))
+
+
+## La Caída del Día: el nivel de la fecha UTC (o de `fecha`, para las pruebas).
+func cargar_diario(fecha := "") -> void:
+	var e: Dictionary = reto.de(fecha) if fecha != "" else reto.de_hoy()
+	if e.is_empty():
+		return
+	modo_diario = true
+	_abrir({"id": 0, "titulo": "Caída del Día", "ayuda": RetoDiario.objetivo(e["tipo"]), "nivel": e["nivel"],
+		"solucion": e["solucion"], "fecha": e["fecha_jugada"]}, "Caída del Día")
+
+
+func _abrir(n: Dictionary, texto_titulo: String) -> void:
+	actual = n
 	partida = Partida.new(n["nivel"])
 	tablero.preparar(partida)
 	_pista_paso = 0
@@ -123,7 +144,7 @@ func cargar(i: int) -> void:
 	_abierto_en = Time.get_ticks_msec()
 	boton_lento.resaltado = false
 	registro.anotar("nivel", {"nivel": int(n["id"])})
-	titulo.text = "Nivel %d" % int(n["id"])
+	titulo.text = texto_titulo
 	objetivo.text = n["ayuda"]
 	_cerrar_ventanas()
 	_actualizar()
@@ -145,8 +166,9 @@ func _al_tumbar() -> void:
 
 func _al_terminar_caida() -> void:
 	var r: Dictionary = tablero.resultado()
-	var n: Dictionary = niveles[indice]
+	var n: Dictionary = actual
 	var id := int(n["id"])
+	var clave = ("dia:" + n["fecha"]) if modo_diario else id
 	var marca := int(n["nivel"]["m"])
 	var e: int = Partida.estrellas(r, marca)
 	registro.anotar("intento", {"nivel": id, "exito": bool(r["exito"]), "fichas": int(r["fichas_usadas"]),
@@ -155,21 +177,29 @@ func _al_terminar_caida() -> void:
 	_sonar("superado" if e > 0 else "fallo")
 	if e > 0:
 		_fallos_nivel = 0
-		var antes: int = progreso.de(id)
-		progreso.registrar(id, e)
+		var antes: int = progreso.de(clave)
+		progreso.registrar(clave, e)
 		ventana_titulo.text = "¡Nivel superado!"
 		ventana_estrellas.conseguidas = e
 		ventana_dato.text = "%d fichas" % int(r["fichas_usadas"])
+		var de_que := "del día" if modo_diario else "del nivel"
 		if e >= 2:
-			ventana_detalle.text = "Sin pasarte de la marca del nivel (%d)." % marca
+			ventana_detalle.text = "Sin pasarte de la marca %s (%d)." % [de_que, marca]
 		else:
-			ventana_detalle.text = "La marca del nivel es %d: con menos fichas, segunda estrella." % marca
-		if indice == niveles.size() - 1:
+			ventana_detalle.text = "La marca %s es %d: con menos fichas, segunda estrella." % [de_que, marca]
+		if not modo_diario and indice == niveles.size() - 1:
 			ventana_detalle.text += "\nHas terminado los niveles de esta prueba. ¡Gracias por jugar!"
 		var ganadas := maxi(e - antes, 0)
-		ventana_premio.visible = ganadas > 0
+		ventana_premio.visible = ganadas > 0 and not modo_diario
 		ventana_premio_texto.text = "+%d %s para La Plaza" % [ganadas, "estrella" if ganadas == 1 else "estrellas"]
-		boton_siguiente.visible = indice < niveles.size() - 1
+		if modo_diario:
+			# En la Caída del Día, «Siguiente» se convierte en compartir el resultado
+			ventana_titulo.text = "¡Caída del Día superada!"
+			_tipo_boton(boton_siguiente, "Copiar resultado", true)
+			boton_siguiente.visible = true
+		else:
+			_tipo_boton(boton_siguiente, "Siguiente", true)
+			boton_siguiente.visible = indice < niveles.size() - 1
 		_tipo_boton(boton_repetir, "Repetir", false)
 		velo.visible = true
 		ventana.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
@@ -232,6 +262,13 @@ func _al_repetir() -> void:
 
 
 func _al_siguiente() -> void:
+	if modo_diario:
+		var r: Dictionary = tablero.resultado()
+		var e: int = Partida.estrellas(r, int(actual["nivel"]["m"]))
+		DisplayServer.clipboard_set(RetoDiario.texto_compartir(actual["fecha"], bool(r["exito"]), int(r["fichas_usadas"]), e,
+			_pista_paso > 0))
+		_tipo_boton(boton_siguiente, "¡Copiado!", true)
+		return
 	cargar(indice + 1)
 
 
@@ -250,7 +287,7 @@ func _al_borrar() -> void:
 
 ## La pista dibuja en fantasma el siguiente tramo de la solución de referencia.
 func _al_pista() -> void:
-	var sol: Array = niveles[indice]["solucion"]
+	var sol: Array = actual["solucion"]
 	tablero.pista = sol[_pista_paso % sol.size()]["puntos"]
 	_pista_paso += 1
 	tablero.queue_redraw()
@@ -362,6 +399,9 @@ func _abrir_lista() -> void:
 		est.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		celda.add_child(est)
 		rejilla.add_child(celda)
+	var hoy: int = progreso.de("dia:" + RetoDiario.hoy_utc())
+	boton_diario.texto = "Caída del Día" + ("  " + "★".repeat(hoy) if hoy > 0 else "")
+	boton_diario.update_minimum_size()
 	_textos_ajustes()
 	velo.visible = true
 	lista_niveles.reset_size()
@@ -581,6 +621,10 @@ func _construir_lista() -> void:
 	rejilla.add_theme_constant_override("v_separation", 6)
 	rejilla.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	caja.add_child(rejilla)
+	boton_diario = _boton("Caída del Día", false, 34)
+	boton_diario.icono = "campana"
+	boton_diario.pulsado.connect(func(): cargar_diario())
+	caja.add_child(boton_diario)
 	var ajustes := HBoxContainer.new()
 	ajustes.add_theme_constant_override("separation", 16)
 	ajustes.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -672,13 +716,16 @@ func _demo_si_toca() -> void:
 		return
 	var prefijo: String = args.get("captura", "user://captura")
 	await get_tree().process_frame
-	cargar(int(args["demo"]) - 1)
+	if args.has("diario"):
+		cargar_diario(args.get("fecha", ""))
+	else:
+		cargar(int(args["demo"]) - 1)
 	await _capturar(prefijo + "_1_vacio.png")
-	var sol: Array = niveles[indice]["solucion"]
+	var sol: Array = actual["solucion"]
 	if args.has("incompleto"):
 		sol = sol.slice(0, 1)
 	if args.has("recto"):      # en línea recta del inicio a la primera campana: suele fallar
-		var nivel: Dictionary = niveles[indice]["nivel"]
+		var nivel: Dictionary = actual["nivel"]
 		sol = [{"puntos": [nivel["i"], nivel["c"][0][1]]}]
 	for tr in sol:
 		_trazar(tr["puntos"])

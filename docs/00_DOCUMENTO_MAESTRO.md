@@ -170,6 +170,9 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: fuentes, icono provisional y APK de prueba para Android generado y verificado (18/11/2026)
 - [x] Fase 8: pantalla de juego con el diseño Dominó Pop acordado (18/11/2026)
 - [ ] Fase 8: instalar el APK en un Android y hacer la prueba de la puerta 0 con 10–15 personas
+- [x] Fase 8: generador de niveles por construcción y Caída del Día (calendario de un año dentro del juego) (18/11/2026)
+- [ ] Fase 8: regenerar el calendario de la Caída del Día antes del 31/10/2027
+- [ ] **TODO (decisión del cliente, 18/11/2026): pasada estética** con animaciones, sombreado y efectos. Se hace después de desarrollar el juego. Lista en fase8/ARQUITECTURA_BORRADOR.md, sección 6 bis
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal
 - [ ] Antes de monetizar: consulta fiscal con un gestor (alta, IVA intracomunitario, W-8BEN)

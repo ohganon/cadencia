@@ -10,7 +10,7 @@ Motor: **Godot 4.7.2** (MIT). Arquitectura en [docs/fase8/ARQUITECTURA_BORRADOR.
 | `iconos/` | Icono provisional (y su versión adaptable de Android), generado por `prototipos/icono/generar_icono.py` |
 | `fuentes/` | Lilita One y Nunito con sus licencias SIL OFL |
 | `sonidos/` | Sonidos propios generados por síntesis (`prototipos/sonido/generar_sonidos.py`). No se editan a mano |
-| `datos/` | Niveles y casos compartidos. **No se editan a mano**: los genera `prototipos/simulacion/niveles_entrega1.py` |
+| `datos/` | Niveles, casos compartidos y el calendario de la Caída del Día. **No se editan a mano**: los generan `prototipos/simulacion/niveles_entrega1.py` y `prototipos/generador/generador.py` |
 | `pruebas/` | `ejecutar_pruebas.gd`: todas las pruebas sin pantalla |
 
 ## Jugar en el ordenador
@@ -23,7 +23,7 @@ Abre Godot, pulsa **Importar**, elige `godot/project.godot` y pulsa **Ejecutar**
 Godot_v4.7.2-stable_win64_console.exe --headless --path godot --script res://pruebas/ejecutar_pruebas.gd
 ```
 
-90 pruebas: que todos los scripts compilan, que los sonidos cargan, los 30 casos compartidos con Python, que cada nivel se supera dibujando su solución (también punto a punto, como un dedo), el límite de fichas, el enganche, deshacer, el guardado del progreso y los ajustes, y que el registro de pruebas no guarda nada más de lo previsto. Termina con código 0 si todo pasa.
+100 pruebas: que todos los scripts compilan, que los sonidos cargan, los 30 casos compartidos con Python, que cada nivel se supera dibujando su solución (también punto a punto, como un dedo), el límite de fichas, el enganche, deshacer, el guardado del progreso y los ajustes, que el registro de pruebas no guarda nada más de lo previsto, y que Godot supera los 365 niveles de la Caída del Día con su solución y su marca exacta. Termina con código 0 si todo pasa.
 
 ## Generar el APK de prueba (Android)
 
@@ -45,4 +45,4 @@ Herramientas instaladas en este equipo (fuera del repositorio): Java 17 (Temurin
 Godot_v4.7.2-stable_win64_console.exe --path godot --resolution 540x960 -- --demo=7 --captura=C:/ruta/prefijo
 ```
 
-Abre una ventana, dibuja la solución del nivel, la tumba y guarda 4 capturas (vacío, dibujado, cayendo y resultado). Con `--incompleto` dibuja solo el primer tramo y con `--recto` una línea recta a la primera campana, para ver los fallos. Usa un progreso aparte y lo borra al terminar.
+Abre una ventana, dibuja la solución del nivel, la tumba y guarda 4 capturas (vacío, dibujado, cayendo y resultado). Con `--diario --fecha=2026-11-18` juega la Caída del Día de esa fecha y con `--lista` añade una captura de la lista de niveles. Con `--incompleto` dibuja solo el primer tramo y con `--recto` una línea recta a la primera campana, para ver los fallos. Usa un progreso aparte y lo borra al terminar.

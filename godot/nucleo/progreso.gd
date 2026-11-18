@@ -49,8 +49,9 @@ func guardar() -> void:
 	f.store_string(JSON.stringify({"version": VERSION, "estrellas": estrellas, "ajustes": ajustes}, " "))
 
 
-## Guarda las estrellas de un nivel solo si mejoran las que ya tenía.
-func registrar(id: int, n: int) -> void:
+## Guarda las estrellas de un nivel solo si mejoran las que ya tenía. `id` es el número del nivel o
+## una clave de texto (por ejemplo «dia:2026-11-18» para la Caída del Día).
+func registrar(id, n: int) -> void:
 	var k := str(id)
 	if n > int(estrellas.get(k, 0)):
 		estrellas[k] = n
@@ -62,7 +63,7 @@ func ajustar(clave: String, valor: bool) -> void:
 	guardar()
 
 
-func de(id: int) -> int:
+func de(id) -> int:
 	return int(estrellas.get(str(id), 0))
 
 

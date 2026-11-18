@@ -12,7 +12,7 @@
 ## Es un ejecutor mínimo sin dependencias. GUT se añadirá cuando haga falta probar escenas.
 extends SceneTree
 
-const SCRIPTS := ["res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd",
+const SCRIPTS := ["res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd",
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
 	"res://escenas/comun/iconos.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd"]
 
@@ -37,6 +37,7 @@ func _init() -> void:
 	pruebas_progreso(progreso)
 	pruebas_registro(load("res://nucleo/registro.gd"))
 	pruebas_sonidos()
+	pruebas_reto(load("res://nucleo/reto_diario.gd"), sim)
 	terminar()
 
 
@@ -174,6 +175,27 @@ func pruebas_registro(Registro: GDScript) -> void:
 			claves[k] = true
 	comprobar(claves.keys().all(func(k): return k in ["evento", "t", "nivel", "exito", "pistas"]), "el registro no guarda nada más que lo previsto")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
+
+
+func pruebas_reto(RetoDiario: GDScript, sim: GDScript) -> void:
+	var r = RetoDiario.new()
+	comprobar(r.niveles.size() == 365, "el calendario de la Caída del Día tiene 365 días")
+	var fallidos := []
+	for e in r.niveles:
+		var res: Dictionary = sim.simular(e["nivel"], e["solucion"])
+		if not res["exito"] or int(res["fichas_usadas"]) != int(e["nivel"]["m"]):
+			fallidos.append(e["fecha"])
+	comprobar(fallidos.is_empty(), "Godot supera los 365 niveles diarios con su solución y su marca", str(fallidos.slice(0, 5)))
+	comprobar(r.de("2026-11-18")["fecha"] == "2026-11-18", "cada fecha del calendario da su nivel")
+	comprobar(r.de("2026-11-01")["fecha"] == r.niveles[0]["fecha"], "el primer día es el primero del calendario")
+	comprobar(r.de("2027-11-01")["fecha"] == "2026-11-01", "pasado el año, el calendario se repite igual para todos")
+	comprobar(r.de("2026-10-31")["fecha"] == "2027-10-31", "antes del calendario también se repite (sin errores)")
+	comprobar(RetoDiario.hoy_utc().length() == 10, "la fecha UTC de hoy tiene el formato AAAA-MM-DD")
+	var texto: String = RetoDiario.texto_compartir("2026-11-18", true, 47, 2)
+	comprobar(texto.contains("18/11/2026") and texto.contains("47 fichas") and not texto.contains("http"),
+		"el texto para compartir lleva fecha y fichas, y ningún enlace", texto)
+	comprobar(RetoDiario.texto_compartir("2026-11-18", true, 47, 2, true).contains("con pista"),
+		"si se usó la pista, el texto para compartir lo dice")
 
 
 func pruebas_sonidos() -> void:

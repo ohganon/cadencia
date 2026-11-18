@@ -126,6 +126,19 @@ godot/
 | Android SDK (Platform-Tools, Build-Tools 35.0.1, Platform 35) | Licencia del Android SDK (aceptada por el cliente el 18/11/2026) | 0 € | Instalado el 18/11/2026 |
 | Analítica | Por decidir | **Comprobar el precio, los límites gratuitos y las condiciones antes de elegir** (regla del presupuesto) | Fase 9 |
 
+## 6 bis. TODO: pasada estética (decidido por el cliente el 18/11/2026)
+
+La pantalla de juego ya sigue la maqueta, pero **le falta ser más visual y llamativa**. El cliente prefiere desarrollar primero el juego y dejar esto para después. Lista para esa pasada:
+
+- **Animaciones de la caída:** cada ficha gira al caer en vez de encogerse, con un pequeño rebote al tumbarse; la cámara puede seguir la ficha que cae en los niveles grandes.
+- **Campanas:** balanceo al sonar, ondas y partículas (destellos amarillos); la doble, con las dos campanas chocando.
+- **Sombreado y profundidad:** sombra suave bajo las fichas de pie, relieve en las caras, luz en el tablero.
+- **Interfaz:** botones que se hunden con curva suave (140 ms, `cubic-bezier(.22,1,.36,1)`), ventanas que entran con escala, estrellas que aparecen una a una, contador que baja animado.
+- **Celebración** al superar un nivel (confeti de fichas) y al completar un barrio.
+- **Pío** animado (vuela, señala, celebra) y el **mapa** con el camino de fichas.
+- **Fondo** con algo de textura o ilustración del barrio, sin perder la calma de Dominó Pop v2.
+- **Accesibilidad:** todo lo anterior respetará «reducir movimiento».
+
 ## 7. Pendiente
 
 - ~~Instalar Godot 4.7.2~~ **Hecho** (17/11/2026).
@@ -135,6 +148,7 @@ godot/
 - ~~Sonido~~ **Hecho** (18/11/2026): sonidos propios por síntesis (sin licencias de terceros), vibración en las campanas, cámara lenta (destacada tras 5 fallos), ajustes de sonido y vibración, registro local de intentos y resumen para quien dirige la prueba. Protocolo de la prueba en [PRUEBA_PUERTA_0.md](PRUEBA_PUERTA_0.md).
 - ~~Fuentes y APK~~ **Hecho** (18/11/2026), con permiso del cliente para las descargas: fuentes Lilita One y Nunito (OFL), plantillas de Android de Godot 4.7.2, Java 17 y Android SDK (el cliente aceptó la licencia del SDK). APK de depuración comprobado con aapt2 y apksigner: `com.dingfall.prueba`, arm64, solo el permiso VIBRATE, objetivo Android 16 (API 36), icono provisional propio.
 - ~~Pantalla de juego con el diseño acordado~~ **Hecha** (18/11/2026): HUD con volver, «Nivel N» y pastilla de fichas; tarjeta del objetivo; mandos de la maqueta (deshacer, «¡A tumbar!» y bombilla); botones con borde, sombra sólida y labio; fichas, empujador verde y campanas con las medidas de la maqueta; marcas de cuenta cada 4 fichas con el orden de caída; ventana de resultado con estrellas dibujadas y premio; lista de niveles con nodos de mapa. Pendiente para la entrega 2: mapa del barrio, Pío y cuerda.
+- ~~Entrega 3: generador y Caída del Día~~ **Hecha** (18/11/2026), adelantada a la entrega 2 por decisión del cliente (primero el juego, luego la estética y el mapa). Generador por construcción en [prototipos/generador/](../../prototipos/generador/) con solucionador perezoso de atajos y dificultad prevista; **la Caída del Día viaja como datos** (un año, 570 KB) en vez de generarse en el teléfono, para que sea idéntica en todos sin servidor. En el juego: botón en la lista de niveles, objetivo según el tipo, estrellas del día y «Copiar resultado» (sin enlaces; si se usó la pista, lo dice).
 - **Para la puerta 0:** instalar el APK en un Android de gama media y hacer la prueba con 10–15 personas ([PRUEBA_PUERTA_0.md](PRUEBA_PUERTA_0.md)).
 - **Para Google Play (más adelante):** AAB con compilación Gradle (requiere el NDK r28b y CMake, unos 1–2 GB más), identificador definitivo de la app y clave de firma de publicación guardada fuera del repositorio.
 - **Ajustar en el prototipo** los valores de la simulación (PASO, GIRO_MAXIMO, RADIO_CAMPANA, TOLERANCIA_DOBLE): ahora son una hipótesis razonable, no un dato.
