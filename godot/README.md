@@ -11,7 +11,7 @@ Motor: **Godot 4.7.2** (MIT). Arquitectura en [docs/fase8/ARQUITECTURA_BORRADOR.
 | `autoload/` | `estado.gd` (autoload «Estado»): el nivel del Taller que se abre al cambiar de pantalla y el borrador. `tema.gd` (autoload «Tema»): elige el tema guardado al arrancar |
 | `escenas/partida/` | Pantalla de juego de la entrega 1: tablero, dedo, caída animada, resultado y lista de niveles |
 | `iconos/` | Icono provisional (y su versión adaptable de Android), generado por `prototipos/icono/generar_icono.py` |
-| `fuentes/` | Lilita One y Nunito con sus licencias SIL OFL |
+| `fuentes/` | Las letras de los 11 temas (Lilita One y Nunito para Dominó Pop; 13 familias más para el resto), todas SIL OFL con su licencia. Las japonesas, recortadas a caracteres latinos |
 | `sonidos/` | Sonidos propios generados por síntesis (`prototipos/sonido/generar_sonidos.py`). No se editan a mano |
 | `datos/` | Niveles, casos compartidos, el calendario de la Caída del Día y los temas. **No se editan a mano**: los generan `prototipos/simulacion/niveles_entrega1.py`, `prototipos/generador/generador.py` y `prototipos/generador/temas.py` |
 | `pruebas/` | `ejecutar_pruebas.gd`: todas las pruebas sin pantalla |

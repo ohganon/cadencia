@@ -9,6 +9,7 @@ extends Control
 
 const Taller = preload("res://nucleo/taller.gd")
 const Temas = preload("res://nucleo/temas.gd")
+const Fuentes = preload("res://escenas/comun/fuentes.gd")
 const Progreso = preload("res://nucleo/progreso.gd")
 const TableroEditor = preload("res://escenas/taller/tablero_editor.gd")
 const BotonPop = preload("res://escenas/comun/boton_pop.gd")
@@ -47,6 +48,7 @@ var campo_codigo: LineEdit
 var error_codigo: Label
 var lista_caja: VBoxContainer
 var fuente_titulos: Font
+var fuente_botones: Font
 var fuente_texto: Font
 var fuente_negrita: Font
 
@@ -190,20 +192,12 @@ func _rellenar_lista() -> void:
 # ---------------------------------------------------------------- interfaz
 
 func _fuentes() -> void:
-	var ts := TextServerManager.get_primary_interface()
-	var nunito: FontFile = load("res://fuentes/Nunito-wght.ttf")
-	var texto := FontVariation.new()
-	texto.base_font = nunito
-	texto.variation_opentype = {ts.name_to_tag("wght"): 700}
-	fuente_texto = texto
-	var negrita := FontVariation.new()
-	negrita.base_font = nunito
-	negrita.variation_opentype = {ts.name_to_tag("wght"): 900}
-	fuente_negrita = negrita
-	var titulos := FontVariation.new()
-	titulos.base_font = load("res://fuentes/LilitaOne-Regular.ttf")
-	titulos.fallbacks = [texto]
-	fuente_titulos = titulos
+	# Las letras del tema activo (escenas/comun/fuentes.gd)
+	var f := Fuentes.del_tema()
+	fuente_titulos = f["titulos"]
+	fuente_botones = f["botones"]
+	fuente_texto = f["texto"]
+	fuente_negrita = f["negrita"]
 	var tema := Theme.new()
 	tema.default_font = fuente_texto
 	theme = tema
@@ -380,7 +374,7 @@ func _boton(texto: String, principal: bool, tam := 36) -> Control:
 	b.texto = texto
 	b.principal = principal
 	b.tam_fuente = tam
-	b.fuente = fuente_titulos
+	b.fuente = fuente_botones
 	return b
 
 

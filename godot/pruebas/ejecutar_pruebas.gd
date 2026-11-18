@@ -14,7 +14,7 @@ extends SceneTree
 
 const SCRIPTS := ["res://nucleo/temas.gd", "res://autoload/tema.gd", "res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
-	"res://escenas/comun/iconos.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd",
+	"res://escenas/comun/iconos.gd", "res://escenas/comun/fuentes.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd",
 	"res://autoload/estado.gd", "res://escenas/taller/tablero_editor.gd", "res://escenas/taller/taller.gd",
 	"res://nucleo/cuerda.gd", "res://escenas/mapa/camino.gd", "res://escenas/mapa/mapa.gd"]
 
@@ -147,6 +147,21 @@ func pruebas_temas(Temas: GDScript) -> void:
 		comprobar(Temas.contraste(tab["tinta"], fondo_tablero) >= 3.0, "%s: muros y postes se ven sobre el tablero" % datos["id"])
 		comprobar(Temas.contraste(tab["ficha"], fondo_tablero) >= 1.3 or tab["borde_ficha"].a > 0.3 or tab["sombra"].a >= 0.15,
 			"%s: las fichas se distinguen del tablero (color, borde o sombra)" % datos["id"])
+	var Fuentes: GDScript = load("res://escenas/comun/fuentes.gd")
+	for datos in todos:
+		var letras: Dictionary = datos.get("letras", {})
+		var faltan := []
+		for uso in ["titulos", "botones", "texto", "negrita"]:
+			var archivo := "res://fuentes/" + str(letras.get(uso, {}).get("archivo", ""))
+			if not ResourceLoader.exists(archivo):
+				faltan.append(uso)
+			elif not FileAccess.file_exists("res://fuentes/OFL-" + archivo.get_file().get_slice("-", 0).get_basename() + ".txt"):
+				faltan.append(uso + " (sin licencia)")
+		comprobar(faltan.is_empty(), "%s: sus fuentes están, con su licencia OFL" % datos["id"], str(faltan))
+		var f: Dictionary = Fuentes.de(letras)
+		var muestra := "Nivel superado ¡ñ «»"
+		comprobar(f["titulos"].get_string_size(muestra, HORIZONTAL_ALIGNMENT_LEFT, -1, 30).x > 50,
+			"%s: la letra de títulos escribe en castellano" % datos["id"])
 	Temas.usar("no-existe")
 	comprobar(Temas.id_activo() == "pop", "un tema desconocido vuelve a Dominó Pop")
 	Temas.usar("nocturno")

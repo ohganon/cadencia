@@ -12,8 +12,9 @@ Qué hace con cada tema:
 - Labio de los botones: el color del «inset» de la sombra de la maqueta; si no hay, se oscurece.
 - Campana normal y dorada: la dorada usa el color de la estrella del tema y la normal, el de la
   campana o el badajo (el que no coincida con la dorada). Dos temas se ajustan a mano.
-- Letras: la maqueta usa fuentes distintas por tema. Hasta que se descarguen (necesita permiso), el
-  juego usa Lilita One y Nunito en todos; la fuente prevista queda anotada en "fuentes_previstas".
+- Letras: las de la maqueta (todas SIL OFL, en godot/fuentes con su licencia), con cuatro usos:
+  títulos, botones, texto y negrita, cada uno con su archivo y su peso (eje «wght» de las
+  fuentes variables; las fijas lo ignoran). Las japonesas van recortadas a caracteres latinos.
 """
 import json
 import pathlib
@@ -27,6 +28,37 @@ SALIDA = RAIZ / "godot" / "datos" / "temas.json"
 CAMPANAS = {"bauhaus": ["#1b4fbf", "#f7c600"], "brutal": ["#000000", "#c6ff00"],
             "nordico": ["#2f5d50", "#d8b98e"]}
 TEXTOS = ["ya", "superado", "sinTitulo"]
+
+
+def _l(archivo, peso, **ejes):
+    return {"archivo": archivo, "peso": peso, "ejes": ejes}
+
+
+def _familia(archivo, titulos, botones, texto, negrita, **ejes_titulos):
+    """Una sola fuente variable para todo, con pesos distintos."""
+    return {"titulos": _l(archivo, titulos, **ejes_titulos), "botones": _l(archivo, botones),
+            "texto": _l(archivo, texto), "negrita": _l(archivo, negrita)}
+
+
+# Letras de cada tema (maqueta: --fd títulos, --fu resto, --wd y --wb pesos). El texto corrido va
+# a 500 como mínimo para que se lea bien en el móvil.
+LETRAS = {
+    "pop": {"titulos": _l("LilitaOne-Regular.ttf", 400), "botones": _l("LilitaOne-Regular.ttf", 400),
+            "texto": _l("Nunito-wght.ttf", 700), "negrita": _l("Nunito-wght.ttf", 900)},
+    "mesa": _familia("Manrope-wght.ttf", 800, 800, 600, 800),
+    "calma": _familia("Jost-wght.ttf", 400, 500, 500, 700),
+    "grafico": _familia("Archivo-wdth-wght.ttf", 900, 800, 500, 800, wdth=75),
+    "negro": {"titulos": _l("BebasNeue-Regular.ttf", 400), "botones": _l("Barlow-Bold.ttf", 700),
+              "texto": _l("Barlow-Regular.ttf", 400), "negrita": _l("Barlow-Bold.ttf", 700)},
+    "tinta": {"titulos": _l("ShipporiMincho-Bold-latin.ttf", 700), "botones": _l("ZenKakuGothicNew-Bold-latin.ttf", 700),
+              "texto": _l("ZenKakuGothicNew-Medium-latin.ttf", 500), "negrita": _l("ZenKakuGothicNew-Bold-latin.ttf", 700)},
+    "bauhaus": _familia("LeagueSpartan-wght.ttf", 800, 800, 500, 800),
+    "brutal": _familia("FamiljenGrotesk-wght.ttf", 700, 700, 500, 700),
+    "riso": _familia("BricolageGrotesque-opsz-wdth-wght.ttf", 800, 800, 500, 800),
+    "nocturno": {"titulos": _l("RedHatDisplay-wght.ttf", 900), "botones": _l("RedHatText-wght.ttf", 700),
+                 "texto": _l("RedHatText-wght.ttf", 500), "negrita": _l("RedHatText-wght.ttf", 700)},
+    "nordico": _familia("Figtree-wght.ttf", 800, 700, 500, 800),
+}
 
 
 def color(css):
@@ -118,7 +150,7 @@ def tema(t, base):
     tinta = max([color(v["--marco"]), color(v["--texto"])], key=lambda c: contraste(c, fondo_tablero))
     return {
         "id": t["id"], "nombre": t["nombre"], "desc": t.get("desc", ""), "club": not t.get("defecto", False),
-        "fuentes_previstas": [t.get("fd", ""), t.get("fu", "")],
+        "letras": LETRAS[t["id"]],
         "radio_boton": min(px(v.get("--rb"), 16), 999), "radio_ventana": px(v.get("--rventana"), 22),
         "sombra_solida": bool(re.search(r"(^|,)\s*-?\d+(px)? -?\d+px 0 #", re.sub(r"inset[^,]*", "", sombra))),
         "textos": textos,

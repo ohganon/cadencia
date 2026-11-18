@@ -7,8 +7,8 @@
 ## - mandos: deshacer (mantener = borrar todo), «¡A tumbar!» y la bombilla de la pista;
 ## - ventana de resultado con título, estrellas dibujadas (la central más grande), el dato que
 ##   importa, el premio y Repetir / Siguiente.
-## La interfaz se construye en código para que se pueda revisar como texto. Fuentes: Lilita One y
-## Nunito (SIL OFL; las licencias están en res://fuentes/).
+## La interfaz se construye en código para que se pueda revisar como texto. Fuentes: las del tema
+## activo (escenas/comun/fuentes.gd; todas SIL OFL, con sus licencias en res://fuentes/).
 ##
 ## Modo demostración, para capturas automáticas (ver godot/README.md):
 ##   Godot_v4.7.2-stable_win64_console.exe --path godot --resolution 540x960 -- --demo=7 --captura=C:/ruta/prefijo [--incompleto | --recto]
@@ -17,6 +17,7 @@ extends Control
 
 const Partida = preload("res://nucleo/partida.gd")
 const Temas = preload("res://nucleo/temas.gd")
+const Fuentes = preload("res://escenas/comun/fuentes.gd")
 const Progreso = preload("res://nucleo/progreso.gd")
 const Registro = preload("res://nucleo/registro.gd")
 const Tablero = preload("res://escenas/partida/tablero.gd")
@@ -92,7 +93,8 @@ var ventana_premio: HBoxContainer
 var ventana_premio_texto: Label
 var boton_repetir: Control
 var boton_siguiente: Control
-var fuente_titulos: Font        # Lilita One
+var fuente_titulos: Font
+var fuente_botones: Font
 var fuente_texto: Font          # Nunito 700
 var fuente_negrita: Font        # Nunito 900
 var _pista_paso := 0
@@ -476,21 +478,12 @@ func _cerrar_ventanas() -> void:
 # ---------------------------------------------------------------- construcción de la interfaz
 
 func _fuentes() -> void:
-	var nunito: FontFile = load("res://fuentes/Nunito-wght.ttf")
-	var lilita: FontFile = load("res://fuentes/LilitaOne-Regular.ttf")
-	var ts := TextServerManager.get_primary_interface()
-	var texto := FontVariation.new()
-	texto.base_font = nunito
-	texto.variation_opentype = {ts.name_to_tag("wght"): 700}
-	fuente_texto = texto
-	var negrita := FontVariation.new()
-	negrita.base_font = nunito
-	negrita.variation_opentype = {ts.name_to_tag("wght"): 900}
-	fuente_negrita = negrita
-	var titulos := FontVariation.new()
-	titulos.base_font = lilita
-	titulos.fallbacks = [texto]          # signos que Lilita no tiene
-	fuente_titulos = titulos
+	# Las letras del tema activo (escenas/comun/fuentes.gd)
+	var f := Fuentes.del_tema()
+	fuente_titulos = f["titulos"]
+	fuente_botones = f["botones"]
+	fuente_texto = f["texto"]
+	fuente_negrita = f["negrita"]
 	var tema := Theme.new()
 	tema.default_font = fuente_texto
 	theme = tema
@@ -709,7 +702,7 @@ func _boton(texto: String, principal: bool, tam := 36) -> Control:
 	b.texto = texto
 	b.principal = principal
 	b.tam_fuente = tam
-	b.fuente = fuente_titulos
+	b.fuente = fuente_botones
 	return b
 
 

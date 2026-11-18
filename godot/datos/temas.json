@@ -6,10 +6,28 @@
    "nombre": "Dominó Pop",
    "desc": "Juego casual con carácter: azul piscina, fichas de marfil, botones que se hunden un poco al pulsar y Pío, el pájaro de hojalata, señalando el camino. El color fuerte se guarda para lo importante.",
    "club": false,
-   "fuentes_previstas": [
-    "\"Lilita One\",sans-serif",
-    "\"Nunito\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "LilitaOne-Regular.ttf",
+     "peso": 400,
+     "ejes": {}
+    },
+    "botones": {
+     "archivo": "LilitaOne-Regular.ttf",
+     "peso": 400,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "Nunito-wght.ttf",
+     "peso": 700,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "Nunito-wght.ttf",
+     "peso": 900,
+     "ejes": {}
+    }
+   },
    "radio_boton": 16,
    "radio_ventana": 22,
    "sombra_solida": true,
@@ -67,10 +85,28 @@
    "nombre": "Mesa de juego",
    "desc": "El dominó de siempre, sobre una mesa: tapete de pizarra, fichas de hueso con sombra real, detalles de latón y un rojo lacre para las campanas. Pensado para parecer un juego de mesa premium.",
    "club": true,
-   "fuentes_previstas": [
-    "\"Manrope\",sans-serif",
-    "\"Manrope\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "Manrope-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    },
+    "botones": {
+     "archivo": "Manrope-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "Manrope-wght.ttf",
+     "peso": 600,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "Manrope-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    }
+   },
    "radio_boton": 12,
    "radio_ventana": 18,
    "sombra_solida": false,
@@ -128,10 +164,28 @@
    "nombre": "Calma premium",
    "desc": "Un juego para respirar: degradados de atardecer, fichas blancas mate con sombra larga, mucho espacio y una sola nota de color por barrio. Texto mínimo y tranquilo.",
    "club": true,
-   "fuentes_previstas": [
-    "\"Jost\",sans-serif",
-    "\"Jost\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "Jost-wght.ttf",
+     "peso": 400,
+     "ejes": {}
+    },
+    "botones": {
+     "archivo": "Jost-wght.ttf",
+     "peso": 500,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "Jost-wght.ttf",
+     "peso": 500,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "Jost-wght.ttf",
+     "peso": 700,
+     "ejes": {}
+    }
+   },
    "radio_boton": 999,
    "radio_ventana": 28,
    "sombra_solida": false,
@@ -189,10 +243,30 @@
    "nombre": "Gráfico y limpio",
    "desc": "Como los pasatiempos de un periódico: blanco roto, fichas negras, mostaza y cobalto como únicos acentos, bordes de 2 px y una grotesca condensada muy firme.",
    "club": true,
-   "fuentes_previstas": [
-    "\"Archivo\",sans-serif",
-    "\"Archivo\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "Archivo-wdth-wght.ttf",
+     "peso": 900,
+     "ejes": {
+      "wdth": 75
+     }
+    },
+    "botones": {
+     "archivo": "Archivo-wdth-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "Archivo-wdth-wght.ttf",
+     "peso": 500,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "Archivo-wdth-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    }
+   },
    "radio_boton": 4,
    "radio_ventana": 6,
    "sombra_solida": false,
@@ -250,10 +324,28 @@
    "nombre": "Cine negro",
    "desc": "Blanco y negro de película de detectives: alto contraste, grano fino y un único rojo para lo importante. Títulos altos y estrechos como un cartel de cine.",
    "club": true,
-   "fuentes_previstas": [
-    "\"Bebas Neue\",sans-serif",
-    "\"Barlow\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "BebasNeue-Regular.ttf",
+     "peso": 400,
+     "ejes": {}
+    },
+    "botones": {
+     "archivo": "Barlow-Bold.ttf",
+     "peso": 700,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "Barlow-Regular.ttf",
+     "peso": 400,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "Barlow-Bold.ttf",
+     "peso": 700,
+     "ejes": {}
+    }
+   },
    "radio_boton": 2,
    "radio_ventana": 4,
    "sombra_solida": false,
@@ -311,10 +403,28 @@
    "nombre": "Tinta japonesa",
    "desc": "Papel de arroz gris, trazos de tinta sumi y un sello bermellón como único color. Mucho vacío, ritmo pausado y textos muy breves.",
    "club": true,
-   "fuentes_previstas": [
-    "\"Shippori Mincho\",serif",
-    "\"Zen Kaku Gothic New\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "ShipporiMincho-Bold-latin.ttf",
+     "peso": 700,
+     "ejes": {}
+    },
+    "botones": {
+     "archivo": "ZenKakuGothicNew-Bold-latin.ttf",
+     "peso": 700,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "ZenKakuGothicNew-Medium-latin.ttf",
+     "peso": 500,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "ZenKakuGothicNew-Bold-latin.ttf",
+     "peso": 700,
+     "ejes": {}
+    }
+   },
    "radio_boton": 0,
    "radio_ventana": 2,
    "sombra_solida": false,
@@ -372,10 +482,28 @@
    "nombre": "Bauhaus",
    "desc": "Formas puras y colores primarios: círculo rojo, cuadrado azul y triángulo amarillo sobre blanco y negro. Geometría honesta y tipografía geométrica gruesa.",
    "club": true,
-   "fuentes_previstas": [
-    "\"League Spartan\",sans-serif",
-    "\"League Spartan\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "LeagueSpartan-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    },
+    "botones": {
+     "archivo": "LeagueSpartan-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "LeagueSpartan-wght.ttf",
+     "peso": 500,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "LeagueSpartan-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    }
+   },
    "radio_boton": 0,
    "radio_ventana": 0,
    "sombra_solida": false,
@@ -433,10 +561,28 @@
    "nombre": "Brutalista",
    "desc": "Web sin maquillaje: gris hormigón, bordes negros gruesos, sombras duras y un verde ácido para la acción. Directo y muy reconocible en redes.",
    "club": true,
-   "fuentes_previstas": [
-    "\"Familjen Grotesk\",sans-serif",
-    "\"Familjen Grotesk\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "FamiljenGrotesk-wght.ttf",
+     "peso": 700,
+     "ejes": {}
+    },
+    "botones": {
+     "archivo": "FamiljenGrotesk-wght.ttf",
+     "peso": 700,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "FamiljenGrotesk-wght.ttf",
+     "peso": 500,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "FamiljenGrotesk-wght.ttf",
+     "peso": 700,
+     "ejes": {}
+    }
+   },
    "radio_boton": 0,
    "radio_ventana": 0,
    "sombra_solida": true,
@@ -494,10 +640,28 @@
    "nombre": "Risografía",
    "desc": "Como un fanzine impreso en risógrafo: rosa fluorescente y azul verdoso sobre papel con trama, colores que se pisan y un punto artesanal.",
    "club": true,
-   "fuentes_previstas": [
-    "\"Bricolage Grotesque\",sans-serif",
-    "\"Bricolage Grotesque\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "BricolageGrotesque-opsz-wdth-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    },
+    "botones": {
+     "archivo": "BricolageGrotesque-opsz-wdth-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "BricolageGrotesque-opsz-wdth-wght.ttf",
+     "peso": 500,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "BricolageGrotesque-opsz-wdth-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    }
+   },
    "radio_boton": 14,
    "radio_ventana": 18,
    "sombra_solida": true,
@@ -555,10 +719,28 @@
    "nombre": "Nocturno",
    "desc": "Un observatorio de noche: azul medianoche, cielo estrellado discreto, fichas plateadas y las cadenas como constelaciones. Silencioso y algo mágico, sin neones.",
    "club": true,
-   "fuentes_previstas": [
-    "\"Red Hat Display\",sans-serif",
-    "\"Red Hat Text\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "RedHatDisplay-wght.ttf",
+     "peso": 900,
+     "ejes": {}
+    },
+    "botones": {
+     "archivo": "RedHatText-wght.ttf",
+     "peso": 700,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "RedHatText-wght.ttf",
+     "peso": 500,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "RedHatText-wght.ttf",
+     "peso": 700,
+     "ejes": {}
+    }
+   },
    "radio_boton": 999,
    "radio_ventana": 22,
    "sombra_solida": false,
@@ -616,10 +798,28 @@
    "nombre": "Nórdico",
    "desc": "Salón escandinavo: gris verdoso claro, fichas de madera de pino, verde bosque para la acción y esquinas suaves. Cálido, ordenado y sin ruido.",
    "club": true,
-   "fuentes_previstas": [
-    "\"Figtree\",sans-serif",
-    "\"Figtree\",sans-serif"
-   ],
+   "letras": {
+    "titulos": {
+     "archivo": "Figtree-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    },
+    "botones": {
+     "archivo": "Figtree-wght.ttf",
+     "peso": 700,
+     "ejes": {}
+    },
+    "texto": {
+     "archivo": "Figtree-wght.ttf",
+     "peso": 500,
+     "ejes": {}
+    },
+    "negrita": {
+     "archivo": "Figtree-wght.ttf",
+     "peso": 800,
+     "ejes": {}
+    }
+   },
    "radio_boton": 14,
    "radio_ventana": 22,
    "sombra_solida": false,
