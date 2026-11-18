@@ -16,6 +16,7 @@ const Progreso = preload("res://nucleo/progreso.gd")
 const Temas = preload("res://nucleo/temas.gd")
 const Fuentes = preload("res://escenas/comun/fuentes.gd")
 const Pestana = preload("res://escenas/comun/pestana.gd")
+const JuegoResponsable = preload("res://nucleo/juego_responsable.gd")
 const Registro = preload("res://nucleo/registro.gd")
 const Cuerda = preload("res://nucleo/cuerda.gd")
 const BotonPop = preload("res://escenas/comun/boton_pop.gd")
@@ -62,6 +63,10 @@ var ventana_cuerda: PanelContainer
 var texto_espera: Label
 var ventana_ajustes: PanelContainer
 var ventana_apariencia: PanelContainer
+var ventana_responsable: PanelContainer
+var texto_tiempo: Label
+var boton_descanso: Control
+var boton_limite: Control
 var boton_apariencia: Control
 var aviso_prueba: Control            # aviso honesto cuando el tema elegido es del Club
 var boton_sonido: Control
@@ -171,6 +176,7 @@ func _cerrar_ventanas() -> void:
 	ventana_cuerda.visible = false
 	ventana_ajustes.visible = false
 	ventana_apariencia.visible = false
+	ventana_responsable.visible = false
 
 
 func _abrir_apariencia() -> void:
@@ -430,6 +436,7 @@ func _construir() -> void:
 	_construir_sin_cuerda()
 	_construir_ajustes()
 	_construir_apariencia()
+	_construir_responsable()
 
 
 ## Barra de abajo (DESIGN.md: la pestaña activa se marca con una pastilla marfil y no se eleva).
@@ -516,6 +523,9 @@ func _construir_ajustes() -> void:
 	boton_apariencia = _boton("Apariencia", false, 32)
 	boton_apariencia.pulsado.connect(_abrir_apariencia)
 	caja.add_child(boton_apariencia)
+	var b_responsable := _boton("Juego responsable", false, 32)
+	b_responsable.pulsado.connect(_abrir_responsable)
+	caja.add_child(b_responsable)
 	boton_sonido = _boton("Sonido: sí", false, 32)
 	boton_sonido.pulsado.connect(func():
 		progreso.ajustar("sonido", not progreso.ajustes["sonido"])
@@ -554,6 +564,80 @@ func _construir_ajustes() -> void:
 		caja.add_child(b)
 	for h in [b_resumen, resumen_prueba, cerrar]:
 		caja.add_child(h)
+
+
+# ---------------------------------------------------------------- juego responsable
+
+## Ajustes › Juego responsable (P-09, DFA art. 17): tiempo jugado, aviso de descanso y límite diario,
+## todo elegido por el jugador y guardado solo en el teléfono. Dingfall no tiene rachas ni
+## notificaciones; el panel lo dice en vez de enseñar interruptores vacíos.
+func _construir_responsable() -> void:
+	ventana_responsable = _ventana()
+	var caja := VBoxContainer.new()
+	caja.add_theme_constant_override("separation", 16)
+	ventana_responsable.add_child(caja)
+	var t := _etiqueta(48, TINTA, true)
+	t.text = "Juego responsable"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caja.add_child(t)
+	texto_tiempo = _etiqueta(28, TINTA)
+	texto_tiempo.add_theme_font_override("font", fuente_negrita)
+	texto_tiempo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caja.add_child(texto_tiempo)
+	boton_descanso = _boton("Aviso de descanso", false, 30)
+	boton_descanso.pulsado.connect(func():
+		var e := get_node_or_null("/root/Estado")
+		if e != null:
+			e.responsable.descanso = JuegoResponsable.siguiente(JuegoResponsable.DESCANSOS, e.responsable.descanso)
+			e.avisos_descanso = int(e.sesion / (e.responsable.descanso * 60)) if e.responsable.descanso > 0 else 0
+			e.responsable.guardar()
+		_textos_responsable())
+	caja.add_child(boton_descanso)
+	boton_limite = _boton("Límite diario", false, 30)
+	boton_limite.pulsado.connect(func():
+		var e := get_node_or_null("/root/Estado")
+		if e != null:
+			e.responsable.limite = JuegoResponsable.siguiente(JuegoResponsable.LIMITES, e.responsable.limite)
+			e.limite_avisado = ""
+			e.responsable.guardar()
+		_textos_responsable())
+	caja.add_child(boton_limite)
+	var nota := _etiqueta(24, TINTA_SUAVE)
+	nota.text = ("Los avisos salen al empezar un nivel, nunca a mitad, y siempre puedes seguir.\n\n"
+		+ "Dingfall no tiene rachas que se pierdan ni notificaciones. Si algún día las tiene, se podrán apagar aquí.\n\n"
+		+ "Gasto: 0 €. De momento no hay nada que comprar.\n\n"
+		+ "Todo esto se guarda solo en este teléfono.")
+	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	nota.custom_minimum_size = Vector2(560, 0)
+	caja.add_child(nota)
+	var volver := _boton("Volver a Ajustes", true, 34)
+	volver.pulsado.connect(func():
+		ventana_responsable.visible = false
+		_abrir_ajustes())
+	caja.add_child(volver)
+
+
+func _abrir_responsable() -> void:
+	_textos_responsable()
+	ventana_ajustes.visible = false
+	velo.visible = true
+	ventana_responsable.visible = true
+	_centrar(ventana_responsable)
+
+
+func _textos_responsable() -> void:
+	var e := get_node_or_null("/root/Estado")
+	if e == null or e.responsable == null:
+		texto_tiempo.text = ""
+		return
+	texto_tiempo.text = "Hoy: %s · Últimos 7 días: %s" % [JuegoResponsable.texto_tiempo(e.hoy()), JuegoResponsable.texto_tiempo(e.semana())]
+	var d: int = e.responsable.descanso
+	boton_descanso.texto = "Aviso de descanso: " + ("cada %d min" % d if d > 0 else "no")
+	var l: int = e.responsable.limite
+	boton_limite.texto = "Límite diario: " + (JuegoResponsable.texto_tiempo(l * 60) if l > 0 else "no")
+	for b in [boton_descanso, boton_limite]:
+		b.update_minimum_size()
+		b.queue_redraw()
 
 
 ## Ajustes › Apariencia: los 11 temas en dos columnas. Dominó Pop es gratis; los demás son del
@@ -748,6 +832,12 @@ func _demo_si_toca() -> void:
 		await get_tree().create_timer(0.3).timeout
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png(prefijo + "_3_ajustes.png")
+	if args.has("responsable"):
+		_cerrar_ventanas()
+		_abrir_responsable()
+		await get_tree().create_timer(0.3).timeout
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_png(prefijo + "_5_responsable.png")
 	if args.has("apariencia"):
 		_cerrar_ventanas()
 		_abrir_apariencia()

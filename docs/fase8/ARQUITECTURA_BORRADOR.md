@@ -112,7 +112,7 @@ godot/
 | 6 | Accesibilidad completa (alto contraste, tamaño de interfaz, reducción de movimiento) ✅ (18/11/2026: también lector de pantalla con AccessKit de Godot; falta probarlo con TalkBack y VoiceOver; el tablero en sí no se puede jugar sin ver) | — |
 | 7 | Anuncios recompensados e intersticiales (AdMob) con su consentimiento | — |
 | 8 | Club y packs de fichas (godot-iap) | Puerta 1: prueba cerrada |
-| 9 | Analítica y panel de juego responsable | Puerta 2: lanzamiento suave |
+| 9 | Analítica y panel de juego responsable (panel ✅ 18/11/2026, local; falta la analítica, que necesita cuenta y consentimiento) | Puerta 2: lanzamiento suave |
 
 ## 6. Herramientas (licencia comprobada y coste)
 

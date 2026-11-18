@@ -12,7 +12,7 @@
 ## Es un ejecutor mínimo sin dependencias. GUT se añadirá cuando haga falta probar escenas.
 extends SceneTree
 
-const SCRIPTS := ["res://nucleo/temas.gd", "res://autoload/tema.gd", "res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
+const SCRIPTS := ["res://nucleo/temas.gd", "res://autoload/tema.gd", "res://nucleo/juego_responsable.gd", "res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
 	"res://escenas/comun/iconos.gd", "res://escenas/comun/fuentes.gd", "res://escenas/comun/pestana.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd",
 	"res://autoload/estado.gd", "res://escenas/taller/tablero_editor.gd", "res://escenas/taller/taller.gd",
@@ -44,6 +44,7 @@ func _init() -> void:
 	pruebas_cuerda(load("res://nucleo/cuerda.gd"), progreso)
 	pruebas_barrio(sim)
 	pruebas_temas(load("res://nucleo/temas.gd"))
+	pruebas_responsable(load("res://nucleo/juego_responsable.gd"))
 	terminar()
 
 
@@ -208,6 +209,43 @@ func pruebas_temas(Temas: GDScript) -> void:
 			sin_nombre.append(icono)
 		b.free()
 	comprobar(sin_nombre.is_empty(), "los botones de solo icono tienen nombre para el lector de pantalla", str(sin_nombre))
+
+
+## Juego responsable: tiempo por día y semana, olvido de días viejos, avisos y archivo dañado.
+func pruebas_responsable(JR: GDScript) -> void:
+	var ruta := "user://prueba_juego_responsable.json"
+	if FileAccess.file_exists(ruta):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
+	var j = JR.new(ruta)
+	comprobar(j.descanso == 0 and j.limite == 0, "sin archivo, ni avisos ni límite (todo desactivado por defecto)")
+	j.sumar("2026-11-18", 600)
+	j.sumar("2026-11-18", 300.4)
+	j.sumar("2026-11-12", 1200)
+	j.sumar("2026-11-11", 999)
+	comprobar(j.hoy("2026-11-18") == 900, "suma el tiempo de un día")
+	comprobar(j.semana("2026-11-18") == 2100, "los últimos 7 días incluyen hoy y no el día 8")
+	j.sumar("2026-12-01", 60)
+	comprobar(not j.dias.has("2026-11-12") and j.dias.has("2026-12-01"), "solo se guardan los últimos 14 días")
+	j.descanso = 30
+	j.limite = 60
+	j.guardar()
+	var k = JR.new(ruta)
+	comprobar(k.descanso == 30 and k.limite == 60 and k.hoy("2026-12-01") == 60, "los ajustes y el tiempo se guardan")
+	comprobar(not k.limite_alcanzado("2026-12-01"), "con 1 min no se llega a un límite de 60")
+	k.sumar("2026-12-01", 3540)
+	comprobar(k.limite_alcanzado("2026-12-01"), "a los 60 min se llega al límite")
+	comprobar(not JR.toca_descanso(1799, 30, 0) and JR.toca_descanso(1800, 30, 0) and not JR.toca_descanso(1900, 30, 1)
+		and JR.toca_descanso(3600, 30, 1) and not JR.toca_descanso(99999, 0, 0),
+		"el descanso se sugiere cada intervalo completo, y nunca si está apagado")
+	comprobar(JR.texto_tiempo(720) == "12 min" and JR.texto_tiempo(3600) == "1 h" and JR.texto_tiempo(7500) == "2 h 05 min",
+		"el tiempo se escribe en minutos y horas")
+	comprobar(JR.siguiente(JR.DESCANSOS, 0) == 20 and JR.siguiente(JR.DESCANSOS, 60) == 0, "los botones recorren las opciones y vuelven a «no»")
+	var f := FileAccess.open(ruta, FileAccess.WRITE)
+	f.store_string("{roto")
+	f.close()
+	var m = JR.new(ruta)
+	comprobar(m.dias.is_empty() and m.descanso == 0, "un archivo dañado no rompe nada")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
 
 
 func terminar() -> void:

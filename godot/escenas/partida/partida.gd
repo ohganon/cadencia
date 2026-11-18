@@ -85,6 +85,12 @@ var boton_pista: Control
 var boton_lento: Control
 var velo: ColorRect
 var ventana: PanelContainer
+## Aviso de juego responsable (descanso o límite diario que eligió el jugador)
+var ventana_aviso: PanelContainer
+var aviso_titulo: Label
+var aviso_texto: Label
+var aviso_seguir: Control
+var aviso_parar: Control
 var ventana_titulo: Label
 var ventana_estrellas: Control
 var ventana_dato: Label
@@ -216,6 +222,38 @@ func _abrir(n: Dictionary, texto_titulo: String) -> void:
 		objetivo.text += " [b]Extra:[/b] la campana dorada da la tercera estrella."
 	_cerrar_ventanas()
 	_actualizar()
+	if modo_taller == "":
+		_comprobar_aviso()
+
+
+## Al empezar un nivel, el aviso de descanso o de límite diario si el jugador los activó y toca.
+## Nunca a mitad de una partida, y siempre se puede seguir.
+func _comprobar_aviso(forzado := "") -> void:
+	var estado := get_node_or_null("/root/Estado")
+	var cual := forzado
+	if cual == "" and estado != null and estado.has_method("aviso_pendiente"):
+		cual = estado.aviso_pendiente()
+	if cual == "":
+		return
+	var JR := preload("res://nucleo/juego_responsable.gd")
+	if cual == "limite":
+		var minutos: int = estado.responsable.limite if estado != null and estado.responsable.limite > 0 else 60
+		aviso_titulo.text = "Tu límite de hoy"
+		aviso_texto.text = "Elegiste jugar como mucho %s al día y ya has llegado. Puedes seguir si quieres; mañana la cuenta empieza de cero." % JR.texto_tiempo(minutos * 60)
+		aviso_parar.texto = "Parar por hoy"
+		aviso_seguir.texto = "Seguir un poco"
+	else:
+		var jugado: int = int(estado.sesion) if estado != null and estado.sesion >= 60 else 1800     # 30 min en la demo
+		aviso_titulo.text = "¿Un descanso?"
+		aviso_texto.text = "Llevas %s jugando seguido. Tu progreso está guardado: puedes volver cuando quieras." % JR.texto_tiempo(jugado)
+		aviso_parar.texto = "Ir al mapa"
+		aviso_seguir.texto = "Seguir jugando"
+	for b in [aviso_parar, aviso_seguir]:
+		b.update_minimum_size()
+		b.queue_redraw()
+	velo.visible = true
+	ventana_aviso.visible = true
+	ventana_aviso.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 
 
 func _actualizar() -> void:
@@ -479,6 +517,8 @@ func _sonar(nombre: String, tono := 1.0, volumen_db := 0.0) -> void:
 func _cerrar_ventanas() -> void:
 	velo.visible = false
 	ventana.visible = false
+	if ventana_aviso != null:
+		ventana_aviso.visible = false
 
 
 # ---------------------------------------------------------------- construcción de la interfaz
@@ -621,6 +661,7 @@ func _construir() -> void:
 	add_child(velo)
 
 	_construir_resultado()
+	_construir_aviso()
 
 
 func _construir_resultado() -> void:
@@ -661,6 +702,27 @@ func _construir_resultado() -> void:
 	var aire := Control.new()
 	aire.custom_minimum_size = Vector2(0, 8)
 	for h in [ventana_titulo, ventana_estrellas, ventana_dato, ventana_detalle, ventana_premio, aire, fila]:
+		caja.add_child(h)
+
+
+func _construir_aviso() -> void:
+	ventana_aviso = _ventana()
+	ventana_aviso.custom_minimum_size = Vector2(600, 0)
+	var caja := VBoxContainer.new()
+	caja.add_theme_constant_override("separation", 16)
+	ventana_aviso.add_child(caja)
+	aviso_titulo = _etiqueta(48, TINTA, true)
+	aviso_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	aviso_texto = _etiqueta(28, TINTA_SUAVE)
+	aviso_texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	aviso_texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	aviso_texto.custom_minimum_size = Vector2(530, 0)
+	# «Parar» es el botón principal: el aviso existe para ayudar a parar, no para retener
+	aviso_parar = _boton("Parar por hoy", true, 34)
+	aviso_parar.pulsado.connect(func(): get_tree().change_scene_to_file(ESCENA_MAPA))
+	aviso_seguir = _boton("Seguir jugando", false, 32)
+	aviso_seguir.pulsado.connect(_cerrar_ventanas)
+	for h in [aviso_titulo, aviso_texto, aviso_parar, aviso_seguir]:
 		caja.add_child(h)
 
 
@@ -744,6 +806,13 @@ func _demo_si_toca() -> void:
 		return
 	var prefijo: String = args.get("captura", "user://captura")
 	await get_tree().process_frame
+	if args.has("aviso"):
+		# Solo el aviso de juego responsable («descanso» o «limite»), con su captura
+		_comprobar_aviso(args["aviso"])
+		await get_tree().create_timer(0.3).timeout
+		await _capturar(prefijo + "_aviso.png")
+		get_tree().quit()
+		return
 	if args.has("diario"):
 		cargar_diario(args.get("fecha", ""))
 	elif args.has("codigo"):
