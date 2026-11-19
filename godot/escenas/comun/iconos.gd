@@ -99,6 +99,9 @@ static func _dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color: Color) ->
 			var lado := rect.size.x * 0.72
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(0, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(rect.size.x - lado, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
+		"muelle":                         # muelle: zigzag y el arco del salto
+			_trazos(ci, rect, [[Vector2(5, 21), Vector2(9, 18), Vector2(5, 15), Vector2(9, 12)],
+				[Vector2(7, 10), Vector2(11, 4), Vector2(17, 4), Vector2(20, 10)], [Vector2(20, 14), Vector2(20, 21)]])
 		"espiral":                        # espiral de retardo
 			var c := rect.get_center()
 			var puntos := []

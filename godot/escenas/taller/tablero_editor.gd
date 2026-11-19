@@ -9,7 +9,10 @@ signal editado
 signal aviso(texto: String)
 
 const Partida = preload("res://nucleo/partida.gd")
-const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "espirales": 4}
+const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "espirales": 4, "muelles": 4}
+## Salto de un muelle nuevo, y cuánto sube al tocar su entrada (de 2 en 2 hasta 20, y vuelta a 2)
+const SALTO_NUEVO := 6
+const SALTO_MAXIMO := 20
 ## Retraso de una espiral nueva, y cuánto sube al tocarla (de 2 en 2 hasta 12, y vuelta a 2)
 const RETARDO_NUEVO := 4
 const RETARDO_MAXIMO := 12
@@ -48,12 +51,14 @@ func _gui_input(evento: InputEvent) -> void:
 		if evento.pressed:
 			if herramienta == "puerta" and _cambiar_ritmo(p):
 				return
-			if herramienta in ["muro", "puerta"]:
+			if herramienta == "muelle" and _cambiar_salto(p):
+				return
+			if herramienta in ["muro", "puerta", "muelle"]:
 				_muro_desde = p
 				_muro_hasta = p
 			else:
 				_aplicar(p)
-		elif herramienta in ["muro", "puerta"] and _muro_desde != null:
+		elif herramienta in ["muro", "puerta", "muelle"] and _muro_desde != null:
 			_terminar_muro()
 		accept_event()
 	elif evento is InputEventMouseMotion and _muro_desde != null:
@@ -116,6 +121,9 @@ func _aplicar(p: Array) -> void:
 
 
 func _terminar_muro() -> void:
+	if herramienta == "muelle":
+		_terminar_muelle()
+		return
 	var a: Array = _muro_desde
 	var b: Array = _muro_hasta
 	_muro_desde = null
@@ -166,6 +174,10 @@ func _borrar_cerca(p: Array) -> bool:
 	if espiral >= 0:
 		nivel["e"].remove_at(espiral)
 		return true
+	var muelle := _muelle_cerca(p)
+	if muelle >= 0:
+		nivel["ml"].remove_at(muelle)
+		return true
 	var muro := -1
 	var muro_d := 4.0
 	for k in nivel["mu"].size():
@@ -177,7 +189,7 @@ func _borrar_cerca(p: Array) -> bool:
 	if muro >= 0:
 		nivel["mu"].remove_at(muro)
 		return true
-	aviso.emit("Toca una campana, una puerta, una espiral o un muro para quitarlo.")
+	aviso.emit("Toca una campana, una puerta, una espiral, un muelle o un muro para quitarlo.")
 	return false
 
 
@@ -203,6 +215,49 @@ func _cambiar_ritmo(p: Array) -> bool:
 	_refrescar()
 	editado.emit()
 	return true
+
+
+## Muelle nuevo: se arrastra de la entrada a la salida.
+func _terminar_muelle() -> void:
+	var desde: Array = _muro_desde
+	var hasta: Array = _muro_hasta
+	_muro_desde = null
+	_muro_hasta = null
+	if not nivel.has("ml"):
+		nivel["ml"] = []
+	if Sim.dist(desde, hasta) < 2 * Sim.RADIO_MUELLE + 2:
+		aviso.emit("Arrastra desde la entrada hasta donde quieras que salga la cadena.")
+		queue_redraw()
+		return
+	if nivel["ml"].size() >= LIMITES["muelles"]:
+		aviso.emit("Como mucho 4 muelles por nivel.")
+		queue_redraw()
+		return
+	nivel["ml"].append([[snappedf(desde[0], 0.1), snappedf(desde[1], 0.1)], [snappedf(hasta[0], 0.1), snappedf(hasta[1], 0.1)], SALTO_NUEVO])
+	aviso.emit("La cadena salta en %d tics. Toca la entrada para cambiarlo." % SALTO_NUEVO)
+	_refrescar()
+	editado.emit()
+
+
+## Tocar la entrada de un muelle con su herramienta cambia el salto.
+func _cambiar_salto(p: Array) -> bool:
+	var lista: Array = nivel.get("ml", [])
+	for m in lista:
+		if Sim.dist(p, m[0]) <= Sim.RADIO_MUELLE + 2.0:
+			m[2] = int(m[2]) + 2 if int(m[2]) + 2 <= SALTO_MAXIMO else 2
+			aviso.emit("Este muelle salta en %d tics." % int(m[2]))
+			_refrescar()
+			editado.emit()
+			return true
+	return false
+
+
+func _muelle_cerca(p: Array) -> int:
+	var lista: Array = nivel.get("ml", [])
+	for k in lista.size():
+		if Sim.dist(p, lista[k][0]) <= Sim.RADIO_MUELLE + 2.0 or Sim.dist(p, lista[k][1]) <= Sim.RADIO_MUELLE + 2.0:
+			return k
+	return -1
 
 
 func _espiral_cerca(p: Array) -> int:

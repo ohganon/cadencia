@@ -15,6 +15,7 @@ const PASO_MINIMO := 0.75
 var nivel: Dictionary
 var tramos: Array = []          # [{puntos, padre, desde}] en el formato de la simulación
 var _actual = null              # tramo que se está dibujando (o null)
+var _final = null               # último punto del dedo que no se guardó por estar muy cerca (o null)
 
 
 func _init(datos_nivel: Dictionary) -> void:
@@ -39,21 +40,39 @@ func dibujando() -> bool:
 
 
 ## Intenta empezar un tramo en el punto p. Devuelve true si engancha con el inicio (el primer
-## tramo) o con una ficha ya puesta (una rama nueva).
+## tramo), con una ficha ya puesta (una rama nueva) o con la salida de un muelle (un tramo que
+## sale de él; solo después del primer tramo).
 func empezar(p: Array) -> bool:
 	if _actual != null:
 		return false
+	_final = null
 	if tramos.is_empty():
 		if Sim.dist(p, nivel["i"]) > RADIO_ENGANCHE:
 			return false
 		_actual = {"puntos": [_copia(nivel["i"])], "padre": null, "desde": 0}
 	else:
 		var mejor := _ficha_cercana(p)
-		if mejor.is_empty():
+		var salida := _salida_cercana(p, mejor.get("d", RADIO_ENGANCHE))
+		if not salida.is_empty():
+			_actual = {"puntos": [salida], "padre": null, "desde": 0}
+		elif mejor.is_empty():
 			return false
-		_actual = {"puntos": [mejor["pos"]], "padre": mejor["tramo"], "desde": mejor["ficha"]}
+		else:
+			_actual = {"puntos": [mejor["pos"]], "padre": mejor["tramo"], "desde": mejor["ficha"]}
 	tramos.append(_actual)
 	return true
+
+
+## Salida de muelle a menos de `limite` del punto (más cerca que cualquier ficha), o vacío.
+func _salida_cercana(p: Array, limite: float) -> Array:
+	var mejor := []
+	var mejor_d := limite
+	for m in nivel.get("ml", []):
+		var d := Sim.dist(p, m[1])
+		if d <= mejor_d:
+			mejor_d = d
+			mejor = _copia(m[1])
+	return mejor
 
 
 ## Añade un punto al tramo en curso. Si con él se pasaría de las fichas disponibles, el trazo se
@@ -63,7 +82,9 @@ func seguir(p: Array) -> bool:
 		return false
 	var ultimo: Array = _actual["puntos"][-1]
 	if Sim.dist(ultimo, p) < PASO_MINIMO:
+		_final = _copia(p)          # si el dedo se levanta aquí, el trazo tiene que acabar aquí
 		return false
+	_final = null
 	_actual["puntos"].append(_copia(p))
 	if usadas() > disponibles():
 		_actual["puntos"].pop_back()
@@ -75,6 +96,12 @@ func seguir(p: Array) -> bool:
 func terminar() -> void:
 	if _actual == null:
 		return
+	# El trazo acaba donde se levantó el dedo, aunque estuviera muy cerca del punto anterior
+	if _final != null and Sim.dist(_actual["puntos"][-1], _final) > 0.0:
+		_actual["puntos"].append(_final)
+		if usadas() > disponibles():
+			_actual["puntos"].pop_back()
+	_final = null
 	if Sim.repartir(_actual["puntos"]).size() < 2:
 		tramos.erase(_actual)
 	_actual = null
@@ -151,10 +178,14 @@ func _ficha_cercana(p: Array) -> Dictionary:
 	var todas := fichas()
 	for i in todas.size():
 		for j in todas[i].size():
+			# La primera ficha de una rama es la misma que su bifurcador: engancharse a ella haría
+			# que la rama nueva cayera un tic tarde. Se engancha al bifurcador de verdad.
+			if j == 0 and tramos[i]["padre"] != null:
+				continue
 			var d := Sim.dist(p, todas[i][j])
 			if d <= mejor_d:
 				mejor_d = d
-				mejor = {"tramo": i, "ficha": j, "pos": _copia(todas[i][j])}
+				mejor = {"tramo": i, "ficha": j, "pos": _copia(todas[i][j]), "d": d}
 	return mejor
 
 

@@ -248,9 +248,11 @@ func _draw() -> void:
 		draw_circle(a_pantalla(m[0]), 1.1 * _k, TINTA)
 		draw_circle(a_pantalla(m[1]), 1.1 * _k, TINTA)
 
-	# Las espirales van debajo de las fichas: no ocupan sitio, la cadena pasa por encima
+	# Las espirales y los muelles van debajo de las fichas: no ocupan sitio, la cadena pasa por encima
 	for e in nivel.get("e", []):
 		_espiral(e)
+	for m in nivel.get("ml", []):
+		_muelle(m)
 
 	if not pista.is_empty():
 		var fantasma := Sim.repartir(pista)
@@ -296,6 +298,8 @@ func _draw() -> void:
 	# El aro y el retraso de cada espiral, encima de todo: si la cadena pasa por ella, se sigue viendo
 	for e in nivel.get("e", []):
 		_espiral_etiqueta(e)
+	for m in nivel.get("ml", []):
+		_muelle_etiqueta(m)
 	if modo == Modo.RESULTADO:
 		_parada()
 
@@ -323,11 +327,12 @@ func _cruces_de_puertas(todas: Array, tics: Array) -> void:
 					break
 
 
-## Tic en que cae cada ficha, igual que en la simulación (con el retraso de las espirales): así la
-## cuenta que se ve al dibujar es el orden real de caída, y las dos ramas de una campana doble
-## muestran el mismo número al llegar.
+## Tic en que cae cada ficha, igual que en la simulación (con el retraso de las espirales y el salto
+## de los muelles): así la cuenta que se ve al dibujar es el orden real de caída, y las dos ramas de
+## una campana doble muestran el mismo número al llegar. Mientras se dibuja se supone que no se para.
 func _tics_de(todas: Array) -> Array:
 	var r := []
+	var todas_caen := []
 	for i in todas.size():
 		var base := -1
 		if i < partida.tramos.size() and partida.tramos[i]["padre"] != null:
@@ -335,6 +340,14 @@ func _tics_de(todas: Array) -> Array:
 			var desde := int(partida.tramos[i]["desde"])
 			if padre < r.size() and desde < r[padre].size():
 				base = r[padre][desde]
+		elif not todas[i].is_empty() and Sim.dist(todas[i][0], partida.nivel["i"]) > Sim.PASO:
+			var k := Sim.salida_de(partida.nivel, todas[i][0])
+			if k >= 0:
+				var m: Array = partida.nivel["ml"][k]
+				var disparo := Sim.disparo_muelle(m, todas, r, todas_caen)
+				if disparo >= 0:
+					base = disparo + int(m[2]) - 1
+		todas_caen.append(todas[i].size() - 1)
 		r.append(Sim.tics_tramo(partida.nivel, todas[i], base))
 	return r
 
@@ -583,6 +596,54 @@ func _espiral_etiqueta(e: Array) -> void:
 	var texto := "+%d" % int(e[1])
 	var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
 	var base := c + Vector2(-medida.x / 2, -r - 1.0 * _k)     # encima del aro, centrado
+	var caja := Rect2(base - Vector2(0.6 * _k, fuente.get_ascent(tam) + 0.2 * _k), Vector2(medida.x + 1.2 * _k, tam + 0.4 * _k))
+	draw_style_box(_caja(Color(ETIQUETA, 0.94), 6, ETIQUETA_T, 1), caja)
+	draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, ETIQUETA_T)
+
+
+## Muelle: la entrada es un muelle en zigzag dentro de su círculo; la salida, un anillo donde se
+## empieza a dibujar; entre las dos, un arco discontinuo (el salto por encima de lo que haya).
+func _muelle(m: Array) -> void:
+	var a := a_pantalla(m[0])
+	var b := a_pantalla(m[1])
+	var r := Sim.RADIO_MUELLE * _k
+	draw_circle(a, r, Color(VERDE, 0.22))
+	draw_circle(b, r, Color(VERDE, 0.22))
+	var zig := PackedVector2Array()
+	for k in 7:
+		zig.append(a + Vector2((-1.0 if k % 2 == 0 else 1.0) * r * 0.55, -r * 0.7 + k * r * 1.4 / 6.0))
+	draw_polyline(zig, TINTA, maxf(1.2, 0.45 * _k), true)
+	# Arco del salto: una parábola entre la entrada y la salida
+	var medio := (a + b) / 2.0
+	var altura := maxf(a.distance_to(b) * 0.35, 4.0 * _k)
+	var normal := (b - a).orthogonal().normalized()
+	if normal.y > 0:
+		normal = -normal
+	var anterior := a
+	for k in range(1, 21):
+		var u := k / 20.0
+		var q := a.lerp(b, u) + normal * altura * 4.0 * u * (1.0 - u)
+		if k % 2 == 1:
+			draw_line(anterior, q, Color(TINTA, 0.6), maxf(1.0, 0.3 * _k), true)
+		anterior = q
+
+
+func _muelle_etiqueta(m: Array) -> void:
+	var a := a_pantalla(m[0])
+	var b := a_pantalla(m[1])
+	var r := Sim.RADIO_MUELLE * _k
+	draw_arc(a, r, 0, TAU, 32, Color(VERDE.darkened(0.3), 0.95), maxf(1.5, 0.45 * _k), true)
+	draw_arc(b, r, 0, TAU, 32, Color(VERDE.darkened(0.3), 0.95), maxf(1.5, 0.45 * _k), true)
+	draw_circle(b, r * 0.3, VERDE.darkened(0.3))
+	var fuente := get_theme_default_font()
+	var tam := int(3.6 * _k)
+	var texto := "+%d" % int(m[2])
+	var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
+	var normal := (b - a).orthogonal().normalized()
+	if normal.y > 0:
+		normal = -normal
+	var cima := (a + b) / 2.0 + normal * maxf(a.distance_to(b) * 0.35, 4.0 * _k)
+	var base := cima + Vector2(-medida.x / 2, -0.8 * _k)
 	var caja := Rect2(base - Vector2(0.6 * _k, fuente.get_ascent(tam) + 0.2 * _k), Vector2(medida.x + 1.2 * _k, tam + 0.4 * _k))
 	draw_style_box(_caja(Color(ETIQUETA, 0.94), 6, ETIQUETA_T, 1), caja)
 	draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, ETIQUETA_T)

@@ -137,5 +137,19 @@ class Barrio(unittest.TestCase):
                     self.assertFalse(simular(g.nivel, g.solucion)["exito"])
 
 
+    def test_niveles_con_muelle(self):
+        for tipo in G.TIPOS_MUELLE:
+            for semilla in (61, 62, 63):
+                with self.subTest(tipo=tipo, semilla=semilla):
+                    g = G.generar(semilla, tipo, 0.6)
+                    self.assertIsNotNone(g)
+                    self.assertEqual(len(g.nivel.muelles), 1)
+                    self.assertTrue(simular(g.nivel, g.solucion)["exito"])
+                    self.assertEqual(G.atajos(g.nivel)["recto"], 0)
+                    # Sin el muelle, la solución no sirve: el tramo que sale de él ya no empieza en ningún sitio
+                    g.nivel.muelles = []
+                    self.assertFalse(simular(g.nivel, g.solucion)["exito"])
+
+
 if __name__ == "__main__":
     unittest.main()

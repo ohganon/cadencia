@@ -37,6 +37,7 @@ func _init() -> void:
 	casos_compartidos(sim)
 	pruebas_partida(partida)
 	pruebas_progreso(progreso)
+	pruebas_muelle_dibujo(partida, sim)
 	pruebas_registro(load("res://nucleo/registro.gd"))
 	pruebas_sonidos()
 	pruebas_reto(load("res://nucleo/reto_diario.gd"), sim)
@@ -89,7 +90,7 @@ func pruebas_cuerda(Cuerda: GDScript, Progreso: GDScript) -> void:
 func pruebas_barrio(sim: GDScript) -> void:
 	var Partida: GDScript = load("res://nucleo/partida.gd")
 	var primero := 1
-	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json"]:
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json"]:
 		var b = leer_json(ruta)
 		comprobar(b != null and b["niveles"].size() == 20, "%s tiene 20 niveles" % b["nombre"])
 		var mal := []
@@ -105,6 +106,15 @@ func pruebas_barrio(sim: GDScript) -> void:
 			if r["exito"] and Partida.estrellas(r, int(n["nivel"]["m"]), n["nivel"]) != 3:
 				sin_tres.append(n["id"])
 		comprobar(mal.is_empty(), "los 20 niveles de %s se superan con su solución y su marca" % b["nombre"], str(mal))
+		# Y dibujando la solución como un dedo (empezar, seguir punto a punto y levantar)
+		var con_dedo := []
+		for n in b["niveles"]:
+			var pd = Partida.new(n["nivel"])
+			for tr in n["solucion"]:
+				dibujar(pd, tr["puntos"])
+			if not pd.tumbar()["resultado"]["exito"]:
+				con_dedo.append(n["id"])
+		comprobar(con_dedo.is_empty(), "los 20 niveles de %s se superan dibujando su solución con el dedo" % b["nombre"], str(con_dedo))
 		comprobar(sin_tres.is_empty(), "en %s la solución de referencia da las 3 estrellas (con la campana dorada)" % b["nombre"], str(sin_tres))
 		if b["barrio"] == 2:
 			comprobar(con_puertas >= 10, "El Puerto tiene puertas de vaivén en la mayoría de niveles (%d)" % con_puertas)
@@ -128,6 +138,18 @@ func pruebas_barrio(sim: GDScript) -> void:
 			var n42: Dictionary = b["niveles"][1]
 			var recta42: Dictionary = sim.simular(n42["nivel"], [{"puntos": [n42["nivel"]["i"], n42["nivel"]["c"][0][1]], "padre": null, "desde": 0}])
 			comprobar(not recta42["exito"] and recta42["parada"]["motivo"] == "puerta cerrada", "en el nivel 42 la línea recta encuentra la puerta cerrada")
+		if b["barrio"] == 4:
+			var con_muelle := 0
+			var sin_muelle_falla := []
+			for n in b["niveles"]:
+				if not n["nivel"].get("ml", []).is_empty():
+					con_muelle += 1
+					var sin: Dictionary = n["nivel"].duplicate(true)
+					sin.erase("ml")
+					if not sim.simular(sin, n["solucion"])["exito"]:
+						sin_muelle_falla.append(n["id"])
+			comprobar(con_muelle >= 10, "La Feria tiene muelles en la mayoría de niveles (%d)" % con_muelle)
+			comprobar(sin_muelle_falla.size() == con_muelle, "en La Feria la solución necesita su muelle (sin él falla)", str(sin_muelle_falla))
 		primero += 20
 
 
@@ -202,7 +224,7 @@ func pruebas_temas(Temas: GDScript) -> void:
 	var BotonPop: GDScript = load("res://escenas/comun/boton_pop.gd")
 	var sin_nombre := []
 	for icono in ["volver", "adelante", "deshacer", "bombilla", "lento", "inicio", "campana_simple", "doble", "numerada",
-			"dorada", "muro", "puerta", "espiral", "goma"]:
+			"dorada", "muro", "puerta", "espiral", "muelle", "goma"]:
 		var b = BotonPop.new()
 		b.icono = icono
 		if b.nombre_para_lector() == icono:
@@ -336,6 +358,21 @@ func pruebas_partida(Partida: GDScript) -> void:
 
 
 # ---------------------------------------------------------------- 4. progreso
+
+func pruebas_muelle_dibujo(Partida: GDScript, sim: GDScript) -> void:
+	var nivel := {"v": 1, "w": 200, "h": 100, "i": [10.0, 50.0], "f": 500, "m": 0, "c": [["a", [110.0, 50.0], "simple", 0]],
+		"mu": [[[60.0, 0.0], [60.0, 100.0]]], "p": [], "ml": [[[55.0, 50.0], [65.0, 50.0], 6]]}
+	var p = Partida.new(nivel)
+	comprobar(not p.empezar([66.0, 50.0]), "sin dibujar nada, la salida del muelle no sirve para empezar")
+	p.empezar([10.0, 50.0])
+	dibujar(p, densificar([[10.0, 50.0], [55.0, 50.0]], 1.0))
+	p.terminar()
+	comprobar(p.empezar([66.0, 51.0]) and p.tramos[1]["padre"] == null and p.tramos[1]["puntos"][0] == [65.0, 50.0],
+		"después, se empieza a dibujar en la salida del muelle")
+	dibujar(p, densificar([[65.0, 50.0], [110.0, 50.0]], 1.0))
+	p.terminar()
+	comprobar(p.tumbar()["resultado"]["exito"], "la cadena salta el muro por el muelle y hace sonar la campana")
+
 
 func pruebas_progreso(Progreso: GDScript) -> void:
 	var ruta := "user://prueba_progreso.json"

@@ -37,7 +37,8 @@ const HERRAMIENTAS := [
 	["muro", "Muro: arrastra el dedo para dibujarlo."],
 	["puerta", "Puerta: arrástrala para ponerla; tócala para cambiar cuándo se abre."],
 	["espiral", "Espiral: retrasa lo que pasa por ella. Tócala otra vez para cambiar cuántos tics."],
-	["goma", "Goma: toca una campana, una puerta, una espiral o un muro para quitarlo."],
+	["muelle", "Muelle: arrastra de la entrada a la salida. La cadena salta por encima; toca la entrada para cambiar el tiempo."],
+	["goma", "Goma: toca una campana, una puerta, una espiral, un muelle o un muro para quitarlo."],
 ]
 
 var tablero: Control
@@ -246,7 +247,7 @@ func _construir() -> void:
 		var b := _boton("", false)
 		b.icono = "campana_simple" if par[0] == "campana" else par[0]     # que no se confunda con la dorada
 		b.redondo = true
-		b.custom_minimum_size = Vector2(64, 64)      # las nueve herramientas caben en una fila
+		b.custom_minimum_size = Vector2(58, 58)      # las diez herramientas caben en una fila
 		b.pulsado.connect(_elegir.bind(par[0]))
 		barra.add_child(b)
 		botones_herramienta[par[0]] = b
@@ -401,6 +402,10 @@ func _demo_si_toca() -> void:
 	_elegir("puerta")
 	tablero._muro_desde = [30.0, 100.0]
 	tablero._muro_hasta = [56.0, 100.0]
+	tablero._terminar_muro()
+	_elegir("muelle")
+	tablero._muro_desde = [80.0, 112.0]
+	tablero._muro_hasta = [80.0, 82.0]
 	tablero._terminar_muro()
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(prefijo + "_1_editor.png")
