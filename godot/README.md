@@ -52,7 +52,7 @@ Godot_v4.7.2-stable_win64_console.exe --headless --path godot --export-release "
 ```
 
 - **Windows:** un solo archivo, `godot/exportaciones/windows/Dingfall.exe` (unos 110 MB, con el juego dentro). Se abre con doble clic en una ventana de 450 × 800 y se juega con el ratón como si fuera el dedo. No está firmado, así que Windows puede avisar («Windows protegió su PC»): «Más información» › «Ejecutar de todas formas».
-- **Web:** `godot/exportaciones/web/` (unos 43 MB). Funciona en el navegador del ordenador y del móvil (también en un iPhone), pero tiene que servirse desde una web: abrir `index.html` con doble clic no funciona. Sin hilos («nothreads»), así que vale cualquier alojamiento estático (por ejemplo GitHub Pages o itch.io). Publicarla es una acción externa: se hará solo con permiso del cliente.
+- **Web:** `godot/exportaciones/web/` (unos 43 MB). Funciona en el navegador del ordenador y del móvil (también en un iPhone), pero tiene que servirse desde una web: abrir `index.html` con doble clic no funciona. Sin hilos («nothreads»), así que vale cualquier alojamiento estático. **Publicada con permiso del cliente (20/11/2026) en GitHub Pages: https://ohganon.github.io/cadencia/** (rama `gh-pages`, que solo lleva la exportación; con `noindex` para que no salga en buscadores). Para actualizarla: exportar «Web (prueba)», copiar `godot/exportaciones/web/index.*` a la rama `gh-pages` y subirla.
 
 ## Capturas automáticas
 
