@@ -32,5 +32,7 @@ func _init() -> void:
 			ajustes["alto_contraste"] = true
 		elif a == "--texto-grande":
 			ajustes["texto_grande"] = true
+		elif a == "--sin-movimiento":
+			ajustes["reducir_movimiento"] = true
 	Temas.usar(elegido)
 	Temas.accesibilidad(ajustes)

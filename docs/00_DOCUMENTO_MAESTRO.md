@@ -186,7 +186,8 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: accesibilidad: alto contraste, reducir movimiento, texto grande y símbolos además de colores (18/11/2026)
 - [x] Fase 8: los 11 temas en Ajustes › Apariencia; los del Club se pueden usar gratis mientras el Club no exista, con un aviso que lo dice tal cual (18/11/2026)
 - [x] Fase 8: fuentes propias de cada tema (13 familias SIL OFL de google/fonts, descargadas con permiso del cliente; licencias comprobadas y guardadas en godot/fuentes) (18/11/2026)
-- [ ] **TODO (decisión del cliente, 18/11/2026): pasada estética** con animaciones, sombreado y efectos. Se hace después de desarrollar el juego. Lista en fase8/ARQUITECTURA_BORRADOR.md, sección 6 bis
+- [x] Pasada estética, primera parte (20/11/2026): animaciones de interfaz, caída con vuelco y rebote, sombras, brillos y luz, campanas que se balancean con destellos, confeti al superar un nivel y al terminar un barrio, Taller en dos filas. Todo respeta «reducir movimiento». Detalle en fase8/ARQUITECTURA_BORRADOR.md, sección 6 bis
+- [ ] Pasada estética, pendiente: Pío animado (necesita arte), ilustración de fondo por barrio y cámara que sigue la caída
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal
 - [ ] Antes de monetizar: consulta fiscal con un gestor (alta, IVA intracomunitario, W-8BEN)

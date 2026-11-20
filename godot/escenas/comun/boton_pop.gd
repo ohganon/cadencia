@@ -11,6 +11,7 @@ signal mantenido          # se mantiene pulsado 0,6 s (por ejemplo, para borrar 
 
 const Iconos = preload("res://escenas/comun/iconos.gd")
 const Temas = preload("res://nucleo/temas.gd")
+const Animar = preload("res://escenas/comun/animar.gd")
 
 # Colores y forma del tema activo (nucleo/temas.gd)
 var TINTA: Color = Temas.ui("marco")
@@ -58,6 +59,7 @@ var resaltado := false:
 		queue_redraw()
 
 var _hundido := false
+var _h := 0.0                     # cuánto está hundido, de 0 a 1 (animado; ver _process)
 var _en_ventana = null            # se averigua al dibujar: ¿está dentro de una ventana?
 var _tiempo_pulsado := -1.0
 
@@ -111,7 +113,7 @@ func _gui_input(evento: InputEvent) -> void:
 			set_process(true)
 		elif _hundido:
 			_hundido = false
-			set_process(false)
+			set_process(true)            # sigue para que el botón suba con suavidad
 			if _tiempo_pulsado >= 0.0 and Rect2(Vector2.ZERO, size).has_point(evento.position):
 				pulsado.emit()
 			_tiempo_pulsado = -1.0
@@ -120,13 +122,20 @@ func _gui_input(evento: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
-	if _tiempo_pulsado < 0.0:
+	# El botón baja y sube con una curva suave (unos 140 ms); con «reducir movimiento», de golpe
+	var objetivo := 1.0 if _hundido else 0.0
+	if Temas.reducir_movimiento:
+		_h = objetivo
+	else:
+		_h = move_toward(_h, objetivo, delta / 0.14)
+	queue_redraw()
+	if _tiempo_pulsado >= 0.0:
+		_tiempo_pulsado += delta
+		if _tiempo_pulsado >= MANTENER:
+			_tiempo_pulsado = -1.0          # ya no cuenta como pulsación corta
+			mantenido.emit()
+	if _tiempo_pulsado < 0.0 and _h == objetivo:
 		set_process(false)
-		return
-	_tiempo_pulsado += delta
-	if _tiempo_pulsado >= MANTENER:
-		_tiempo_pulsado = -1.0          # ya no cuenta como pulsación corta
-		mantenido.emit()
 
 
 func _notification(que: int) -> void:
@@ -183,14 +192,15 @@ func _draw() -> void:
 		fondo = fondo.darkened(0.12) if fondo.a >= 0.5 else Color(color_texto, 0.12)
 	if not SOMBRA_SOLIDA:
 		labio = fondo
-	var baja := sombra if _hundido else 0.0
+	var h := Animar.suave(_h) if _hundido else 1.0 - Animar.suave(1.0 - _h)
+	var baja := sombra * h
 	var cuerpo := Rect2(Vector2(0, baja), size - Vector2(0, sombra))
 	var mitad := int(minf(cuerpo.size.x, cuerpo.size.y) / 2)
 	var radio := mitad if circular else mini(RADIO, mitad)
-	if not _hundido and not sin_sombra and sombra > 0:
+	if h < 1.0 and not sin_sombra and sombra > 0:
 		draw_style_box(_caja(TINTA, radio), Rect2(Vector2(0, sombra), cuerpo.size))
 	var dentro := cuerpo.grow(-2)
-	var alto_labio := (2.0 if _hundido else 4.0) if SOMBRA_SOLIDA else 0.0
+	var alto_labio := lerpf(4.0, 2.0, h) if SOMBRA_SOLIDA else 0.0
 	if fondo.a >= 0.5:
 		draw_style_box(_caja(borde, radio), cuerpo)                     # borde de 2 px
 		draw_style_box(_caja(labio, radio - 2), dentro)                  # labio

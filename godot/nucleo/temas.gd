@@ -28,6 +28,7 @@ static var _todos: Array = []
 static var activo: Dictionary = {}     # tema en uso, con los colores ya convertidos
 static var alto_contraste := false
 static var texto_grande := false
+static var reducir_movimiento := false   # sin animaciones decorativas (escenas/comun/animar.gd)
 
 
 ## Cambia el tema activo (no lo guarda: eso lo hace quien tenga el progreso abierto).
@@ -46,6 +47,7 @@ static func usar(id) -> void:
 static func accesibilidad(ajustes: Dictionary) -> void:
 	alto_contraste = ajustes.get("alto_contraste", false)
 	texto_grande = ajustes.get("texto_grande", false)
+	reducir_movimiento = ajustes.get("reducir_movimiento", false)
 	usar(id_activo() if not activo.is_empty() else POR_DEFECTO)
 
 

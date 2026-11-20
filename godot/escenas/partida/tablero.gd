@@ -54,6 +54,7 @@ var PUERTA := Color("#c98a4b")     # madera de la puerta de vaivén
 ## Accesibilidad (Ajustes): sin efectos decorativos que se mueven. La información (la puerta que se
 ## abre y se cierra, la caída) se mantiene.
 var reducir_movimiento := false
+var _contraste := false       # con alto contraste no hay sombras, brillos ni luz en el tablero
 
 # Medidas de la maqueta, en unidades lógicas (allí 1 unidad = 2,8 px)
 const FICHA_ANCHO := 2.5      # de pie: grosor a lo largo del camino
@@ -106,6 +107,7 @@ func aplicar_accesibilidad(ajustes: Dictionary) -> void:
 		paleta.merge(PALETA_CONTRASTE, true)
 	for clave in paleta:
 		set(clave, Color(paleta[clave]))
+	_contraste = contraste
 	GROSOR_BORDE = 2 if contraste else Temas.numero("grosor_borde", 2)
 	RADIO_TABLERO = clampi(Temas.numero("radio_ventana", 18), 0, 18)
 	TRAZO = 1.1 if contraste else 0.72
@@ -234,6 +236,11 @@ func _draw() -> void:
 	var nivel: Dictionary = partida.nivel
 	var tablero := Rect2(_origen, Vector2(nivel["w"], nivel["h"]) * _k)
 	draw_style_box(_caja(HIELO, RADIO_TABLERO, BORDE_TABLERO, GROSOR_BORDE), tablero)
+	if not _contraste:
+		var dentro := tablero.grow(-maxf(RADIO_TABLERO * 0.3, float(GROSOR_BORDE)))
+		draw_polygon(PackedVector2Array([dentro.position, Vector2(dentro.end.x, dentro.position.y), dentro.end,
+			Vector2(dentro.position.x, dentro.end.y)]),
+			PackedColorArray([Color(1, 1, 1, 0.10), Color(1, 1, 1, 0.10), Color(0, 0, 0, 0.035), Color(0, 0, 0, 0.035)]))
 	var paso := 24.0
 	var y := tablero.position.y + paso / 2
 	while y < tablero.end.y - 4.0:      # sin pisar el borde del tablero
@@ -267,14 +274,16 @@ func _draw() -> void:
 		# La primera ficha del tronco es el empujador y la de cada rama está en su bifurcador
 		for j in range(1, f.size()):
 			var estado := 0      # 0 de pie, 1 cayendo, 2 caída
+			var recien := false   # se acaba de tumbar (el tic anterior): rebota un poco
 			if modo != Modo.EDITAR and not _detalle.get("caidas", []).is_empty():
 				var t: int = _detalle["tics"][i][j]
 				if j <= _detalle["caidas"][i]:
 					if t < tic:
 						estado = 2
+						recien = t == tic - 1
 					elif t == tic:
 						estado = 1
-			_ficha(f, j, estado, avance)
+			_ficha(f, j, estado, avance, recien)
 
 	_empujador(nivel["i"])
 	# Las campanas van encima de las fichas para que siempre se vean
@@ -412,7 +421,7 @@ func _cerrar(p: PackedVector2Array) -> PackedVector2Array:
 	return b
 
 
-func _ficha(f: Array, j: int, estado: int, avance: float) -> void:
+func _ficha(f: Array, j: int, estado: int, avance: float, recien := false) -> void:
 	var c := a_pantalla(f[j])
 	var eje := _direccion(f, j)
 	var n := Vector2(-eje.y, eje.x)
@@ -420,23 +429,41 @@ func _ficha(f: Array, j: int, estado: int, avance: float) -> void:
 	var forma: PackedVector2Array
 	var color := MARFIL
 	var alto := FICHA_ALTO
+	var elevada := 1.0          # cuánto «levanta» la ficha del tablero (para la sombra)
 	match estado:
-		1:   # cayendo: se acorta mientras cae, como en la maqueta
-			alto = FICHA_ALTO * (0.7 if reducir_movimiento else 1.0 - avance * 0.55)
+		1:   # cayendo: vuelca hacia delante, cada vez más deprisa (como con la gravedad)
 			color = CAYENDO
-			forma = _rect_redondo(c, eje, FICHA_ANCHO * _k, alto * _k, radio)
-		2:   # tumbada: ahora es larga a lo largo del camino
+			if reducir_movimiento:
+				alto = FICHA_ALTO * 0.7
+				forma = _rect_redondo(c, eje, FICHA_ANCHO * _k, alto * _k, radio)
+			else:
+				var p := avance * avance
+				var largo := lerpf(FICHA_ANCHO, FICHA_ALTO, p)
+				alto = lerpf(FICHA_ALTO, FICHA_ANCHO * 0.9, p)
+				forma = _rect_redondo(c + eje * 1.4 * p * _k, eje, largo * _k, alto * _k, radio)
+				elevada = 1.0 - p
+		2:   # tumbada: ahora es larga a lo largo del camino; al caer, un pequeño rebote
 			color = CAIDA
-			forma = _rect_redondo(c + eje * 1.4 * _k, eje, FICHA_ALTO * _k, FICHA_ANCHO * 0.9 * _k, radio)
+			var largo := FICHA_ALTO
+			if recien and not reducir_movimiento:
+				largo *= 1.0 + 0.08 * sin(PI * avance)
+			forma = _rect_redondo(c + eje * 1.4 * _k, eje, largo * _k, FICHA_ANCHO * 0.9 * _k, radio)
+			elevada = 0.0
 		_:
 			forma = _rect_redondo(c, eje, FICHA_ANCHO * _k, alto * _k, radio)
-	if SOMBRA_FICHA.a > 0:
-		var abajo := Vector2(0, 0.7 * _k)
+	# Sombra: la del tema o, si no tiene, una muy suave bajo las fichas de pie
+	var sombra_color := SOMBRA_FICHA if SOMBRA_FICHA.a > 0 else Color(0, 0, 0, 0.10 * elevada)
+	if sombra_color.a > 0 and not _contraste:
+		var abajo := Vector2(0.45, 0.8) * _k * (0.4 + 0.6 * elevada)
 		var sombra := PackedVector2Array()
 		for v in forma:
 			sombra.append(v + abajo)
-		draw_colored_polygon(sombra, SOMBRA_FICHA)
+		draw_colored_polygon(sombra, sombra_color)
 	draw_colored_polygon(forma, color)
+	# Relieve: un brillo en la cara de las fichas de pie
+	if estado == 0 and not _contraste:
+		var brillo := _rect_redondo(c - n * alto * 0.12 * _k, eje, FICHA_ANCHO * 0.45 * _k, alto * 0.5 * _k, radio * 0.6)
+		draw_colored_polygon(brillo, Color(1, 1, 1, 0.20))
 	if BORDE_FICHA.a > 0:
 		draw_polyline(_cerrar(forma), BORDE_FICHA, maxf(1.0, TRAZO * _k), true)
 	if estado != 2:
@@ -489,10 +516,14 @@ func _campana(c: Array) -> void:
 	var id: String = c[0]
 	var sono = resultado().get("campanas", {}).get(id) if modo != Modo.EDITAR else null
 	var suena: bool = sono != null and _tic_actual() >= int(sono)
+	var giro := 0.0             # balanceo de la campana al sonar (radianes)
 	if suena:
 		var t := _tiempo - int(sono) * DURACION_TIC
 		var halo := 0.6 if reducir_movimiento else clampf(1.0 - t / 0.8, 0.0, 1.0)
 		draw_circle(centro, (Sim.RADIO_CAMPANA + 2.0 + 3.0 * (1.0 - halo)) * _k, Color(CAYENDO, 0.35 + 0.4 * halo))
+		if not reducir_movimiento:
+			giro = sin(t * 18.0) * 0.4 * exp(-t * 3.0)
+			_destellos(centro, t, DORADA if c[2] == "dorada" else CAYENDO)
 	draw_arc(centro, Sim.RADIO_CAMPANA * _k, 0, TAU, 40, Color(CAMPANA, 0.4), maxf(1.0, 0.25 * _k), true)
 	var tipo: String = c[2]
 	var lado := 9.0 * _k
@@ -507,8 +538,14 @@ func _campana(c: Array) -> void:
 		draw_circle(centro, (Sim.RADIO_CAMPANA + 0.6 + brillo) * _k, Color(DORADA, 0.18 + 0.12 * brillo))
 		if modo == Modo.EDITAR and not reducir_movimiento:
 			queue_redraw()
-	for r in cajas:
-		Iconos.dibujar(self, "campana", r, DORADA if tipo == "dorada" else CAMPANA)
+	for k in cajas.size():
+		var r: Rect2 = cajas[k]
+		# En la doble, las dos campanas se balancean una hacia la otra
+		var a := giro * (1.0 if k == 0 else -1.0)
+		var pivote := r.position + Vector2(r.size.x / 2, r.size.y * 0.15)
+		draw_set_transform(pivote, a, Vector2.ONE)
+		Iconos.dibujar(self, "campana", Rect2(r.position - pivote, r.size), DORADA if tipo == "dorada" else CAMPANA)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if tipo == "dorada":
 		# Una estrella pequeña: se distingue por la forma, no solo por el color
 		var lado_e := 4.0 * _k
@@ -523,6 +560,22 @@ func _campana(c: Array) -> void:
 		var letra := Temas.sobre(CAMPANA, Color("#142554"), BLANCO)
 		draw_string_outline(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, maxi(2, int(0.5 * _k)), CAMPANA)
 		draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, letra)
+
+
+## Destellos al sonar una campana: ocho chispas que salen hacia fuera y se apagan en 0,7 s.
+func _destellos(centro: Vector2, t: float, color: Color) -> void:
+	if t >= 0.7:
+		return
+	var u := t / 0.7
+	var ida := 1.0 - pow(1.0 - u, 3.0)
+	for k in 8:
+		var a := TAU * k / 8.0 + 0.3
+		var d := (Sim.RADIO_CAMPANA + 1.5 + 7.0 * ida) * _k
+		var p := centro + Vector2(cos(a), sin(a)) * d
+		var tam := (0.9 - 0.6 * u) * _k
+		var c := Color(color, 1.0 - u)
+		draw_line(p - Vector2(tam, 0), p + Vector2(tam, 0), c, maxf(1.0, 0.35 * _k), true)
+		draw_line(p - Vector2(0, tam), p + Vector2(0, tam), c, maxf(1.0, 0.35 * _k), true)
 
 
 ## Pequeña insignia con forma (✓, ✗ o !) para que la información no dependa solo del color.

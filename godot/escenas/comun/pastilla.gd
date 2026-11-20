@@ -4,6 +4,7 @@ extends Control
 
 const Iconos = preload("res://escenas/comun/iconos.gd")
 const Temas = preload("res://nucleo/temas.gd")
+const Animar = preload("res://escenas/comun/animar.gd")
 
 # Colores del tema activo (nucleo/temas.gd)
 var FONDO: Color = Temas.ui("chip")
@@ -13,6 +14,8 @@ var icono := "ficha"
 var color_icono: Color = Temas.ui("ventana")
 var texto := "":
 	set(v):
+		if v != texto and texto != "" and is_inside_tree():
+			Animar.latido(self)          # la cifra cambia: un pequeño latido
 		texto = v
 		update_minimum_size()
 		queue_redraw()

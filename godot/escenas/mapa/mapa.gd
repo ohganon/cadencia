@@ -14,6 +14,7 @@ extends Control
 
 const Progreso = preload("res://nucleo/progreso.gd")
 const Temas = preload("res://nucleo/temas.gd")
+const Animar = preload("res://escenas/comun/animar.gd")
 const Fuentes = preload("res://escenas/comun/fuentes.gd")
 const Pestana = preload("res://escenas/comun/pestana.gd")
 const JuegoResponsable = preload("res://nucleo/juego_responsable.gd")
@@ -105,6 +106,7 @@ func _ready() -> void:
 	elif estado != null and estado.pendiente.get("modo") == "ajustes":
 		estado.pendiente = {}
 		_abrir_ajustes()
+	Animar.fundido_entrada(self)
 	_demo_si_toca()
 
 
@@ -214,6 +216,7 @@ func _centrar(v: Control) -> void:
 	v.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	v.size = v.get_combined_minimum_size()
 	v.position = ((v.get_parent() as Control).size - v.size) / 2.0
+	Animar.entrar(v)
 
 
 func _textos_ajustes() -> void:
@@ -310,6 +313,7 @@ func _colocar_nodos() -> void:
 			b.color_fondo = VERDE
 			b.color_labio = LABIO_VERDE
 			b.resaltado = true
+			b.ready.connect(func(): Animar.respirar.call_deferred(b))
 		else:
 			b.color_fondo = BLOQUEADO
 			b.color_labio = BLOQUEADO
@@ -352,6 +356,7 @@ func _construir() -> void:
 	fondo.color = AZUL
 	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(fondo)
+	Animar.luz_de_fondo(fondo)
 	var margen := MarginContainer.new()
 	margen.set_anchors_preset(Control.PRESET_FULL_RECT)
 	for lado in ["left", "right"]:
@@ -559,6 +564,7 @@ func _construir_ajustes() -> void:
 					estado.pendiente = {"modo": "ajustes"}
 				get_tree().reload_current_scene()
 				return
+			Temas.reducir_movimiento = progreso.ajustes.get("reducir_movimiento", false)
 			_textos_ajustes())
 		botones_accesibilidad[clave] = b
 		caja.add_child(b)

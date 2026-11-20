@@ -9,6 +9,7 @@ extends Control
 
 const Taller = preload("res://nucleo/taller.gd")
 const Temas = preload("res://nucleo/temas.gd")
+const Animar = preload("res://escenas/comun/animar.gd")
 const Fuentes = preload("res://escenas/comun/fuentes.gd")
 const Progreso = preload("res://nucleo/progreso.gd")
 const TableroEditor = preload("res://escenas/taller/tablero_editor.gd")
@@ -67,6 +68,7 @@ func _ready() -> void:
 	tablero.editar_nivel(nivel.duplicate(true))
 	_elegir("campana")
 	_validar()
+	Animar.fundido_entrada(self)
 	_demo_si_toca()
 
 
@@ -136,6 +138,8 @@ func _abrir_codigos() -> void:
 	ventana.reset_size()
 	ventana.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 	ventana.visible = true
+	Animar.entrar(ventana)
+	Animar.aparecer(velo)
 
 
 func _cerrar_codigos() -> void:
@@ -211,6 +215,7 @@ func _construir() -> void:
 	fondo.color = AZUL
 	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(fondo)
+	Animar.luz_de_fondo(fondo)
 	var margen := MarginContainer.new()
 	margen.set_anchors_preset(Control.PRESET_FULL_RECT)
 	for lado in ["left", "right"]:
@@ -240,15 +245,19 @@ func _construir() -> void:
 	hueco.custom_minimum_size = Vector2(96, 0)
 	hud.add_child(hueco)
 
-	var barra := HBoxContainer.new()
-	barra.add_theme_constant_override("separation", 5)
-	barra.alignment = BoxContainer.ALIGNMENT_CENTER
-	columna.add_child(barra)
+	# Las herramientas, en dos filas de botones grandes (más fáciles de tocar que una fila apretada)
+	var centrado := CenterContainer.new()
+	columna.add_child(centrado)
+	var barra := GridContainer.new()
+	barra.columns = 6
+	barra.add_theme_constant_override("h_separation", 10)
+	barra.add_theme_constant_override("v_separation", 10)
+	centrado.add_child(barra)
 	for par in HERRAMIENTAS:
 		var b := _boton("", false)
 		b.icono = "campana_simple" if par[0] == "campana" else par[0]     # que no se confunda con la dorada
 		b.redondo = true
-		b.custom_minimum_size = Vector2(52, 52)      # las once herramientas caben en una fila
+		b.custom_minimum_size = Vector2(72, 72)      # once herramientas en dos filas de seis
 		b.pulsado.connect(_elegir.bind(par[0]))
 		barra.add_child(b)
 		botones_herramienta[par[0]] = b
@@ -390,7 +399,7 @@ func _demo_si_toca() -> void:
 	for a in args:
 		if a.begins_with("--captura="):
 			prefijo = a.trim_prefix("--captura=")
-	await get_tree().process_frame
+	await get_tree().create_timer(0.3).timeout      # que termine el fundido de entrada
 	_al_vaciar()
 	# Un nivel como el 8: campana doble arriba a la derecha y un muro
 	var pasos := [["doble", [74.0, 30.0]], ["campana", [18.0, 70.0]], ["dorada", [22.0, 28.0]], ["espiral", [62.0, 124.0]], ["inicio", [50.0, 150.0]]]

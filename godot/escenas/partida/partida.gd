@@ -17,6 +17,8 @@ extends Control
 
 const Partida = preload("res://nucleo/partida.gd")
 const Temas = preload("res://nucleo/temas.gd")
+const Animar = preload("res://escenas/comun/animar.gd")
+const Confeti = preload("res://escenas/comun/confeti.gd")
 const Fuentes = preload("res://escenas/comun/fuentes.gd")
 const Progreso = preload("res://nucleo/progreso.gd")
 const Registro = preload("res://nucleo/registro.gd")
@@ -149,6 +151,7 @@ func _ready() -> void:
 				break
 			primero = mini(primero + 1, niveles.size() - 1)
 		cargar(primero)
+	Animar.fundido_entrada(self)
 	_demo_si_toca()
 
 
@@ -254,6 +257,8 @@ func _comprobar_aviso(forzado := "") -> void:
 	velo.visible = true
 	ventana_aviso.visible = true
 	ventana_aviso.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
+	Animar.entrar(ventana_aviso)
+	Animar.aparecer(velo)
 
 
 func _actualizar() -> void:
@@ -303,6 +308,12 @@ func _al_terminar_caida() -> void:
 		if not modo_diario and indice == niveles.size() - 1:
 			ventana_detalle.text += "\nHas terminado los niveles de esta prueba. ¡Gracias por jugar!"
 		var ganadas := maxi(e - antes, 0)
+		# Celebración: confeti de fichas; más grande al terminar un barrio por primera vez
+		var fin_barrio: bool = modo_taller == "" and not modo_diario and antes == 0 \
+			and (indice == niveles.size() - 1 or niveles[indice + 1].get("barrio") != n.get("barrio"))
+		if fin_barrio:
+			ventana_detalle.text += "\n¡Has terminado %s!" % n.get("barrio", "el barrio")
+		Confeti.lanzar(self, fin_barrio)
 		ventana_premio.visible = ganadas > 0 and not modo_diario
 		ventana_premio_texto.text = "+%d %s para %s" % [ganadas, "estrella" if ganadas == 1 else "estrellas", n.get("barrio", "La Plaza")]
 		if modo_taller == "prueba" and Partida.maximo_estrellas(n["nivel"]) == 3 and not Partida.dorada_sono(r, n["nivel"]):
@@ -353,6 +364,11 @@ func _al_terminar_caida() -> void:
 	ventana_estrellas.visible = e > 0 and modo_taller != "prueba"
 	ventana.reset_size()
 	ventana.visible = true
+	Animar.entrar(ventana)
+	if velo.visible:
+		Animar.aparecer(velo)
+	if ventana_estrellas.visible:
+		ventana_estrellas.animar()
 	_actualizar()
 
 
@@ -541,6 +557,7 @@ func _construir() -> void:
 	fondo.color = AZUL
 	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(fondo)
+	Animar.luz_de_fondo(fondo)
 
 	var margen := MarginContainer.new()
 	margen.set_anchors_preset(Control.PRESET_FULL_RECT)

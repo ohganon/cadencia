@@ -126,7 +126,11 @@ godot/
 | Android SDK (Platform-Tools, Build-Tools 35.0.1, Platform 35) | Licencia del Android SDK (aceptada por el cliente el 18/11/2026) | 0 € | Instalado el 18/11/2026 |
 | Analítica | Por decidir | **Comprobar el precio, los límites gratuitos y las condiciones antes de elegir** (regla del presupuesto) | Fase 9 |
 
-## 6 bis. TODO: pasada estética (decidido por el cliente el 18/11/2026)
+## 6 bis. Pasada estética (decidido por el cliente el 18/11/2026; primera pasada hecha el 20/11/2026)
+
+**Hecho el 20/11/2026** (`escenas/comun/animar.gd` y `confeti.gd`): botones que se hunden con curva suave (140 ms), ventanas que entran con escala y velo que se funde, fundido al abrir cada pantalla, estrellas que salen una a una con rebote, latido de las pastillas al cambiar la cifra, ficha que vuelca hacia delante al caer (acelerando) con un pequeño rebote al tumbarse, sombra suave y brillo en las fichas de pie, luz en el tablero y en el fondo de las pantallas, campanas que se balancean al sonar con destellos (la doble, una hacia la otra), confeti de fichas al superar un nivel y más grande al terminar un barrio («¡Has terminado …!»), nodo del nivel que toca que respira en el mapa y barra del Taller en dos filas de botones grandes. Todo respeta «reducir movimiento» y el alto contraste. **Pendiente:** Pío (necesita arte), la cámara que sigue la caída en niveles grandes (ahora todos caben en pantalla) y una ilustración de fondo por barrio.
+
+Lista original:
 
 La pantalla de juego ya sigue la maqueta, pero **le falta ser más visual y llamativa**. El cliente prefiere desarrollar primero el juego y dejar esto para después. Lista para esa pasada:
 
