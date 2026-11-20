@@ -41,6 +41,7 @@ const HERRAMIENTAS := [
 	["muelle", "Muelle: arrastra de la entrada a la salida. La cadena salta por encima; toca la entrada para cambiar el tiempo."],
 	["interruptor", "Interruptor: arrastra para dibujar la compuerta; toca para mover su placa. Se abre al pisar la placa."],
 	["noria", "Noria: arrastra de la entrada a la salida. Suelta la cadena en su siguiente vuelta; toca la entrada para cambiar cada cuánto."],
+	["globo", "Globo: arrastra desde el globo hasta donde llega su camino. Al tocarlo la cadena, revienta y su camino cae solo."],
 	["goma", "Goma: toca cualquier pieza para quitarla."],
 ]
 
@@ -250,7 +251,7 @@ func _construir() -> void:
 	var centrado := CenterContainer.new()
 	columna.add_child(centrado)
 	var barra := GridContainer.new()
-	barra.columns = 6
+	barra.columns = 7
 	barra.add_theme_constant_override("h_separation", 10)
 	barra.add_theme_constant_override("v_separation", 10)
 	centrado.add_child(barra)
@@ -258,7 +259,7 @@ func _construir() -> void:
 		var b := _boton("", false)
 		b.icono = "campana_simple" if par[0] == "campana" else par[0]     # que no se confunda con la dorada
 		b.redondo = true
-		b.custom_minimum_size = Vector2(72, 72)      # doce herramientas en dos filas de seis
+		b.custom_minimum_size = Vector2(68, 68)      # trece herramientas en dos filas de siete
 		b.pulsado.connect(_elegir.bind(par[0]))
 		barra.add_child(b)
 		botones_herramienta[par[0]] = b
@@ -425,6 +426,10 @@ func _demo_si_toca() -> void:
 	_elegir("noria")
 	tablero._muro_desde = [30.0, 60.0]
 	tablero._muro_hasta = [30.0, 40.0]
+	tablero._terminar_muro()
+	_elegir("globo")
+	tablero._muro_desde = [70.0, 150.0]
+	tablero._muro_hasta = [90.0, 120.0]
 	tablero._terminar_muro()
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(prefijo + "_1_editor.png")

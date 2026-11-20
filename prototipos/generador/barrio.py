@@ -1,7 +1,7 @@
 """Los barrios de la campaña del prototipo.
 
 Uso (desde esta carpeta):
-    python -X utf8 barrio.py              # escribe godot/datos/barrio_1.json … barrio_6.json
+    python -X utf8 barrio.py              # escribe godot/datos/barrio_1.json … barrio_7.json
     python -X utf8 barrio.py --comprobar  # falla si los archivos no están al día
 
 Barrio 1, «La Plaza» (niveles 1–20): los 10 hechos a mano de la entrega 1 y 10 del generador.
@@ -23,6 +23,9 @@ Barrio 6, «La Fábrica» (niveles 101–120): presenta la **noria**, que lleva 
 un muro y la suelta en su siguiente vuelta. El 101 la enseña a mano y 102–120 salen del generador:
 muros que solo se pasan con la noria y dos norias del mismo ritmo que sueltan a la vez dos ramas
 que llegan a destiempo.
+Barrio 7, «El Jardín» (niveles 121–140): presenta el **globo**, que lleva colgado un camino de fichas
+gratis que cae al reventarlo. El 121 lo enseña a mano y 122–140 salen del generador: campanas
+lejos de tus fichas y campanas dobles con dos globos que hay que reventar cada uno a su tiempo.
 
 Ambos siguen la regla de ritmo de la Fase 4 (sección 5.2): dificultad creciente con picos cortos,
 respiros, preparación y el Gran Tramo al final. Las semillas son fijas: los barrios no cambian.
@@ -37,7 +40,7 @@ import sys
 import generador as G
 import sim
 from niveles_entrega1 import exportar, niveles, suave, tramo_a_dict
-from sim import Campana, Espiral, Interruptor, Muelle, Nivel, Noria, Tramo, nivel_a_dict, simular
+from sim import Campana, Espiral, Globo, Interruptor, Muelle, Nivel, Noria, Tramo, nivel_a_dict, simular
 
 DATOS = pathlib.Path(__file__).resolve().parents[2] / "godot" / "datos"
 
@@ -56,6 +59,8 @@ OBJETIVOS = {
     "interruptor": "Pisa la [b]placa[/b] con una rama para abrir la compuerta, y crúzala después.",
     "noria": "Un muro de lado a lado: la [b]noria[/b] lleva la cadena al otro lado en su siguiente vuelta.",
     "noria_doble": "Haz sonar la [b]campana doble[/b]: las dos norias sueltan las ramas a la vez, aunque lleguen a destiempo.",
+    "globo": "La campana queda lejos de tus fichas: revienta el [b]globo[/b] y su camino llegará por ti.",
+    "globo_doble": "Revienta los dos [b]globos[/b], cada uno a su tiempo, para que sus caminos lleguen a la vez a la campana doble.",
 }
 
 # (número, título, tipo, dificultad, semilla)
@@ -179,6 +184,28 @@ PLAN_6 = [
     (120, "Gran Tramo: la gran rueda", "noria_doble", 0.85, 12019),
 ]
 
+PLAN_7 = [
+    (122, "Pompas", "globo_doble", 0.35, 12201),
+    (123, "El estanque", "globo", 0.4, 12302),
+    (124, "Los aspersores", "interruptor", 0.45, 12403),
+    (125, "Diente de león", "globo_doble", 0.45, 12504),
+    (126, "El invernadero", "numeradas", 0.5, 12605),
+    (127, "La cometa", "globo", 0.5, 12706),
+    (128, "Respiro bajo el sauce", "simple", 0.3, 12807),
+    (129, "El laberinto de setos", "globo_doble", 0.55, 12908),
+    (130, "La fuente", "noria", 0.55, 13009),
+    (131, "Las mariposas", "espiral", 0.55, 13110),
+    (132, "El tobogán", "globo", 0.6, 13211),
+    (133, "Respiro en el banco", "dos", 0.4, 13312),
+    (134, "Los columpios", "muelle_doble", 0.65, 13413),
+    (135, "Bandada", "globo_doble", 0.65, 13514),
+    (136, "El reloj de sol", "espiral_doble", 0.7, 13615),
+    (137, "Las dos glorietas", "noria_doble", 0.7, 13716),
+    (138, "Fuegos artificiales", "globo_doble", 0.75, 13817),
+    (139, "La verja", "interruptor", 0.75, 13918),
+    (140, "Gran Tramo: el gran globo", "globo_doble", 0.85, 14019),
+]
+
 
 def _generados(plan):
     lista = []
@@ -200,6 +227,8 @@ def _con_dorada(lista):
         nivel = sim.nivel_de_dict(n["nivel"])
         tramos = [Tramo([tuple(p) for p in t["puntos"]], t["padre"], t["desde"]) for t in n["solucion"]]
         r = G.poner_dorada(nivel, tramos, 7919 * int(n["id"]))
+        if r is None:
+            r = G.poner_dorada(nivel, tramos, 7919 * int(n["id"]), corto=True)
         if r is not None:
             nivel, tramos = r
             n = n | {"nivel": nivel_a_dict(nivel), "solucion": [tramo_a_dict(x) for x in tramos]}
@@ -361,11 +390,31 @@ def barrio_6() -> dict:
     return {"version": 1, "barrio": 6, "nombre": "La Fábrica", "niveles": _con_dorada(ensenanza_6() + generados)}
 
 
+def ensenanza_7():
+    # 121. El globo: las fichas no llegan a la campana; el camino del globo, sí.
+    regalo = [(50.0, 128.0), (50.0, 25.0)]
+    n = Nivel(100, 160, (50, 150), [Campana("a", (50, 25))], fichas=10_000, globos=[Globo((50, 128), regalo)])
+    s = [Tramo([(50, 150), (50, 128)])]
+    r = simular(n, s)
+    assert r["exito"], r
+    n.marca, n.fichas = r["fichas_usadas"], r["fichas_usadas"] + 8
+    assert not simular(Nivel(100, 160, (50, 150), [Campana("a", (50, 25))], fichas=n.fichas), [Tramo([(50, 150), (50, 25)])])["exito"]
+    return [{"id": 121, "titulo": "El globo", "nivel": nivel_a_dict(n), "solucion": [tramo_a_dict(x) for x in s],
+             "ayuda": "Toca el [b]globo[/b] con la cadena: revienta y su camino de fichas cae solo, sin gastar las tuyas.",
+             "origen": "a mano"}]
+
+
+def barrio_7() -> dict:
+    generados = _generados(PLAN_7)
+    generados[0]["ayuda"] = "Dos [b]globos[/b] con caminos de largo distinto: revienta antes el del camino largo para que lleguen a la vez."
+    return {"version": 1, "barrio": 7, "nombre": "El Jardín", "niveles": _con_dorada(ensenanza_7() + generados)}
+
+
 def archivos() -> dict:
     fmt = lambda d: json.dumps(d, ensure_ascii=False, indent=1) + "\n"
     return {"barrio_1.json": fmt(barrio_1()), "barrio_2.json": fmt(barrio_2()), "barrio_3.json": fmt(barrio_3()),
             "barrio_4.json": fmt(barrio_4()), "barrio_5.json": fmt(barrio_5()),
-            "barrio_6.json": fmt(barrio_6())}
+            "barrio_6.json": fmt(barrio_6()), "barrio_7.json": fmt(barrio_7())}
 
 
 def main():

@@ -24,7 +24,7 @@ import math
 import pathlib
 import sys
 
-from sim import PASO, Campana, Espiral, Interruptor, Muelle, Nivel, Noria, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
+from sim import PASO, Campana, Espiral, Globo, Interruptor, Muelle, Nivel, Noria, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
 
 ANCHO, ALTO = 100, 160
 DATOS = pathlib.Path(__file__).with_name("datos")
@@ -224,6 +224,10 @@ def casos_reglas():
         return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], fichas=500, interruptores=interruptores,
                      muros=[((20, 0), (20, 100))] if muro else [])
 
+    def con_globo(muro=False):
+        return Nivel(200, 100, (10, 50), [Campana("b", (30, 90))], fichas=500,
+                     muros=[((20, 70), (40, 70))] if muro else [], globos=[Globo((30, 50), [(30, 50), (30, 90)])])
+
     def con_noria(periodo, fase):
         return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], muros=[((60, 0), (60, 100))], fichas=500,
                      norias=[Noria((55, 50), (65, 50), periodo, fase)])
@@ -296,6 +300,13 @@ def casos_reglas():
         ("dos ramas a destiempo salen a la vez de dos norias", doble_norias(),
          [Tramo([(10, 50), (40, 50)]), Tramo([(40, 50), (55, 40)], 0, 6), Tramo([(40, 50), (55, 80)], 0, 6),
           Tramo([(65, 40), (95, 60)]), Tramo([(65, 80), (95, 60)])]),
+        # Globo: en (30, 50) con un camino colgado que baja hasta la campana b (30, 90)
+        ("el globo suelta su camino", con_globo(), [Tramo([(10, 50), (35, 50)])]),
+        ("sin reventar el globo no cae su camino", con_globo(), [Tramo([(10, 50), (20, 50)])]),
+        ("el camino del globo choca con un muro", con_globo(muro=True), [Tramo([(10, 50), (35, 50)])]),
+        ("un globo revienta otro", Nivel(200, 100, (10, 50), [Campana("b", (90, 90))], fichas=500,
+                                        globos=[Globo((30, 50), [(30, 50), (60, 50)]), Globo((60, 50), [(60, 50), (80, 65), (90, 90)])]),
+         [Tramo([(10, 50), (35, 50)])]),
         ("rama de un bifurcador que no llegó a caer", Nivel(200, 100, (10, 50), [Campana("a", (110, 50))],
                                                             muros=[((40, 0), (40, 100))], fichas=500),
          [Tramo([(10, 50), (110, 50)]), Tramo([(60, 50), (60, 90)], 0, 10)]),

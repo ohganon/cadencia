@@ -90,7 +90,7 @@ func pruebas_cuerda(Cuerda: GDScript, Progreso: GDScript) -> void:
 func pruebas_barrio(sim: GDScript) -> void:
 	var Partida: GDScript = load("res://nucleo/partida.gd")
 	var primero := 1
-	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json", "res://datos/barrio_5.json", "res://datos/barrio_6.json"]:
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json", "res://datos/barrio_5.json", "res://datos/barrio_6.json", "res://datos/barrio_7.json"]:
 		var b = leer_json(ruta)
 		comprobar(b != null and b["niveles"].size() == 20, "%s tiene 20 niveles" % b["nombre"])
 		var mal := []
@@ -150,6 +150,18 @@ func pruebas_barrio(sim: GDScript) -> void:
 						sin_muelle_falla.append(n["id"])
 			comprobar(con_muelle >= 10, "La Feria tiene muelles en la mayoría de niveles (%d)" % con_muelle)
 			comprobar(sin_muelle_falla.size() == con_muelle, "en La Feria la solución necesita su muelle (sin él falla)", str(sin_muelle_falla))
+		if b["barrio"] == 7:
+			var con_globo := 0
+			var sin_globo_falla := []
+			for n in b["niveles"]:
+				if not n["nivel"].get("gl", []).is_empty():
+					con_globo += 1
+					var sin: Dictionary = n["nivel"].duplicate(true)
+					sin.erase("gl")
+					if not sim.simular(sin, n["solucion"])["exito"]:
+						sin_globo_falla.append(n["id"])
+			comprobar(con_globo >= 10, "El Jardín tiene globos en la mayoría de niveles (%d)" % con_globo)
+			comprobar(sin_globo_falla.size() == con_globo, "en El Jardín la solución necesita sus globos (sin ellos falla)", str(sin_globo_falla))
 		if b["barrio"] == 6:
 			var con_noria := 0
 			var sin_noria_falla := []
@@ -250,7 +262,7 @@ func pruebas_temas(Temas: GDScript) -> void:
 	var BotonPop: GDScript = load("res://escenas/comun/boton_pop.gd")
 	var sin_nombre := []
 	for icono in ["volver", "adelante", "deshacer", "bombilla", "lento", "inicio", "campana_simple", "doble", "numerada",
-			"dorada", "muro", "puerta", "espiral", "muelle", "interruptor", "noria", "goma"]:
+			"dorada", "muro", "puerta", "espiral", "muelle", "interruptor", "noria", "globo", "goma"]:
 		var b = BotonPop.new()
 		b.icono = icono
 		if b.nombre_para_lector() == icono:

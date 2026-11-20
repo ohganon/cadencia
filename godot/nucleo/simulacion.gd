@@ -16,7 +16,8 @@
 ##    e: [[[x, y], retardo]...] (opcional: espirales de retardo),
 ##    ml: [[[entrada], [salida], salto]...] (opcional: muelles),
 ##    in: [[[placa], [a], [b]]...] (opcional: interruptores con su compuerta a-b),
-##    nr: [[[entrada], [salida], periodo, fase]...] (opcional: norias)}
+##    nr: [[[entrada], [salida], periodo, fase]...] (opcional: norias),
+##    gl: [[[globo], [[x, y]...]]...] (opcional: globos con el camino que sueltan)}
 ## Un tramo es {puntos: [[x, y]...], padre: int o null, desde: int}.
 extends RefCounted
 
@@ -213,7 +214,7 @@ static func simular_detalle(nivel: Dictionary, tramos: Array) -> Dictionary:
 		r = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
 		var nuevos := []
 		for it in interruptores:
-			nuevos.append(disparo_placa(it[0], fichas_por_tramo, r["tics"], r["caidas"]))
+			nuevos.append(disparo_placa(it[0], r["todas"], r["tics"], r["caidas"]))
 		if nuevos == disparos:
 			convergio = true
 			break
@@ -223,19 +224,20 @@ static func simular_detalle(nivel: Dictionary, tramos: Array) -> Dictionary:
 	var tics: Array = r["tics"]
 	var caidas: Array = r["caidas"]
 	var parada = r["parada"]
+	var todas: Array = r["todas"]        # los tramos del jugador y, detrás, los caminos de los globos
 
 	# Campanas: el primer tic en que una ficha caída de cada tramo llega a su radio
 	var llegadas := {}
 	for c in nivel["c"]:
 		var lista := []
-		for idx in fichas_por_tramo.size():
-			var f: Array = fichas_por_tramo[idx]
+		for idx in todas.size():
+			var f: Array = todas[idx]
 			for j in range(0, caidas[idx] + 1):
 				if dist(f[j], c[1]) <= RADIO_CAMPANA:
 					lista.append([tics[idx][j], idx])
 					break
 		llegadas[c[0]] = lista
-	var d := _detalle(_resultado(nivel, fichas_por_tramo, llegadas, parada, usadas), fichas_por_tramo, tics, caidas)
+	var d := _detalle(_resultado(nivel, fichas_por_tramo, llegadas, parada, usadas), todas, tics, caidas)
 	d["interruptores"] = disparos
 	return d
 
@@ -258,18 +260,28 @@ static func _resolver(nivel: Dictionary, tramos: Array, fichas_por_tramo: Array,
 	var tics := []
 	var caidas := []
 	var parada = null
-	for idx in fichas_por_tramo.size():
-		var tr: Dictionary = tramos[idx]
-		var f: Array = fichas_por_tramo[idx]
+	# Después de los tramos del jugador, los caminos de los globos (en su orden)
+	var globos: Array = nivel.get("gl", [])
+	var todas := fichas_por_tramo.duplicate()
+	for g in globos:
+		todas.append(repartir(g[1]))
+	for idx in todas.size():
+		var f: Array = todas[idx]
 		var cae := true
 		var base := -1
-		if salidas[idx] >= 0:
+		if idx >= tramos.size():
+			var reventon := disparo_placa(globos[idx - tramos.size()][0], todas, tics, caidas)
+			cae = reventon >= 0
+			if cae:
+				base = reventon
+		elif salidas[idx] >= 0:
 			var m: Array = lanzadores(nivel)[salidas[idx]]
 			var disparo := disparo_muelle(m, fichas_por_tramo, tics, caidas)
 			cae = disparo >= 0          # si nada llegó a la entrada, no sale nada
 			if cae:
 				base = primera_salida(m, disparo) - 1
-		elif tr["padre"] != null:
+		elif tramos[idx]["padre"] != null:
+			var tr: Dictionary = tramos[idx]
 			base = tics[int(tr["padre"])][int(tr["desde"])]
 			cae = caidas[int(tr["padre"])] >= int(tr["desde"])   # su bifurcador tiene que haber caído
 		tics.append(tics_tramo(nivel, f, base))
@@ -308,7 +320,7 @@ static func _resolver(nivel: Dictionary, tramos: Array, fichas_por_tramo: Array,
 					parada = {"tramo": idx, "ficha": j, "tic": tics[idx][j], "motivo": motivo}
 				break
 		caidas.append(ultima)
-	return {"tics": tics, "caidas": caidas, "parada": parada}
+	return {"tics": tics, "caidas": caidas, "parada": parada, "todas": todas}
 
 
 static func _detalle(resultado: Dictionary, fichas: Array, tics: Array, caidas: Array) -> Dictionary:

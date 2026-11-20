@@ -32,6 +32,11 @@ Reglas (Fase 4, sección 4.3):
   un tiempo fijo: lo suelta en su siguiente vuelta. Tiene `periodo` y `fase`: la primera ficha del
   tramo que sale cae en el primer tic s posterior al disparo con (s - fase) % periodo == 0. Así, dos
   ramas que llegan a destiempo a dos norias iguales salen a la vez.
+- Globo: lleva colgado un camino de fichas (`regalo`, que empieza en el globo) que no gasta fichas del
+  jugador. Cuando cae una ficha sobre el globo (a RADIO_INTERRUPTOR o menos, sin contar la primera de
+  cada tramo), revienta en ese tic d y su camino cae como una rama: la ficha j en el tic d + 1 + j.
+  Se para con lo mismo que cualquier tramo. Los globos se resuelven después de los tramos del
+  jugador, en su orden, así que el camino de un globo puede reventar otro globo que vaya después.
 - Interruptor: una placa con su compuerta (un segmento). La compuerta para la cadena como un muro
   hasta que cae una ficha sobre la placa (a RADIO_INTERRUPTOR o menos, sin contar la primera de
   cada tramo); desde el tic siguiente queda abierta para siempre. Como abrir una compuerta puede
@@ -184,6 +189,13 @@ class Noria:
 
 
 @dataclass
+class Globo:
+    """Globo en `pos` con un camino de fichas colgado (`regalo`, una lista de puntos)."""
+    pos: tuple
+    regalo: list
+
+
+@dataclass
 class Interruptor:
     """Placa en `pos` que abre la compuerta a-b desde el tic siguiente a que la pisen."""
     pos: tuple
@@ -205,6 +217,7 @@ class Nivel:
     muelles: list = field(default_factory=list)
     interruptores: list = field(default_factory=list)
     norias: list = field(default_factory=list)
+    globos: list = field(default_factory=list)
 
 
 @dataclass
@@ -283,18 +296,18 @@ def simular(nivel: Nivel, tramos: list[Tramo]):
     # Por rondas, para los interruptores (sin interruptores, una sola)
     disparos = [None] * len(nivel.interruptores)
     for _ in range(len(nivel.interruptores) + 4):
-        tics, caidas, parada = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
-        nuevos = [disparo_placa(i.pos, fichas_por_tramo, tics, caidas) for i in nivel.interruptores]
+        tics, caidas, parada, todas = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
+        nuevos = [disparo_placa(i.pos, todas, tics, caidas) for i in nivel.interruptores]
         if nuevos == disparos:
             break
         disparos = nuevos
     else:
-        tics, caidas, parada = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
+        tics, caidas, parada, todas = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
 
-    # Campanas: el primer tic en que una ficha caída de cada tramo llega a su radio
+    # Campanas: el primer tic en que una ficha caída de cada tramo (o de cada globo) llega a su radio
     llegadas = {c.id: [] for c in nivel.campanas}        # lista de (tic, tramo)
     for c in nivel.campanas:
-        for idx, f in enumerate(fichas_por_tramo):
+        for idx, f in enumerate(todas):
             for j in range(0, caidas[idx] + 1):
                 if _dist(f[j], c.pos) <= RADIO_CAMPANA:
                     llegadas[c.id].append((tics[idx][j], idx))
@@ -319,9 +332,22 @@ def _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos):
     después de ese tic."""
     tics, caidas = [], []          # caidas[idx]: índice de la última ficha que cae (-1: ninguna)
     parada = None
-    for idx, f in enumerate(fichas_por_tramo):
-        tr = tramos[idx]
+    # Después de los tramos del jugador, los caminos de los globos (en su orden)
+    todas = list(fichas_por_tramo) + [repartir(g.regalo) for g in nivel.globos]
+    for idx, f in enumerate(todas):
         cae = True
+        if idx >= len(tramos):
+            g = nivel.globos[idx - len(tramos)]
+            reventon = disparo_placa(g.pos, todas, tics, caidas)
+            cae = reventon is not None
+            tics.append(tics_tramo(nivel, f, -1 if reventon is None else reventon))
+            if not cae:
+                caidas.append(-1)
+                continue
+            ultima, parada = _recorrer(nivel, f, tics, idx, disparos, parada)
+            caidas.append(ultima)
+            continue
+        tr = tramos[idx]
         if salidas[idx] is not None:
             m = lanzadores(nivel)[salidas[idx]]
             disparo = disparo_muelle(m, fichas_por_tramo, tics, caidas)
@@ -336,33 +362,39 @@ def _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos):
         if not cae:
             caidas.append(-1)
             continue
-        ultima = len(f) - 1
-        for j in range(1, len(f)):
-            motivo = None
-            x, y = f[j]
-            if not (0 <= x <= nivel.ancho and 0 <= y <= nivel.alto):
-                motivo = "sale del tablero"
-            elif j >= 2 and _curva_cerrada(f[j - 2], f[j - 1], f[j]):
-                motivo = "curva demasiado cerrada"
-            elif any(_cruza(f[j - 1], f[j], m[0], m[1]) for m in nivel.muros):
-                motivo = "choca con un muro"
-            else:
-                for p in nivel.puertas:
-                    if _cruza(f[j - 1], f[j], p.a, p.b) and not p.abierta_en(tics[idx][j]):
-                        motivo = "puerta cerrada"
-                        break
-                if motivo is None:
-                    for k, i in enumerate(nivel.interruptores):
-                        if _cruza(f[j - 1], f[j], i.a, i.b) and (disparos[k] is None or tics[idx][j] <= disparos[k]):
-                            motivo = "compuerta cerrada"
-                            break
-            if motivo:
-                ultima = j - 1
-                if parada is None or tics[idx][j] < parada["tic"]:
-                    parada = {"tramo": idx, "ficha": j, "tic": tics[idx][j], "motivo": motivo}
-                break
+        ultima, parada = _recorrer(nivel, f, tics, idx, disparos, parada)
         caidas.append(ultima)
-    return tics, caidas, parada
+    return tics, caidas, parada, todas
+
+
+def _recorrer(nivel, f, tics, idx, disparos, parada):
+    """Recorre las fichas de un tramo hasta donde se para. Devuelve (última que cae, parada)."""
+    ultima = len(f) - 1
+    for j in range(1, len(f)):
+        motivo = None
+        x, y = f[j]
+        if not (0 <= x <= nivel.ancho and 0 <= y <= nivel.alto):
+            motivo = "sale del tablero"
+        elif j >= 2 and _curva_cerrada(f[j - 2], f[j - 1], f[j]):
+            motivo = "curva demasiado cerrada"
+        elif any(_cruza(f[j - 1], f[j], m[0], m[1]) for m in nivel.muros):
+            motivo = "choca con un muro"
+        else:
+            for p in nivel.puertas:
+                if _cruza(f[j - 1], f[j], p.a, p.b) and not p.abierta_en(tics[idx][j]):
+                    motivo = "puerta cerrada"
+                    break
+            if motivo is None:
+                for k, i in enumerate(nivel.interruptores):
+                    if _cruza(f[j - 1], f[j], i.a, i.b) and (disparos[k] is None or tics[idx][j] <= disparos[k]):
+                        motivo = "compuerta cerrada"
+                        break
+        if motivo:
+            ultima = j - 1
+            if parada is None or tics[idx][j] < parada["tic"]:
+                parada = {"tramo": idx, "ficha": j, "tic": tics[idx][j], "motivo": motivo}
+            break
+    return ultima, parada
 
 
 def _resultado(nivel, tramos, fichas, llegadas, parada, usadas=None):
@@ -422,7 +454,8 @@ def nivel_a_dict(n: Nivel) -> dict:
         {"e": [[list(e.pos), e.retardo] for e in n.espirales]} if n.espirales else {}) | (
         {"ml": [[list(m.entrada), list(m.salida), m.salto] for m in n.muelles]} if n.muelles else {}) | (
         {"in": [[list(i.pos), list(i.a), list(i.b)] for i in n.interruptores]} if n.interruptores else {}) | (
-        {"nr": [[list(m.entrada), list(m.salida), m.periodo, m.fase] for m in n.norias]} if n.norias else {})
+        {"nr": [[list(m.entrada), list(m.salida), m.periodo, m.fase] for m in n.norias]} if n.norias else {}) | (
+        {"gl": [[list(g.pos), [list(q) for q in g.regalo]] for g in n.globos]} if n.globos else {})
 
 
 def nivel_de_dict(d: dict) -> Nivel:
@@ -435,7 +468,8 @@ def nivel_de_dict(d: dict) -> Nivel:
                  d["f"], d["m"], [Espiral(tuple(e[0]), int(e[1])) for e in d.get("e", [])],
                  [Muelle(tuple(m[0]), tuple(m[1]), int(m[2])) for m in d.get("ml", [])],
                  [Interruptor(tuple(i[0]), tuple(i[1]), tuple(i[2])) for i in d.get("in", [])],
-                 [Noria(tuple(m[0]), tuple(m[1]), int(m[2]), int(m[3])) for m in d.get("nr", [])])
+                 [Noria(tuple(m[0]), tuple(m[1]), int(m[2]), int(m[3])) for m in d.get("nr", [])],
+                 [Globo(tuple(g[0]), [tuple(q) for q in g[1]]) for g in d.get("gl", [])])
 
 
 PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
@@ -445,7 +479,7 @@ PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
 LIMITES_TALLER = {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
                   "tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12,
                   "muelles": 4, "salto": 20, "interruptores": 4,
-                  "norias": 4, "vuelta": 60}
+                  "norias": 4, "vuelta": 60, "globos": 4, "regalo": 40}
 TIPOS_CAMPANA = ("simple", "doble", "numerada", "dorada")
 
 
@@ -520,6 +554,13 @@ def validar_nivel_taller(d: dict) -> str:
             if not (isinstance(x, list) and len(x) == 4 and _punto(x[0], d) and _punto(x[1], d)
                     and _numero(x[2], 2, L["vuelta"]) and _numero(x[3], 0, x[2])):
                 return "noria no válida"
+        gl = d.get("gl", [])
+        if not (isinstance(gl, list) and len(gl) <= L["globos"]):
+            return "demasiados globos"
+        for x in gl:
+            if not (isinstance(x, list) and len(x) == 2 and _punto(x[0], d) and isinstance(x[1], list)
+                    and 2 <= len(x[1]) <= L["regalo"] and all(_punto(q, d) for q in x[1])):
+                return "globo no válido"
     except (KeyError, TypeError, IndexError):
         return "faltan datos del nivel"
     return ""

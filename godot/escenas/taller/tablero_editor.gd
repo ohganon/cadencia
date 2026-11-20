@@ -10,7 +10,7 @@ signal aviso(texto: String)
 
 const Partida = preload("res://nucleo/partida.gd")
 const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "espirales": 4, "muelles": 4, "interruptores": 4,
-	"norias": 4}
+	"norias": 4, "globos": 4}
 ## Vueltas posibles de una noria (en tics); tocar su entrada pasa a la siguiente
 const VUELTAS := [4, 6, 8, 10, 12, 16]
 ## Salto de un muelle nuevo, y cuánto sube al tocar su entrada (de 2 en 2 hasta 20, y vuelta a 2)
@@ -58,12 +58,12 @@ func _gui_input(evento: InputEvent) -> void:
 				return
 			if herramienta == "noria" and _cambiar_vuelta(p):
 				return
-			if herramienta in ["muro", "puerta", "muelle", "interruptor", "noria"]:
+			if herramienta in ["muro", "puerta", "muelle", "interruptor", "noria", "globo"]:
 				_muro_desde = p
 				_muro_hasta = p
 			else:
 				_aplicar(p)
-		elif herramienta in ["muro", "puerta", "muelle", "interruptor", "noria"] and _muro_desde != null:
+		elif herramienta in ["muro", "puerta", "muelle", "interruptor", "noria", "globo"] and _muro_desde != null:
 			_terminar_muro()
 		accept_event()
 	elif evento is InputEventMouseMotion and _muro_desde != null:
@@ -135,6 +135,9 @@ func _terminar_muro() -> void:
 	if herramienta == "noria":
 		_terminar_noria()
 		return
+	if herramienta == "globo":
+		_terminar_globo()
+		return
 	var a: Array = _muro_desde
 	var b: Array = _muro_hasta
 	_muro_desde = null
@@ -189,6 +192,11 @@ func _borrar_cerca(p: Array) -> bool:
 	if muelle >= 0:
 		nivel["ml"].remove_at(muelle)
 		return true
+	var lista_gl: Array = nivel.get("gl", [])
+	for k in lista_gl.size():
+		if Sim.dist(p, lista_gl[k][0]) <= Sim.RADIO_INTERRUPTOR + 3.0:
+			lista_gl.remove_at(k)
+			return true
 	var lista_nr: Array = nivel.get("nr", [])
 	for k in lista_nr.size():
 		if Sim.dist(p, lista_nr[k][0]) <= Sim.RADIO_MUELLE + 2.0 or Sim.dist(p, lista_nr[k][1]) <= Sim.RADIO_MUELLE + 2.0:
@@ -266,6 +274,29 @@ func _terminar_interruptor() -> void:
 		lista.append([[snappedf(placa[0], 0.1), snappedf(placa[1], 0.1)], [snappedf(a[0], 0.1), snappedf(a[1], 0.1)],
 			[snappedf(b[0], 0.1), snappedf(b[1], 0.1)]])
 		aviso.emit("La compuerta se abre cuando cae una ficha en la placa. Toca otro sitio para mover la placa.")
+	_refrescar()
+	editado.emit()
+
+
+## Globo nuevo: se pone donde empieza el arrastre y su camino de fichas va hasta donde se suelta.
+func _terminar_globo() -> void:
+	var desde: Array = _muro_desde
+	var hasta: Array = _muro_hasta
+	_muro_desde = null
+	_muro_hasta = null
+	if not nivel.has("gl"):
+		nivel["gl"] = []
+	if Sim.dist(desde, hasta) < 10.0:
+		aviso.emit("Arrastra desde el globo hasta donde quieras que llegue su camino de fichas.")
+		queue_redraw()
+		return
+	if nivel["gl"].size() >= LIMITES["globos"]:
+		aviso.emit("Como mucho 4 globos por nivel.")
+		queue_redraw()
+		return
+	var a := [snappedf(desde[0], 0.1), snappedf(desde[1], 0.1)]
+	nivel["gl"].append([a, [a.duplicate(), [snappedf(hasta[0], 0.1), snappedf(hasta[1], 0.1)]]])
+	aviso.emit("Cuando la cadena toca el globo, revienta y su camino cae solo, sin gastar tus fichas.")
 	_refrescar()
 	editado.emit()
 

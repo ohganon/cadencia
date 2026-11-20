@@ -16,7 +16,7 @@ const PREFIJO := "DING1-"
 const MAXIMO_DESCOMPRIMIDO := 65536
 const MAXIMO_CODIGO := 20000
 const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
-	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12, "muelles": 4, "salto": 20, "interruptores": 4, "norias": 4, "vuelta": 60}
+	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12, "muelles": 4, "salto": 20, "interruptores": 4, "norias": 4, "vuelta": 60, "globos": 4, "regalo": 40}
 const TIPOS_CAMPANA := ["simple", "doble", "numerada", "dorada"]
 const RUTA := "user://taller.json"
 
@@ -162,6 +162,16 @@ static func validar_nivel(d: Dictionary) -> String:
 		if typeof(x) != TYPE_ARRAY or x.size() != 4 or not _punto(x[0], d) or not _punto(x[1], d) \
 				or not _numero(x[2], 2, LIMITES["vuelta"]) or not _numero(x[3], 0, float(x[2]) if _numero(x[2], 2, LIMITES["vuelta"]) else 0):
 			return "Hay una noria que no es válida."
+	var gl = d.get("gl", [])
+	if typeof(gl) != TYPE_ARRAY or gl.size() > LIMITES["globos"]:
+		return "Hay demasiados globos."
+	for x in gl:
+		if typeof(x) != TYPE_ARRAY or x.size() != 2 or not _punto(x[0], d) or typeof(x[1]) != TYPE_ARRAY \
+				or x[1].size() < 2 or x[1].size() > LIMITES["regalo"]:
+			return "Hay un globo que no es válido."
+		for q in x[1]:
+			if not _punto(q, d):
+				return "Hay un globo que no es válido."
 	return ""
 
 

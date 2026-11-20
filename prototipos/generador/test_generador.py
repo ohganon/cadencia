@@ -6,7 +6,7 @@ import unittest
 
 import generador as G
 import sim
-from sim import Tramo, simular
+from sim import Tramo, repartir, simular
 
 DATOS = pathlib.Path(__file__).resolve().parent.parent / "simulacion" / "datos" / "caida_del_dia.json"
 
@@ -176,6 +176,21 @@ class Barrio(unittest.TestCase):
                         # Las dos norias giran igual y las ramas llegan a destiempo: salen a la vez gracias a ellas
                         self.assertEqual(len({(n.periodo, n.fase) for n in g.nivel.norias}), 1)
                     g.nivel.norias = []
+                    self.assertFalse(simular(g.nivel, g.solucion)["exito"])
+
+
+    def test_niveles_con_globo(self):
+        for tipo in G.TIPOS_GLOBO:
+            for semilla in (121, 122, 123):
+                with self.subTest(tipo=tipo, semilla=semilla):
+                    g = G.generar(semilla, tipo, 0.6)
+                    self.assertIsNotNone(g)
+                    r = simular(g.nivel, g.solucion)
+                    self.assertTrue(r["exito"])
+                    self.assertEqual(G.atajos(g.nivel)["recto"], 0)
+                    # Las fichas de los globos son gratis: la marca solo cuenta las del jugador
+                    self.assertEqual(r["fichas_usadas"], sum(len(repartir(t.puntos)) for t in g.solucion))
+                    g.nivel.globos = []
                     self.assertFalse(simular(g.nivel, g.solucion)["exito"])
 
 

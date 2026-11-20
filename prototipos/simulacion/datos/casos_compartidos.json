@@ -7637,6 +7637,330 @@
    }
   },
   {
+   "nombre": "regla: el globo suelta su camino",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "b",
+      [
+       30,
+       90
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [],
+    "gl": [
+     [
+      [
+       30,
+       50
+      ],
+      [
+       [
+        30,
+        50
+       ],
+       [
+        30,
+        90
+       ]
+      ]
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       35,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 6,
+    "sobran": 494,
+    "campanas": {
+     "b": 12
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
+   "nombre": "regla: sin reventar el globo no cae su camino",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "b",
+      [
+       30,
+       90
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [],
+    "gl": [
+     [
+      [
+       30,
+       50
+      ],
+      [
+       [
+        30,
+        50
+       ],
+       [
+        30,
+        90
+       ]
+      ]
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       20,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": false,
+    "fichas_usadas": 3,
+    "sobran": 497,
+    "campanas": {
+     "b": null
+    },
+    "parada": null,
+    "motivos": {
+     "b": "no llegó"
+    }
+   }
+  },
+  {
+   "nombre": "regla: el camino del globo choca con un muro",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "b",
+      [
+       30,
+       90
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [
+     [
+      [
+       20,
+       70
+      ],
+      [
+       40,
+       70
+      ]
+     ]
+    ],
+    "p": [],
+    "gl": [
+     [
+      [
+       30,
+       50
+      ],
+      [
+       [
+        30,
+        50
+       ],
+       [
+        30,
+        90
+       ]
+      ]
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       35,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": false,
+    "fichas_usadas": 6,
+    "sobran": 494,
+    "campanas": {
+     "b": null
+    },
+    "parada": {
+     "tramo": 1,
+     "ficha": 4,
+     "tic": 9,
+     "motivo": "choca con un muro"
+    },
+    "motivos": {
+     "b": "no llegó"
+    }
+   }
+  },
+  {
+   "nombre": "regla: un globo revienta otro",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "b",
+      [
+       90,
+       90
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [],
+    "gl": [
+     [
+      [
+       30,
+       50
+      ],
+      [
+       [
+        30,
+        50
+       ],
+       [
+        60,
+        50
+       ]
+      ]
+     ],
+     [
+      [
+       60,
+       50
+      ],
+      [
+       [
+        60,
+        50
+       ],
+       [
+        80,
+        65
+       ],
+       [
+        90,
+        90
+       ]
+      ]
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       35,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 6,
+    "sobran": 494,
+    "campanas": {
+     "b": 21
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
    "nombre": "regla: rama de un bifurcador que no llegó a caer",
    "nivel": {
     "v": 1,

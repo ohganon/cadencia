@@ -287,6 +287,12 @@ func _draw() -> void:
 						estado = 1
 			_ficha(f, j, estado, avance, recien)
 
+	# Mientras se dibuja, los caminos de los globos ya están puestos (en la caída van con los demás)
+	if modo == Modo.EDITAR:
+		for g in nivel.get("gl", []):
+			var regalo := Sim.repartir(g[1])
+			for j in range(1, regalo.size()):
+				_ficha(regalo, j, 0, 0.0)
 	_empujador(nivel["i"])
 	# Las campanas van encima de las fichas para que siempre se vean
 	for c in nivel["c"]:
@@ -301,6 +307,19 @@ func _draw() -> void:
 
 	if modo == Modo.EDITAR:
 		var tics := _tics_de(todas)
+		# Los caminos de los globos que revientan con lo dibujado, con su cuenta (y sus cruces)
+		var caen := []
+		for f in todas:
+			caen.append(f.size() - 1)
+		todas = todas.duplicate()
+		for g in nivel.get("gl", []):
+			var reventon := Sim.disparo_placa(g[0], todas, tics, caen)
+			if reventon < 0:
+				continue
+			var regalo := Sim.repartir(g[1])
+			todas.append(regalo)
+			tics.append(Sim.tics_tramo(nivel, regalo, reventon))
+			caen.append(regalo.size() - 1)
 		for i in todas.size():
 			for j in range(1, todas[i].size()):
 				if tics[i][j] > 0 and tics[i][j] % 4 == 0:
@@ -310,6 +329,10 @@ func _draw() -> void:
 			draw_arc(c, 3.4 * _k, 0, TAU, 28, CORAL, 0.6 * _k, true)
 			_simbolo(c + Vector2(3.0, -3.0) * _k, "!")      # aviso con forma, no solo con color
 		_cruces_de_puertas(todas, tics)
+	# Los globos, encima de todo (hasta que revientan)
+	var globos: Array = nivel.get("gl", [])
+	for k in globos.size():
+		_globo(globos[k], k)
 	# El aro y el retraso de cada espiral, encima de todo: si la cadena pasa por ella, se sigue viendo
 	for e in nivel.get("e", []):
 		_espiral_etiqueta(e)
@@ -778,6 +801,37 @@ func _interruptor(it: Array, k: int) -> void:
 		d += raya
 	for poste in [a, b]:
 		draw_circle(poste, 1.3 * _k, TINTA)
+
+
+## Globo: un globo rosa con su brillo y su cuerda, atado al principio de su camino. Al reventar
+## (durante la caída), unos trocitos salen volando y desaparece.
+func _globo(g: Array, k: int) -> void:
+	var c := a_pantalla(g[0])
+	var reventon := -1
+	if modo != Modo.EDITAR:
+		var tics_todas: Array = _detalle.get("tics", [])
+		var indice: int = partida.tramos.size() + k
+		var caidas: Array = _detalle.get("caidas", [])
+		if indice < tics_todas.size() and indice < caidas.size() and int(caidas[indice]) >= 0:
+			reventon = int(tics_todas[indice][0]) - 1
+	var color := Color("#ff7eb6")
+	if reventon >= 0 and _tic_actual() > reventon:
+		var t := _tiempo - (reventon + 1) * DURACION_TIC
+		if t < 0.5 and not reducir_movimiento:
+			var u := t / 0.5
+			for s in 8:
+				var a := TAU * s / 8.0 + 0.2
+				var p := c + Vector2(0, -3.0 * _k) + Vector2(cos(a), sin(a)) * (2.0 + 6.0 * u) * _k
+				draw_circle(p, (0.8 - 0.5 * u) * _k, Color(color, 1.0 - u))
+		return
+	var centro := c + Vector2(0, -4.2 * _k)
+	var r := 3.2 * _k
+	draw_line(c, centro + Vector2(0, r), Color(TINTA, 0.7), maxf(1.0, 0.25 * _k), true)
+	draw_circle(centro, r, color)
+	draw_arc(centro, r, 0, TAU, 28, TINTA, maxf(1.0, 0.3 * _k), true)
+	draw_circle(centro + Vector2(-1.0, -1.1) * _k, 0.8 * _k, Color(1, 1, 1, 0.6))
+	draw_colored_polygon(PackedVector2Array([centro + Vector2(-0.7, r / _k) * _k, centro + Vector2(0.7, r / _k) * _k,
+		centro + Vector2(0, r / _k + 1.0) * _k]), color)
 
 
 ## Posición en pantalla (global) de la X donde se paró la cadena, o null si no se paró.

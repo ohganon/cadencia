@@ -99,6 +99,12 @@ static func _dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color: Color) ->
 			var lado := rect.size.x * 0.72
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(0, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(rect.size.x - lado, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
+		"globo":                          # globo con su cuerda
+			var e := rect.size.x / 24.0
+			var c := rect.position + Vector2(12, 9) * e
+			ci.draw_circle(c, 6.0 * e, Color("#ff7eb6"))
+			ci.draw_arc(c, 6.0 * e, 0, TAU, 24, _t, maxf(1.5, 2.0 * e), true)
+			_trazos(ci, rect, [[Vector2(12, 15), Vector2(11, 18), Vector2(13, 21)]])
 		"noria":                          # noria: rueda con cuatro radios
 			var e := rect.size.x / 24.0
 			var c := rect.get_center()
