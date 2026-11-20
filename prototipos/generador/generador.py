@@ -35,7 +35,7 @@ AQUI = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(AQUI.parent / "simulacion"))
 
 import sim  # noqa: E402
-from sim import Campana, Espiral, Muelle, Nivel, Tramo, longitud, nivel_a_dict, repartir, simular  # noqa: E402
+from sim import Campana, Espiral, Interruptor, Muelle, Nivel, Tramo, longitud, nivel_a_dict, repartir, simular  # noqa: E402
 from niveles_entrega1 import con_curva, igualar, suave, tramo_a_dict  # noqa: E402
 
 ANCHO, ALTO = 100, 160
@@ -331,6 +331,9 @@ def poner_dorada(nivel: Nivel, solucion: list, semilla: int, intentos=300):
         if any(min(math.dist(destino, m.entrada), math.dist(destino, m.salida)) < sim.RADIO_CAMPANA + sim.RADIO_MUELLE + 2
                for m in nivel.muelles):
             continue
+        if any(math.dist(destino, i.pos) < sim.RADIO_CAMPANA + sim.RADIO_INTERRUPTOR + 2 or
+               _distancia_segmento(destino, i.a, i.b) < sim.RADIO_CAMPANA + 2 for i in nivel.interruptores):
+            continue
         # Ni encima de un muro ni de una puerta: tiene que verse limpia
         segmentos = list(nivel.muros) + [(p.a, p.b) for p in nivel.puertas]
         if any(_distancia_segmento(destino, a, b) < sim.RADIO_CAMPANA + 2 for a, b in segmentos):
@@ -338,14 +341,14 @@ def poner_dorada(nivel: Nivel, solucion: list, semilla: int, intentos=300):
         rama = Tramo([(round(base[0], 3), round(base[1], 3)), destino], i, j)
         campanas = nivel.campanas + [Campana("oro", destino, "dorada")]
         nuevo = Nivel(nivel.ancho, nivel.alto, nivel.inicio, campanas, nivel.muros, nivel.puertas, fichas=10_000,
-                      espirales=nivel.espirales, muelles=nivel.muelles)
+                      espirales=nivel.espirales, muelles=nivel.muelles, interruptores=nivel.interruptores)
         tramos = solucion + [rama]
         r = simular(nuevo, tramos)
         if not r["exito"] or r["parada"] is not None or r["campanas"]["oro"] is None:
             continue
         # Las demás campanas tienen que sonar igual que sin la rama (no altera el nivel)
         antes = simular(Nivel(nivel.ancho, nivel.alto, nivel.inicio, nivel.campanas, nivel.muros, nivel.puertas, fichas=10_000,
-                              espirales=nivel.espirales, muelles=nivel.muelles), solucion)
+                              espirales=nivel.espirales, muelles=nivel.muelles, interruptores=nivel.interruptores), solucion)
         if any(r["campanas"][c.id] != antes["campanas"][c.id] for c in nivel.campanas):
             continue
         nuevo.marca = r["fichas_usadas"]
@@ -359,6 +362,7 @@ def poner_dorada(nivel: Nivel, solucion: list, semilla: int, intentos=300):
 TIPOS_PUERTA = ("puerta", "dos_puertas")
 TIPOS_ESPIRAL = ("espiral", "espiral_doble")
 TIPOS_MUELLE = ("muelle", "muelle_doble")
+TIPOS_INTERRUPTOR = ("interruptor",)
 
 
 def _tic_cruce(tramo_puntos, a, b):
@@ -637,6 +641,75 @@ def _candidato_muelle(rnd, tipo, dificultad):
     return g
 
 
+# ---------------------------------------------------------------- interruptores
+
+def _candidato_interruptor(rnd, dificultad):
+    """Una fila de muro con una compuerta en el hueco y la placa del interruptor a un lado. Una rama
+    va a pisar la placa; la otra da el rodeo justo para cruzar la compuerta después. La recta (y la
+    misma rama sin nadie en la placa) encuentra la compuerta cerrada."""
+    inicio = (round(rnd.uniform(35, 65), 2), round(rnd.uniform(142, 150), 2))
+    fork = (round(inicio[0] + rnd.uniform(-6, 6), 2), round(rnd.uniform(118, 128), 2))
+    y = round(rnd.uniform(70, 90), 2)
+    hx = round(rnd.uniform(32, 68), 2)
+    muros, (ga, gb) = fila_con_puerta(y, hx, rnd.uniform(14, 18))
+    lado = rnd.choice([-1, 1])
+    lejos = 22 + dificultad * 22
+    placa = (round(min(88, max(12, fork[0] + lado * rnd.uniform(lejos, lejos + 10))), 2),
+             round(rnd.uniform(y + 16, fork[1] - 10), 2))
+    campana = (round(rnd.uniform(18, 82), 2), round(rnd.uniform(18, 34), 2))
+    tronco = _camino(rnd, inicio, fork, curvas=1, desvio=5)
+    f = len(repartir(tronco)) - 1
+    a_placa = _camino(rnd, fork, placa, curvas=1, desvio=8)
+    margen = 1 + round(dificultad * 2)
+
+    def ruta(empuje):
+        return suave([fork, ((fork[0] + hx) / 2 - lado * empuje, (fork[1] + y) / 2 + 4), (hx, y + 8), (hx, y - 8),
+                      ((hx + campana[0]) / 2, (y + campana[1]) / 2), campana], 3)
+
+    vacio = Nivel(ANCHO, ALTO, inicio, [Campana("a", campana)], fichas=10_000)
+    tics, fichas = _tics(vacio, [Tramo(tronco), Tramo(a_placa, 0, f)])
+    pisada, _ = _primer_tic(tics[1], fichas[1], placa, sim.RADIO_INTERRUPTOR)
+    if pisada is None:
+        return None
+
+    def cruce(empuje):
+        tt, ff = _tics(vacio, [Tramo(tronco), Tramo(ruta(empuje), 0, f)])
+        for j in range(1, len(ff[1])):
+            if sim._cruza(ff[1][j - 1], ff[1][j], ga, gb):
+                return tt[1][j]
+        return None
+
+    # El rodeo más corto que cruza la compuerta `margen` tics después de pisar la placa
+    empuje = None
+    for e in range(0, 46, 2):
+        c = cruce(e)
+        if c is not None and c > pisada + margen - 1:
+            empuje = e
+            break
+    if empuje is None:
+        return None
+    tramos = [Tramo(tronco), Tramo(a_placa, 0, f), Tramo(ruta(empuje), 0, f)]
+    tramos = [Tramo([(round(a, 3), round(b, 3)) for a, b in tr.puntos], tr.padre, tr.desde) for tr in tramos]
+    if not all(_dentro(q, 3) for tr in tramos for q in tr.puntos):
+        return None
+    nivel = Nivel(ANCHO, ALTO, inicio, [Campana("a", campana)], muros=muros, fichas=10_000,
+                  interruptores=[Interruptor(placa, ga, gb)])
+    r = simular(nivel, tramos)
+    if not r["exito"] or r["parada"] is not None:
+        return None
+    if simular(nivel, [tramos[0], tramos[2]])["exito"]:
+        return None                   # sin pisar la placa no puede funcionar
+    marca = r["fichas_usadas"]
+    margen_fichas = max(3, round(14 - dificultad * 10))
+    nivel.marca, nivel.fichas = marca, marca + margen_fichas
+    a = atajos(nivel)
+    if a["recto"] > 0:
+        return None
+    g = Generado(nivel, tramos, "interruptor", 0, 0.0, a["codo"] + a["horquilla"], {"atajos": a, "margen": margen_fichas})
+    g.dificultad = puntuar(g)
+    return g
+
+
 # ---------------------------------------------------------------- generador
 
 def _candidato(rnd, tipo, dificultad):
@@ -647,6 +720,8 @@ def _candidato(rnd, tipo, dificultad):
         return _candidato_espiral(rnd, dificultad)
     if tipo in TIPOS_MUELLE:
         return _candidato_muelle(rnd, tipo, dificultad)
+    if tipo in TIPOS_INTERRUPTOR:
+        return _candidato_interruptor(rnd, dificultad)
     espirales = []
     if tipo == "simple":
         base = _simple(rnd)
@@ -743,6 +818,7 @@ def puntuar(g: Generado) -> float:
     restricciones += 1.5 * len(g.nivel.puertas)       # cada puerta obliga a llegar en su momento
     restricciones += 1.0 * len(g.nivel.espirales)     # hay que ver que la espiral es la clave
     restricciones += 1.0 * len(g.nivel.muelles)       # y el muelle, y lo que cuesta su salto
+    restricciones += 1.5 * len(g.nivel.interruptores) # pisar la placa a tiempo y esperar a la compuerta
     ramas = len(g.solucion)
     margen = g.info["margen"]
     p = 0.12 * restricciones + 0.06 * ramas + 0.05 * len(g.nivel.muros) + 0.02 * (14 - margen)

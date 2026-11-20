@@ -90,7 +90,7 @@ func pruebas_cuerda(Cuerda: GDScript, Progreso: GDScript) -> void:
 func pruebas_barrio(sim: GDScript) -> void:
 	var Partida: GDScript = load("res://nucleo/partida.gd")
 	var primero := 1
-	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json"]:
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json", "res://datos/barrio_5.json"]:
 		var b = leer_json(ruta)
 		comprobar(b != null and b["niveles"].size() == 20, "%s tiene 20 niveles" % b["nombre"])
 		var mal := []
@@ -150,6 +150,20 @@ func pruebas_barrio(sim: GDScript) -> void:
 						sin_muelle_falla.append(n["id"])
 			comprobar(con_muelle >= 10, "La Feria tiene muelles en la mayoría de niveles (%d)" % con_muelle)
 			comprobar(sin_muelle_falla.size() == con_muelle, "en La Feria la solución necesita su muelle (sin él falla)", str(sin_muelle_falla))
+		if b["barrio"] == 5:
+			var con_interruptor := 0
+			var sin_placa_falla := []
+			for n in b["niveles"]:
+				if not n["nivel"].get("in", []).is_empty():
+					con_interruptor += 1
+					var lejos: Dictionary = n["nivel"].duplicate(true)
+					for it in lejos["in"]:
+						it[0] = [1.0, 1.0]          # la placa, en una esquina donde nadie la pisa
+					if not sim.simular(lejos, n["solucion"])["exito"]:
+						sin_placa_falla.append(n["id"])
+			comprobar(con_interruptor >= 10, "La Estación tiene interruptores en la mayoría de niveles (%d)" % con_interruptor)
+			comprobar(sin_placa_falla.size() == con_interruptor, "en La Estación hay que pisar la placa (si no, la compuerta sigue cerrada)",
+				str(sin_placa_falla))
 		primero += 20
 
 
@@ -224,7 +238,7 @@ func pruebas_temas(Temas: GDScript) -> void:
 	var BotonPop: GDScript = load("res://escenas/comun/boton_pop.gd")
 	var sin_nombre := []
 	for icono in ["volver", "adelante", "deshacer", "bombilla", "lento", "inicio", "campana_simple", "doble", "numerada",
-			"dorada", "muro", "puerta", "espiral", "muelle", "goma"]:
+			"dorada", "muro", "puerta", "espiral", "muelle", "interruptor", "goma"]:
 		var b = BotonPop.new()
 		b.icono = icono
 		if b.nombre_para_lector() == icono:

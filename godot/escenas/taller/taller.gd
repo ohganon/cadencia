@@ -38,7 +38,8 @@ const HERRAMIENTAS := [
 	["puerta", "Puerta: arrástrala para ponerla; tócala para cambiar cuándo se abre."],
 	["espiral", "Espiral: retrasa lo que pasa por ella. Tócala otra vez para cambiar cuántos tics."],
 	["muelle", "Muelle: arrastra de la entrada a la salida. La cadena salta por encima; toca la entrada para cambiar el tiempo."],
-	["goma", "Goma: toca una campana, una puerta, una espiral, un muelle o un muro para quitarlo."],
+	["interruptor", "Interruptor: arrastra para dibujar la compuerta; toca para mover su placa. Se abre al pisar la placa."],
+	["goma", "Goma: toca una campana, una puerta, una espiral, un muelle, un interruptor o un muro para quitarlo."],
 ]
 
 var tablero: Control
@@ -240,14 +241,14 @@ func _construir() -> void:
 	hud.add_child(hueco)
 
 	var barra := HBoxContainer.new()
-	barra.add_theme_constant_override("separation", 8)
+	barra.add_theme_constant_override("separation", 5)
 	barra.alignment = BoxContainer.ALIGNMENT_CENTER
 	columna.add_child(barra)
 	for par in HERRAMIENTAS:
 		var b := _boton("", false)
 		b.icono = "campana_simple" if par[0] == "campana" else par[0]     # que no se confunda con la dorada
 		b.redondo = true
-		b.custom_minimum_size = Vector2(58, 58)      # las diez herramientas caben en una fila
+		b.custom_minimum_size = Vector2(52, 52)      # las once herramientas caben en una fila
 		b.pulsado.connect(_elegir.bind(par[0]))
 		barra.add_child(b)
 		botones_herramienta[par[0]] = b
@@ -406,6 +407,10 @@ func _demo_si_toca() -> void:
 	_elegir("muelle")
 	tablero._muro_desde = [80.0, 112.0]
 	tablero._muro_hasta = [80.0, 82.0]
+	tablero._terminar_muro()
+	_elegir("interruptor")
+	tablero._muro_desde = [10.0, 132.0]
+	tablero._muro_hasta = [34.0, 132.0]
 	tablero._terminar_muro()
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(prefijo + "_1_editor.png")

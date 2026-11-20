@@ -151,5 +151,18 @@ class Barrio(unittest.TestCase):
                     self.assertFalse(simular(g.nivel, g.solucion)["exito"])
 
 
+    def test_niveles_con_interruptor(self):
+        for semilla in (81, 82, 83):
+            with self.subTest(semilla=semilla):
+                g = G.generar(semilla, "interruptor", 0.6)
+                self.assertIsNotNone(g)
+                self.assertEqual(len(g.nivel.interruptores), 1)
+                self.assertTrue(simular(g.nivel, g.solucion)["exito"])
+                self.assertEqual(G.atajos(g.nivel)["recto"], 0)
+                # Con la placa donde nadie la pisa, la compuerta no se abre y la solución falla
+                g.nivel.interruptores[0].pos = (1.0, 1.0)
+                self.assertFalse(simular(g.nivel, g.solucion)["exito"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -24,7 +24,7 @@ import math
 import pathlib
 import sys
 
-from sim import PASO, Campana, Espiral, Muelle, Nivel, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
+from sim import PASO, Campana, Espiral, Interruptor, Muelle, Nivel, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
 
 ANCHO, ALTO = 100, 160
 DATOS = pathlib.Path(__file__).with_name("datos")
@@ -220,6 +220,10 @@ def casos_reglas():
 
     def doble(espirales):
         return Nivel(200, 100, (10, 50), [Campana("d", (60, 90), "doble")], fichas=500, espirales=espirales)
+    def con_compuerta(interruptores, muro=False):
+        return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], fichas=500, interruptores=interruptores,
+                     muros=[((20, 0), (20, 100))] if muro else [])
+
     def con_muelle(salto, muro_antes=False, espiral=False):
         muros = [((60, 0), (60, 100))] + ([((40, 0), (40, 100))] if muro_antes else [])
         return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], muros=muros, fichas=500,
@@ -266,6 +270,16 @@ def casos_reglas():
                                                  muelles=[Muelle((55, 50), (65, 50), 4)]),
          [Tramo([(10, 50), (55, 50)]), Tramo([(65, 50), (110, 50)]), Tramo([(85, 50), (85, 85)], 1, 4)]),
         ("muelle y espiral se suman", con_muelle(3, espiral=True), [Tramo([(10, 50), (55, 50)]), Tramo([(65, 50), (110, 50)])]),
+        # Interruptor: la compuerta en x = 60 se abre el tic siguiente a que caiga una ficha en la placa
+        ("compuerta sin pisar el interruptor", con_compuerta([Interruptor((30, 80), (60, 0), (60, 100))]), recta),
+        ("el tronco pisa el interruptor antes", con_compuerta([Interruptor((30, 50), (60, 0), (60, 100))]), recta),
+        ("rama que llega antes al interruptor", con_compuerta([Interruptor((30, 70), (60, 0), (60, 100))]),
+         recta + [Tramo([(30, 50), (30, 70)], 0, 4)]),
+        ("rama que llega tarde al interruptor", con_compuerta([Interruptor((30, 80), (60, 0), (60, 100))]),
+         recta + [Tramo([(30, 50), (30, 80)], 0, 4)]),
+        ("una compuerta abierta deja pisar otro interruptor",
+         con_compuerta([Interruptor((30, 50), (60, 0), (60, 100)), Interruptor((80, 50), (100, 0), (100, 100))]), recta),
+        ("la placa la pisa una ficha que no cae", con_compuerta([Interruptor((30, 50), (60, 0), (60, 100))], muro=True), recta),
         ("rama de un bifurcador que no llegó a caer", Nivel(200, 100, (10, 50), [Campana("a", (110, 50))],
                                                             muros=[((40, 0), (40, 100))], fichas=500),
          [Tramo([(10, 50), (110, 50)]), Tramo([(60, 50), (60, 90)], 0, 10)]),

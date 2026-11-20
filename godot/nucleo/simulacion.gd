@@ -14,7 +14,8 @@
 ##   {w, h, i: [x, y], f: fichas, m: marca, c: [[id, [x, y], tipo, numero]...],
 ##    mu: [[[x1, y1], [x2, y2]]...], p: [[[x1, y1], [x2, y2], periodo, abierta, fase]...],
 ##    e: [[[x, y], retardo]...] (opcional: espirales de retardo),
-##    ml: [[[entrada], [salida], salto]...] (opcional: muelles)}
+##    ml: [[[entrada], [salida], salto]...] (opcional: muelles),
+##    in: [[[placa], [a], [b]]...] (opcional: interruptores con su compuerta a-b)}
 ## Un tramo es {puntos: [[x, y]...], padre: int o null, desde: int}.
 extends RefCounted
 
@@ -23,6 +24,7 @@ const COS_GIRO_MAXIMO := 0.573576436351046   # cos(55°), el mismo literal que e
 const RADIO_CAMPANA := 6.0
 const RADIO_ESPIRAL := 4.5
 const RADIO_MUELLE := 4.5
+const RADIO_INTERRUPTOR := 4.5
 const TOLERANCIA_DOBLE := 1
 
 const PARADAS_SIN_EXITO := ["faltan fichas", "no empieza en el inicio", "bifurcador no válido"]
@@ -184,6 +186,57 @@ static func simular_detalle(nivel: Dictionary, tramos: Array) -> Dictionary:
 		return _detalle(_resultado(nivel, fichas_por_tramo, {}, {"tramo": null, "ficha": null, "motivo": "faltan fichas"}, usadas),
 			fichas_por_tramo, [], [])
 
+	# Por rondas, para los interruptores (sin interruptores, una sola)
+	var interruptores: Array = nivel.get("in", [])
+	var disparos := []
+	for k in interruptores.size():
+		disparos.append(-1)
+	var r := {}
+	var convergio := false
+	for _ronda in interruptores.size() + 4:
+		r = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
+		var nuevos := []
+		for it in interruptores:
+			nuevos.append(disparo_placa(it[0], fichas_por_tramo, r["tics"], r["caidas"]))
+		if nuevos == disparos:
+			convergio = true
+			break
+		disparos = nuevos
+	if not convergio:
+		r = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
+	var tics: Array = r["tics"]
+	var caidas: Array = r["caidas"]
+	var parada = r["parada"]
+
+	# Campanas: el primer tic en que una ficha caída de cada tramo llega a su radio
+	var llegadas := {}
+	for c in nivel["c"]:
+		var lista := []
+		for idx in fichas_por_tramo.size():
+			var f: Array = fichas_por_tramo[idx]
+			for j in range(0, caidas[idx] + 1):
+				if dist(f[j], c[1]) <= RADIO_CAMPANA:
+					lista.append([tics[idx][j], idx])
+					break
+		llegadas[c[0]] = lista
+	var d := _detalle(_resultado(nivel, fichas_por_tramo, llegadas, parada, usadas), fichas_por_tramo, tics, caidas)
+	d["interruptores"] = disparos
+	return d
+
+
+## Tic de la primera ficha que cae de verdad sobre la placa (-1 si ninguna).
+static func disparo_placa(pos: Array, fichas: Array, tics: Array, caidas: Array) -> int:
+	var mejor := -1
+	for t in caidas.size():
+		for j in range(1, int(caidas[t]) + 1):
+			if dist(fichas[t][j], pos) <= RADIO_INTERRUPTOR and (mejor == -1 or tics[t][j] < mejor):
+				mejor = tics[t][j]
+	return mejor
+
+
+## Tramo a tramo, en el orden en que se dibujaron: cuándo cae cada ficha y dónde se para. `disparos[k]`
+## es el tic en que se pisó el interruptor k (-1: ninguno): su compuerta se abre después de ese tic.
+static func _resolver(nivel: Dictionary, tramos: Array, fichas_por_tramo: Array, salidas: Array, disparos: Array) -> Dictionary:
 	# Tramo a tramo, en el orden en que se dibujaron: cuándo cae cada ficha y dónde se para (si se
 	# para). Un tramo solo depende de los anteriores (su bifurcador o la entrada de su muelle).
 	var tics := []
@@ -226,25 +279,20 @@ static func simular_detalle(nivel: Dictionary, tramos: Array) -> Dictionary:
 						if cruza(f[j - 1], f[j], p[0], p[1]) and not puerta_abierta(p, tics[idx][j]):
 							motivo = "puerta cerrada"
 							break
+				if motivo == "":
+					var interruptores: Array = nivel.get("in", [])
+					for k in interruptores.size():
+						var it: Array = interruptores[k]
+						if cruza(f[j - 1], f[j], it[1], it[2]) and (disparos[k] < 0 or tics[idx][j] <= disparos[k]):
+							motivo = "compuerta cerrada"
+							break
 			if motivo != "":
 				ultima = j - 1
 				if parada == null or tics[idx][j] < parada["tic"]:
 					parada = {"tramo": idx, "ficha": j, "tic": tics[idx][j], "motivo": motivo}
 				break
 		caidas.append(ultima)
-
-	# Campanas: el primer tic en que una ficha caída de cada tramo llega a su radio
-	var llegadas := {}
-	for c in nivel["c"]:
-		var lista := []
-		for idx in fichas_por_tramo.size():
-			var f: Array = fichas_por_tramo[idx]
-			for j in range(0, caidas[idx] + 1):
-				if dist(f[j], c[1]) <= RADIO_CAMPANA:
-					lista.append([tics[idx][j], idx])
-					break
-		llegadas[c[0]] = lista
-	return _detalle(_resultado(nivel, fichas_por_tramo, llegadas, parada, usadas), fichas_por_tramo, tics, caidas)
+	return {"tics": tics, "caidas": caidas, "parada": parada}
 
 
 static func _detalle(resultado: Dictionary, fichas: Array, tics: Array, caidas: Array) -> Dictionary:

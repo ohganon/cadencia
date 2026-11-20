@@ -9,7 +9,7 @@ signal editado
 signal aviso(texto: String)
 
 const Partida = preload("res://nucleo/partida.gd")
-const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "espirales": 4, "muelles": 4}
+const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "espirales": 4, "muelles": 4, "interruptores": 4}
 ## Salto de un muelle nuevo, y cuánto sube al tocar su entrada (de 2 en 2 hasta 20, y vuelta a 2)
 const SALTO_NUEVO := 6
 const SALTO_MAXIMO := 20
@@ -53,12 +53,12 @@ func _gui_input(evento: InputEvent) -> void:
 				return
 			if herramienta == "muelle" and _cambiar_salto(p):
 				return
-			if herramienta in ["muro", "puerta", "muelle"]:
+			if herramienta in ["muro", "puerta", "muelle", "interruptor"]:
 				_muro_desde = p
 				_muro_hasta = p
 			else:
 				_aplicar(p)
-		elif herramienta in ["muro", "puerta", "muelle"] and _muro_desde != null:
+		elif herramienta in ["muro", "puerta", "muelle", "interruptor"] and _muro_desde != null:
 			_terminar_muro()
 		accept_event()
 	elif evento is InputEventMouseMotion and _muro_desde != null:
@@ -124,6 +124,9 @@ func _terminar_muro() -> void:
 	if herramienta == "muelle":
 		_terminar_muelle()
 		return
+	if herramienta == "interruptor":
+		_terminar_interruptor()
+		return
 	var a: Array = _muro_desde
 	var b: Array = _muro_hasta
 	_muro_desde = null
@@ -178,6 +181,12 @@ func _borrar_cerca(p: Array) -> bool:
 	if muelle >= 0:
 		nivel["ml"].remove_at(muelle)
 		return true
+	var lista_in: Array = nivel.get("in", [])
+	for k in lista_in.size():
+		var it: Array = lista_in[k]
+		if Sim.dist(p, it[0]) <= Sim.RADIO_INTERRUPTOR + 2.0 or _distancia_segmento(p, it[1], it[2]) < 4.0:
+			lista_in.remove_at(k)
+			return true
 	var muro := -1
 	var muro_d := 4.0
 	for k in nivel["mu"].size():
@@ -189,7 +198,7 @@ func _borrar_cerca(p: Array) -> bool:
 	if muro >= 0:
 		nivel["mu"].remove_at(muro)
 		return true
-	aviso.emit("Toca una campana, una puerta, una espiral, un muelle o un muro para quitarlo.")
+	aviso.emit("Toca una campana, una puerta, una espiral, un muelle, un interruptor o un muro para quitarlo.")
 	return false
 
 
@@ -215,6 +224,37 @@ func _cambiar_ritmo(p: Array) -> bool:
 	_refrescar()
 	editado.emit()
 	return true
+
+
+## Interruptor: arrastrar dibuja la compuerta y pone su placa un poco por debajo (hacia el inicio);
+## tocar sin arrastrar mueve la placa del último interruptor a ese punto.
+func _terminar_interruptor() -> void:
+	var a: Array = _muro_desde
+	var b: Array = _muro_hasta
+	_muro_desde = null
+	_muro_hasta = null
+	if not nivel.has("in"):
+		nivel["in"] = []
+	var lista: Array = nivel["in"]
+	if Sim.dist(a, b) < MURO_MINIMO:
+		if lista.is_empty():
+			aviso.emit("Arrastra el dedo para dibujar la compuerta; su placa aparece debajo.")
+			queue_redraw()
+			return
+		lista[-1][0] = [snappedf(b[0], 0.1), snappedf(b[1], 0.1)]
+		aviso.emit("Placa movida: la compuerta se abre en cuanto cae una ficha encima.")
+	else:
+		if lista.size() >= LIMITES["interruptores"]:
+			aviso.emit("Como mucho 4 interruptores por nivel.")
+			queue_redraw()
+			return
+		var medio := [(a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0]
+		var placa := _limitar([medio[0], medio[1] + 16.0])
+		lista.append([[snappedf(placa[0], 0.1), snappedf(placa[1], 0.1)], [snappedf(a[0], 0.1), snappedf(a[1], 0.1)],
+			[snappedf(b[0], 0.1), snappedf(b[1], 0.1)]])
+		aviso.emit("La compuerta se abre cuando cae una ficha en la placa. Toca otro sitio para mover la placa.")
+	_refrescar()
+	editado.emit()
 
 
 ## Muelle nuevo: se arrastra de la entrada a la salida.

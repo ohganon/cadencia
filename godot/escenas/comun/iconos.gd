@@ -99,6 +99,13 @@ static func _dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color: Color) ->
 			var lado := rect.size.x * 0.72
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(0, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(rect.size.x - lado, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
+		"interruptor":                    # interruptor: placa redonda y compuerta a rayas
+			var e := rect.size.x / 24.0
+			ci.draw_arc(rect.position + Vector2(8, 16) * e, 5.0 * e, 0, TAU, 20, _t, maxf(1.5, 2.2 * e), true)
+			ci.draw_circle(rect.position + Vector2(8, 16) * e, 2.2 * e, _t)
+			_trazos(ci, rect, [[Vector2(14, 6), Vector2(22, 6)]])
+			for k in 3:
+				ci.draw_line(rect.position + Vector2(15 + k * 2.6, 3.5) * e, rect.position + Vector2(16.5 + k * 2.6, 8.5) * e, _t, maxf(1.0, 1.2 * e), true)
 		"muelle":                         # muelle: zigzag y el arco del salto
 			_trazos(ci, rect, [[Vector2(5, 21), Vector2(9, 18), Vector2(5, 15), Vector2(9, 12)],
 				[Vector2(7, 10), Vector2(11, 4), Vector2(17, 4), Vector2(20, 10)], [Vector2(20, 14), Vector2(20, 21)]])

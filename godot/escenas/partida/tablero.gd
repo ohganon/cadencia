@@ -283,6 +283,10 @@ func _draw() -> void:
 	# Las puertas, encima de las fichas, para que se vea su ritmo
 	for p in nivel["p"]:
 		_puerta(p)
+	# Los interruptores: la placa y su compuerta (abierta desde el tic siguiente a pisar la placa)
+	var interruptores: Array = nivel.get("in", [])
+	for k in interruptores.size():
+		_interruptor(interruptores[k], k)
 
 	if modo == Modo.EDITAR:
 		var tics := _tics_de(todas)
@@ -307,24 +311,40 @@ func _draw() -> void:
 ## Mientras se dibuja: dónde cruza el camino cada puerta y si en ese tic estará abierta (verde) o
 ## cerrada (coral). Con las marcas de cuenta, permite planificar en vez de probar a ciegas.
 func _cruces_de_puertas(todas: Array, tics: Array) -> void:
+	# Compuertas: si se cruzan después de que se pise su placa (según lo dibujado), estarán abiertas
+	var caen := []
+	for f in todas:
+		caen.append(f.size() - 1)
+	for it in partida.nivel.get("in", []):
+		var pisada := Sim.disparo_placa(it[0], todas, tics, caen)
+		for i in todas.size():
+			var f: Array = todas[i]
+			for j in range(1, f.size()):
+				if Sim.cruza(f[j - 1], f[j], it[1], it[2]):
+					var abierta: bool = pisada >= 0 and tics[i][j] > pisada
+					_marca_cruce(f[j], tics[i][j], abierta)
+					break
 	for p in partida.nivel["p"]:
 		for i in todas.size():
 			var f: Array = todas[i]
 			for j in range(1, f.size()):
 				if Sim.cruza(f[j - 1], f[j], p[0], p[1]):
-					var t: int = tics[i][j]
-					var color := VERDE if Sim.puerta_abierta(p, t) else CORAL
-					var c := a_pantalla(f[j])
-					draw_circle(c, MARCA_RADIO * 1.15 * _k, color)
-					draw_arc(c, MARCA_RADIO * 1.15 * _k, 0, TAU, 24, TINTA_SEM, maxf(1.0, 0.35 * _k), true)
-					var fuente := get_theme_default_font()
-					var tam := int(3.2 * _k)
-					var texto := str(t)
-					var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
-					draw_string(fuente, c + Vector2(-medida.x / 2, fuente.get_ascent(tam) / 2 - 0.15 * _k), texto,
-						HORIZONTAL_ALIGNMENT_LEFT, -1, tam, TINTA_SEM)
-					_simbolo(c + Vector2(3.0, -3.0) * _k, "si" if Sim.puerta_abierta(p, t) else "no")
+					_marca_cruce(f[j], tics[i][j], Sim.puerta_abierta(p, tics[i][j]))
 					break
+
+
+## Marca dónde el camino cruza una puerta o una compuerta: el tic, y verde (abierta) o coral (cerrada).
+func _marca_cruce(punto: Array, t: int, abierta: bool) -> void:
+	var c := a_pantalla(punto)
+	draw_circle(c, MARCA_RADIO * 1.15 * _k, VERDE if abierta else CORAL)
+	draw_arc(c, MARCA_RADIO * 1.15 * _k, 0, TAU, 24, TINTA_SEM, maxf(1.0, 0.35 * _k), true)
+	var fuente := get_theme_default_font()
+	var tam := int(3.2 * _k)
+	var texto := str(t)
+	var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
+	draw_string(fuente, c + Vector2(-medida.x / 2, fuente.get_ascent(tam) / 2 - 0.15 * _k), texto,
+		HORIZONTAL_ALIGNMENT_LEFT, -1, tam, TINTA_SEM)
+	_simbolo(c + Vector2(3.0, -3.0) * _k, "si" if abierta else "no")
 
 
 ## Tic en que cae cada ficha, igual que en la simulación (con el retraso de las espirales y el salto
@@ -647,6 +667,43 @@ func _muelle_etiqueta(m: Array) -> void:
 	var caja := Rect2(base - Vector2(0.6 * _k, fuente.get_ascent(tam) + 0.2 * _k), Vector2(medida.x + 1.2 * _k, tam + 0.4 * _k))
 	draw_style_box(_caja(Color(ETIQUETA, 0.94), 6, ETIQUETA_T, 1), caja)
 	draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, ETIQUETA_T)
+
+
+## Interruptor: una placa redonda con un botón y, unida por una línea de puntos, su compuerta: una
+## barra a rayas mientras está cerrada; abierta, solo quedan sus dos postes.
+func _interruptor(it: Array, k: int) -> void:
+	var placa := a_pantalla(it[0])
+	var a := a_pantalla(it[1])
+	var b := a_pantalla(it[2])
+	var disparos: Array = _detalle.get("interruptores", [])
+	var pisada: int = int(disparos[k]) if modo != Modo.EDITAR and k < disparos.size() else -1
+	var abierta := pisada >= 0 and _tic_actual() > pisada
+	var pulsada := pisada >= 0 and _tic_actual() >= pisada
+	# Línea de puntos de la placa al centro de la compuerta
+	var medio := (a + b) / 2.0
+	var pasos := int(placa.distance_to(medio) / (2.2 * _k))
+	for s in range(1, pasos):
+		if s % 2 == 0:
+			draw_circle(placa.lerp(medio, float(s) / pasos), 0.35 * _k, Color(TINTA, 0.45))
+	var r := Sim.RADIO_INTERRUPTOR * _k
+	draw_circle(placa, r, Color(CAYENDO, 0.35))
+	draw_arc(placa, r, 0, TAU, 32, TINTA, maxf(1.2, 0.35 * _k), true)
+	draw_circle(placa, r * (0.35 if pulsada else 0.55), TINTA if pulsada else CAYENDO.darkened(0.25))
+	if abierta:
+		for poste in [a, b]:
+			draw_circle(poste, 1.3 * _k, TINTA)
+		draw_line(a, b, Color(TINTA, 0.25), 0.4 * _k, true)
+		return
+	draw_line(a, b, CAYENDO.darkened(0.1), 1.8 * _k, true)
+	var largo := a.distance_to(b)
+	var eje := (b - a) / maxf(largo, 0.001)
+	var raya := 2.4 * _k
+	var d := 0.0
+	while d < largo:
+		draw_line(a + eje * d, a + eje * minf(d + raya * 0.5, largo), TINTA, 1.8 * _k, true)
+		d += raya
+	for poste in [a, b]:
+		draw_circle(poste, 1.3 * _k, TINTA)
 
 
 ## Posición en pantalla (global) de la X donde se paró la cadena, o null si no se paró.

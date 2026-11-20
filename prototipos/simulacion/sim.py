@@ -28,6 +28,12 @@ Reglas (Fase 4, sección 4.3):
   o menos) sale del muelle: su primera ficha cae `salto` tics después de la primera ficha que llega
   a la entrada (a RADIO_MUELLE o menos) y cae de verdad, de cualquier tramo dibujado antes. Si no
   llega ninguna, ese tramo no cae. La primera ficha de cada tramo no cuenta para la entrada.
+- Interruptor: una placa con su compuerta (un segmento). La compuerta para la cadena como un muro
+  hasta que cae una ficha sobre la placa (a RADIO_INTERRUPTOR o menos, sin contar la primera de
+  cada tramo); desde el tic siguiente queda abierta para siempre. Como abrir una compuerta puede
+  dejar caer fichas que pisen otras placas, se resuelve por rondas: se empieza con todas cerradas y
+  se repite con los tics de las placas que se pisaron hasta que no cambian (como mucho
+  len(interruptores) + 4 rondas).
 - La campana dorada es opcional: no hace falta para superar el nivel (ni da motivo de fallo si no
   suena), pero su tic aparece en el resultado. Da la tercera estrella.
 
@@ -57,6 +63,7 @@ COS_GIRO_MAXIMO = 0.573576436351046
 RADIO_CAMPANA = 6.0        # una ficha a esta distancia o menos activa la campana
 RADIO_ESPIRAL = 4.5        # una ficha a esta distancia o menos entra en la espiral de retardo
 RADIO_MUELLE = 4.5         # una ficha a esta distancia o menos de la entrada dispara el muelle
+RADIO_INTERRUPTOR = 4.5    # una ficha a esta distancia o menos pisa la placa del interruptor
 TOLERANCIA_DOBLE = 1       # tics de diferencia permitidos en la campana doble
 
 
@@ -164,6 +171,14 @@ class Muelle:
 
 
 @dataclass
+class Interruptor:
+    """Placa en `pos` que abre la compuerta a-b desde el tic siguiente a que la pisen."""
+    pos: tuple
+    a: tuple
+    b: tuple
+
+
+@dataclass
 class Nivel:
     ancho: float
     alto: float
@@ -175,6 +190,7 @@ class Nivel:
     marca: int = 0                                  # fichas de la solución de referencia
     espirales: list = field(default_factory=list)
     muelles: list = field(default_factory=list)
+    interruptores: list = field(default_factory=list)
 
 
 @dataclass
@@ -237,8 +253,43 @@ def simular(nivel: Nivel, tramos: list[Tramo]):
     if usadas > nivel.fichas:
         return _resultado(nivel, tramos, fichas_por_tramo, {}, {"tramo": None, "ficha": None, "motivo": "faltan fichas"}, usadas)
 
-    # Tramo a tramo, en el orden en que se dibujaron: cuándo cae cada ficha y dónde se para (si se
-    # para). Un tramo solo depende de los anteriores (su bifurcador o la entrada de su muelle).
+    # Por rondas, para los interruptores (sin interruptores, una sola)
+    disparos = [None] * len(nivel.interruptores)
+    for _ in range(len(nivel.interruptores) + 4):
+        tics, caidas, parada = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
+        nuevos = [disparo_placa(i.pos, fichas_por_tramo, tics, caidas) for i in nivel.interruptores]
+        if nuevos == disparos:
+            break
+        disparos = nuevos
+    else:
+        tics, caidas, parada = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
+
+    # Campanas: el primer tic en que una ficha caída de cada tramo llega a su radio
+    llegadas = {c.id: [] for c in nivel.campanas}        # lista de (tic, tramo)
+    for c in nivel.campanas:
+        for idx, f in enumerate(fichas_por_tramo):
+            for j in range(0, caidas[idx] + 1):
+                if _dist(f[j], c.pos) <= RADIO_CAMPANA:
+                    llegadas[c.id].append((tics[idx][j], idx))
+                    break
+    return _resultado(nivel, tramos, fichas_por_tramo, llegadas, parada, usadas)
+
+
+def disparo_placa(pos, fichas: list, tics: list, caidas: list):
+    """Tic de la primera ficha que cae de verdad a RADIO_INTERRUPTOR o menos de `pos`; None si ninguna."""
+    mejor = None
+    for t in range(len(caidas)):
+        for j in range(1, caidas[t] + 1):
+            if _dist(fichas[t][j], pos) <= RADIO_INTERRUPTOR and (mejor is None or tics[t][j] < mejor):
+                mejor = tics[t][j]
+    return mejor
+
+
+def _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos):
+    """Tramo a tramo, en el orden en que se dibujaron: cuándo cae cada ficha y dónde se para (si se
+    para). Un tramo solo depende de los anteriores (su bifurcador o la entrada de su muelle).
+    `disparos[k]` es el tic en que se pisó el interruptor k (o None): su compuerta está abierta
+    después de ese tic."""
     tics, caidas = [], []          # caidas[idx]: índice de la última ficha que cae (-1: ninguna)
     parada = None
     for idx, f in enumerate(fichas_por_tramo):
@@ -273,22 +324,18 @@ def simular(nivel: Nivel, tramos: list[Tramo]):
                     if _cruza(f[j - 1], f[j], p.a, p.b) and not p.abierta_en(tics[idx][j]):
                         motivo = "puerta cerrada"
                         break
+                if motivo is None:
+                    for k, i in enumerate(nivel.interruptores):
+                        if _cruza(f[j - 1], f[j], i.a, i.b) and (disparos[k] is None or tics[idx][j] <= disparos[k]):
+                            motivo = "compuerta cerrada"
+                            break
             if motivo:
                 ultima = j - 1
                 if parada is None or tics[idx][j] < parada["tic"]:
                     parada = {"tramo": idx, "ficha": j, "tic": tics[idx][j], "motivo": motivo}
                 break
         caidas.append(ultima)
-
-    # Campanas: el primer tic en que una ficha caída de cada tramo llega a su radio
-    llegadas = {c.id: [] for c in nivel.campanas}        # lista de (tic, tramo)
-    for c in nivel.campanas:
-        for idx, f in enumerate(fichas_por_tramo):
-            for j in range(0, caidas[idx] + 1):
-                if _dist(f[j], c.pos) <= RADIO_CAMPANA:
-                    llegadas[c.id].append((tics[idx][j], idx))
-                    break
-    return _resultado(nivel, tramos, fichas_por_tramo, llegadas, parada, usadas)
+    return tics, caidas, parada
 
 
 def _resultado(nivel, tramos, fichas, llegadas, parada, usadas=None):
@@ -346,7 +393,8 @@ def nivel_a_dict(n: Nivel) -> dict:
             "mu": [[list(a), list(b)] for a, b in n.muros],
             "p": [[list(p.a), list(p.b), p.periodo, p.abierta, p.fase] for p in n.puertas]} | (
         {"e": [[list(e.pos), e.retardo] for e in n.espirales]} if n.espirales else {}) | (
-        {"ml": [[list(m.entrada), list(m.salida), m.salto] for m in n.muelles]} if n.muelles else {})
+        {"ml": [[list(m.entrada), list(m.salida), m.salto] for m in n.muelles]} if n.muelles else {}) | (
+        {"in": [[list(i.pos), list(i.a), list(i.b)] for i in n.interruptores]} if n.interruptores else {})
 
 
 def nivel_de_dict(d: dict) -> Nivel:
@@ -357,7 +405,8 @@ def nivel_de_dict(d: dict) -> Nivel:
                  [(tuple(a), tuple(b)) for a, b in d["mu"]],
                  [Puerta(tuple(p[0]), tuple(p[1]), p[2], p[3], p[4]) for p in d["p"]],
                  d["f"], d["m"], [Espiral(tuple(e[0]), int(e[1])) for e in d.get("e", [])],
-                 [Muelle(tuple(m[0]), tuple(m[1]), int(m[2])) for m in d.get("ml", [])])
+                 [Muelle(tuple(m[0]), tuple(m[1]), int(m[2])) for m in d.get("ml", [])],
+                 [Interruptor(tuple(i[0]), tuple(i[1]), tuple(i[2])) for i in d.get("in", [])])
 
 
 PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
@@ -366,7 +415,7 @@ PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
 # antes de jugarlo (godot/nucleo/taller.gd aplica exactamente las mismas reglas).
 LIMITES_TALLER = {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
                   "tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12,
-                  "muelles": 4, "salto": 20}
+                  "muelles": 4, "salto": 20, "interruptores": 4}
 TIPOS_CAMPANA = ("simple", "doble", "numerada", "dorada")
 
 
@@ -428,6 +477,12 @@ def validar_nivel_taller(d: dict) -> str:
         for x in ml:
             if not (isinstance(x, list) and len(x) == 3 and _punto(x[0], d) and _punto(x[1], d) and _numero(x[2], 1, L["salto"])):
                 return "muelle no válido"
+        it = d.get("in", [])
+        if not (isinstance(it, list) and len(it) <= L["interruptores"]):
+            return "demasiados interruptores"
+        for x in it:
+            if not (isinstance(x, list) and len(x) == 3 and all(_punto(q, d) for q in x)):
+                return "interruptor no válido"
     except (KeyError, TypeError, IndexError):
         return "faltan datos del nivel"
     return ""
