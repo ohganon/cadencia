@@ -16,7 +16,7 @@ const PREFIJO := "DING1-"
 const MAXIMO_DESCOMPRIMIDO := 65536
 const MAXIMO_CODIGO := 20000
 const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
-	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12, "muelles": 4, "salto": 20, "interruptores": 4}
+	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12, "muelles": 4, "salto": 20, "interruptores": 4, "norias": 4, "vuelta": 60}
 const TIPOS_CAMPANA := ["simple", "doble", "numerada", "dorada"]
 const RUTA := "user://taller.json"
 
@@ -155,6 +155,13 @@ static func validar_nivel(d: Dictionary) -> String:
 	for x in it:
 		if typeof(x) != TYPE_ARRAY or x.size() != 3 or not _punto(x[0], d) or not _punto(x[1], d) or not _punto(x[2], d):
 			return "Hay un interruptor que no es válido."
+	var nr = d.get("nr", [])
+	if typeof(nr) != TYPE_ARRAY or nr.size() > LIMITES["norias"]:
+		return "Hay demasiadas norias."
+	for x in nr:
+		if typeof(x) != TYPE_ARRAY or x.size() != 4 or not _punto(x[0], d) or not _punto(x[1], d) \
+				or not _numero(x[2], 2, LIMITES["vuelta"]) or not _numero(x[3], 0, float(x[2]) if _numero(x[2], 2, LIMITES["vuelta"]) else 0):
+			return "Hay una noria que no es válida."
 	return ""
 
 

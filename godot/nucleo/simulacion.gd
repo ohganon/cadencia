@@ -15,7 +15,8 @@
 ##    mu: [[[x1, y1], [x2, y2]]...], p: [[[x1, y1], [x2, y2], periodo, abierta, fase]...],
 ##    e: [[[x, y], retardo]...] (opcional: espirales de retardo),
 ##    ml: [[[entrada], [salida], salto]...] (opcional: muelles),
-##    in: [[[placa], [a], [b]]...] (opcional: interruptores con su compuerta a-b)}
+##    in: [[[placa], [a], [b]]...] (opcional: interruptores con su compuerta a-b),
+##    nr: [[[entrada], [salida], periodo, fase]...] (opcional: norias)}
 ## Un tramo es {puntos: [[x, y]...], padre: int o null, desde: int}.
 extends RefCounted
 
@@ -141,11 +142,26 @@ static func tics_tramo(nivel: Dictionary, fichas: Array, base: int) -> Array:
 
 ## Muelle del que sale un tramo sin padre que no empieza en el inicio (-1 si ninguno).
 static func salida_de(nivel: Dictionary, primera: Array) -> int:
-	var muelles: Array = nivel.get("ml", [])
-	for k in muelles.size():
-		if dist(primera, muelles[k][1]) <= PASO:
+	var lista := lanzadores(nivel)
+	for k in lista.size():
+		if dist(primera, lista[k][1]) <= PASO:
 			return k
 	return -1
+
+
+## Piezas con entrada y salida de las que puede salir un tramo: primero los muelles
+## [entrada, salida, salto] y luego las norias [entrada, salida, periodo, fase].
+static func lanzadores(nivel: Dictionary) -> Array:
+	return nivel.get("ml", []) + nivel.get("nr", [])
+
+
+## Tic en que cae la primera ficha del tramo que sale de un muelle (salto fijo) o de una noria
+## (en su siguiente vuelta: el primer tic posterior al disparo con (s - fase) % periodo == 0).
+static func primera_salida(m: Array, disparo: int) -> int:
+	if m.size() == 4:
+		var s := disparo + 1
+		return s + posmod(int(m[3]) - s, int(m[2]))
+	return disparo + int(m[2])
 
 
 ## Tic de la primera ficha que llega a la entrada del muelle y cae de verdad, entre los tramos ya
@@ -248,11 +264,11 @@ static func _resolver(nivel: Dictionary, tramos: Array, fichas_por_tramo: Array,
 		var cae := true
 		var base := -1
 		if salidas[idx] >= 0:
-			var m: Array = nivel["ml"][salidas[idx]]
+			var m: Array = lanzadores(nivel)[salidas[idx]]
 			var disparo := disparo_muelle(m, fichas_por_tramo, tics, caidas)
 			cae = disparo >= 0          # si nada llegó a la entrada, no sale nada
 			if cae:
-				base = disparo + int(m[2]) - 1
+				base = primera_salida(m, disparo) - 1
 		elif tr["padre"] != null:
 			base = tics[int(tr["padre"])][int(tr["desde"])]
 			cae = caidas[int(tr["padre"])] >= int(tr["desde"])   # su bifurcador tiene que haber caído

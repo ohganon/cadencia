@@ -28,6 +28,10 @@ Reglas (Fase 4, sección 4.3):
   o menos) sale del muelle: su primera ficha cae `salto` tics después de la primera ficha que llega
   a la entrada (a RADIO_MUELLE o menos) y cae de verdad, de cualquier tramo dibujado antes. Si no
   llega ninguna, ese tramo no cae. La primera ficha de cada tramo no cuenta para la entrada.
+- Noria: como el muelle (entrada, salida y un tramo que sale de ella), pero no suelta el golpe tras
+  un tiempo fijo: lo suelta en su siguiente vuelta. Tiene `periodo` y `fase`: la primera ficha del
+  tramo que sale cae en el primer tic s posterior al disparo con (s - fase) % periodo == 0. Así, dos
+  ramas que llegan a destiempo a dos norias iguales salen a la vez.
 - Interruptor: una placa con su compuerta (un segmento). La compuerta para la cadena como un muro
   hasta que cae una ficha sobre la placa (a RADIO_INTERRUPTOR o menos, sin contar la primera de
   cada tramo); desde el tic siguiente queda abierta para siempre. Como abrir una compuerta puede
@@ -171,6 +175,15 @@ class Muelle:
 
 
 @dataclass
+class Noria:
+    """Noria: lo que llega a la entrada sale por la salida en su siguiente vuelta (cada `periodo` tics)."""
+    entrada: tuple
+    salida: tuple
+    periodo: int
+    fase: int = 0
+
+
+@dataclass
 class Interruptor:
     """Placa en `pos` que abre la compuerta a-b desde el tic siguiente a que la pisen."""
     pos: tuple
@@ -191,6 +204,7 @@ class Nivel:
     espirales: list = field(default_factory=list)
     muelles: list = field(default_factory=list)
     interruptores: list = field(default_factory=list)
+    norias: list = field(default_factory=list)
 
 
 @dataclass
@@ -218,7 +232,20 @@ def tics_tramo(nivel: Nivel, fichas: list, base: int) -> list:
     return tics
 
 
-def disparo_muelle(m: Muelle, fichas: list, tics: list, caidas: list):
+def lanzadores(nivel: Nivel) -> list:
+    """Piezas con entrada y salida de las que puede salir un tramo: primero los muelles y luego las norias."""
+    return nivel.muelles + nivel.norias
+
+
+def primera_salida(m, disparo: int) -> int:
+    """Tic en que cae la primera ficha del tramo que sale de un muelle o una noria."""
+    if isinstance(m, Noria):
+        s = disparo + 1
+        return s + (m.fase - s) % m.periodo
+    return disparo + m.salto
+
+
+def disparo_muelle(m, fichas: list, tics: list, caidas: list):
     """Tic de la primera ficha que llega a la entrada del muelle y cae de verdad, entre los tramos
     ya resueltos (`caidas` tiene uno por tramo); None si no llega ninguna."""
     mejor = None
@@ -235,13 +262,13 @@ def simular(nivel: Nivel, tramos: list[Tramo]):
     Claves: exito, fichas_usadas, sobran, campanas {id: tic o None}, parada (o None) y motivo
     del fallo de cada objetivo.
     """
-    fichas_por_tramo, salidas = [], []      # salidas[idx]: muelle del que sale el tramo, o None
+    fichas_por_tramo, salidas = [], []      # salidas[idx]: muelle o noria del que sale el tramo, o None
     for idx, tr in enumerate(tramos):
         f = repartir(tr.puntos)
         salida = None
         if tr.padre is None:
             if _dist(f[0], nivel.inicio) > PASO:
-                salida = next((k for k, m in enumerate(nivel.muelles) if _dist(f[0], m.salida) <= PASO), None)
+                salida = next((k for k, m in enumerate(lanzadores(nivel)) if _dist(f[0], m.salida) <= PASO), None)
                 if salida is None:
                     return _resultado(nivel, tramos, [], {}, {"tramo": idx, "ficha": 0, "motivo": "no empieza en el inicio"})
         elif tr.padre >= idx or tr.desde >= len(fichas_por_tramo[tr.padre]):
@@ -296,9 +323,9 @@ def _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos):
         tr = tramos[idx]
         cae = True
         if salidas[idx] is not None:
-            m = nivel.muelles[salidas[idx]]
+            m = lanzadores(nivel)[salidas[idx]]
             disparo = disparo_muelle(m, fichas_por_tramo, tics, caidas)
-            base = -1 if disparo is None else disparo + m.salto - 1
+            base = -1 if disparo is None else primera_salida(m, disparo) - 1
             cae = disparo is not None          # si nada llegó a la entrada, no sale nada
         elif tr.padre is None:
             base = -1
@@ -394,7 +421,8 @@ def nivel_a_dict(n: Nivel) -> dict:
             "p": [[list(p.a), list(p.b), p.periodo, p.abierta, p.fase] for p in n.puertas]} | (
         {"e": [[list(e.pos), e.retardo] for e in n.espirales]} if n.espirales else {}) | (
         {"ml": [[list(m.entrada), list(m.salida), m.salto] for m in n.muelles]} if n.muelles else {}) | (
-        {"in": [[list(i.pos), list(i.a), list(i.b)] for i in n.interruptores]} if n.interruptores else {})
+        {"in": [[list(i.pos), list(i.a), list(i.b)] for i in n.interruptores]} if n.interruptores else {}) | (
+        {"nr": [[list(m.entrada), list(m.salida), m.periodo, m.fase] for m in n.norias]} if n.norias else {})
 
 
 def nivel_de_dict(d: dict) -> Nivel:
@@ -406,7 +434,8 @@ def nivel_de_dict(d: dict) -> Nivel:
                  [Puerta(tuple(p[0]), tuple(p[1]), p[2], p[3], p[4]) for p in d["p"]],
                  d["f"], d["m"], [Espiral(tuple(e[0]), int(e[1])) for e in d.get("e", [])],
                  [Muelle(tuple(m[0]), tuple(m[1]), int(m[2])) for m in d.get("ml", [])],
-                 [Interruptor(tuple(i[0]), tuple(i[1]), tuple(i[2])) for i in d.get("in", [])])
+                 [Interruptor(tuple(i[0]), tuple(i[1]), tuple(i[2])) for i in d.get("in", [])],
+                 [Noria(tuple(m[0]), tuple(m[1]), int(m[2]), int(m[3])) for m in d.get("nr", [])])
 
 
 PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
@@ -415,7 +444,8 @@ PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
 # antes de jugarlo (godot/nucleo/taller.gd aplica exactamente las mismas reglas).
 LIMITES_TALLER = {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
                   "tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12,
-                  "muelles": 4, "salto": 20, "interruptores": 4}
+                  "muelles": 4, "salto": 20, "interruptores": 4,
+                  "norias": 4, "vuelta": 60}
 TIPOS_CAMPANA = ("simple", "doble", "numerada", "dorada")
 
 
@@ -483,6 +513,13 @@ def validar_nivel_taller(d: dict) -> str:
         for x in it:
             if not (isinstance(x, list) and len(x) == 3 and all(_punto(q, d) for q in x)):
                 return "interruptor no válido"
+        nr = d.get("nr", [])
+        if not (isinstance(nr, list) and len(nr) <= L["norias"]):
+            return "demasiadas norias"
+        for x in nr:
+            if not (isinstance(x, list) and len(x) == 4 and _punto(x[0], d) and _punto(x[1], d)
+                    and _numero(x[2], 2, L["vuelta"]) and _numero(x[3], 0, x[2])):
+                return "noria no válida"
     except (KeyError, TypeError, IndexError):
         return "faltan datos del nivel"
     return ""

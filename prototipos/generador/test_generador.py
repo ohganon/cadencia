@@ -164,5 +164,20 @@ class Barrio(unittest.TestCase):
                 self.assertFalse(simular(g.nivel, g.solucion)["exito"])
 
 
+    def test_niveles_con_noria(self):
+        for tipo in G.TIPOS_NORIA:
+            for semilla in (101, 102, 103):
+                with self.subTest(tipo=tipo, semilla=semilla):
+                    g = G.generar(semilla, tipo, 0.6)
+                    self.assertIsNotNone(g)
+                    self.assertTrue(simular(g.nivel, g.solucion)["exito"])
+                    self.assertEqual(G.atajos(g.nivel)["recto"], 0)
+                    if tipo == "noria_doble":
+                        # Las dos norias giran igual y las ramas llegan a destiempo: salen a la vez gracias a ellas
+                        self.assertEqual(len({(n.periodo, n.fase) for n in g.nivel.norias}), 1)
+                    g.nivel.norias = []
+                    self.assertFalse(simular(g.nivel, g.solucion)["exito"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -7215,6 +7215,428 @@
    }
   },
   {
+   "nombre": "regla: noria salta el muro en su vuelta",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ]
+     ]
+    ],
+    "p": [],
+    "nr": [
+     [
+      [
+       55,
+       50
+      ],
+      [
+       65,
+       50
+      ],
+      8,
+      0
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       55,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       65,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 20,
+    "sobran": 480,
+    "campanas": {
+     "a": 24
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
+   "nombre": "regla: noria con fase",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ]
+     ]
+    ],
+    "p": [],
+    "nr": [
+     [
+      [
+       55,
+       50
+      ],
+      [
+       65,
+       50
+      ],
+      8,
+      5
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       55,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       65,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 20,
+    "sobran": 480,
+    "campanas": {
+     "a": 21
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
+   "nombre": "regla: noria justo en su vuelta espera una entera",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ]
+     ]
+    ],
+    "p": [],
+    "nr": [
+     [
+      [
+       55,
+       50
+      ],
+      [
+       65,
+       50
+      ],
+      9,
+      0
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       55,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       65,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 20,
+    "sobran": 480,
+    "campanas": {
+     "a": 26
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
+   "nombre": "regla: dos ramas a destiempo salen a la vez de dos norias",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "d",
+      [
+       95,
+       60
+      ],
+      "doble",
+      0
+     ]
+    ],
+    "mu": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ]
+     ]
+    ],
+    "p": [],
+    "nr": [
+     [
+      [
+       55,
+       40
+      ],
+      [
+       65,
+       40
+      ],
+      10,
+      0
+     ],
+     [
+      [
+       55,
+       80
+      ],
+      [
+       65,
+       80
+      ],
+      10,
+      0
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       40,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       40,
+       50
+      ],
+      [
+       55,
+       40
+      ]
+     ],
+     "padre": 0,
+     "desde": 6
+    },
+    {
+     "puntos": [
+      [
+       40,
+       50
+      ],
+      [
+       55,
+       80
+      ]
+     ],
+     "padre": 0,
+     "desde": 6
+    },
+    {
+     "puntos": [
+      [
+       65,
+       40
+      ],
+      [
+       95,
+       60
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       65,
+       80
+      ],
+      [
+       95,
+       60
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 36,
+    "sobran": 464,
+    "campanas": {
+     "d": 26
+    },
+    "parada": null,
+    "motivos": {}
+   }
+  },
+  {
    "nombre": "regla: rama de un bifurcador que no llegó a caer",
    "nivel": {
     "v": 1,

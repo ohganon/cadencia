@@ -24,7 +24,7 @@ import math
 import pathlib
 import sys
 
-from sim import PASO, Campana, Espiral, Interruptor, Muelle, Nivel, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
+from sim import PASO, Campana, Espiral, Interruptor, Muelle, Nivel, Noria, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
 
 ANCHO, ALTO = 100, 160
 DATOS = pathlib.Path(__file__).with_name("datos")
@@ -224,6 +224,14 @@ def casos_reglas():
         return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], fichas=500, interruptores=interruptores,
                      muros=[((20, 0), (20, 100))] if muro else [])
 
+    def con_noria(periodo, fase):
+        return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], muros=[((60, 0), (60, 100))], fichas=500,
+                     norias=[Noria((55, 50), (65, 50), periodo, fase)])
+
+    def doble_norias():
+        return Nivel(200, 100, (10, 50), [Campana("d", (95, 60), "doble")], muros=[((60, 0), (60, 100))], fichas=500,
+                     norias=[Noria((55, 40), (65, 40), 10, 0), Noria((55, 80), (65, 80), 10, 0)])
+
     def con_muelle(salto, muro_antes=False, espiral=False):
         muros = [((60, 0), (60, 100))] + ([((40, 0), (40, 100))] if muro_antes else [])
         return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], muros=muros, fichas=500,
@@ -280,6 +288,14 @@ def casos_reglas():
         ("una compuerta abierta deja pisar otro interruptor",
          con_compuerta([Interruptor((30, 50), (60, 0), (60, 100)), Interruptor((80, 50), (100, 0), (100, 100))]), recta),
         ("la placa la pisa una ficha que no cae", con_compuerta([Interruptor((30, 50), (60, 0), (60, 100))], muro=True), recta),
+        # Noria: igual que el muelle (muro en x = 60), pero sale en su siguiente vuelta. El tronco llega
+        # a la entrada en el tic 9; con periodo 8 y fase 0, la primera ficha que sale cae en el 16
+        ("noria salta el muro en su vuelta", con_noria(8, 0), [Tramo([(10, 50), (55, 50)]), Tramo([(65, 50), (110, 50)])]),
+        ("noria con fase", con_noria(8, 5), [Tramo([(10, 50), (55, 50)]), Tramo([(65, 50), (110, 50)])]),
+        ("noria justo en su vuelta espera una entera", con_noria(9, 0), [Tramo([(10, 50), (55, 50)]), Tramo([(65, 50), (110, 50)])]),
+        ("dos ramas a destiempo salen a la vez de dos norias", doble_norias(),
+         [Tramo([(10, 50), (40, 50)]), Tramo([(40, 50), (55, 40)], 0, 6), Tramo([(40, 50), (55, 80)], 0, 6),
+          Tramo([(65, 40), (95, 60)]), Tramo([(65, 80), (95, 60)])]),
         ("rama de un bifurcador que no llegó a caer", Nivel(200, 100, (10, 50), [Campana("a", (110, 50))],
                                                             muros=[((40, 0), (40, 100))], fichas=500),
          [Tramo([(10, 50), (110, 50)]), Tramo([(60, 50), (60, 90)], 0, 10)]),

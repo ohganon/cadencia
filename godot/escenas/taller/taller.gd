@@ -40,7 +40,8 @@ const HERRAMIENTAS := [
 	["espiral", "Espiral: retrasa lo que pasa por ella. Tócala otra vez para cambiar cuántos tics."],
 	["muelle", "Muelle: arrastra de la entrada a la salida. La cadena salta por encima; toca la entrada para cambiar el tiempo."],
 	["interruptor", "Interruptor: arrastra para dibujar la compuerta; toca para mover su placa. Se abre al pisar la placa."],
-	["goma", "Goma: toca una campana, una puerta, una espiral, un muelle, un interruptor o un muro para quitarlo."],
+	["noria", "Noria: arrastra de la entrada a la salida. Suelta la cadena en su siguiente vuelta; toca la entrada para cambiar cada cuánto."],
+	["goma", "Goma: toca cualquier pieza para quitarla."],
 ]
 
 var tablero: Control
@@ -257,7 +258,7 @@ func _construir() -> void:
 		var b := _boton("", false)
 		b.icono = "campana_simple" if par[0] == "campana" else par[0]     # que no se confunda con la dorada
 		b.redondo = true
-		b.custom_minimum_size = Vector2(72, 72)      # once herramientas en dos filas de seis
+		b.custom_minimum_size = Vector2(72, 72)      # doce herramientas en dos filas de seis
 		b.pulsado.connect(_elegir.bind(par[0]))
 		barra.add_child(b)
 		botones_herramienta[par[0]] = b
@@ -420,6 +421,10 @@ func _demo_si_toca() -> void:
 	_elegir("interruptor")
 	tablero._muro_desde = [10.0, 132.0]
 	tablero._muro_hasta = [34.0, 132.0]
+	tablero._terminar_muro()
+	_elegir("noria")
+	tablero._muro_desde = [30.0, 60.0]
+	tablero._muro_hasta = [30.0, 40.0]
 	tablero._terminar_muro()
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(prefijo + "_1_editor.png")

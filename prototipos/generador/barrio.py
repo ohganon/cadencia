@@ -1,7 +1,7 @@
 """Los barrios de la campaña del prototipo.
 
 Uso (desde esta carpeta):
-    python -X utf8 barrio.py              # escribe godot/datos/barrio_1.json … barrio_5.json
+    python -X utf8 barrio.py              # escribe godot/datos/barrio_1.json … barrio_6.json
     python -X utf8 barrio.py --comprobar  # falla si los archivos no están al día
 
 Barrio 1, «La Plaza» (niveles 1–20): los 10 hechos a mano de la entrega 1 y 10 del generador.
@@ -19,6 +19,10 @@ Barrio 5, «La Estación» (niveles 81–100): presenta el **interruptor**, una 
 compuerta en cuanto cae una ficha encima. El 81 lo enseña a mano (la cadena pisa la placa y luego
 cruza) y 82–100 salen del generador: una rama pisa la placa y la otra da el rodeo justo para llegar
 a la compuerta ya abierta.
+Barrio 6, «La Fábrica» (niveles 101–120): presenta la **noria**, que lleva la cadena al otro lado de
+un muro y la suelta en su siguiente vuelta. El 101 la enseña a mano y 102–120 salen del generador:
+muros que solo se pasan con la noria y dos norias del mismo ritmo que sueltan a la vez dos ramas
+que llegan a destiempo.
 
 Ambos siguen la regla de ritmo de la Fase 4 (sección 5.2): dificultad creciente con picos cortos,
 respiros, preparación y el Gran Tramo al final. Las semillas son fijas: los barrios no cambian.
@@ -33,7 +37,7 @@ import sys
 import generador as G
 import sim
 from niveles_entrega1 import exportar, niveles, suave, tramo_a_dict
-from sim import Campana, Espiral, Interruptor, Muelle, Nivel, Tramo, nivel_a_dict, simular
+from sim import Campana, Espiral, Interruptor, Muelle, Nivel, Noria, Tramo, nivel_a_dict, simular
 
 DATOS = pathlib.Path(__file__).resolve().parents[2] / "godot" / "datos"
 
@@ -50,6 +54,8 @@ OBJETIVOS = {
     "muelle": "Hay un muro de lado a lado: llega al [b]muelle[/b] y sigue dibujando desde su salida.",
     "muelle_doble": "Haz sonar la [b]campana doble[/b]: una rama rodea el muro y la otra salta con el muelle.",
     "interruptor": "Pisa la [b]placa[/b] con una rama para abrir la compuerta, y crúzala después.",
+    "noria": "Un muro de lado a lado: la [b]noria[/b] lleva la cadena al otro lado en su siguiente vuelta.",
+    "noria_doble": "Haz sonar la [b]campana doble[/b]: las dos norias sueltan las ramas a la vez, aunque lleguen a destiempo.",
 }
 
 # (número, título, tipo, dificultad, semilla)
@@ -149,6 +155,28 @@ PLAN_5 = [
     (98, "Doble vía", "doble_y_simple", 0.7, 9817),
     (99, "El jefe de estación", "interruptor", 0.75, 9918),
     (100, "Gran Tramo: el último tren", "interruptor", 0.85, 10019),
+]
+
+PLAN_6 = [
+    (102, "Dos ruedas", "noria_doble", 0.35, 10201),
+    (103, "La cadena de montaje", "noria", 0.4, 10302),
+    (104, "Turno de mañana", "interruptor", 0.45, 10403),
+    (105, "Las poleas", "noria_doble", 0.45, 10504),
+    (106, "El almacén", "numeradas", 0.5, 10605),
+    (107, "La prensa", "noria", 0.5, 10706),
+    (108, "Respiro en el comedor", "simple", 0.3, 10807),
+    (109, "Turno de tarde", "noria_doble", 0.55, 10908),
+    (110, "La caldera", "espiral", 0.55, 11009),
+    (111, "El montacargas", "muelle", 0.55, 11110),
+    (112, "Las cintas", "noria_doble", 0.6, 11211),
+    (113, "Respiro en el vestuario", "dos", 0.4, 11312),
+    (114, "La sirena", "interruptor", 0.65, 11413),
+    (115, "Control de calidad", "noria", 0.65, 11514),
+    (116, "Horas extra", "espiral_doble", 0.7, 11615),
+    (117, "El turno de noche", "noria_doble", 0.7, 11716),
+    (118, "Expedición", "muelle_doble", 0.75, 11817),
+    (119, "Cadena completa", "noria_doble", 0.75, 11918),
+    (120, "Gran Tramo: la gran rueda", "noria_doble", 0.85, 12019),
 ]
 
 
@@ -314,10 +342,30 @@ def barrio_5() -> dict:
     return {"version": 1, "barrio": 5, "nombre": "La Estación", "niveles": _con_dorada(ensenanza_5() + generados)}
 
 
+def ensenanza_6():
+    # 101. La noria: un muro de lado a lado; la cadena entra en la noria y sale en su vuelta.
+    n = Nivel(100, 160, (50, 150), [Campana("a", (50, 25))], muros=[((0.0, 90.0), (100.0, 90.0))], fichas=10_000,
+              norias=[Noria((50, 97), (50, 83), 8, 0)])
+    s = [Tramo([(50, 150), (50, 97)]), Tramo([(50, 83), (50, 25)])]
+    r = simular(n, s)
+    assert r["exito"], r
+    n.marca, n.fichas = r["fichas_usadas"], r["fichas_usadas"] + 15
+    return [{"id": 101, "titulo": "La noria", "nivel": nivel_a_dict(n), "solucion": [tramo_a_dict(x) for x in s],
+             "ayuda": "La [b]noria[/b] recoge la cadena y la suelta al otro lado en su siguiente vuelta: mira cada cuánto gira.",
+             "origen": "a mano"}]
+
+
+def barrio_6() -> dict:
+    generados = _generados(PLAN_6)
+    generados[0]["ayuda"] = "Las dos ramas llegan a destiempo, pero las dos [b]norias[/b] giran igual y las sueltan a la vez."
+    return {"version": 1, "barrio": 6, "nombre": "La Fábrica", "niveles": _con_dorada(ensenanza_6() + generados)}
+
+
 def archivos() -> dict:
     fmt = lambda d: json.dumps(d, ensure_ascii=False, indent=1) + "\n"
     return {"barrio_1.json": fmt(barrio_1()), "barrio_2.json": fmt(barrio_2()), "barrio_3.json": fmt(barrio_3()),
-            "barrio_4.json": fmt(barrio_4()), "barrio_5.json": fmt(barrio_5())}
+            "barrio_4.json": fmt(barrio_4()), "barrio_5.json": fmt(barrio_5()),
+            "barrio_6.json": fmt(barrio_6())}
 
 
 def main():
@@ -330,7 +378,7 @@ def main():
         (DATOS / k).write_text(v, encoding="utf-8")
         for n in json.loads(v)["niveles"]:
             print(f"{n['id']:>2}. {n['titulo']:<24} marca {n['nivel']['m']:>3}  fichas {n['nivel']['f']:>3}"
-                  f"  puertas {len(n['nivel']['p'])}  espirales {len(n['nivel'].get('e', []))}  muelles {len(n['nivel'].get('ml', []))}  interruptores {len(n['nivel'].get('in', []))}  {n['origen']}")
+                  f"  puertas {len(n['nivel']['p'])}  espirales {len(n['nivel'].get('e', []))}  muelles {len(n['nivel'].get('ml', []))}  interruptores {len(n['nivel'].get('in', []))}  norias {len(n['nivel'].get('nr', []))}  {n['origen']}")
 
 
 if __name__ == "__main__":

@@ -114,7 +114,7 @@ var _sonidos := {}              # nombre -> AudioStreamPlayer
 func _ready() -> void:
 	# La campaña: los barrios en orden (La Plaza 1–20, El Puerto 21–40)
 	niveles = []
-	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json", "res://datos/barrio_5.json"]:
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json", "res://datos/barrio_5.json", "res://datos/barrio_6.json"]:
 		var barrio = JSON.parse_string(FileAccess.get_file_as_string(ruta))
 		for n in barrio["niveles"]:
 			n["barrio"] = barrio["nombre"]          # para «+2 estrellas para El Puerto»

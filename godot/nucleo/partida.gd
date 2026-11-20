@@ -67,7 +67,7 @@ func empezar(p: Array) -> bool:
 func _salida_cercana(p: Array, limite: float) -> Array:
 	var mejor := []
 	var mejor_d := limite
-	for m in nivel.get("ml", []):
+	for m in Sim.lanzadores(nivel):
 		var d := Sim.dist(p, m[1])
 		if d <= mejor_d:
 			mejor_d = d

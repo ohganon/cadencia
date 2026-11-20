@@ -9,7 +9,10 @@ signal editado
 signal aviso(texto: String)
 
 const Partida = preload("res://nucleo/partida.gd")
-const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "espirales": 4, "muelles": 4, "interruptores": 4}
+const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "espirales": 4, "muelles": 4, "interruptores": 4,
+	"norias": 4}
+## Vueltas posibles de una noria (en tics); tocar su entrada pasa a la siguiente
+const VUELTAS := [4, 6, 8, 10, 12, 16]
 ## Salto de un muelle nuevo, y cuánto sube al tocar su entrada (de 2 en 2 hasta 20, y vuelta a 2)
 const SALTO_NUEVO := 6
 const SALTO_MAXIMO := 20
@@ -53,12 +56,14 @@ func _gui_input(evento: InputEvent) -> void:
 				return
 			if herramienta == "muelle" and _cambiar_salto(p):
 				return
-			if herramienta in ["muro", "puerta", "muelle", "interruptor"]:
+			if herramienta == "noria" and _cambiar_vuelta(p):
+				return
+			if herramienta in ["muro", "puerta", "muelle", "interruptor", "noria"]:
 				_muro_desde = p
 				_muro_hasta = p
 			else:
 				_aplicar(p)
-		elif herramienta in ["muro", "puerta", "muelle", "interruptor"] and _muro_desde != null:
+		elif herramienta in ["muro", "puerta", "muelle", "interruptor", "noria"] and _muro_desde != null:
 			_terminar_muro()
 		accept_event()
 	elif evento is InputEventMouseMotion and _muro_desde != null:
@@ -127,6 +132,9 @@ func _terminar_muro() -> void:
 	if herramienta == "interruptor":
 		_terminar_interruptor()
 		return
+	if herramienta == "noria":
+		_terminar_noria()
+		return
 	var a: Array = _muro_desde
 	var b: Array = _muro_hasta
 	_muro_desde = null
@@ -181,6 +189,11 @@ func _borrar_cerca(p: Array) -> bool:
 	if muelle >= 0:
 		nivel["ml"].remove_at(muelle)
 		return true
+	var lista_nr: Array = nivel.get("nr", [])
+	for k in lista_nr.size():
+		if Sim.dist(p, lista_nr[k][0]) <= Sim.RADIO_MUELLE + 2.0 or Sim.dist(p, lista_nr[k][1]) <= Sim.RADIO_MUELLE + 2.0:
+			lista_nr.remove_at(k)
+			return true
 	var lista_in: Array = nivel.get("in", [])
 	for k in lista_in.size():
 		var it: Array = lista_in[k]
@@ -198,7 +211,7 @@ func _borrar_cerca(p: Array) -> bool:
 	if muro >= 0:
 		nivel["mu"].remove_at(muro)
 		return true
-	aviso.emit("Toca una campana, una puerta, una espiral, un muelle, un interruptor o un muro para quitarlo.")
+	aviso.emit("Toca una campana, una puerta, una espiral, un muelle, una noria, un interruptor o un muro para quitarlo.")
 	return false
 
 
@@ -255,6 +268,42 @@ func _terminar_interruptor() -> void:
 		aviso.emit("La compuerta se abre cuando cae una ficha en la placa. Toca otro sitio para mover la placa.")
 	_refrescar()
 	editado.emit()
+
+
+## Noria nueva: se arrastra de la entrada a la salida, como el muelle; suelta la cadena en su
+## siguiente vuelta (cada 8 tics al ponerla).
+func _terminar_noria() -> void:
+	var desde: Array = _muro_desde
+	var hasta: Array = _muro_hasta
+	_muro_desde = null
+	_muro_hasta = null
+	if not nivel.has("nr"):
+		nivel["nr"] = []
+	if Sim.dist(desde, hasta) < 2 * Sim.RADIO_MUELLE + 2:
+		aviso.emit("Arrastra desde la entrada de la noria hasta donde quieras que salga la cadena.")
+		queue_redraw()
+		return
+	if nivel["nr"].size() >= LIMITES["norias"]:
+		aviso.emit("Como mucho 4 norias por nivel.")
+		queue_redraw()
+		return
+	nivel["nr"].append([[snappedf(desde[0], 0.1), snappedf(desde[1], 0.1)], [snappedf(hasta[0], 0.1), snappedf(hasta[1], 0.1)], 8, 0])
+	aviso.emit("Suelta la cadena en su siguiente vuelta, cada 8 tics. Toca la entrada para cambiarlo.")
+	_refrescar()
+	editado.emit()
+
+
+func _cambiar_vuelta(p: Array) -> bool:
+	for m in nivel.get("nr", []):
+		if Sim.dist(p, m[0]) <= Sim.RADIO_MUELLE + 2.0:
+			var k := VUELTAS.find(int(m[2]))
+			m[2] = VUELTAS[(k + 1) % VUELTAS.size()]
+			m[3] = 0
+			aviso.emit("Esta noria da una vuelta cada %d tics." % int(m[2]))
+			_refrescar()
+			editado.emit()
+			return true
+	return false
 
 
 ## Muelle nuevo: se arrastra de la entrada a la salida.
