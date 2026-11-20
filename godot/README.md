@@ -42,6 +42,18 @@ adb install -r godot/exportaciones/dingfall-prueba.apk
 
 Herramientas instaladas en este equipo (fuera del repositorio): Java 17 (Temurin 17.0.21) en `%LOCALAPPDATA%\Programs\Java`, Android SDK en `%LOCALAPPDATA%\Programs\Android\Sdk` (Platform-Tools, Build-Tools 35.0.1 y Platform 35) y las plantillas de Android de Godot 4.7.2. En otro ordenador hay que poner las dos rutas en *Editor › Configuración del editor › Exportar › Android*. Si `sdkmanager` falla con «PKIX path building failed», hay que lanzarlo con `SDKMANAGER_OPTS=-Djavax.net.ssl.trustStoreType=Windows-ROOT`.
 
+## Versiones para Windows y web (sin Android)
+
+Las plantillas salen del mismo archivo oficial ya descargado para el APK (`Godot_v4.7.2-stable_export_templates.tpz`), así que no hace falta descargar nada más.
+
+```
+Godot_v4.7.2-stable_win64_console.exe --headless --path godot --export-release "Windows (prueba)" exportaciones/windows/Dingfall.exe
+Godot_v4.7.2-stable_win64_console.exe --headless --path godot --export-release "Web (prueba)" exportaciones/web/index.html
+```
+
+- **Windows:** un solo archivo, `godot/exportaciones/windows/Dingfall.exe` (unos 110 MB, con el juego dentro). Se abre con doble clic en una ventana de 450 × 800 y se juega con el ratón como si fuera el dedo. No está firmado, así que Windows puede avisar («Windows protegió su PC»): «Más información» › «Ejecutar de todas formas».
+- **Web:** `godot/exportaciones/web/` (unos 43 MB). Funciona en el navegador del ordenador y del móvil (también en un iPhone), pero tiene que servirse desde una web: abrir `index.html` con doble clic no funciona. Sin hilos («nothreads»), así que vale cualquier alojamiento estático (por ejemplo GitHub Pages o itch.io). Publicarla es una acción externa: se hará solo con permiso del cliente.
+
 ## Capturas automáticas
 
 ```bash

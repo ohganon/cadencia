@@ -170,7 +170,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: sonidos propios, vibración, cámara lenta, registro local y protocolo de la prueba de la puerta 0 (18/11/2026)
 - [x] Fase 8: fuentes, icono provisional y APK de prueba para Android generado y verificado (18/11/2026)
 - [x] Fase 8: pantalla de juego con el diseño Dominó Pop acordado (18/11/2026)
-- [ ] Fase 8: instalar el APK en un Android y hacer la prueba de la puerta 0 con 10–15 personas
+- [ ] Fase 8: prueba de la puerta 0 con 10–15 personas. El cliente no tiene Android (20/11/2026): hay versión para Windows (`godot/exportaciones/windows/Dingfall.exe`) y versión web, que para jugarla en un móvil (también iPhone) hay que publicarla en un alojamiento estático (GitHub Pages o itch.io), con su permiso
 - [x] Fase 8: generador de niveles por construcción y Caída del Día (calendario de un año dentro del juego) (18/11/2026)
 - [ ] Fase 8: regenerar el calendario de la Caída del Día antes del 31/10/2027
 - [x] Fase 8: Taller: crear, probar, publicar con código y jugar códigos de otros (18/11/2026)
