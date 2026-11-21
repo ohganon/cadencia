@@ -29,6 +29,7 @@ const Iconos = preload("res://escenas/comun/iconos.gd")
 const Camino = preload("res://escenas/mapa/camino.gd")
 const Fondo = preload("res://escenas/comun/fondo.gd")
 const Caja = preload("res://escenas/comun/caja.gd")
+const Pio = preload("res://escenas/comun/pio.gd")
 
 const ESCENA_PARTIDA := "res://escenas/partida/partida.tscn"
 const ESCENA_TALLER := "res://escenas/taller/taller.tscn"
@@ -44,6 +45,7 @@ var TEXTO: Color = Temas.ui("texto")          # texto sobre la pantalla
 var MARCO: Color = Temas.ui("marco")          # borde y sombra de las ventanas
 var ESTRELLA: Color = Temas.ui("estrella")
 const ALTO_TRAMO := 190.0
+const LADO_PIO := 150.0
 
 var niveles: Array = []          # toda la campaña, barrio tras barrio
 var barrios: Array = []
@@ -337,6 +339,40 @@ func _construir_resumen() -> void:
 
 # ---------------------------------------------------------------- mapa
 
+## Pío (solo en Dominó Pop, como en la maqueta): entre el nivel que toca y el siguiente, mirando hacia
+## el siguiente. Si se acaba de superar un nivel, vuela desde su sitio anterior (Estado.pio_nivel
+## recuerda dónde estaba; con «reducir movimiento» aparece en su sitio).
+func _poner_pio(rango: Array, centros: Array, abierto: bool) -> void:
+	var k := _actual - int(rango[0])
+	if Temas.id_activo() != "pop" or not abierto or k < 0 or k >= centros.size():
+		return
+	var pio = Pio.new()
+	pio.size = Vector2(LADO_PIO, LADO_PIO)
+	var sitio := _sitio_pio(k, centros)
+	pio.position = sitio[0]
+	pio.a_la_izquierda = sitio[1]
+	camino.add_child(pio)
+	var estado := get_node_or_null("/root/Estado")
+	if estado == null:
+		return
+	var antes: int = estado.pio_nivel - int(rango[0])
+	if estado.pio_nivel >= 0 and estado.pio_nivel != _actual and antes >= 0 and antes < centros.size():
+		pio.vuela(_sitio_pio(antes, centros)[0])
+	estado.pio_nivel = _actual
+
+
+## Dónde va Pío junto al nodo k: [esquina de su caja, ¿mira a la izquierda?].
+func _sitio_pio(k: int, centros: Array) -> Array:
+	var c: Vector2 = centros[k]
+	var punto := c + Vector2(80, -70)
+	var izquierda := false
+	if k + 1 < centros.size():
+		var siguiente: Vector2 = centros[k + 1]
+		punto = c + (siguiente - c) * Vector2(0.52, 0.4)
+		izquierda = siguiente.x < c.x
+	return [punto - Vector2(LADO_PIO / 2.0, LADO_PIO * 0.6), izquierda]
+
+
 ## Índices (en la lista de toda la campaña) de los niveles del barrio que se ve.
 func _rango_visible() -> Array:
 	var desde := 0
@@ -412,6 +448,7 @@ func _colocar_nodos() -> void:
 		else:
 			b.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		camino.add_child(b)
+	_poner_pio(rango, centros, abierto)
 	# El nivel que toca, a la vista (o el principio del barrio)
 	await get_tree().process_frame
 	var objetivo := clampi(_actual - rango[0], 0, rango.size() - 1) if abierto else 0
@@ -1101,13 +1138,16 @@ func _demo_si_toca() -> void:
 	var prefijo: String = args.get("captura", "user://mapa")
 	for id in range(1, int(args.get("superados", "0")) + 1):
 		progreso.registrar(id, 2 if id % 3 else 1)
+	var estado_demo := get_node_or_null("/root/Estado")
+	if estado_demo != null:
+		estado_demo.pio_nivel = int(args.get("superados", "0")) - 1 if args.has("pio-vuela") else -1
 	if args.has("sin-cuerda"):
 		progreso.cuerda = {"n": 0, "t": ahora() - 17 * 60}
 	_refrescar()
 	if args.has("ver-barrio"):
 		_visible = clampi(int(args["ver-barrio"]) - 1, 0, barrios.size() - 1)
 		_colocar_nodos()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.45 if args.has("pio-vuela") else 0.3).timeout
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(prefijo + "_1_mapa.png")
 	if args.has("sin-cuerda"):

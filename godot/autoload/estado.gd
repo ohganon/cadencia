@@ -13,6 +13,9 @@ const GUARDAR_CADA := 30.0
 ## Nivel que la pantalla de partida tiene que abrir al cargarse, o vacío:
 ## {modo: "prueba" | "codigo", nivel, solucion, titulo, codigo}
 var pendiente: Dictionary = {}
+## Nivel (índice en la campaña) junto al que estaba Pío la última vez que se vio el mapa: si al volver
+## toca otro, Pío vuela hasta él. -1 al empezar (aparece en su sitio).
+var pio_nivel := -1
 
 ## Nivel que se está editando en el Taller (formato de nivel_a_dict)
 var borrador: Dictionary = {}

@@ -144,7 +144,9 @@ godot/
 
 **Cámara que sigue la caída (21/11/2026):** como todos los niveles miden 100 × 160 y en el móvil las fichas se ven pequeñas, durante la caída la cámara se acerca (hasta que una ficha mide unos 40 px, como mucho 1,6 veces) a lo que está cayendo en ese momento y lo sigue con suavidad, sin enseñar nunca fuera del tablero y alejándose si hay ramas lejos unas de otras. Al caer la última ficha vuelve a la vista completa, y el resultado y la X de la parada se ven con el tablero entero. Va dentro de `_medir()` del tablero, así que todo lo dibujado queda en su sitio. Con «reducir movimiento», quieta.
 
-**Pendiente:** Pío (necesita arte) y una ilustración de fondo por barrio (necesita arte).
+**Pío (21/11/2026):** no necesitaba arte aparte: la maqueta de Dominó Pop ya lo dibuja con formas sencillas (cuerpo y cabeza cian, ala, pico amarillo y los trazos con los que señala), y el juego lo dibuja igual en código (`escenas/comun/pio.gd`). Va en el mapa, solo en Dominó Pop como en el catálogo, entre el nivel que toca y el siguiente, mirando hacia el siguiente. Respira, parpadea y aletea de vez en cuando; al volver al mapa tras superar un nivel, vuela en arco hasta su nuevo sitio y da un saltito (Estado.pio_nivel recuerda dónde estaba). Es decoración: no recoge el dedo. Con «reducir movimiento», quieto.
+
+**Pendiente:** una ilustración de fondo por barrio (necesita arte).
 
 Lista original:
 
