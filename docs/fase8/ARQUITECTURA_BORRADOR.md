@@ -146,7 +146,9 @@ godot/
 
 **Pío (21/11/2026):** no necesitaba arte aparte: la maqueta de Dominó Pop ya lo dibuja con formas sencillas (cuerpo y cabeza cian, ala, pico amarillo y los trazos con los que señala), y el juego lo dibuja igual en código (`escenas/comun/pio.gd`). Va en el mapa, solo en Dominó Pop como en el catálogo, entre el nivel que toca y el siguiente, mirando hacia el siguiente. Respira, parpadea y aletea de vez en cuando; al volver al mapa tras superar un nivel, vuela en arco hasta su nuevo sitio y da un saltito (Estado.pio_nivel recuerda dónde estaba). Es decoración: no recoge el dedo. Con «reducir movimiento», quieto.
 
-**Pendiente:** una ilustración de fondo por barrio (necesita arte).
+**Ilustraciones de los barrios (21/11/2026, elegidas por el cliente entre las propuestas):** siluetas sencillas dibujadas en código (`escenas/mapa/ilustracion.gd`), del color del texto del tema y muy suaves (12 % sobre fondos oscuros, 9 % sobre claros). Al pie de cada barrio va el perfil de sus edificios y a los lados del camino, cada cuatro niveles y alternando en espejo, objetos sueltos. Cada una recoge la pieza que estrena el barrio (la noria en La Fábrica, los globos en El Jardín, el faro de cristal en El Faro…). Se dibujan dentro de un CanvasGroup que les da la transparencia de una vez, para que no se oscurezcan donde se tocan. Quietas; con alto contraste no se dibujan.
+
+**Con esto la pasada estética está terminada.**
 
 Lista original:
 

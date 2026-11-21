@@ -198,7 +198,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: prueba de la puerta 0 a distancia: «Ajustes › Resumen › Copiar resumen» y guía adaptada al enlace de la web (21/11/2026)
 - [x] Fase 8: cámara que sigue la caída: se acerca hasta 1,6 veces al frente de fichas que caen sin dejar nada de lo que cae fuera de la vista, y vuelve a la vista completa para el resultado; quieta con «reducir movimiento» (21/11/2026)
 - [x] Fase 8: Pío en el mapa de Dominó Pop, dibujado en código con las formas de la maqueta: entre el nivel que toca y el siguiente, señalándolo; respira, parpadea, aletea y vuela al nivel nuevo al superar uno. Quieto con «reducir movimiento» (21/11/2026)
-- [ ] Pasada estética, pendiente: ilustración de fondo por barrio (necesita arte)
+- [x] Fase 8: ilustración de cada uno de los 9 barrios en el mapa, en siluetas dibujadas en código del color del tema (perfil al pie y objetos a los lados), elegidas por el cliente. **Pasada estética terminada** (21/11/2026)
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal
 - [ ] Antes de monetizar: consulta fiscal con un gestor (alta, IVA intracomunitario, W-8BEN)

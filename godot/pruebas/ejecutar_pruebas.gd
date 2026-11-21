@@ -16,7 +16,7 @@ const SCRIPTS := ["res://nucleo/temas.gd", "res://autoload/tema.gd", "res://nucl
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
 	"res://escenas/comun/iconos.gd", "res://escenas/comun/fuentes.gd", "res://escenas/comun/pestana.gd", "res://escenas/comun/animar.gd", "res://escenas/comun/confeti.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd", "res://escenas/comun/fila_ajuste.gd", "res://escenas/comun/caja.gd", "res://escenas/comun/fondo.gd", "res://escenas/comun/pio.gd",
 	"res://autoload/estado.gd", "res://escenas/taller/tablero_editor.gd", "res://escenas/taller/taller.gd",
-	"res://nucleo/cuerda.gd", "res://escenas/mapa/camino.gd", "res://escenas/mapa/mapa.gd"]
+	"res://nucleo/cuerda.gd", "res://escenas/mapa/camino.gd", "res://escenas/mapa/ilustracion.gd", "res://escenas/mapa/mapa.gd"]
 
 var fallos := 0
 var pasadas := 0

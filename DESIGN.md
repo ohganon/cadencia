@@ -267,6 +267,8 @@ The screens are drawn this way:
 - background: `escenas/comun/fondo.gd`;
 - Ajustes › Apariencia: a full screen of theme cards, as in the mockup.
 
+**Neighbourhood illustrations** (chosen by the client on 21/11/2026). Each of the 9 neighbourhoods has flat silhouettes drawn in code behind the map path. Its skyline sits at the foot of the neighbourhood, and loose props line the sides every four levels, mirrored on alternate rows. They use the theme's text colour at 12 % on dark screens and 9 % on light ones, are composited as one layer and never animate. They are hidden in high contrast. Each one echoes the piece its neighbourhood introduces.
+
 **Background animations** (chosen by the client on 21/11/2026; there are none in the original mockup). Each theme has one slow, low-contrast animation over its mockup background:
 
 | Theme | Animation | Rhythm |

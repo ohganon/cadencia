@@ -30,6 +30,7 @@ const Camino = preload("res://escenas/mapa/camino.gd")
 const Fondo = preload("res://escenas/comun/fondo.gd")
 const Caja = preload("res://escenas/comun/caja.gd")
 const Pio = preload("res://escenas/comun/pio.gd")
+const Ilustracion = preload("res://escenas/mapa/ilustracion.gd")
 
 const ESCENA_PARTIDA := "res://escenas/partida/partida.tscn"
 const ESCENA_TALLER := "res://escenas/taller/taller.tscn"
@@ -339,6 +340,26 @@ func _construir_resumen() -> void:
 
 # ---------------------------------------------------------------- mapa
 
+## Ilustración del barrio (escenas/mapa/ilustracion.gd), detrás del camino: siluetas del color del
+## texto del tema, en un CanvasGroup que les da la transparencia de una vez (así no se oscurecen donde
+## se tocan). Con alto contraste no se dibuja.
+func _poner_ilustracion(numero: int, ancho: float, alto: float) -> void:
+	if Temas.alto_contraste:
+		return
+	var tinta := Temas.ui("texto")
+	var grupo := CanvasGroup.new()
+	grupo.show_behind_parent = true
+	grupo.self_modulate = Color(1, 1, 1, 0.12 if tinta.get_luminance() > 0.5 else 0.09)
+	var dibujo = Ilustracion.new()
+	dibujo.barrio = numero
+	dibujo.ancho = ancho
+	dibujo.alto = alto
+	dibujo.color = Color(tinta, 1.0)
+	grupo.add_child(dibujo)
+	camino.add_child(grupo)
+	camino.move_child(grupo, 0)
+
+
 ## Pío (solo en Dominó Pop, como en la maqueta): entre el nivel que toca y el siguiente, mirando hacia
 ## el siguiente. Si se acaba de superar un nivel, vuela desde su sitio anterior (Estado.pio_nivel
 ## recuerda dónde estaba; con «reducir movimiento» aparece en su sitio).
@@ -409,6 +430,7 @@ func _colocar_nodos() -> void:
 	var ancho: float = maxf(scroll.size.x, 600.0)
 	var alto := ALTO_TRAMO * rango.size() + 120.0
 	camino.custom_minimum_size = Vector2(ancho, alto)
+	_poner_ilustracion(int(barrios[_visible]["barrio"]), ancho, alto)
 	var centros := []
 	for k in rango.size():
 		var x := ancho * (0.3 if k % 2 == 0 else 0.7)
