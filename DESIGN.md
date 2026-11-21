@@ -267,7 +267,23 @@ The screens are drawn this way:
 - background: `escenas/comun/fondo.gd`;
 - Ajustes › Apariencia: a full screen of theme cards, as in the mockup.
 
-There are **no background animations** in the agreed designs: backgrounds are flat colours, gradients or fixed textures.
+**Background animations** (chosen by the client on 21/11/2026; there are none in the original mockup). Each theme has one slow, low-contrast animation over its mockup background:
+
+| Theme | Animation | Rhythm |
+|---|---|---|
+| Dominó Pop | distant ivory tiles fall in a wave and stand up again | 10 s cycle |
+| Mesa de juego | a brass lamp halo breathes; dust motes rise | 8 s |
+| Calma premium | the sunset gradient drifts towards rose and mist | 30 s |
+| Gráfico y limpio | the grid paper moves up | one cell every 6 s |
+| Cine negro | moving film grain, faint flicker and an occasional scratch | 12 fps |
+| Tinta japonesa | an ink drop spreads and fades | every 9 s |
+| Bauhaus | pale circle, square and triangle rotate | one turn per minute |
+| Brutalista | giant grey «TUMBAR · DINGFALL» marquee | 20 px/s |
+| Risografía | the pink halftone drifts off-register over the blue | 7 s sway |
+| Nocturno | stars twinkle; a shooting star | every 14 s |
+| Nórdico | a few large, slow snowflakes | about 20 s fall |
+
+They move only on the map, in Ajustes and in Apariencia. In a game and in the Taller the background stays still. They are still with Reduce Motion, off with high contrast, and drawn at 30 fps only while visible (`escenas/comun/fondo.gd`).
 
 Textures are allowed per theme only as screen background layers:
 

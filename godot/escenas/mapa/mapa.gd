@@ -86,6 +86,7 @@ var fuente_negrita: Font
 var _actual := 0                    # índice del nivel que toca
 var _demo := false
 var _reloj := 0.0
+var fondo_mapa: Control             # escenas/comun/fondo.gd (se para mientras Apariencia lo tapa)
 var _velo_abierto := false          # el velo ya está a la vista (al pasar de una ventana a otra no se vuelve a fundir)
 
 
@@ -193,6 +194,7 @@ func _abrir_apariencia() -> void:
 	velo.visible = false
 	_velo_abierto = false
 	ventana_apariencia.visible = true
+	fondo_mapa.animado = false          # Apariencia lo tapa entero: que no se dibuje para nada
 	Animar.fundido_entrada(ventana_apariencia)
 
 
@@ -354,7 +356,10 @@ func _fuentes() -> void:
 func _construir() -> void:
 	_fuentes()
 	# Fondo del tema: color o degradado y, en algunos, su textura (escenas/comun/fondo.gd)
-	add_child(Fondo.new())
+	# El fondo del mapa se mueve (animación de cada tema); también detrás de Ajustes
+	fondo_mapa = Fondo.new()
+	fondo_mapa.animado = true
+	add_child(fondo_mapa)
 	var margen := MarginContainer.new()
 	margen.set_anchors_preset(Control.PRESET_FULL_RECT)
 	for lado in ["left", "right"]:
@@ -565,6 +570,7 @@ func _construir_ajustes() -> void:
 				get_tree().reload_current_scene()
 				return
 			Temas.reducir_movimiento = progreso.ajustes.get("reducir_movimiento", false)
+			fondo_mapa.animado = true        # se para o vuelve a moverse según el ajuste
 			_textos_ajustes())
 		botones_accesibilidad[clave] = f
 		filas_acc.append(f)
@@ -787,7 +793,9 @@ func _construir_apariencia() -> void:
 	ventana_apariencia.mouse_filter = Control.MOUSE_FILTER_STOP
 	ventana_apariencia.visible = false
 	add_child(ventana_apariencia)
-	ventana_apariencia.add_child(Fondo.new())
+	var fondo_apariencia = Fondo.new()
+	fondo_apariencia.animado = true
+	ventana_apariencia.add_child(fondo_apariencia)
 	var margen := MarginContainer.new()
 	margen.set_anchors_preset(Control.PRESET_FULL_RECT)
 	for lado in ["left", "right"]:
@@ -808,6 +816,7 @@ func _construir_apariencia() -> void:
 	volver.custom_minimum_size = Vector2(84, 84)
 	volver.pulsado.connect(func():
 		ventana_apariencia.visible = false
+		fondo_mapa.animado = true
 		_abrir_ajustes())
 	cabeza.add_child(volver)
 	var t := _etiqueta(44, TEXTO, true)

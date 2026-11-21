@@ -138,6 +138,10 @@ godot/
 - **Tablero:** los carteles (puertas, espirales, muelles, norias) no bajan de 19 px; el de la puerta, si no cabe al lado del hueco, se pone en columna en vez de meterse bajo la cadena.
 - **Resultado:** la estrella no conseguida toma el color de la ventana de cada tema en vez de un azul fijo.
 
+**Temas idénticos a la maqueta (21/11/2026):** el generador de temas exporta el estilo completo de cada tema (cajas con sus sombras, bordes y radios, mayúsculas y espaciado, fondos con textura, botón desactivado y pulsación) y el juego lo dibuja tal cual, con las medidas de la maqueta multiplicadas por 2,2. Apariencia pasa a ser una pantalla entera como en la maqueta.
+
+**Fondos animados (21/11/2026, elegidos por el cliente entre las propuestas):** uno por tema, lento y suave, solo en el mapa, Ajustes y Apariencia; quietos en la partida y el Taller, con «reducir movimiento» y con alto contraste (DESIGN.md › Background animations).
+
 **Pendiente:** Pío (necesita arte), la cámara que sigue la caída en niveles grandes (ahora todos caben en pantalla) y una ilustración de fondo por barrio.
 
 Lista original:
