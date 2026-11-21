@@ -554,7 +554,21 @@ func pruebas_registro(Registro: GDScript) -> void:
 		for k in l:
 			claves[k] = true
 	comprobar(claves.keys().all(func(k): return k in ["evento", "t", "nivel", "exito", "pistas"]), "el registro no guarda nada más que lo previsto")
+	# Resumen para enviar (prueba a distancia): las medidas de la puerta 0 y los intentos por nivel
+	for id in [1, 2]:
+		r.anotar("intento", {"nivel": id, "exito": true, "pistas": 0})
+	r.anotar("intento", {"nivel": 12, "exito": false, "pistas": 0})
+	var texto: String = r.texto_resumen(range(1, 21), {"plataforma": "Web", "minutos": 23, "tema": "Dominó Pop", "ajustes": "sin ajustes de accesibilidad", "fecha": "2026-11-21"})
+	comprobar(texto.begins_with("Dingfall · resumen de la prueba") and texto.contains("Fecha: 2026-11-21 · Web") and texto.contains("Tiempo jugado (7 días): 23 min"),
+		"el resumen para enviar lleva fecha, plataforma y tiempo", texto)
+	comprobar(texto.contains("Niveles 1–3 sin pista: 2 de 3") and texto.contains("Niveles 7–9 sin pista: 0 de 3") and texto.contains("Niveles jugados después del 10: 1"),
+		"el resumen calcula las medidas de la puerta 0", texto)
+	comprobar(texto.contains("3 · 4 · 3 · 1") and texto.contains("12 · 1 · sin superar · 0") and texto.find("\n1 · ") < texto.find("\n3 · "),
+		"el resumen lista los niveles en orden con sus intentos", texto)
+	comprobar(texto.contains("superados: 3 · pistas usadas: 1"), "el resumen cuenta niveles superados y pistas", texto)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
+	var vacio = Registro.new(ruta)
+	comprobar(vacio.texto_resumen([1, 2], {}).contains("Aún no hay partidas registradas."), "el resumen sin partidas lo dice")
 
 
 func pruebas_reto(RetoDiario: GDScript, sim: GDScript) -> void:

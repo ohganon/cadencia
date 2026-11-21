@@ -78,7 +78,9 @@ var boton_vibracion: Control
 var botones_accesibilidad := {}     # clave del ajuste -> botón
 const ACCESIBILIDAD := [["alto_contraste", "Alto contraste"], ["reducir_movimiento", "Reducir movimiento"],
 	["texto_grande", "Texto grande"]]
-var resumen_prueba: Label
+var ventana_resumen: PanelContainer   # Ajustes › Resumen de la prueba (para enviarlo desde casa)
+var texto_resumen: TextEdit
+var aviso_copiado: Label
 var fuente_titulos: Font
 var fuente_botones: Font
 var fuente_texto: Font
@@ -187,6 +189,7 @@ func _cerrar_ventanas() -> void:
 	ventana_responsable.visible = false
 	ventana_piezas.visible = false
 	ventana_creditos.visible = false
+	ventana_resumen.visible = false
 
 
 func _abrir_apariencia() -> void:
@@ -213,7 +216,6 @@ func _elegir_tema(id: String) -> void:
 
 func _abrir_ajustes() -> void:
 	_textos_ajustes()
-	resumen_prueba.visible = false
 	velo.visible = true
 	ventana_ajustes.visible = true
 	_centrar(ventana_ajustes)
@@ -240,20 +242,97 @@ func _textos_ajustes() -> void:
 		botones_accesibilidad[par[0]].encendido = progreso.ajustes.get(par[0], false)
 
 
-## Para quien dirige la prueba: intentos por nivel, leídos del registro local.
+## Ajustes › Resumen de la prueba: el texto para enviar a quien dirige la prueba (nucleo/registro.gd ›
+## texto_resumen), con «Copiar resumen». El texto también se puede seleccionar a mano, por si el
+## navegador no deja copiar. No lleva ningún dato personal.
 func _al_resumen() -> void:
-	var s: Dictionary = registro.resumen()
-	var lineas := ["Nivel · intentos · hasta superarlo · pistas"]
+	texto_resumen.text = _texto_resumen()
+	aviso_copiado.text = "No lleva tu nombre ni nada que te identifique."
+	ventana_ajustes.visible = false
+	velo.visible = true
+	ventana_resumen.visible = true
+	_centrar(ventana_resumen)
+
+
+func _texto_resumen() -> String:
+	var ids := []
 	for n in niveles:
-		var k := str(int(n["id"]))
-		if s.has(k):
-			var r: Dictionary = s[k]
-			lineas.append("%s · %d · %s · %d" % [k, r["intentos"], str(r["intentos_hasta_superar"]) if r["superado"] else "sin superar", r["pistas"]])
-	if lineas.size() == 1:
-		lineas.append("Aún no hay partidas registradas.")
-	resumen_prueba.text = "\n".join(lineas)
-	resumen_prueba.visible = not resumen_prueba.visible
-	_centrar(ventana_ajustes)
+		ids.append(int(n["id"]))
+	var minutos := 0
+	var estado := get_node_or_null("/root/Estado")
+	if estado != null and estado.responsable != null:
+		minutos = int(estado.semana() / 60)
+	var acc := []
+	for par in ACCESIBILIDAD:
+		if progreso.ajustes.get(par[0], false):
+			acc.append(par[1].to_lower())
+	return registro.texto_resumen(ids, {"plataforma": _plataforma(), "minutos": minutos,
+		"tema": Temas.activo.get("nombre", ""), "ajustes": ", ".join(acc) if not acc.is_empty() else "sin ajustes de accesibilidad"})
+
+
+## «Web (Android)», «Windows»… (sin modelo de teléfono ni nada que identifique el aparato).
+static func _plataforma() -> String:
+	if OS.has_feature("web"):
+		for par in [["web_android", "Android"], ["web_ios", "iPhone o iPad"], ["web_windows", "Windows"], ["web_macos", "Mac"], ["web_linuxbsd", "Linux"]]:
+			if OS.has_feature(par[0]):
+				return "Web (%s)" % par[1]
+		return "Web"
+	return OS.get_name()
+
+
+func _al_copiar_resumen() -> void:
+	var texto := _texto_resumen()
+	texto_resumen.text = texto
+	if not _demo:
+		DisplayServer.clipboard_set(texto)
+	aviso_copiado.text = "Copiado. Pégalo en un mensaje a quien te pasó el juego."
+	Animar.latido(aviso_copiado, 1.06)
+
+
+func _construir_resumen() -> void:
+	ventana_resumen = _ventana()
+	var caja := VBoxContainer.new()
+	caja.add_theme_constant_override("separation", 14)
+	ventana_resumen.add_child(caja)
+	var t := _etiqueta(44, TINTA, true)
+	t.text = "Resumen de la prueba"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caja.add_child(t)
+	var explica := _etiqueta(24, TINTA_SUAVE)
+	explica.text = "Si te han pedido probar el juego, copia esto y envíaselo a quien te lo pasó."
+	explica.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	explica.custom_minimum_size = Vector2(560, 0)
+	caja.add_child(explica)
+	texto_resumen = TextEdit.new()
+	texto_resumen.editable = false
+	texto_resumen.custom_minimum_size = Vector2(576, 520)
+	texto_resumen.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+	texto_resumen.add_theme_font_override("font", fuente_texto)
+	texto_resumen.add_theme_font_size_override("font_size", Temas.tam(20))
+	texto_resumen.add_theme_color_override("font_readonly_color", TINTA)
+	texto_resumen.add_theme_color_override("selection_color", Color(Temas.ui("acento"), 0.35))
+	var fondo_texto := StyleBoxFlat.new()
+	fondo_texto.bg_color = Color(TINTA, 0.05)
+	fondo_texto.border_color = Color(TINTA, 0.18)
+	fondo_texto.set_border_width_all(2)
+	fondo_texto.set_corner_radius_all(14)
+	fondo_texto.set_content_margin_all(14)
+	for estilo in ["normal", "read_only", "focus"]:
+		texto_resumen.add_theme_stylebox_override(estilo, fondo_texto)
+	caja.add_child(texto_resumen)
+	aviso_copiado = _etiqueta(23, TINTA_SUAVE)
+	aviso_copiado.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	aviso_copiado.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	aviso_copiado.custom_minimum_size = Vector2(560, 0)
+	caja.add_child(aviso_copiado)
+	var copiar := _boton("Copiar resumen", true, 34)
+	copiar.pulsado.connect(_al_copiar_resumen)
+	caja.add_child(copiar)
+	var volver := _boton("Volver a Ajustes", false, 32)
+	volver.pulsado.connect(func():
+		ventana_resumen.visible = false
+		_abrir_ajustes())
+	caja.add_child(volver)
 
 
 # ---------------------------------------------------------------- mapa
@@ -448,6 +527,7 @@ func _construir() -> void:
 	_construir_responsable()
 	_construir_piezas()
 	_construir_creditos()
+	_construir_resumen()
 
 
 ## Barra de abajo (DESIGN.md: la pestaña activa se marca con una pastilla marfil y no se eleva).
@@ -575,10 +655,6 @@ func _construir_ajustes() -> void:
 		botones_accesibilidad[clave] = f
 		filas_acc.append(f)
 	caja.add_child(FilaAjuste.grupo(filas_acc))
-	resumen_prueba = _etiqueta(24, TINTA_SUAVE)
-	resumen_prueba.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	resumen_prueba.visible = false
-	caja.add_child(resumen_prueba)
 	# Abajo: el resumen para quien dirige la prueba y volver, uno al lado del otro
 	var fila_abajo := HBoxContainer.new()
 	fila_abajo.add_theme_constant_override("separation", 12)
@@ -1045,6 +1121,19 @@ func _demo_si_toca() -> void:
 		await get_tree().create_timer(0.3).timeout
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png(prefijo + "_3_ajustes.png")
+	if args.has("resumen"):
+		_cerrar_ventanas()
+		# Partidas de ejemplo en el registro de la demostración (se borra al terminar)
+		for id in range(1, 13):
+			var veces := 3 if id in [5, 8] else 1
+			for k in veces:
+				registro.anotar("intento", {"nivel": id, "exito": k == veces - 1, "pistas": 1 if id == 8 else 0})
+		_al_resumen()
+		await get_tree().create_timer(0.4).timeout
+		_al_copiar_resumen()
+		await get_tree().create_timer(0.3).timeout
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_png(prefijo + "_8_resumen.png")
 	if args.has("creditos"):
 		_cerrar_ventanas()
 		_abrir_creditos()
