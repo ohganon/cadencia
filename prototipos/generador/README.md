@@ -33,6 +33,8 @@ python -X utf8 -m unittest -v test_generador                      # 8 pruebas
 
 **Barrio 7, El Jardín** (`barrio.py`): presenta el globo. El 121, a mano (las fichas no llegan a la campana; el camino del globo, sí). Del 122 al 140, del generador con los tipos `globo` y `globo_doble` (dos globos con caminos de largo distinto: la rama del camino corto da el rodeo justo para reventarlo más tarde). Sin sus globos, la solución falla. Escribe `godot/datos/barrio_7.json`.
 
+**Barrio 8, El Faro** (`barrio.py`): presenta el cristal. El 141, a mano; del 142 al 160, del generador con el tipo `cristal` (una fila de cristal: una rama lo rompe y se para, la otra da el rodeo justo para cruzarlo después). Si el cristal fuera un muro, la solución fallaría. Escribe `godot/datos/barrio_8.json`.
+
 **Campana dorada** (`poner_dorada`): la tercera estrella. Sale una rama de una ficha de la solución hacia un sitio alejado del camino, de muros y de puertas, sin cambiar cuándo suenan las demás campanas. La marca incluye esa rama, así que las tres estrellas se consiguen con la solución de referencia. Los 40 niveles de los barrios y los 365 días de la Caída del Día la llevan.
 
 **Temas** (`temas.py`): convierte los 11 temas de la maqueta (`docs/fase6/temas/index.html`, copiados en `datos_temas_maqueta.json`) a `godot/datos/temas.json`: colores de la interfaz y del tablero, radios, si los botones llevan sombra sólida y los textos con tono («¡A tumbar!», «Soltar», «Encender»…). Elige la campana normal y la dorada de cada tema y la tinta del tablero (el marco o el texto, el que más contraste). Las pruebas de Godot comprueban contrastes mínimos en los 11.

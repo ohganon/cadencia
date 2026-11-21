@@ -10,7 +10,7 @@ signal aviso(texto: String)
 
 const Partida = preload("res://nucleo/partida.gd")
 const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "espirales": 4, "muelles": 4, "interruptores": 4,
-	"norias": 4, "globos": 4}
+	"norias": 4, "globos": 4, "cristales": 6}
 ## Vueltas posibles de una noria (en tics); tocar su entrada pasa a la siguiente
 const VUELTAS := [4, 6, 8, 10, 12, 16]
 ## Salto de un muelle nuevo, y cuánto sube al tocar su entrada (de 2 en 2 hasta 20, y vuelta a 2)
@@ -58,12 +58,12 @@ func _gui_input(evento: InputEvent) -> void:
 				return
 			if herramienta == "noria" and _cambiar_vuelta(p):
 				return
-			if herramienta in ["muro", "puerta", "muelle", "interruptor", "noria", "globo"]:
+			if herramienta in ["muro", "puerta", "muelle", "interruptor", "noria", "globo", "cristal"]:
 				_muro_desde = p
 				_muro_hasta = p
 			else:
 				_aplicar(p)
-		elif herramienta in ["muro", "puerta", "muelle", "interruptor", "noria", "globo"] and _muro_desde != null:
+		elif herramienta in ["muro", "puerta", "muelle", "interruptor", "noria", "globo", "cristal"] and _muro_desde != null:
 			_terminar_muro()
 		accept_event()
 	elif evento is InputEventMouseMotion and _muro_desde != null:
@@ -138,6 +138,9 @@ func _terminar_muro() -> void:
 	if herramienta == "globo":
 		_terminar_globo()
 		return
+	if herramienta == "cristal":
+		_terminar_cristal()
+		return
 	var a: Array = _muro_desde
 	var b: Array = _muro_hasta
 	_muro_desde = null
@@ -192,6 +195,11 @@ func _borrar_cerca(p: Array) -> bool:
 	if muelle >= 0:
 		nivel["ml"].remove_at(muelle)
 		return true
+	var lista_cr: Array = nivel.get("cr", [])
+	for k in lista_cr.size():
+		if _distancia_segmento(p, lista_cr[k][0], lista_cr[k][1]) < 4.0:
+			lista_cr.remove_at(k)
+			return true
 	var lista_gl: Array = nivel.get("gl", [])
 	for k in lista_gl.size():
 		if Sim.dist(p, lista_gl[k][0]) <= Sim.RADIO_INTERRUPTOR + 3.0:
@@ -274,6 +282,28 @@ func _terminar_interruptor() -> void:
 		lista.append([[snappedf(placa[0], 0.1), snappedf(placa[1], 0.1)], [snappedf(a[0], 0.1), snappedf(a[1], 0.1)],
 			[snappedf(b[0], 0.1), snappedf(b[1], 0.1)]])
 		aviso.emit("La compuerta se abre cuando cae una ficha en la placa. Toca otro sitio para mover la placa.")
+	_refrescar()
+	editado.emit()
+
+
+## Cristal nuevo: se dibuja arrastrando, como un muro.
+func _terminar_cristal() -> void:
+	var a: Array = _muro_desde
+	var b: Array = _muro_hasta
+	_muro_desde = null
+	_muro_hasta = null
+	if not nivel.has("cr"):
+		nivel["cr"] = []
+	if Sim.dist(a, b) < MURO_MINIMO:
+		aviso.emit("Arrastra el dedo para dibujar el cristal.")
+		queue_redraw()
+		return
+	if nivel["cr"].size() >= LIMITES["cristales"]:
+		aviso.emit("Como mucho 6 cristales por nivel.")
+		queue_redraw()
+		return
+	nivel["cr"].append([[snappedf(a[0], 0.1), snappedf(a[1], 0.1)], [snappedf(b[0], 0.1), snappedf(b[1], 0.1)]])
+	aviso.emit("La primera ficha que choca rompe el cristal y se para; las que llegan después pasan.")
 	_refrescar()
 	editado.emit()
 

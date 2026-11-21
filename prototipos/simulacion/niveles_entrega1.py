@@ -24,7 +24,7 @@ import math
 import pathlib
 import sys
 
-from sim import PASO, Campana, Espiral, Globo, Interruptor, Muelle, Nivel, Noria, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
+from sim import PASO, Campana, Cristal, Espiral, Globo, Interruptor, Muelle, Nivel, Noria, Puerta, Tramo, longitud, nivel_a_dict, repartir, simular
 
 ANCHO, ALTO = 100, 160
 DATOS = pathlib.Path(__file__).with_name("datos")
@@ -224,6 +224,9 @@ def casos_reglas():
         return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], fichas=500, interruptores=interruptores,
                      muros=[((20, 0), (20, 100))] if muro else [])
 
+    def con_cristal():
+        return Nivel(200, 100, (10, 50), [Campana("a", (110, 50))], fichas=500, cristales=[Cristal((60, 0), (60, 100))])
+
     def con_globo(muro=False):
         return Nivel(200, 100, (10, 50), [Campana("b", (30, 90))], fichas=500,
                      muros=[((20, 70), (40, 70))] if muro else [], globos=[Globo((30, 50), [(30, 50), (30, 90)])])
@@ -307,6 +310,12 @@ def casos_reglas():
         ("un globo revienta otro", Nivel(200, 100, (10, 50), [Campana("b", (90, 90))], fichas=500,
                                         globos=[Globo((30, 50), [(30, 50), (60, 50)]), Globo((60, 50), [(60, 50), (80, 65), (90, 90)])]),
          [Tramo([(10, 50), (35, 50)])]),
+        # Cristal en x = 60: la primera ficha que choca lo rompe (y su rama se para); luego se pasa
+        ("el cristal para la cadena", con_cristal(), recta),
+        ("una rama rompe el cristal y otra pasa después", con_cristal(),
+         [Tramo([(10, 50), (30, 50)]), Tramo([(30, 50), (65, 30)], 0, 4), Tramo([(30, 50), (40, 70), (55, 60), (70, 50), (110, 50)], 0, 4)]),
+        ("dos ramas iguales chocan a la vez: las dos se paran", con_cristal(),
+         [Tramo([(10, 50), (30, 50)]), Tramo([(30, 50), (65, 40)], 0, 4), Tramo([(30, 50), (65, 60)], 0, 4)]),
         ("rama de un bifurcador que no llegó a caer", Nivel(200, 100, (10, 50), [Campana("a", (110, 50))],
                                                             muros=[((40, 0), (40, 100))], fichas=500),
          [Tramo([(10, 50), (110, 50)]), Tramo([(60, 50), (60, 90)], 0, 10)]),

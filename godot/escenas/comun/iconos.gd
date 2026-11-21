@@ -99,6 +99,16 @@ static func _dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color: Color) ->
 			var lado := rect.size.x * 0.72
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(0, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
 			_dibujar(ci, "campana", Rect2(rect.position + Vector2(rect.size.x - lado, rect.size.y * 0.14), Vector2(lado, lado)), CORAL)
+		"cristal":                        # cristal: panel azul claro con brillos
+			var e := rect.size.x / 24.0
+			var caja := StyleBoxFlat.new()
+			caja.bg_color = Color("#8fd3ff")
+			caja.border_color = _t
+			caja.set_border_width_all(maxi(1, int(round(2.0 * e))))
+			caja.set_corner_radius_all(int(2 * e))
+			ci.draw_style_box(caja, Rect2(rect.position + Vector2(4, 6) * e, Vector2(16, 12) * e))
+			ci.draw_line(rect.position + Vector2(7, 14) * e, rect.position + Vector2(11, 9) * e, Color.WHITE, maxf(1.0, 1.4 * e), true)
+			ci.draw_line(rect.position + Vector2(12, 15) * e, rect.position + Vector2(15, 11) * e, Color.WHITE, maxf(1.0, 1.4 * e), true)
 		"globo":                          # globo con su cuerda
 			var e := rect.size.x / 24.0
 			var c := rect.position + Vector2(12, 9) * e

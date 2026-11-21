@@ -56,6 +56,8 @@ const EXPLICACIONES := {
 	"choca con un muro": "La cadena chocó con un muro.",
 	"sale del tablero": "La cadena se salió del tablero.",
 	"puerta cerrada": "La puerta estaba cerrada cuando llegó la cadena.",
+	"compuerta cerrada": "La compuerta seguía cerrada: pisa antes su placa.",
+	"rompe el cristal": "La cadena rompió el cristal y se paró ahí. Otra rama puede pasar después.",
 	"faltan fichas": "No hay fichas para tanto camino.",
 	"no empieza en el inicio": "Empieza a dibujar desde el botón verde.",
 	"bifurcador no válido": "Las ramas tienen que salir de una ficha ya puesta.",
@@ -114,7 +116,7 @@ var _sonidos := {}              # nombre -> AudioStreamPlayer
 func _ready() -> void:
 	# La campaña: los barrios en orden (La Plaza 1–20, El Puerto 21–40)
 	niveles = []
-	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json", "res://datos/barrio_5.json", "res://datos/barrio_6.json", "res://datos/barrio_7.json"]:
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json", "res://datos/barrio_5.json", "res://datos/barrio_6.json", "res://datos/barrio_7.json", "res://datos/barrio_8.json"]:
 		var barrio = JSON.parse_string(FileAccess.get_file_as_string(ruta))
 		for n in barrio["niveles"]:
 			n["barrio"] = barrio["nombre"]          # para «+2 estrellas para El Puerto»

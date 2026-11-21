@@ -300,6 +300,10 @@ func _draw() -> void:
 	# Las puertas, encima de las fichas, para que se vea su ritmo
 	for p in nivel["p"]:
 		_puerta(p)
+	# Los cristales: enteros hasta que algo choca con ellos; después, solo quedan sus marcos
+	var cristales: Array = nivel.get("cr", [])
+	for k in cristales.size():
+		_cristal(cristales[k], k)
 	# Los interruptores: la placa y su compuerta (abierta desde el tic siguiente a pisar la placa)
 	var interruptores: Array = nivel.get("in", [])
 	for k in interruptores.size():
@@ -349,6 +353,22 @@ func _draw() -> void:
 ## Mientras se dibuja: dónde cruza el camino cada puerta y si en ese tic estará abierta (verde) o
 ## cerrada (coral). Con las marcas de cuenta, permite planificar en vez de probar a ciegas.
 func _cruces_de_puertas(todas: Array, tics: Array) -> void:
+	# Cristales: el primer cruce lo rompe (coral: esa rama se para ahí); los que llegan después pasan (verde)
+	for c in partida.nivel.get("cr", []):
+		var cruces := []
+		for i in todas.size():
+			var f: Array = todas[i]
+			for j in range(1, f.size()):
+				if Sim.cruza(f[j - 1], f[j], c[0], c[1]):
+					cruces.append([tics[i][j], f[j]])
+					break
+		if cruces.is_empty():
+			continue
+		var primero := 1 << 30
+		for x in cruces:
+			primero = mini(primero, int(x[0]))
+		for x in cruces:
+			_marca_cruce(x[1], int(x[0]), int(x[0]) > primero)
 	# Compuertas: si se cruzan después de que se pise su placa (según lo dibujado), estarán abiertas
 	var caen := []
 	for f in todas:
@@ -766,6 +786,42 @@ func _muelle_etiqueta(m: Array) -> void:
 	draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, ETIQUETA_T)
 
 
+## Cristal: una barra azul clara y translúcida con dos brillos. Cuando algo choca con él (en la caída)
+## salta en pedazos y solo quedan sus dos marcos.
+func _cristal(c: Array, k: int) -> void:
+	var a := a_pantalla(c[0])
+	var b := a_pantalla(c[1])
+	var roto := -1
+	if modo != Modo.EDITAR:
+		var disparos: Array = _detalle.get("interruptores", [])
+		var indice: int = partida.nivel.get("in", []).size() + k
+		if indice < disparos.size():
+			roto = int(disparos[indice])
+	var azul := Color("#8fd3ff")
+	for poste in [a, b]:
+		draw_circle(poste, 1.2 * _k, TINTA)
+	if roto >= 0 and _tic_actual() > roto:
+		var t := _tiempo - (roto + 1) * DURACION_TIC
+		if t < 0.6 and not reducir_movimiento:
+			var u := t / 0.6
+			var eje := (b - a).normalized()
+			var normal := Vector2(-eje.y, eje.x)
+			for s in 10:
+				var base := a.lerp(b, (s + 0.5) / 10.0)
+				var lado := 1.0 if s % 2 == 0 else -1.0
+				var p := base + normal * lado * (1.5 + 5.0 * u) * _k + eje * (s % 3 - 1) * 1.5 * u * _k
+				var trozo := PackedVector2Array([p + Vector2(-0.8, -0.5) * _k, p + Vector2(0.9, -0.2) * _k, p + Vector2(0.1, 0.9) * _k])
+				draw_colored_polygon(trozo, Color(azul, 1.0 - u))
+		return
+	draw_line(a, b, Color(azul, 0.75), 1.6 * _k, true)
+	draw_line(a, b, Color(TINTA, 0.55), maxf(1.0, 0.25 * _k), true)
+	var eje2 := (b - a)
+	for f in [0.25, 0.6]:
+		var p: Vector2 = a + eje2 * f
+		var d := eje2.normalized() * 1.6 * _k
+		draw_line(p - d * 0.5 + Vector2(0, -0.5 * _k), p + d * 0.5 + Vector2(0, 0.5 * _k), Color(1, 1, 1, 0.9), maxf(1.0, 0.3 * _k), true)
+
+
 ## Interruptor: una placa redonda con un botón y, unida por una línea de puntos, su compuerta: una
 ## barra a rayas mientras está cerrada; abierta, solo quedan sus dos postes.
 func _interruptor(it: Array, k: int) -> void:
@@ -854,6 +910,8 @@ func _parada() -> void:
 	var parada = r.get("parada")
 	if parada == null or parada.get("tramo") == null:
 		return
+	if r.get("exito", false) and parada.get("motivo") == "rompe el cristal":
+		return       # romper el cristal era parte de la solución: no es un fallo que marcar
 	var i := int(parada["tramo"])
 	var j := int(parada["ficha"])
 	var todas: Array = _detalle.get("fichas", [])

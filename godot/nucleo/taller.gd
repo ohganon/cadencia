@@ -16,7 +16,7 @@ const PREFIJO := "DING1-"
 const MAXIMO_DESCOMPRIMIDO := 65536
 const MAXIMO_CODIGO := 20000
 const LIMITES := {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
-	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12, "muelles": 4, "salto": 20, "interruptores": 4, "norias": 4, "vuelta": 60, "globos": 4, "regalo": 40}
+	"tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12, "muelles": 4, "salto": 20, "interruptores": 4, "norias": 4, "vuelta": 60, "globos": 4, "regalo": 40, "cristales": 6}
 const TIPOS_CAMPANA := ["simple", "doble", "numerada", "dorada"]
 const RUTA := "user://taller.json"
 
@@ -172,6 +172,12 @@ static func validar_nivel(d: Dictionary) -> String:
 		for q in x[1]:
 			if not _punto(q, d):
 				return "Hay un globo que no es válido."
+	var cr = d.get("cr", [])
+	if typeof(cr) != TYPE_ARRAY or cr.size() > LIMITES["cristales"]:
+		return "Hay demasiados cristales."
+	for x in cr:
+		if typeof(x) != TYPE_ARRAY or x.size() != 2 or not _punto(x[0], d) or not _punto(x[1], d):
+			return "Hay un cristal que no es válido."
 	return ""
 
 

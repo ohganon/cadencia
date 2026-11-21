@@ -1,7 +1,7 @@
 """Los barrios de la campaña del prototipo.
 
 Uso (desde esta carpeta):
-    python -X utf8 barrio.py              # escribe godot/datos/barrio_1.json … barrio_7.json
+    python -X utf8 barrio.py              # escribe godot/datos/barrio_1.json … barrio_8.json
     python -X utf8 barrio.py --comprobar  # falla si los archivos no están al día
 
 Barrio 1, «La Plaza» (niveles 1–20): los 10 hechos a mano de la entrega 1 y 10 del generador.
@@ -26,6 +26,9 @@ que llegan a destiempo.
 Barrio 7, «El Jardín» (niveles 121–140): presenta el **globo**, que lleva colgado un camino de fichas
 gratis que cae al reventarlo. El 121 lo enseña a mano y 122–140 salen del generador: campanas
 lejos de tus fichas y campanas dobles con dos globos que hay que reventar cada uno a su tiempo.
+Barrio 8, «El Faro» (niveles 141–160): presenta el **cristal**, que para la cadena como un muro hasta
+que una ficha choca con él y lo rompe (esa rama se para ahí). El 141 lo enseña a mano y 142–160
+salen del generador: una rama rompe el cristal y la otra da el rodeo justo para cruzarlo después.
 
 Ambos siguen la regla de ritmo de la Fase 4 (sección 5.2): dificultad creciente con picos cortos,
 respiros, preparación y el Gran Tramo al final. Las semillas son fijas: los barrios no cambian.
@@ -40,7 +43,7 @@ import sys
 import generador as G
 import sim
 from niveles_entrega1 import exportar, niveles, suave, tramo_a_dict
-from sim import Campana, Espiral, Globo, Interruptor, Muelle, Nivel, Noria, Tramo, nivel_a_dict, simular
+from sim import Campana, Cristal, Espiral, Globo, Interruptor, Muelle, Nivel, Noria, Tramo, nivel_a_dict, simular
 
 DATOS = pathlib.Path(__file__).resolve().parents[2] / "godot" / "datos"
 
@@ -61,6 +64,7 @@ OBJETIVOS = {
     "noria_doble": "Haz sonar la [b]campana doble[/b]: las dos norias sueltan las ramas a la vez, aunque lleguen a destiempo.",
     "globo": "La campana queda lejos de tus fichas: revienta el [b]globo[/b] y su camino llegará por ti.",
     "globo_doble": "Revienta los dos [b]globos[/b], cada uno a su tiempo, para que sus caminos lleguen a la vez a la campana doble.",
+    "cristal": "Una rama rompe el [b]cristal[/b] (y se queda ahí); la otra tiene que llegar después.",
 }
 
 # (número, título, tipo, dificultad, semilla)
@@ -204,6 +208,28 @@ PLAN_7 = [
     (138, "Fuegos artificiales", "globo_doble", 0.75, 13817),
     (139, "La verja", "interruptor", 0.75, 13918),
     (140, "Gran Tramo: el gran globo", "globo_doble", 0.85, 14019),
+]
+
+PLAN_8 = [
+    (142, "La linterna", "cristal", 0.35, 14201),
+    (143, "Bruma", "cristal", 0.4, 14302),
+    (144, "La sirena del puerto", "interruptor", 0.45, 14403),
+    (145, "Vidrieras", "cristal", 0.45, 14504),
+    (146, "Las gaviotas", "globo", 0.5, 14605),
+    (147, "La escalera de caracol", "espiral", 0.5, 14706),
+    (148, "Respiro en las rocas", "simple", 0.3, 14807),
+    (149, "Señales de luz", "cristal", 0.55, 14908),
+    (150, "Marea alta", "puerta", 0.55, 15009),
+    (151, "El farero", "cristal", 0.6, 15110),
+    (152, "Las dos luces", "noria_doble", 0.6, 15211),
+    (153, "Respiro en el muelle", "dos", 0.4, 15312),
+    (154, "Temporal", "cristal", 0.65, 15413),
+    (155, "Barcos en la niebla", "globo_doble", 0.65, 15514),
+    (156, "La lente", "cristal", 0.7, 15615),
+    (157, "El rompeolas", "muelle_doble", 0.7, 15716),
+    (158, "Destellos", "cristal", 0.75, 15817),
+    (159, "La última guardia", "interruptor", 0.75, 15918),
+    (160, "Gran Tramo: la luz del faro", "cristal", 0.85, 16019),
 ]
 
 
@@ -410,11 +436,34 @@ def barrio_7() -> dict:
     return {"version": 1, "barrio": 7, "nombre": "El Jardín", "niveles": _con_dorada(ensenanza_7() + generados)}
 
 
+def ensenanza_8():
+    # 141. El cristal: una rama corta lo rompe y se queda ahí; la otra da un rodeo y pasa después.
+    cristal = Cristal((0.0, 90.0), (100.0, 90.0))
+    n = Nivel(100, 160, (50, 150), [Campana("a", (50, 25))], fichas=10_000, cristales=[cristal])
+    tronco = [(50, 150), (50, 130)]
+    rompe = suave([(50, 130), (42, 110), (36, 84)], 3)
+    rodeo = suave([(50, 130), (74, 118), (76, 100), (62, 86), (52, 66), (50, 25)], 3)
+    s = [Tramo(tronco), Tramo(rompe, 0, 4), Tramo(rodeo, 0, 4)]
+    r = simular(n, s)
+    assert r["exito"], r
+    assert not simular(n, [Tramo([(50, 150), (50, 25)])])["exito"], "la recta tiene que romper el cristal y pararse"
+    n.marca, n.fichas = r["fichas_usadas"], r["fichas_usadas"] + 14
+    return [{"id": 141, "titulo": "El cristal", "nivel": nivel_a_dict(n), "solucion": [tramo_a_dict(x) for x in s],
+             "ayuda": "El [b]cristal[/b] para la cadena, pero se rompe: abre una rama corta para romperlo y haz que la otra pase después.",
+             "origen": "a mano"}]
+
+
+def barrio_8() -> dict:
+    generados = _generados(PLAN_8)
+    return {"version": 1, "barrio": 8, "nombre": "El Faro", "niveles": _con_dorada(ensenanza_8() + generados)}
+
+
 def archivos() -> dict:
     fmt = lambda d: json.dumps(d, ensure_ascii=False, indent=1) + "\n"
     return {"barrio_1.json": fmt(barrio_1()), "barrio_2.json": fmt(barrio_2()), "barrio_3.json": fmt(barrio_3()),
             "barrio_4.json": fmt(barrio_4()), "barrio_5.json": fmt(barrio_5()),
-            "barrio_6.json": fmt(barrio_6()), "barrio_7.json": fmt(barrio_7())}
+            "barrio_6.json": fmt(barrio_6()), "barrio_7.json": fmt(barrio_7()),
+            "barrio_8.json": fmt(barrio_8())}
 
 
 def main():

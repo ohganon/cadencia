@@ -7961,6 +7961,288 @@
    }
   },
   {
+   "nombre": "regla: el cristal para la cadena",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [],
+    "cr": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ]
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    }
+   ],
+   "esperado": {
+    "exito": false,
+    "fichas_usadas": 21,
+    "sobran": 479,
+    "campanas": {
+     "a": null
+    },
+    "parada": {
+     "tramo": 0,
+     "ficha": 10,
+     "tic": 10,
+     "motivo": "rompe el cristal"
+    },
+    "motivos": {
+     "a": "no llegó"
+    }
+   }
+  },
+  {
+   "nombre": "regla: una rama rompe el cristal y otra pasa después",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [],
+    "cr": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ]
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       30,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       30,
+       50
+      ],
+      [
+       65,
+       30
+      ]
+     ],
+     "padre": 0,
+     "desde": 4
+    },
+    {
+     "puntos": [
+      [
+       30,
+       50
+      ],
+      [
+       40,
+       70
+      ],
+      [
+       55,
+       60
+      ],
+      [
+       70,
+       50
+      ],
+      [
+       110,
+       50
+      ]
+     ],
+     "padre": 0,
+     "desde": 4
+    }
+   ],
+   "esperado": {
+    "exito": true,
+    "fichas_usadas": 35,
+    "sobran": 465,
+    "campanas": {
+     "a": 24
+    },
+    "parada": {
+     "tramo": 1,
+     "ficha": 7,
+     "tic": 12,
+     "motivo": "rompe el cristal"
+    },
+    "motivos": {}
+   }
+  },
+  {
+   "nombre": "regla: dos ramas iguales chocan a la vez: las dos se paran",
+   "nivel": {
+    "v": 1,
+    "w": 200,
+    "h": 100,
+    "i": [
+     10,
+     50
+    ],
+    "f": 500,
+    "m": 0,
+    "c": [
+     [
+      "a",
+      [
+       110,
+       50
+      ],
+      "simple",
+      0
+     ]
+    ],
+    "mu": [],
+    "p": [],
+    "cr": [
+     [
+      [
+       60,
+       0
+      ],
+      [
+       60,
+       100
+      ]
+     ]
+    ]
+   },
+   "tramos": [
+    {
+     "puntos": [
+      [
+       10,
+       50
+      ],
+      [
+       30,
+       50
+      ]
+     ],
+     "padre": null,
+     "desde": 0
+    },
+    {
+     "puntos": [
+      [
+       30,
+       50
+      ],
+      [
+       65,
+       40
+      ]
+     ],
+     "padre": 0,
+     "desde": 4
+    },
+    {
+     "puntos": [
+      [
+       30,
+       50
+      ],
+      [
+       65,
+       60
+      ]
+     ],
+     "padre": 0,
+     "desde": 4
+    }
+   ],
+   "esperado": {
+    "exito": false,
+    "fichas_usadas": 21,
+    "sobran": 479,
+    "campanas": {
+     "a": null
+    },
+    "parada": {
+     "tramo": 1,
+     "ficha": 6,
+     "tic": 11,
+     "motivo": "rompe el cristal"
+    },
+    "motivos": {
+     "a": "no llegó"
+    }
+   }
+  },
+  {
    "nombre": "regla: rama de un bifurcador que no llegó a caer",
    "nivel": {
     "v": 1,

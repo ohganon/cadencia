@@ -37,6 +37,9 @@ Reglas (Fase 4, sección 4.3):
   cada tramo), revienta en ese tic d y su camino cae como una rama: la ficha j en el tic d + 1 + j.
   Se para con lo mismo que cualquier tramo. Los globos se resuelven después de los tramos del
   jugador, en su orden, así que el camino de un globo puede reventar otro globo que vaya después.
+- Cristal: un segmento que para la cadena como un muro, pero la primera ficha que choca con él lo
+  rompe (esa rama se para ahí); desde el tic siguiente se puede cruzar. Se resuelve en las mismas
+  rondas que los interruptores: el tic de rotura es el del primer choque.
 - Interruptor: una placa con su compuerta (un segmento). La compuerta para la cadena como un muro
   hasta que cae una ficha sobre la placa (a RADIO_INTERRUPTOR o menos, sin contar la primera de
   cada tramo); desde el tic siguiente queda abierta para siempre. Como abrir una compuerta puede
@@ -196,6 +199,13 @@ class Globo:
 
 
 @dataclass
+class Cristal:
+    """Cristal entre a y b: para la cadena hasta que alguien choca con él; luego queda roto."""
+    a: tuple
+    b: tuple
+
+
+@dataclass
 class Interruptor:
     """Placa en `pos` que abre la compuerta a-b desde el tic siguiente a que la pisen."""
     pos: tuple
@@ -218,6 +228,7 @@ class Nivel:
     interruptores: list = field(default_factory=list)
     norias: list = field(default_factory=list)
     globos: list = field(default_factory=list)
+    cristales: list = field(default_factory=list)
 
 
 @dataclass
@@ -294,15 +305,17 @@ def simular(nivel: Nivel, tramos: list[Tramo]):
         return _resultado(nivel, tramos, fichas_por_tramo, {}, {"tramo": None, "ficha": None, "motivo": "faltan fichas"}, usadas)
 
     # Por rondas, para los interruptores (sin interruptores, una sola)
-    disparos = [None] * len(nivel.interruptores)
-    for _ in range(len(nivel.interruptores) + 4):
-        tics, caidas, parada, todas = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
-        nuevos = [disparo_placa(i.pos, todas, tics, caidas) for i in nivel.interruptores]
+    # `disparos`: primero el tic de cada placa pisada y luego el de cada cristal roto (None: todavía no)
+    disparos = [None] * (len(nivel.interruptores) + len(nivel.cristales))
+    for _ in range(len(disparos) + 4):
+        tics, caidas, parada, todas, golpes = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
+        nuevos = [disparo_placa(i.pos, todas, tics, caidas) for i in nivel.interruptores] + \
+                 [golpes.get(k) for k in range(len(nivel.cristales))]
         if nuevos == disparos:
             break
         disparos = nuevos
     else:
-        tics, caidas, parada, todas = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
+        tics, caidas, parada, todas, golpes = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
 
     # Campanas: el primer tic en que una ficha caída de cada tramo (o de cada globo) llega a su radio
     llegadas = {c.id: [] for c in nivel.campanas}        # lista de (tic, tramo)
@@ -332,6 +345,7 @@ def _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos):
     después de ese tic."""
     tics, caidas = [], []          # caidas[idx]: índice de la última ficha que cae (-1: ninguna)
     parada = None
+    golpes = {}                    # cristal -> tic del primer choque con él
     # Después de los tramos del jugador, los caminos de los globos (en su orden)
     todas = list(fichas_por_tramo) + [repartir(g.regalo) for g in nivel.globos]
     for idx, f in enumerate(todas):
@@ -344,7 +358,7 @@ def _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos):
             if not cae:
                 caidas.append(-1)
                 continue
-            ultima, parada = _recorrer(nivel, f, tics, idx, disparos, parada)
+            ultima, parada = _recorrer(nivel, f, tics, idx, disparos, parada, golpes)
             caidas.append(ultima)
             continue
         tr = tramos[idx]
@@ -362,12 +376,12 @@ def _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos):
         if not cae:
             caidas.append(-1)
             continue
-        ultima, parada = _recorrer(nivel, f, tics, idx, disparos, parada)
+        ultima, parada = _recorrer(nivel, f, tics, idx, disparos, parada, golpes)
         caidas.append(ultima)
-    return tics, caidas, parada, todas
+    return tics, caidas, parada, todas, golpes
 
 
-def _recorrer(nivel, f, tics, idx, disparos, parada):
+def _recorrer(nivel, f, tics, idx, disparos, parada, golpes):
     """Recorre las fichas de un tramo hasta donde se para. Devuelve (última que cae, parada)."""
     ultima = len(f) - 1
     for j in range(1, len(f)):
@@ -388,6 +402,13 @@ def _recorrer(nivel, f, tics, idx, disparos, parada):
                 for k, i in enumerate(nivel.interruptores):
                     if _cruza(f[j - 1], f[j], i.a, i.b) and (disparos[k] is None or tics[idx][j] <= disparos[k]):
                         motivo = "compuerta cerrada"
+                        break
+            if motivo is None:
+                n = len(nivel.interruptores)
+                for k, c in enumerate(nivel.cristales):
+                    if _cruza(f[j - 1], f[j], c.a, c.b) and (disparos[n + k] is None or tics[idx][j] <= disparos[n + k]):
+                        motivo = "rompe el cristal"
+                        golpes[k] = tics[idx][j] if golpes.get(k) is None else min(golpes[k], tics[idx][j])
                         break
         if motivo:
             ultima = j - 1
@@ -455,7 +476,8 @@ def nivel_a_dict(n: Nivel) -> dict:
         {"ml": [[list(m.entrada), list(m.salida), m.salto] for m in n.muelles]} if n.muelles else {}) | (
         {"in": [[list(i.pos), list(i.a), list(i.b)] for i in n.interruptores]} if n.interruptores else {}) | (
         {"nr": [[list(m.entrada), list(m.salida), m.periodo, m.fase] for m in n.norias]} if n.norias else {}) | (
-        {"gl": [[list(g.pos), [list(q) for q in g.regalo]] for g in n.globos]} if n.globos else {})
+        {"gl": [[list(g.pos), [list(q) for q in g.regalo]] for g in n.globos]} if n.globos else {}) | (
+        {"cr": [[list(c.a), list(c.b)] for c in n.cristales]} if n.cristales else {})
 
 
 def nivel_de_dict(d: dict) -> Nivel:
@@ -469,7 +491,8 @@ def nivel_de_dict(d: dict) -> Nivel:
                  [Muelle(tuple(m[0]), tuple(m[1]), int(m[2])) for m in d.get("ml", [])],
                  [Interruptor(tuple(i[0]), tuple(i[1]), tuple(i[2])) for i in d.get("in", [])],
                  [Noria(tuple(m[0]), tuple(m[1]), int(m[2]), int(m[3])) for m in d.get("nr", [])],
-                 [Globo(tuple(g[0]), [tuple(q) for q in g[1]]) for g in d.get("gl", [])])
+                 [Globo(tuple(g[0]), [tuple(q) for q in g[1]]) for g in d.get("gl", [])],
+                 [Cristal(tuple(c[0]), tuple(c[1])) for c in d.get("cr", [])])
 
 
 PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
@@ -479,7 +502,8 @@ PREFIJO_TALLER = "DING1-"     # nombre del juego + versión del formato
 LIMITES_TALLER = {"campanas": 6, "numeradas": 4, "muros": 12, "puertas": 6, "fichas": 400,
                   "tramos": 8, "puntos": 600, "id": 8, "periodo": 200, "espirales": 4, "retardo": 12,
                   "muelles": 4, "salto": 20, "interruptores": 4,
-                  "norias": 4, "vuelta": 60, "globos": 4, "regalo": 40}
+                  "norias": 4, "vuelta": 60, "globos": 4, "regalo": 40,
+                  "cristales": 6}
 TIPOS_CAMPANA = ("simple", "doble", "numerada", "dorada")
 
 
@@ -561,6 +585,12 @@ def validar_nivel_taller(d: dict) -> str:
             if not (isinstance(x, list) and len(x) == 2 and _punto(x[0], d) and isinstance(x[1], list)
                     and 2 <= len(x[1]) <= L["regalo"] and all(_punto(q, d) for q in x[1])):
                 return "globo no válido"
+        cr = d.get("cr", [])
+        if not (isinstance(cr, list) and len(cr) <= L["cristales"]):
+            return "demasiados cristales"
+        for x in cr:
+            if not (isinstance(x, list) and len(x) == 2 and _punto(x[0], d) and _punto(x[1], d)):
+                return "cristal no válido"
     except (KeyError, TypeError, IndexError):
         return "faltan datos del nivel"
     return ""

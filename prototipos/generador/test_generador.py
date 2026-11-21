@@ -194,5 +194,18 @@ class Barrio(unittest.TestCase):
                     self.assertFalse(simular(g.nivel, g.solucion)["exito"])
 
 
+    def test_niveles_con_cristal(self):
+        for semilla in (141, 142, 143):
+            with self.subTest(semilla=semilla):
+                g = G.generar(semilla, "cristal", 0.6)
+                self.assertIsNotNone(g)
+                self.assertTrue(simular(g.nivel, g.solucion)["exito"])
+                self.assertEqual(G.atajos(g.nivel)["recto"], 0)
+                # Si el cristal fuera un muro que no se rompe, la solución fallaría
+                g.nivel.muros = g.nivel.muros + [(c.a, c.b) for c in g.nivel.cristales]
+                g.nivel.cristales = []
+                self.assertFalse(simular(g.nivel, g.solucion)["exito"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -17,7 +17,8 @@
 ##    ml: [[[entrada], [salida], salto]...] (opcional: muelles),
 ##    in: [[[placa], [a], [b]]...] (opcional: interruptores con su compuerta a-b),
 ##    nr: [[[entrada], [salida], periodo, fase]...] (opcional: norias),
-##    gl: [[[globo], [[x, y]...]]...] (opcional: globos con el camino que sueltan)}
+##    gl: [[[globo], [[x, y]...]]...] (opcional: globos con el camino que sueltan),
+##    cr: [[[a], [b]]...] (opcional: cristales)}
 ## Un tramo es {puntos: [[x, y]...], padre: int o null, desde: int}.
 extends RefCounted
 
@@ -203,18 +204,22 @@ static func simular_detalle(nivel: Dictionary, tramos: Array) -> Dictionary:
 		return _detalle(_resultado(nivel, fichas_por_tramo, {}, {"tramo": null, "ficha": null, "motivo": "faltan fichas"}, usadas),
 			fichas_por_tramo, [], [])
 
-	# Por rondas, para los interruptores (sin interruptores, una sola)
+	# Por rondas, para los interruptores y los cristales (sin ellos, una sola). `disparos`: primero
+	# el tic de cada placa pisada y luego el de cada cristal roto (-1: todavía no)
 	var interruptores: Array = nivel.get("in", [])
+	var cristales: Array = nivel.get("cr", [])
 	var disparos := []
-	for k in interruptores.size():
+	for k in interruptores.size() + cristales.size():
 		disparos.append(-1)
 	var r := {}
 	var convergio := false
-	for _ronda in interruptores.size() + 4:
+	for _ronda in disparos.size() + 4:
 		r = _resolver(nivel, tramos, fichas_por_tramo, salidas, disparos)
 		var nuevos := []
 		for it in interruptores:
 			nuevos.append(disparo_placa(it[0], r["todas"], r["tics"], r["caidas"]))
+		for k in cristales.size():
+			nuevos.append(int(r["golpes"].get(k, -1)))
 		if nuevos == disparos:
 			convergio = true
 			break
@@ -260,6 +265,7 @@ static func _resolver(nivel: Dictionary, tramos: Array, fichas_por_tramo: Array,
 	var tics := []
 	var caidas := []
 	var parada = null
+	var golpes := {}         # cristal -> tic del primer choque con él
 	# Después de los tramos del jugador, los caminos de los globos (en su orden)
 	var globos: Array = nivel.get("gl", [])
 	var todas := fichas_por_tramo.duplicate()
@@ -314,13 +320,22 @@ static func _resolver(nivel: Dictionary, tramos: Array, fichas_por_tramo: Array,
 						if cruza(f[j - 1], f[j], it[1], it[2]) and (disparos[k] < 0 or tics[idx][j] <= disparos[k]):
 							motivo = "compuerta cerrada"
 							break
+			if motivo == "":
+				var cristales: Array = nivel.get("cr", [])
+				var n_in: int = nivel.get("in", []).size()
+				for k in cristales.size():
+					var rotura: int = disparos[n_in + k]
+					if cruza(f[j - 1], f[j], cristales[k][0], cristales[k][1]) and (rotura < 0 or tics[idx][j] <= rotura):
+						motivo = "rompe el cristal"
+						golpes[k] = tics[idx][j] if not golpes.has(k) else mini(golpes[k], tics[idx][j])
+						break
 			if motivo != "":
 				ultima = j - 1
 				if parada == null or tics[idx][j] < parada["tic"]:
 					parada = {"tramo": idx, "ficha": j, "tic": tics[idx][j], "motivo": motivo}
 				break
 		caidas.append(ultima)
-	return {"tics": tics, "caidas": caidas, "parada": parada, "todas": todas}
+	return {"tics": tics, "caidas": caidas, "parada": parada, "todas": todas, "golpes": golpes}
 
 
 static func _detalle(resultado: Dictionary, fichas: Array, tics: Array, caidas: Array) -> Dictionary:

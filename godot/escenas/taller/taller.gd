@@ -42,6 +42,7 @@ const HERRAMIENTAS := [
 	["interruptor", "Interruptor: arrastra para dibujar la compuerta; toca para mover su placa. Se abre al pisar la placa."],
 	["noria", "Noria: arrastra de la entrada a la salida. Suelta la cadena en su siguiente vuelta; toca la entrada para cambiar cada cuánto."],
 	["globo", "Globo: arrastra desde el globo hasta donde llega su camino. Al tocarlo la cadena, revienta y su camino cae solo."],
+	["cristal", "Cristal: arrástralo como un muro. La primera ficha que choca lo rompe y se para; las siguientes pasan."],
 	["goma", "Goma: toca cualquier pieza para quitarla."],
 ]
 
@@ -259,7 +260,7 @@ func _construir() -> void:
 		var b := _boton("", false)
 		b.icono = "campana_simple" if par[0] == "campana" else par[0]     # que no se confunda con la dorada
 		b.redondo = true
-		b.custom_minimum_size = Vector2(68, 68)      # trece herramientas en dos filas de siete
+		b.custom_minimum_size = Vector2(68, 68)      # catorce herramientas en dos filas de siete
 		b.pulsado.connect(_elegir.bind(par[0]))
 		barra.add_child(b)
 		botones_herramienta[par[0]] = b
@@ -430,6 +431,10 @@ func _demo_si_toca() -> void:
 	_elegir("globo")
 	tablero._muro_desde = [70.0, 150.0]
 	tablero._muro_hasta = [90.0, 120.0]
+	tablero._terminar_muro()
+	_elegir("cristal")
+	tablero._muro_desde = [10.0, 80.0]
+	tablero._muro_hasta = [40.0, 80.0]
 	tablero._terminar_muro()
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(prefijo + "_1_editor.png")

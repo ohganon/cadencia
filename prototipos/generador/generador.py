@@ -35,7 +35,7 @@ AQUI = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(AQUI.parent / "simulacion"))
 
 import sim  # noqa: E402
-from sim import Campana, Espiral, Globo, Interruptor, Muelle, Nivel, Noria, Tramo, longitud, nivel_a_dict, repartir, simular  # noqa: E402
+from sim import Campana, Cristal, Espiral, Globo, Interruptor, Muelle, Nivel, Noria, Tramo, longitud, nivel_a_dict, repartir, simular  # noqa: E402
 from niveles_entrega1 import con_curva, igualar, suave, tramo_a_dict  # noqa: E402
 
 ANCHO, ALTO = 100, 160
@@ -336,6 +336,8 @@ def poner_dorada(nivel: Nivel, solucion: list, semilla: int, intentos=300, corto
         if any(min(math.dist(destino, m.entrada), math.dist(destino, m.salida)) < sim.RADIO_CAMPANA + sim.RADIO_MUELLE + 2
                for m in nivel.norias):
             continue
+        if any(_distancia_segmento(destino, c.a, c.b) < sim.RADIO_CAMPANA + 2 for c in nivel.cristales):
+            continue
         if any(math.dist(destino, g.pos) < sim.RADIO_CAMPANA + 8 or
                min(_distancia_segmento(destino, g.regalo[k - 1], g.regalo[k]) for k in range(1, len(g.regalo))) < sim.RADIO_CAMPANA + 3
                for g in nivel.globos):
@@ -350,14 +352,16 @@ def poner_dorada(nivel: Nivel, solucion: list, semilla: int, intentos=300, corto
         rama = Tramo([(round(base[0], 3), round(base[1], 3)), destino], i, j)
         campanas = nivel.campanas + [Campana("oro", destino, "dorada")]
         nuevo = Nivel(nivel.ancho, nivel.alto, nivel.inicio, campanas, nivel.muros, nivel.puertas, fichas=10_000,
-                      espirales=nivel.espirales, muelles=nivel.muelles, interruptores=nivel.interruptores, norias=nivel.norias, globos=nivel.globos)
+                      espirales=nivel.espirales, muelles=nivel.muelles, interruptores=nivel.interruptores, norias=nivel.norias, globos=nivel.globos, cristales=nivel.cristales)
         tramos = solucion + [rama]
         r = simular(nuevo, tramos)
-        if not r["exito"] or r["parada"] is not None or r["campanas"]["oro"] is None:
+        # Ninguna rama puede pararse, salvo la que rompe un cristal (es parte de la solución)
+        parada_mala = r["parada"] is not None and r["parada"]["motivo"] != "rompe el cristal"
+        if not r["exito"] or parada_mala or r["campanas"]["oro"] is None:
             continue
         # Las demás campanas tienen que sonar igual que sin la rama (no altera el nivel)
         antes = simular(Nivel(nivel.ancho, nivel.alto, nivel.inicio, nivel.campanas, nivel.muros, nivel.puertas, fichas=10_000,
-                              espirales=nivel.espirales, muelles=nivel.muelles, interruptores=nivel.interruptores, norias=nivel.norias, globos=nivel.globos), solucion)
+                              espirales=nivel.espirales, muelles=nivel.muelles, interruptores=nivel.interruptores, norias=nivel.norias, globos=nivel.globos, cristales=nivel.cristales), solucion)
         if any(r["campanas"][c.id] != antes["campanas"][c.id] for c in nivel.campanas):
             continue
         nuevo.marca = r["fichas_usadas"]
@@ -374,6 +378,7 @@ TIPOS_MUELLE = ("muelle", "muelle_doble")
 TIPOS_INTERRUPTOR = ("interruptor",)
 TIPOS_NORIA = ("noria", "noria_doble")
 TIPOS_GLOBO = ("globo", "globo_doble")
+TIPOS_CRISTAL = ("cristal",)
 
 
 def _tic_cruce(tramo_puntos, a, b):
@@ -860,6 +865,69 @@ def _candidato_globo(rnd, tipo, dificultad):
     return g
 
 
+# ---------------------------------------------------------------- cristales
+
+def _cruce_tic(vacio, tronco, f, puntos, a, b):
+    tt, ff = _tics(vacio, [Tramo(tronco), Tramo(puntos, 0, f)])
+    for j in range(1, len(ff[1])):
+        if sim._cruza(ff[1][j - 1], ff[1][j], a, b):
+            return tt[1][j]
+    return None
+
+
+def _candidato_cristal(rnd, dificultad):
+    """Una fila de cristal de lado a lado. Una rama choca con él y lo rompe (y se para ahí); la otra da
+    el rodeo justo para cruzarlo después, ya roto, y llegar a la campana."""
+    inicio = (round(rnd.uniform(35, 65), 2), round(rnd.uniform(142, 150), 2))
+    fork = (round(inicio[0] + rnd.uniform(-6, 6), 2), round(rnd.uniform(118, 128), 2))
+    y = round(rnd.uniform(72, 92), 2)
+    ca, cb = (0.0, y), (float(ANCHO), y)
+    lado = rnd.choice([-1, 1])
+    choque = (round(min(88, max(12, fork[0] + lado * rnd.uniform(14, 30))), 2), round(y - 6, 2))
+    hx = round(rnd.uniform(32, 68), 2)
+    campana = (round(rnd.uniform(18, 82), 2), round(rnd.uniform(18, 34), 2))
+    tronco = _camino(rnd, inicio, fork, curvas=1, desvio=5)
+    f = len(repartir(tronco)) - 1
+    rompe = _camino(rnd, fork, choque, curvas=1, desvio=5)
+    vacio = Nivel(ANCHO, ALTO, inicio, [Campana("a", campana)], fichas=10_000)
+    t_rompe = _cruce_tic(vacio, tronco, f, rompe, ca, cb)
+    if t_rompe is None:
+        return None
+    margen = 1 + round(dificultad * 2)
+
+    def ruta(empuje):
+        return suave([fork, ((fork[0] + hx) / 2 - lado * empuje, (fork[1] + y) / 2 + 4), (hx, y + 8), (hx, y - 8),
+                      ((hx + campana[0]) / 2, (y + campana[1]) / 2), campana], 3)
+
+    empuje = None
+    for e in range(0, 46, 2):
+        c = _cruce_tic(vacio, tronco, f, ruta(e), ca, cb)
+        if c is not None and c >= t_rompe + margen:
+            empuje = e
+            break
+    if empuje is None:
+        return None
+    tramos = [Tramo(tronco), Tramo(rompe, 0, f), Tramo(ruta(empuje), 0, f)]
+    tramos = [Tramo([(round(a, 3), round(b, 3)) for a, b in tr.puntos], tr.padre, tr.desde) for tr in tramos]
+    if not all(_dentro(q, 3) for tr in tramos for q in tr.puntos):
+        return None
+    nivel = Nivel(ANCHO, ALTO, inicio, [Campana("a", campana)], fichas=10_000, cristales=[Cristal(ca, cb)])
+    r = simular(nivel, tramos)
+    if not r["exito"]:
+        return None
+    if simular(nivel, [tramos[0], tramos[2]])["exito"]:
+        return None                   # sin la rama que lo rompe no puede funcionar
+    marca = r["fichas_usadas"]
+    margen_fichas = max(3, round(14 - dificultad * 10))
+    nivel.marca, nivel.fichas = marca, marca + margen_fichas
+    a = atajos(nivel)
+    if a["recto"] > 0:
+        return None
+    g = Generado(nivel, tramos, "cristal", 0, 0.0, a["codo"] + a["horquilla"], {"atajos": a, "margen": margen_fichas})
+    g.dificultad = puntuar(g)
+    return g
+
+
 # ---------------------------------------------------------------- generador
 
 def _candidato(rnd, tipo, dificultad):
@@ -876,6 +944,8 @@ def _candidato(rnd, tipo, dificultad):
         return _candidato_noria(rnd, tipo, dificultad)
     if tipo in TIPOS_GLOBO:
         return _candidato_globo(rnd, tipo, dificultad)
+    if tipo in TIPOS_CRISTAL:
+        return _candidato_cristal(rnd, dificultad)
     espirales = []
     if tipo == "simple":
         base = _simple(rnd)
@@ -975,6 +1045,7 @@ def puntuar(g: Generado) -> float:
     restricciones += 1.5 * len(g.nivel.interruptores) # pisar la placa a tiempo y esperar a la compuerta
     restricciones += 1.0 * len(g.nivel.norias)        # entender que sale en su vuelta, no al llegar
     restricciones += 1.0 * len(g.nivel.globos)        # reventarlo, y a tiempo
+    restricciones += 1.5 * len(g.nivel.cristales)     # sacrificar una rama y que la otra llegue después
     ramas = len(g.solucion)
     margen = g.info["margen"]
     p = 0.12 * restricciones + 0.06 * ramas + 0.05 * len(g.nivel.muros) + 0.02 * (14 - margen)
