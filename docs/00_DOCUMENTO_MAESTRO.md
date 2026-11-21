@@ -177,6 +177,7 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: mapa del barrio, progreso y cuerda con las reglas de la Fase 5; La Plaza con 20 niveles (18/11/2026)
 - [x] Fase 8: Barrio 2, El Puerto, con la puerta de vaivén (generador, tablero, Taller y mapa de dos barrios) (18/11/2026)
 - [x] Fase 8: tercera estrella con la campana dorada en los 40 niveles de los barrios (18/11/2026)
+- [x] Fase 8: la Caída del Día usa todas las piezas: cinco opciones por día de la semana (de fácil el lunes a reto el domingo) que rotan cada semana; 21 tipos de nivel en el año, todos con campana dorada. Calendario regenerado desde el 01/11/2026 (21/11/2026)
 - [x] Fase 8: Barrio 9, La Verbena (niveles 161–180), barrio de **combinaciones** sin piezas nuevas (decisión del cliente): esperar en una espiral para cruzar un cristal o una compuerta, llegar al muelle o reventar el globo a tiempo para una puerta, y los niveles dobles de cada pieza (21/11/2026)
 - [x] Fase 8: Barrio 8, El Faro (niveles 141–160), con el **cristal** (decisión del cliente, 21/11/2026, en lugar de la cinta transportadora): para la cadena como un muro hasta que una ficha choca con él y lo rompe; esa rama se para y las que llegan después pasan. Regla en Python y Godot, tablero con marcas de cruce, herramienta del Taller y generador (21/11/2026)
 - [x] Fase 8: Barrio 7, El Jardín (niveles 121–140), con el **globo**: lleva colgado un camino de fichas gratis que cae al reventarlo. Regla en Python y Godot, tablero, herramienta del Taller y generador (20/11/2026)

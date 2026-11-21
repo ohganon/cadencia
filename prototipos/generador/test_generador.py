@@ -69,7 +69,10 @@ class CaidaDelDia(unittest.TestCase):
     def test_ritmo_semanal(self):
         lunes = dt.date(2026, 11, 16)
         self.assertEqual(lunes.weekday(), 0)
-        self.assertEqual(G.caida_del_dia(lunes).tipo, G.RITMO[0][0])
+        self.assertEqual(G.caida_del_dia(lunes).tipo, G.ritmo_de(lunes)[0])
+        # Cada semana, el mismo día de la semana cambia de tipo; en cinco semanas salen los cinco
+        tipos = {G.ritmo_de(lunes + dt.timedelta(weeks=k))[0] for k in range(5)}
+        self.assertEqual(tipos, {o[0] for o in G.RITMO[0]})
 
     def test_calendario_publicado(self):
         d = json.loads(DATOS.read_text(encoding="utf-8"))

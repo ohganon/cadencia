@@ -513,6 +513,14 @@ func pruebas_reto(RetoDiario: GDScript, sim: GDScript) -> void:
 			sin_tres.append(e["fecha"])
 	comprobar(fallidos.is_empty(), "Godot supera los 365 niveles diarios con su solución y su marca", str(fallidos.slice(0, 5)))
 	comprobar(sin_tres.is_empty(), "los 365 días llevan campana dorada y su solución da las 3 estrellas", str(sin_tres.slice(0, 5)))
+	var sin_texto := []
+	var tipos := {}
+	for e in r.niveles:
+		tipos[e["tipo"]] = true
+		if not RetoDiario.OBJETIVOS.has(e["tipo"]):
+			sin_texto.append(e["tipo"])
+	comprobar(sin_texto.is_empty(), "cada tipo de la Caída del Día tiene su texto de objetivo", str(sin_texto))
+	comprobar(tipos.size() >= 15, "la Caída del Día usa todas las piezas (%d tipos de nivel en el año)" % tipos.size())
 	comprobar(r.de("2026-11-18")["fecha"] == "2026-11-18", "cada fecha del calendario da su nivel")
 	comprobar(r.de("2026-11-01")["fecha"] == r.niveles[0]["fecha"], "el primer día es el primero del calendario")
 	comprobar(r.de("2027-11-01")["fecha"] == "2026-11-01", "pasado el año, el calendario se repite igual para todos")

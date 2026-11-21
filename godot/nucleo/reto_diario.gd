@@ -17,6 +17,22 @@ const OBJETIVOS := {
 	"numeradas": "Las campanas suenan [b]en orden[/b]: la 1 antes que la 2.",
 	"doble": "Haz sonar la [b]campana doble[/b]: las dos ramas tienen que llegar a la vez.",
 	"doble_y_simple": "Haz sonar la [b]campana[/b] y la [b]campana doble[/b].",
+	"puerta": "Cruza la [b]puerta[/b] cuando esté abierta y haz sonar la campana.",
+	"dos_puertas": "Cruza [b]las dos puertas[/b], cada una en su momento.",
+	"espiral": "Pasa por la [b]espiral[/b] si necesitas llegar más tarde a la puerta.",
+	"espiral_doble": "Haz sonar la [b]campana doble[/b]: una espiral retrasa la rama que llegaría antes.",
+	"muelle": "Hay un muro de lado a lado: llega al [b]muelle[/b] y sigue dibujando desde su salida.",
+	"muelle_doble": "Haz sonar la [b]campana doble[/b]: una rama rodea el muro y la otra salta con el muelle.",
+	"interruptor": "Pisa la [b]placa[/b] con una rama para abrir la compuerta, y crúzala después.",
+	"noria": "Un muro de lado a lado: la [b]noria[/b] lleva la cadena al otro lado en su siguiente vuelta.",
+	"noria_doble": "Haz sonar la [b]campana doble[/b]: las dos norias sueltan las ramas a la vez, aunque lleguen a destiempo.",
+	"globo": "La campana queda lejos de tus fichas: revienta el [b]globo[/b] y su camino llegará por ti.",
+	"globo_doble": "Revienta los dos [b]globos[/b], cada uno a su tiempo, para que sus caminos lleguen a la vez a la campana doble.",
+	"cristal": "Una rama rompe el [b]cristal[/b] (y se queda ahí); la otra tiene que llegar después.",
+	"cristal_espiral": "Una rama rompe el [b]cristal[/b]; la otra puede esperar en la [b]espiral[/b] para cruzar después.",
+	"interruptor_espiral": "Pisa la [b]placa[/b] con una rama; la otra puede esperar en la [b]espiral[/b] a que se abra la compuerta.",
+	"muelle_puerta": "Salta el muro con el [b]muelle[/b], pero llega a él a tiempo: detrás hay una [b]puerta[/b].",
+	"globo_puerta": "El camino del [b]globo[/b] cruza una [b]puerta[/b]: revienta el globo en el momento justo.",
 }
 
 var desde := ""

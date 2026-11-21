@@ -1214,19 +1214,36 @@ def a_dict(g: Generado) -> dict:
 # ---------------------------------------------------------------- Caída del Día
 
 # Ritmo semanal: más fácil el lunes y más reto el fin de semana (0 = lunes)
-RITMO = [("simple", 0.3), ("dos", 0.4), ("numeradas", 0.5), ("doble", 0.5), ("doble_y_simple", 0.6),
-         ("numeradas", 0.7), ("doble_y_simple", 0.8)]
+# Cinco opciones por día de la semana (0 = lunes), de fácil a reto, con todas las piezas. Cada semana
+# se pasa a la siguiente opción, así que el mismo día de la semana cambia de pieza de una a otra.
+RITMO = [
+    [("simple", 0.3), ("espiral", 0.35), ("noria", 0.35), ("globo", 0.35), ("dos", 0.35)],
+    [("dos", 0.4), ("muelle", 0.4), ("interruptor", 0.4), ("cristal", 0.4), ("numeradas", 0.45)],
+    [("numeradas", 0.5), ("puerta", 0.5), ("espiral", 0.5), ("globo", 0.5), ("noria", 0.5)],
+    [("doble", 0.5), ("espiral_doble", 0.5), ("muelle_doble", 0.5), ("noria_doble", 0.5), ("globo_doble", 0.5)],
+    [("doble_y_simple", 0.6), ("dos_puertas", 0.6), ("interruptor", 0.6), ("cristal", 0.6), ("muelle_puerta", 0.55)],
+    [("numeradas", 0.7), ("cristal_espiral", 0.65), ("interruptor_espiral", 0.65), ("globo_puerta", 0.65), ("espiral", 0.7)],
+    [("doble_y_simple", 0.8), ("noria_doble", 0.75), ("muelle_doble", 0.75), ("globo_doble", 0.75), ("cristal_espiral", 0.8)],
+]
+
+
+def ritmo_de(fecha):
+    """(tipo, dificultad) de la Caída del Día de una fecha."""
+    opciones = RITMO[fecha.weekday()]
+    return opciones[(fecha.toordinal() // 7) % len(opciones)]
 
 
 def caida_del_dia(fecha) -> Generado:
     """El nivel de un día: misma fecha UTC, mismo nivel para todo el mundo. Lleva campana dorada
     (tercera estrella) siempre que quepa; la marca y la solución de referencia ya la incluyen."""
     semilla = sim.semilla_diaria(fecha)
-    tipo, dificultad = RITMO[fecha.weekday()]
+    tipo, dificultad = ritmo_de(fecha)
     for k in range(50):
         g = generar(semilla + k, tipo, dificultad)
         if g is not None:
             con_dorada = poner_dorada(g.nivel, g.solucion, 7919 * (semilla + k) + 1)
+            if con_dorada is None:
+                con_dorada = poner_dorada(g.nivel, g.solucion, 7919 * (semilla + k) + 1, corto=True)
             if con_dorada is not None:
                 g.nivel, g.solucion = con_dorada
             return g
