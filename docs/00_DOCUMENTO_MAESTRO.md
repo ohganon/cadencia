@@ -194,6 +194,8 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Fase 8: los 11 temas en Ajustes › Apariencia; los del Club se pueden usar gratis mientras el Club no exista, con un aviso que lo dice tal cual (18/11/2026)
 - [x] Fase 8: fuentes propias de cada tema (13 familias SIL OFL de google/fonts, descargadas con permiso del cliente; licencias comprobadas y guardadas en godot/fuentes) (18/11/2026)
 - [x] Pasada estética, primera parte (20/11/2026): animaciones de interfaz, caída con vuelco y rebote, sombras, brillos y luz, campanas que se balancean con destellos, confeti al superar un nivel y al terminar un barrio, Taller en dos filas. Todo respeta «reducir movimiento». Detalle en fase8/ARQUITECTURA_BORRADOR.md, sección 6 bis
+- [x] Fase 8: los 11 temas idénticos a la maqueta del catálogo (botones, sombras, nodos, ventanas, fondos con textura, Apariencia a pantalla entera) y un fondo animado por tema, elegido por el cliente (21/11/2026)
+- [x] Fase 8: prueba de la puerta 0 a distancia: «Ajustes › Resumen › Copiar resumen» y guía adaptada al enlace de la web (21/11/2026)
 - [ ] Pasada estética, pendiente: Pío animado (necesita arte), ilustración de fondo por barrio y cámara que sigue la caída
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal
