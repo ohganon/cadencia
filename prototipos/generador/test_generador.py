@@ -207,5 +207,23 @@ class Barrio(unittest.TestCase):
                 self.assertFalse(simular(g.nivel, g.solucion)["exito"])
 
 
+    def test_niveles_combinados(self):
+        for tipo in G.TIPOS_COMBINADOS:
+            for semilla in (161, 162, 163, 164):
+                g = G.generar(semilla, tipo, 0.6)
+                if g is None:
+                    continue
+                with self.subTest(tipo=tipo, semilla=semilla):
+                    self.assertTrue(simular(g.nivel, g.solucion)["exito"])
+                    self.assertEqual(G.atajos(g.nivel)["recto"], 0)
+                    # Sin la pieza que da el tiempo (la espiral o la puerta a tiempo) no sale
+                    if tipo.endswith("_espiral"):
+                        g.nivel.espirales = []
+                        self.assertFalse(simular(g.nivel, g.solucion)["exito"])
+                break
+            else:
+                self.fail(f"ninguna semilla dio un nivel {tipo}")
+
+
 if __name__ == "__main__":
     unittest.main()

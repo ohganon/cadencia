@@ -90,7 +90,7 @@ func pruebas_cuerda(Cuerda: GDScript, Progreso: GDScript) -> void:
 func pruebas_barrio(sim: GDScript) -> void:
 	var Partida: GDScript = load("res://nucleo/partida.gd")
 	var primero := 1
-	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json", "res://datos/barrio_5.json", "res://datos/barrio_6.json", "res://datos/barrio_7.json", "res://datos/barrio_8.json"]:
+	for ruta in ["res://datos/barrio_1.json", "res://datos/barrio_2.json", "res://datos/barrio_3.json", "res://datos/barrio_4.json", "res://datos/barrio_5.json", "res://datos/barrio_6.json", "res://datos/barrio_7.json", "res://datos/barrio_8.json", "res://datos/barrio_9.json"]:
 		var b = leer_json(ruta)
 		comprobar(b != null and b["niveles"].size() == 20, "%s tiene 20 niveles" % b["nombre"])
 		var mal := []
@@ -150,6 +150,16 @@ func pruebas_barrio(sim: GDScript) -> void:
 						sin_muelle_falla.append(n["id"])
 			comprobar(con_muelle >= 10, "La Feria tiene muelles en la mayoría de niveles (%d)" % con_muelle)
 			comprobar(sin_muelle_falla.size() == con_muelle, "en La Feria la solución necesita su muelle (sin él falla)", str(sin_muelle_falla))
+		if b["barrio"] == 9:
+			var combinados := 0
+			for n in b["niveles"]:
+				var piezas := 0
+				for clave in ["p", "e", "ml", "nr", "in", "gl", "cr"]:
+					if not n["nivel"].get(clave, []).is_empty():
+						piezas += 1
+				if piezas >= 2:
+					combinados += 1
+			comprobar(combinados >= 10, "La Verbena combina dos piezas en la mayoría de niveles (%d)" % combinados)
 		if b["barrio"] == 8:
 			var con_cristal := 0
 			var como_muro_falla := []

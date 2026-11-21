@@ -379,6 +379,7 @@ TIPOS_INTERRUPTOR = ("interruptor",)
 TIPOS_NORIA = ("noria", "noria_doble")
 TIPOS_GLOBO = ("globo", "globo_doble")
 TIPOS_CRISTAL = ("cristal",)
+TIPOS_COMBINADOS = ("cristal_espiral", "interruptor_espiral", "muelle_puerta", "globo_puerta")
 
 
 def _tic_cruce(tramo_puntos, a, b):
@@ -928,6 +929,154 @@ def _candidato_cristal(rnd, dificultad):
     return g
 
 
+# ---------------------------------------------------------------- combinaciones (barrio de mezcla)
+
+def _candidato_espera(rnd, pieza, dificultad):
+    """«cristal_espiral» / «interruptor_espiral»: como el cristal o el interruptor, pero la rama que
+    tiene que llegar después no da un rodeo: espera en una espiral puesta en su camino."""
+    inicio = (round(rnd.uniform(35, 65), 2), round(rnd.uniform(142, 150), 2))
+    fork = (round(inicio[0] + rnd.uniform(-6, 6), 2), round(rnd.uniform(118, 128), 2))
+    y = round(rnd.uniform(72, 90), 2)
+    lado = rnd.choice([-1, 1])
+    hx = round(min(78, max(22, fork[0] - lado * rnd.uniform(4, 16))), 2)
+    campana = (round(rnd.uniform(18, 82), 2), round(rnd.uniform(18, 34), 2))
+    tronco = _camino(rnd, inicio, fork, curvas=1, desvio=4)
+    f = len(repartir(tronco)) - 1
+    muros, cristales, interruptores = [], [], []
+    if pieza == "cristal":
+        ca, cb = (0.0, y), (float(ANCHO), y)
+        cristales = [Cristal(ca, cb)]
+        meta = (round(min(88, max(12, fork[0] + lado * rnd.uniform(16, 30))), 2), round(y - 6, 2))
+    else:
+        muros, (ca, cb) = fila_con_puerta(y, hx, rnd.uniform(14, 18))
+        meta = (round(min(88, max(12, fork[0] + lado * rnd.uniform(22, 34))), 2), round(rnd.uniform(y + 16, fork[1] - 10), 2))
+    rama_a = _camino(rnd, fork, meta, curvas=1, desvio=4)
+    rama_b = suave([fork, ((fork[0] + hx) / 2, (fork[1] + y) / 2 + 6), (hx, y + 8), (hx, y - 8),
+                    ((hx + campana[0]) / 2, (y + campana[1]) / 2), campana], 3)
+    vacio = Nivel(ANCHO, ALTO, inicio, [Campana("a", campana)], fichas=10_000)
+    tics, fichas = _tics(vacio, [Tramo(tronco), Tramo(rama_a, 0, f)])
+    if pieza == "cristal":
+        t_a = None
+        for j in range(1, len(fichas[1])):
+            if sim._cruza(fichas[1][j - 1], fichas[1][j], ca, cb):
+                t_a = tics[1][j]
+                break
+    else:
+        t_a, _ = _primer_tic(tics[1], fichas[1], meta, sim.RADIO_INTERRUPTOR)
+    t_b = _cruce_tic(vacio, tronco, f, rama_b, ca, cb)
+    if t_a is None or t_b is None:
+        return None
+    necesita = t_a + 1 + round(dificultad * 2) - t_b      # tics que la rama B tiene que esperar
+    if not 2 <= necesita <= 12:
+        return None
+    fb = repartir(rama_b)
+    j = max(2, round(len(fb) * rnd.uniform(0.15, 0.3)))
+    pos = (round(fb[j][0], 2), round(fb[j][1], 2))
+    otros = repartir(tronco) + repartir(rama_a)
+    if min(math.dist(pos, q) for q in otros) < sim.RADIO_ESPIRAL + 4 or pos[1] < y + 6:
+        return None
+    if pieza == "interruptor":
+        interruptores = [Interruptor(meta, ca, cb)]
+    tramos = [Tramo(tronco), Tramo(rama_a, 0, f), Tramo(rama_b, 0, f)]
+    tramos = [Tramo([(round(a, 3), round(b, 3)) for a, b in tr.puntos], tr.padre, tr.desde) for tr in tramos]
+    if not all(_dentro(q, 3) for tr in tramos for q in tr.puntos):
+        return None
+    nivel = Nivel(ANCHO, ALTO, inicio, [Campana("a", campana)], muros=muros, fichas=10_000, espirales=[Espiral(pos, necesita)],
+                  cristales=cristales, interruptores=interruptores)
+    r = simular(nivel, tramos)
+    if not r["exito"]:
+        return None
+    sin = Nivel(ANCHO, ALTO, inicio, nivel.campanas, muros=muros, fichas=10_000, cristales=cristales, interruptores=interruptores)
+    if simular(sin, tramos)["exito"]:
+        return None                       # sin la espiral tiene que fallar
+    return _cerrar_nivel(nivel, tramos, pieza + "_espiral", dificultad)
+
+
+def _cerrar_nivel(nivel, tramos, tipo, dificultad):
+    """Marca, margen de fichas, solucionador perezoso y dificultad prevista."""
+    r = simular(nivel, tramos)
+    marca = r["fichas_usadas"]
+    margen = max(3, round(14 - dificultad * 10))
+    nivel.marca, nivel.fichas = marca, marca + margen
+    a = atajos(nivel)
+    if a["recto"] > 0:
+        return None
+    g = Generado(nivel, tramos, tipo, 0, 0.0, a["codo"] + a["horquilla"], {"atajos": a, "margen": margen})
+    g.dificultad = puntuar(g)
+    return g
+
+
+def _candidato_salto_puerta(rnd, pieza, dificultad):
+    """«muelle_puerta»: un muro de lado a lado que se salta con el muelle y, más arriba, una fila con
+    puerta. «globo_puerta»: el camino del globo cruza una fila con puerta. En los dos, la puerta solo
+    está abierta si la cadena llega al muelle (o revienta el globo) con un rodeo: el camino directo
+    llega antes y la encuentra cerrada."""
+    inicio = (round(rnd.uniform(30, 70), 2), round(rnd.uniform(142, 150), 2))
+    lado = rnd.choice([-1, 1])
+    y_puerta = round(rnd.uniform(48, 62), 2)
+    hx = round(rnd.uniform(30, 70), 2)
+    campana = (round(rnd.uniform(20, 80), 2), round(rnd.uniform(18, 28), 2))
+    muros, (pa, pb) = fila_con_puerta(y_puerta, hx, rnd.uniform(16, 20))
+    if pieza == "muelle":
+        y = round(rnd.uniform(92, 104), 2)
+        muros = muros + [((0.0, y), (float(ANCHO), y))]
+        ex = round(rnd.uniform(28, 72), 2)
+        objetivo = (ex, round(y + 7, 2))
+        salida = (ex, round(y - 7, 2))
+        salto = rnd.randint(4, 8)
+        resto = suave([salida, ((ex + hx) / 2, (y + y_puerta) / 2), (hx, y_puerta + 7), (hx, y_puerta - 7), campana], 3)
+        radio = sim.RADIO_MUELLE
+    else:
+        objetivo = (round(min(84, max(16, inicio[0] + lado * rnd.uniform(12, 24))), 2), round(rnd.uniform(112, 124), 2))
+        resto = suave([objetivo, ((objetivo[0] + hx) / 2, (objetivo[1] + y_puerta) / 2), (hx, y_puerta + 7),
+                       (hx, y_puerta - 7), campana], 3)
+        radio = sim.RADIO_INTERRUPTOR
+
+    def ida(empuje):
+        return suave([inicio, ((inicio[0] + objetivo[0]) / 2 + lado * empuje, (inicio[1] + objetivo[1]) / 2), objetivo], 3)
+
+    def llegada(puntos):
+        f = repartir(puntos)
+        for j in range(1, len(f)):
+            if math.dist(f[j], objetivo) <= radio:
+                return j
+        return None
+
+    fr = repartir(resto)
+    cruce = next((j for j in range(1, len(fr)) if sim._cruza(fr[j - 1], fr[j], pa, pb)), None)
+    if cruce is None:
+        return None
+    # Tic del cruce de la puerta según cuándo se llega al muelle o al globo
+    extra = (salto + cruce) if pieza == "muelle" else (1 + cruce)
+    t_directo = llegada(ida(0))
+    empuje = rnd.uniform(12, 26)
+    t_rodeo = llegada(ida(empuje))
+    if t_directo is None or t_rodeo is None or t_rodeo - t_directo < 3:
+        return None
+    abierta = 3 if dificultad >= 0.6 else 4
+    ritmo = ritmo_para(rnd, t_rodeo + extra, [t_directo + extra, t_directo + extra + 1], abierta)
+    if ritmo is None:
+        return None
+    puerta = sim.Puerta(pa, pb, *ritmo)
+    if pieza == "muelle":
+        tramos = [Tramo(ida(empuje)), Tramo(resto)]
+        nivel = Nivel(ANCHO, ALTO, inicio, [Campana("a", campana)], muros=muros, puertas=[puerta], fichas=10_000,
+                      muelles=[Muelle(objetivo, salida, salto)])
+    else:
+        tramos = [Tramo(ida(empuje))]
+        nivel = Nivel(ANCHO, ALTO, inicio, [Campana("a", campana)], muros=muros, puertas=[puerta], fichas=10_000,
+                      globos=[Globo(objetivo, [(round(a, 3), round(b, 3)) for a, b in resto])])
+    tramos = [Tramo([(round(a, 3), round(b, 3)) for a, b in tr.puntos], tr.padre, tr.desde) for tr in tramos]
+    if not all(_dentro(q, 3) for tr in tramos for q in tr.puntos) or not all(_dentro(q, 3) for q in resto):
+        return None
+    if not simular(nivel, tramos)["exito"]:
+        return None
+    directo = [Tramo(ida(0))] + tramos[1:]
+    if simular(nivel, directo)["exito"]:
+        return None                       # el camino directo tiene que encontrar la puerta cerrada
+    return _cerrar_nivel(nivel, tramos, pieza + "_puerta", dificultad)
+
+
 # ---------------------------------------------------------------- generador
 
 def _candidato(rnd, tipo, dificultad):
@@ -946,6 +1095,10 @@ def _candidato(rnd, tipo, dificultad):
         return _candidato_globo(rnd, tipo, dificultad)
     if tipo in TIPOS_CRISTAL:
         return _candidato_cristal(rnd, dificultad)
+    if tipo in ("cristal_espiral", "interruptor_espiral"):
+        return _candidato_espera(rnd, tipo.split("_")[0], dificultad)
+    if tipo in ("muelle_puerta", "globo_puerta"):
+        return _candidato_salto_puerta(rnd, tipo.split("_")[0], dificultad)
     espirales = []
     if tipo == "simple":
         base = _simple(rnd)

@@ -1,7 +1,7 @@
 """Los barrios de la campaña del prototipo.
 
 Uso (desde esta carpeta):
-    python -X utf8 barrio.py              # escribe godot/datos/barrio_1.json … barrio_8.json
+    python -X utf8 barrio.py              # escribe godot/datos/barrio_1.json … barrio_9.json
     python -X utf8 barrio.py --comprobar  # falla si los archivos no están al día
 
 Barrio 1, «La Plaza» (niveles 1–20): los 10 hechos a mano de la entrega 1 y 10 del generador.
@@ -29,6 +29,9 @@ lejos de tus fichas y campanas dobles con dos globos que hay que reventar cada u
 Barrio 8, «El Faro» (niveles 141–160): presenta el **cristal**, que para la cadena como un muro hasta
 que una ficha choca con él y lo rompe (esa rama se para ahí). El 141 lo enseña a mano y 142–160
 salen del generador: una rama rompe el cristal y la otra da el rodeo justo para cruzarlo después.
+Barrio 9, «La Verbena» (niveles 161–180): barrio de **combinaciones**, sin piezas nuevas. Mezcla de
+dos en dos lo ya aprendido: esperar en una espiral para cruzar un cristal o una compuerta, llegar al
+muelle o reventar el globo a tiempo para una puerta, y los niveles dobles de cada pieza.
 
 Ambos siguen la regla de ritmo de la Fase 4 (sección 5.2): dificultad creciente con picos cortos,
 respiros, preparación y el Gran Tramo al final. Las semillas son fijas: los barrios no cambian.
@@ -65,6 +68,10 @@ OBJETIVOS = {
     "globo": "La campana queda lejos de tus fichas: revienta el [b]globo[/b] y su camino llegará por ti.",
     "globo_doble": "Revienta los dos [b]globos[/b], cada uno a su tiempo, para que sus caminos lleguen a la vez a la campana doble.",
     "cristal": "Una rama rompe el [b]cristal[/b] (y se queda ahí); la otra tiene que llegar después.",
+    "cristal_espiral": "Una rama rompe el [b]cristal[/b]; la otra puede esperar en la [b]espiral[/b] para cruzar después.",
+    "interruptor_espiral": "Pisa la [b]placa[/b] con una rama; la otra puede esperar en la [b]espiral[/b] a que se abra la compuerta.",
+    "muelle_puerta": "Salta el muro con el [b]muelle[/b], pero llega a él a tiempo: detrás hay una [b]puerta[/b].",
+    "globo_puerta": "El camino del [b]globo[/b] cruza una [b]puerta[/b]: revienta el globo en el momento justo.",
 }
 
 # (número, título, tipo, dificultad, semilla)
@@ -230,6 +237,29 @@ PLAN_8 = [
     (158, "Destellos", "cristal", 0.75, 15817),
     (159, "La última guardia", "interruptor", 0.75, 15918),
     (160, "Gran Tramo: la luz del faro", "cristal", 0.85, 16019),
+]
+
+PLAN_9 = [
+    (161, "Farolillos", "cristal_espiral", 0.3, 16101),
+    (162, "La tómbola", "globo_puerta", 0.35, 16202),
+    (163, "Los autos de choque", "interruptor_espiral", 0.4, 16303),
+    (164, "La barraca", "muelle_puerta", 0.4, 16404),
+    (165, "Churros", "espiral_doble", 0.45, 16505),
+    (166, "El tiovivo", "noria_doble", 0.45, 16606),
+    (167, "Respiro en la pista de baile", "simple", 0.3, 16707),
+    (168, "Tiro con arco", "cristal_espiral", 0.5, 16808),
+    (169, "La orquesta", "globo_puerta", 0.5, 16909),
+    (170, "Ruleta de la suerte", "interruptor_espiral", 0.55, 17010),
+    (171, "Saltamontes", "muelle_puerta", 0.55, 17111),
+    (172, "Globos de colores", "globo_doble", 0.6, 17212),
+    (173, "Respiro con limonada", "dos", 0.4, 17313),
+    (174, "El castillo hinchable", "muelle_doble", 0.6, 17414),
+    (175, "La casa del terror", "cristal_espiral", 0.65, 17515),
+    (176, "Los cohetes", "globo_puerta", 0.65, 17616),
+    (177, "El gran desfile", "doble_y_simple", 0.7, 17717),
+    (178, "La traca", "interruptor_espiral", 0.75, 17818),
+    (179, "Medianoche", "muelle_puerta", 0.75, 17919),
+    (180, "Gran Tramo: los fuegos de la verbena", "cristal_espiral", 0.85, 18020),
 ]
 
 
@@ -458,12 +488,16 @@ def barrio_8() -> dict:
     return {"version": 1, "barrio": 8, "nombre": "El Faro", "niveles": _con_dorada(ensenanza_8() + generados)}
 
 
+def barrio_9() -> dict:
+    return {"version": 1, "barrio": 9, "nombre": "La Verbena", "niveles": _con_dorada(_generados(PLAN_9))}
+
+
 def archivos() -> dict:
     fmt = lambda d: json.dumps(d, ensure_ascii=False, indent=1) + "\n"
     return {"barrio_1.json": fmt(barrio_1()), "barrio_2.json": fmt(barrio_2()), "barrio_3.json": fmt(barrio_3()),
             "barrio_4.json": fmt(barrio_4()), "barrio_5.json": fmt(barrio_5()),
             "barrio_6.json": fmt(barrio_6()), "barrio_7.json": fmt(barrio_7()),
-            "barrio_8.json": fmt(barrio_8())}
+            "barrio_8.json": fmt(barrio_8()), "barrio_9.json": fmt(barrio_9())}
 
 
 def main():
