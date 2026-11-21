@@ -128,7 +128,17 @@ godot/
 
 ## 6 bis. Pasada estética (decidido por el cliente el 18/11/2026; primera pasada hecha el 20/11/2026)
 
-**Hecho el 20/11/2026** (`escenas/comun/animar.gd` y `confeti.gd`): botones que se hunden con curva suave (140 ms), ventanas que entran con escala y velo que se funde, fundido al abrir cada pantalla, estrellas que salen una a una con rebote, latido de las pastillas al cambiar la cifra, ficha que vuelca hacia delante al caer (acelerando) con un pequeño rebote al tumbarse, sombra suave y brillo en las fichas de pie, luz en el tablero y en el fondo de las pantallas, campanas que se balancean al sonar con destellos (la doble, una hacia la otra), confeti de fichas al superar un nivel y más grande al terminar un barrio («¡Has terminado …!»), nodo del nivel que toca que respira en el mapa y barra del Taller en dos filas de botones grandes. Todo respeta «reducir movimiento» y el alto contraste. **Pendiente:** Pío (necesita arte), la cámara que sigue la caída en niveles grandes (ahora todos caben en pantalla) y una ilustración de fondo por barrio.
+**Hecho el 20/11/2026** (`escenas/comun/animar.gd` y `confeti.gd`): botones que se hunden con curva suave (140 ms), ventanas que entran con escala y velo que se funde, fundido al abrir cada pantalla, estrellas que salen una a una con rebote, latido de las pastillas al cambiar la cifra, ficha que vuelca hacia delante al caer (acelerando) con un pequeño rebote al tumbarse, sombra suave y brillo en las fichas de pie, luz en el tablero y en el fondo de las pantallas, campanas que se balancean al sonar con destellos (la doble, una hacia la otra), confeti de fichas al superar un nivel y más grande al terminar un barrio («¡Has terminado …!»), nodo del nivel que toca que respira en el mapa y barra del Taller en dos filas de botones grandes. Todo respeta «reducir movimiento» y el alto contraste.
+
+**Segunda pasada, de pulido (21/11/2026),** revisada con capturas de los 11 temas, alto contraste y texto grande:
+- **Ajustes** pasa de botones «Sonido: sí» a filas agrupadas en tarjetas (`escenas/comun/fila_ajuste.gd`): interruptores que se deslizan (con una marca dentro, así el estado no depende del color), filas con valor (Apariencia, aviso de descanso, límite diario) y filas que abren otra ventana. Para el lector de pantalla, los interruptores son interruptores con su estado.
+- **Botones:** el desactivado es gris del color de su tema (antes salía un verde turbio), sin sombra; con ratón (web y Windows), resalte al pasar por encima y cursor de mano. Corregido un fallo de Risografía: sus botones secundarios salían rellenos de tinta con el texto invisible.
+- **Mapa:** las fichas del camino van de borde a borde de los nodos (en los temas de nodos translúcidos se veían dentro); el velo se funde al abrir una ventana; las pestañas de abajo responden al pulsarlas.
+- **Apariencia:** la marca del tema elegido va en la esquina de la miniatura (cortaba «Gratis · por defecto») y su botón vuelve a Ajustes, como las demás ventanas.
+- **Tablero:** los carteles (puertas, espirales, muelles, norias) no bajan de 19 px; el de la puerta, si no cabe al lado del hueco, se pone en columna en vez de meterse bajo la cadena.
+- **Resultado:** la estrella no conseguida toma el color de la ventana de cada tema en vez de un azul fijo.
+
+**Pendiente:** Pío (necesita arte), la cámara que sigue la caída en niveles grandes (ahora todos caben en pantalla) y una ilustración de fondo por barrio.
 
 Lista original:
 

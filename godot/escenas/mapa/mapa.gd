@@ -24,6 +24,7 @@ const Registro = preload("res://nucleo/registro.gd")
 const Cuerda = preload("res://nucleo/cuerda.gd")
 const BotonPop = preload("res://escenas/comun/boton_pop.gd")
 const Pastilla = preload("res://escenas/comun/pastilla.gd")
+const FilaAjuste = preload("res://escenas/comun/fila_ajuste.gd")
 const Iconos = preload("res://escenas/comun/iconos.gd")
 const Camino = preload("res://escenas/mapa/camino.gd")
 
@@ -87,6 +88,7 @@ var fuente_negrita: Font
 var _actual := 0                    # índice del nivel que toca
 var _demo := false
 var _reloj := 0.0
+var _velo_abierto := false          # el velo ya está a la vista (al pasar de una ventana a otra no se vuelve a fundir)
 
 
 func _ready() -> void:
@@ -179,6 +181,7 @@ func _mostrar_sin_cuerda() -> void:
 
 func _cerrar_ventanas() -> void:
 	velo.visible = false
+	_velo_abierto = false
 	ventana_cuerda.visible = false
 	ventana_ajustes.visible = false
 	ventana_apariencia.visible = false
@@ -222,21 +225,18 @@ func _centrar(v: Control) -> void:
 	v.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	v.size = v.get_combined_minimum_size()
 	v.position = ((v.get_parent() as Control).size - v.size) / 2.0
+	if not _velo_abierto:
+		_velo_abierto = true
+		Animar.aparecer(velo)
 	Animar.entrar(v)
 
 
 func _textos_ajustes() -> void:
-	boton_apariencia.texto = "Apariencia: " + Temas.activo.get("nombre", "")
-	boton_sonido.texto = "Sonido: " + ("sí" if progreso.ajustes["sonido"] else "no")
-	boton_vibracion.texto = "Vibración: " + ("sí" if progreso.ajustes["vibracion"] else "no")
+	boton_apariencia.valor = Temas.activo.get("nombre", "")
+	boton_sonido.encendido = progreso.ajustes["sonido"]
+	boton_vibracion.encendido = progreso.ajustes["vibracion"]
 	for par in ACCESIBILIDAD:
-		var b: Control = botones_accesibilidad[par[0]]
-		b.texto = "%s: %s" % [par[1], "sí" if progreso.ajustes.get(par[0], false) else "no"]
-		b.update_minimum_size()
-		b.queue_redraw()
-	for b in [boton_sonido, boton_vibracion, boton_apariencia]:
-		b.update_minimum_size()
-		b.queue_redraw()
+		botones_accesibilidad[par[0]].encendido = progreso.ajustes.get(par[0], false)
 
 
 ## Para quien dirige la prueba: intentos por nivel, leídos del registro local.
@@ -299,6 +299,10 @@ func _colocar_nodos() -> void:
 		var y := alto - 100.0 - k * ALTO_TRAMO
 		centros.append(Vector2(x, y))
 	camino.centros = centros
+	var radios := []
+	for k in rango.size():
+		radios.append(60.0 if rango[k] == _actual and abierto else 48.0)
+	camino.radios = radios
 	camino.recorrido = clampi(_actual - rango[0], 0, rango.size()) if abierto else 0
 	camino.queue_redraw()
 	for k in rango.size():
@@ -527,61 +531,44 @@ func _construir_sin_cuerda() -> void:
 func _construir_ajustes() -> void:
 	ventana_ajustes = _ventana()
 	var caja := VBoxContainer.new()
-	caja.add_theme_constant_override("separation", 16)
+	caja.add_theme_constant_override("separation", 12)
 	ventana_ajustes.add_child(caja)
 	var t := _etiqueta(52, TINTA, true)
 	t.text = "Ajustes"
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	caja.add_child(t)
-	boton_apariencia = _boton("Apariencia", false, 32)
+	# Lo que abre otra ventana: una tarjeta con filas que llevan flecha
+	boton_apariencia = _fila("Apariencia")
 	boton_apariencia.pulsado.connect(_abrir_apariencia)
-	caja.add_child(boton_apariencia)
-	var b_responsable := _boton("Juego responsable", false, 32)
-	b_responsable.pulsado.connect(_abrir_responsable)
-	caja.add_child(b_responsable)
-	# Guía de piezas y créditos, uno al lado del otro
-	var fila_guia := HBoxContainer.new()
-	fila_guia.add_theme_constant_override("separation", 12)
-	var b_piezas := _boton("Guía de piezas", false, 30)
-	b_piezas.pulsado.connect(_abrir_piezas)
-	var b_creditos := _boton("Créditos y legal", false, 30)
-	b_creditos.pulsado.connect(_abrir_creditos)
-	for h in [b_piezas, b_creditos]:
-		h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		fila_guia.add_child(h)
-	caja.add_child(fila_guia)
-	boton_sonido = _boton("Sonido: sí", false, 32)
+	var f_responsable := _fila("Juego responsable")
+	f_responsable.pulsado.connect(_abrir_responsable)
+	var f_piezas := _fila("Guía de piezas")
+	f_piezas.pulsado.connect(_abrir_piezas)
+	var f_creditos := _fila("Créditos y avisos legales")
+	f_creditos.pulsado.connect(_abrir_creditos)
+	caja.add_child(FilaAjuste.grupo([boton_apariencia, f_responsable, f_piezas, f_creditos]))
+	# Interruptores: sonido y vibración; y la accesibilidad, en su propio grupo
+	boton_sonido = _fila("Sonido", true)
 	boton_sonido.pulsado.connect(func():
 		progreso.ajustar("sonido", not progreso.ajustes["sonido"])
 		_textos_ajustes())
-	boton_vibracion = _boton("Vibración: sí", false, 32)
+	boton_vibracion = _fila("Vibración", true)
 	boton_vibracion.pulsado.connect(func():
 		progreso.ajustar("vibracion", not progreso.ajustes["vibracion"])
 		_textos_ajustes())
-	var b_resumen := _boton("Resumen de la prueba", false, 32)
-	b_resumen.pulsado.connect(_al_resumen)
-	resumen_prueba = _etiqueta(24, TINTA_SUAVE)
-	resumen_prueba.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	resumen_prueba.visible = false
-	var cerrar := _boton("Volver al mapa", true, 36)
-	cerrar.pulsado.connect(_cerrar_ventanas)
-	# Sonido y vibración, uno al lado del otro (así cabe todo en la ventana)
-	var fila_sonido := HBoxContainer.new()
-	fila_sonido.add_theme_constant_override("separation", 12)
-	for h in [boton_sonido, boton_vibracion]:
-		h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		fila_sonido.add_child(h)
-	caja.add_child(fila_sonido)
-	var titulo_acc := _etiqueta(34, TINTA, true)
-	titulo_acc.text = "Accesibilidad"
-	caja.add_child(titulo_acc)
+	caja.add_child(_subtitulo("Sonido y vibración"))
+	caja.add_child(FilaAjuste.grupo([boton_sonido, boton_vibracion]))
+	caja.add_child(_subtitulo("Accesibilidad"))
+	var filas_acc := []
 	for par in ACCESIBILIDAD:
 		var clave: String = par[0]
-		var b := _boton(par[1], false, 30)
-		b.pulsado.connect(func():
+		var f := _fila(par[1], true)
+		f.pulsado.connect(func():
 			progreso.ajustar(clave, not progreso.ajustes.get(clave, false))
 			if clave in ["alto_contraste", "texto_grande"]:
 				# Cambian toda la interfaz: se vuelve a construir el mapa con la ventana abierta
+				f.encendido = progreso.ajustes.get(clave, false)
+				await get_tree().create_timer(0.0 if Temas.reducir_movimiento else 0.2).timeout
 				Temas.accesibilidad(progreso.ajustes)
 				var estado := get_node_or_null("/root/Estado")
 				if estado != null:
@@ -590,10 +577,48 @@ func _construir_ajustes() -> void:
 				return
 			Temas.reducir_movimiento = progreso.ajustes.get("reducir_movimiento", false)
 			_textos_ajustes())
-		botones_accesibilidad[clave] = b
-		caja.add_child(b)
-	for h in [b_resumen, resumen_prueba, cerrar]:
-		caja.add_child(h)
+		botones_accesibilidad[clave] = f
+		filas_acc.append(f)
+	caja.add_child(FilaAjuste.grupo(filas_acc))
+	resumen_prueba = _etiqueta(24, TINTA_SUAVE)
+	resumen_prueba.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	resumen_prueba.visible = false
+	caja.add_child(resumen_prueba)
+	# Abajo: el resumen para quien dirige la prueba y volver, uno al lado del otro
+	var fila_abajo := HBoxContainer.new()
+	fila_abajo.add_theme_constant_override("separation", 12)
+	var b_resumen := _boton("Resumen", false, 32)
+	b_resumen.nombre_accesible = "Resumen de la prueba"
+	b_resumen.pulsado.connect(_al_resumen)
+	var cerrar := _boton("Volver al mapa", true, 34)
+	cerrar.pulsado.connect(_cerrar_ventanas)
+	b_resumen.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cerrar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cerrar.size_flags_stretch_ratio = 1.6
+	fila_abajo.add_child(b_resumen)
+	fila_abajo.add_child(cerrar)
+	caja.add_child(fila_abajo)
+
+
+## Título pequeño de un grupo de filas, con más aire encima que debajo.
+func _subtitulo(texto: String) -> Control:
+	var m := MarginContainer.new()
+	m.add_theme_constant_override("margin_top", 6)
+	m.add_theme_constant_override("margin_left", 6)
+	var l := _etiqueta(28, TINTA_SUAVE, true)
+	l.text = texto
+	m.add_child(l)
+	return m
+
+
+func _fila(texto: String, interruptor := false) -> Control:
+	var f = FilaAjuste.new()
+	f.texto = texto
+	f.interruptor = interruptor
+	f.fuente = fuente_negrita
+	f.fuente_valor = fuente_texto
+	f.tam_fuente = 29
+	return f
 
 
 # ---------------------------------------------------------------- juego responsable
@@ -614,7 +639,7 @@ func _construir_responsable() -> void:
 	texto_tiempo.add_theme_font_override("font", fuente_negrita)
 	texto_tiempo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	caja.add_child(texto_tiempo)
-	boton_descanso = _boton("Aviso de descanso", false, 30)
+	boton_descanso = _fila("Aviso de descanso")
 	boton_descanso.pulsado.connect(func():
 		var e := get_node_or_null("/root/Estado")
 		if e != null:
@@ -622,8 +647,7 @@ func _construir_responsable() -> void:
 			e.avisos_descanso = int(e.sesion / (e.responsable.descanso * 60)) if e.responsable.descanso > 0 else 0
 			e.responsable.guardar()
 		_textos_responsable())
-	caja.add_child(boton_descanso)
-	boton_limite = _boton("Límite diario", false, 30)
+	boton_limite = _fila("Límite diario")
 	boton_limite.pulsado.connect(func():
 		var e := get_node_or_null("/root/Estado")
 		if e != null:
@@ -631,7 +655,7 @@ func _construir_responsable() -> void:
 			e.limite_avisado = ""
 			e.responsable.guardar()
 		_textos_responsable())
-	caja.add_child(boton_limite)
+	caja.add_child(FilaAjuste.grupo([boton_descanso, boton_limite]))
 	var nota := _etiqueta(24, TINTA_SUAVE)
 	nota.text = ("Los avisos salen al empezar un nivel, nunca a mitad, y siempre puedes seguir.\n\n"
 		+ "Dingfall no tiene rachas que se pierdan ni notificaciones. Si algún día las tiene, se podrán apagar aquí.\n\n"
@@ -757,12 +781,9 @@ func _textos_responsable() -> void:
 		return
 	texto_tiempo.text = "Hoy: %s · Últimos 7 días: %s" % [JuegoResponsable.texto_tiempo(e.hoy()), JuegoResponsable.texto_tiempo(e.semana())]
 	var d: int = e.responsable.descanso
-	boton_descanso.texto = "Aviso de descanso: " + ("cada %d min" % d if d > 0 else "no")
+	boton_descanso.valor = "cada %d min" % d if d > 0 else "no"
 	var l: int = e.responsable.limite
-	boton_limite.texto = "Límite diario: " + (JuegoResponsable.texto_tiempo(l * 60) if l > 0 else "no")
-	for b in [boton_descanso, boton_limite]:
-		b.update_minimum_size()
-		b.queue_redraw()
+	boton_limite.valor = JuegoResponsable.texto_tiempo(l * 60) if l > 0 else "no"
 
 
 ## Ajustes › Apariencia: los 11 temas en dos columnas. Dominó Pop es gratis; los demás son del
@@ -793,8 +814,10 @@ func _construir_apariencia() -> void:
 	if Temas.activo.get("club", false):
 		aviso_prueba = _aviso_prueba()
 		caja.add_child(aviso_prueba)
-	var cerrar := _boton("Volver al mapa", true, 34)
-	cerrar.pulsado.connect(_cerrar_ventanas)
+	var cerrar := _boton("Volver a Ajustes", true, 34)
+	cerrar.pulsado.connect(func():
+		ventana_apariencia.visible = false
+		_abrir_ajustes())
 	caja.add_child(cerrar)
 
 
@@ -804,17 +827,30 @@ func _muestra_tema(tema: Dictionary) -> Control:
 	var c := Control.new()
 	c.custom_minimum_size = Vector2(284, 88)
 	c.mouse_filter = Control.MOUSE_FILTER_STOP
+	c.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	var id: String = tema["id"]
 	var elegido := id == Temas.id_activo()
 	var letra_titulos: Font = Fuentes.de(tema.get("letras", {}))["titulos"]
+	c.set_meta("pulsada", false)
+	c.set_meta("encima", false)
 	c.gui_input.connect(func(e: InputEvent):
-		if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT and not e.pressed:
-			_elegir_tema(id))
+		if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT:
+			c.set_meta("pulsada", e.pressed)
+			c.queue_redraw()
+			if not e.pressed and Rect2(Vector2.ZERO, c.size).has_point(e.position):
+				_elegir_tema(id))
+	c.mouse_entered.connect(func():
+		c.set_meta("encima", BotonPop.con_raton())
+		c.queue_redraw())
+	c.mouse_exited.connect(func():
+		c.set_meta("encima", false)
+		c.set_meta("pulsada", false)
+		c.queue_redraw())
 	c.draw.connect(func():
 		var ui: Dictionary = tema["ui"]
 		var tab: Dictionary = tema["tablero"]
 		var caja := StyleBoxFlat.new()
-		caja.bg_color = Color(TINTA, 0.06)
+		caja.bg_color = Color(TINTA, 0.13 if c.get_meta("pulsada") else (0.09 if c.get_meta("encima") else 0.05))
 		caja.set_corner_radius_all(14)
 		caja.border_color = TINTA if elegido else Color(TINTA, 0.18)
 		caja.set_border_width_all(4 if elegido else 2)
@@ -843,11 +879,15 @@ func _muestra_tema(tema: Dictionary) -> Control:
 		var f: Font = letra_titulos         # el nombre, con la letra de títulos de ese tema
 		c.draw_string(f, Vector2(90, 40), tema["nombre"], HORIZONTAL_ALIGNMENT_LEFT, c.size.x - 94, 23, TINTA)
 		var etiqueta := "Gratis · por defecto" if not tema["club"] else "Dingclub"
-		c.draw_string(fuente_texto, Vector2(90, 70), etiqueta, HORIZONTAL_ALIGNMENT_LEFT, c.size.x - 94 - (30 if elegido else 0), 19, TINTA_SUAVE)
+		c.draw_string(fuente_texto, Vector2(90, 70), etiqueta, HORIZONTAL_ALIGNMENT_LEFT, c.size.x - 96, 19, TINTA_SUAVE)
 		if elegido:
-			var m := Vector2(c.size.x - 20, c.size.y - 20)
+			# La marca, en la esquina de la miniatura: así no le quita sitio al texto
+			var m := mini.end - Vector2(3, 3)
+			var papel := MARFIL
+			papel.a = 1.0
+			c.draw_circle(m, 14, papel)
 			c.draw_circle(m, 12, TINTA)
-			c.draw_polyline(PackedVector2Array([m + Vector2(-6, 0), m + Vector2(-2, 5), m + Vector2(6, -5)]), MARFIL, 3.0, true))
+			c.draw_polyline(PackedVector2Array([m + Vector2(-6, 0), m + Vector2(-2, 5), m + Vector2(6, -5)]), papel, 3.0, true))
 	return c
 
 

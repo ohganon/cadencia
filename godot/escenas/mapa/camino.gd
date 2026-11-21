@@ -13,7 +13,9 @@ var CAIDA: Color = Temas.ui("camino_no")
 const SEPARACION := 30.0           # píxeles entre fichas del camino
 
 var centros: Array = []            # posición de cada nodo, del primero al último
+var radios: Array = []             # radio de cada nodo: las fichas van de borde a borde, nunca dentro
 var recorrido := 0                 # nodos superados (sus tramos se ven tumbados)
+const AIRE := 14.0                 # espacio libre entre el borde del nodo y la primera ficha
 
 
 func _draw() -> void:
@@ -21,11 +23,19 @@ func _draw() -> void:
 		var a: Vector2 = centros[k - 1]
 		var b: Vector2 = centros[k]
 		var eje := (b - a).normalized()
-		var largo := a.distance_to(b)
-		var n := int(largo / SEPARACION)
-		for s in range(1, n):
-			var p := a + eje * (largo * s / n)
-			_ficha(p, eje, k <= recorrido)
+		# El tramo empieza y acaba fuera de los nodos (algunos temas los tienen translúcidos)
+		var desde := a + eje * (_radio(k - 1) + AIRE)
+		var hasta := b - eje * (_radio(k) + AIRE)
+		var largo := desde.distance_to(hasta)
+		if largo <= 0.0 or eje.dot(hasta - desde) <= 0.0:
+			continue
+		var n := maxi(int(round(largo / SEPARACION)), 1)
+		for s in range(0, n + 1):
+			_ficha(desde + eje * (largo * s / n), eje, k <= recorrido)
+
+
+func _radio(k: int) -> float:
+	return float(radios[k]) if k < radios.size() else 48.0
 
 
 func _ficha(c: Vector2, eje: Vector2, tumbada: bool) -> void:

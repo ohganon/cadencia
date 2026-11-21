@@ -14,6 +14,7 @@ const BLANCO := Color.WHITE
 ## Las pone el autoload Tema: tinta de los contornos y color de la estrella conseguida
 static var tinta := TINTA_POP
 static var estrella := AMARILLO
+static var apagada := APAGADA     # relleno de la estrella no conseguida (del tema: tinta muy suave)
 static var _t := TINTA_POP        # tinta de la llamada en curso
 
 # Puntos de la estrella del SVG (caja de 40 × 40)
@@ -40,7 +41,7 @@ static func _dibujar(ci: CanvasItem, tipo: String, rect: Rect2, color: Color) ->
 		"estrella":
 			_forma(ci, ESTRELLA, 40.0, rect, estrella if color.a == 0 else color, 2.4)
 		"estrella_apagada":
-			_forma(ci, ESTRELLA, 40.0, rect, APAGADA, 2.4)
+			_forma(ci, ESTRELLA, 40.0, rect, apagada, 2.4)
 		"campana":
 			_forma(ci, CAMPANA, 40.0, rect, AMARILLO if color.a == 0 else color, 2.4)
 			var e := rect.size.x / 40.0

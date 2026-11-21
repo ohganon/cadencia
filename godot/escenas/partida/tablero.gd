@@ -649,6 +649,12 @@ func _simbolo(c: Vector2, cual: String) -> void:
 			draw_circle(c + Vector2(0, 0.8) * _k, g * 0.55, BLANCO)
 
 
+## Tamaño de letra de los carteles del tablero: crece con el tablero, pero nunca baja de 19 px
+## (en tableros grandes, con muchas piezas, se leía con dificultad).
+func _tam_etiqueta(unidades: float) -> int:
+	return maxi(int(unidades * _k), Temas.tam(19))
+
+
 ## Puerta de vaivén: cerrada es una barra de madera entre dos postes; abierta, sus dos hojas giran
 ## hacia los lados. Mientras se dibuja, se abre y se cierra a su ritmo en tiempo real (un tic cada
 ## DURACION_TIC); durante la caída sigue el tic de la cadena. Encima, cuándo se abre.
@@ -683,22 +689,36 @@ func _puerta(p: Array) -> void:
 		var t0 := inicio + k * periodo
 		ventanas.append("%d–%d" % [t0, t0 + dura - 1])
 	var fuente := get_theme_default_font()
-	var tam := int(3.0 * _k)
-	var texto := "abre " + " · ".join(ventanas)
-	var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
-	# Al lado del hueco (no encima: ahí va la marca de cruce), hacia el lado con más sitio
+	var tam := _tam_etiqueta(3.0)
+	# Al lado del hueco (no encima: por ahí pasa la cadena y va la marca de cruce), hacia el lado con
+	# más sitio. Si en una línea no cabe, un letrero en columna: «abre» y debajo cada ventana.
 	var izquierda := a if a.x < b.x else b
 	var derecha := b if a.x < b.x else a
 	var tablero_der := _origen.x + float(partida.nivel["w"]) * _k
 	var hueco_der := tablero_der - derecha.x
 	var hueco_izq := izquierda.x - _origen.x
-	var x := derecha.x + 1.6 * _k if hueco_der >= hueco_izq else izquierda.x - 1.6 * _k - medida.x
-	x = clampf(x, _origen.x + 1.0 * _k, tablero_der - medida.x - 1.0 * _k)
-	var base := Vector2(x, minf(a.y, b.y) - 1.8 * _k)
-	var caja := Rect2(base - Vector2(0.8 * _k, fuente.get_ascent(tam) + 0.3 * _k), Vector2(medida.x + 1.6 * _k, tam + 0.6 * _k))
-	draw_style_box(_caja(Color(ETIQUETA, 0.94), 6, ETIQUETA_T, 1), caja)
+	var sitio := maxf(hueco_der, hueco_izq) - 2.6 * _k
+	var lineas := ["abre " + " · ".join(ventanas)]
+	if fuente.get_string_size(lineas[0], HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > sitio:
+		lineas = ["abre"] + ventanas
+	var ancho := 0.0
+	for l in lineas:
+		ancho = maxf(ancho, fuente.get_string_size(l, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x)
+	var alto_linea := fuente.get_height(tam)
+	var x := derecha.x + 1.6 * _k if hueco_der >= hueco_izq else izquierda.x - 1.6 * _k - ancho
+	x = clampf(x, _origen.x + 1.0 * _k, tablero_der - ancho - 1.0 * _k)
+	var abajo := minf(a.y, b.y) - 1.6 * _k                  # el letrero se apoya encima de la puerta
+	var caja := Rect2(Vector2(x - 0.8 * _k, abajo - alto_linea * lineas.size() - 0.6 * _k),
+		Vector2(ancho + 1.6 * _k, alto_linea * lineas.size() + 0.6 * _k))
+	caja.position.y = maxf(caja.position.y, _origen.y + 1.0 * _k)
+	draw_style_box(_caja(Color(ETIQUETA, 0.95), 6, ETIQUETA_T, 1), caja)
 	var verde := Temas.sobre(ETIQUETA, VERDE.darkened(0.45), VERDE)
-	draw_string(fuente, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, verde if abierta else ETIQUETA_T)
+	var color := verde if abierta else ETIQUETA_T
+	for k in lineas.size():
+		var base := Vector2(x, caja.position.y + 0.3 * _k + alto_linea * k + fuente.get_ascent(tam))
+		# En columna, las cifras van centradas bajo «abre»
+		var w := fuente.get_string_size(lineas[k], HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
+		draw_string(fuente, base + Vector2((ancho - w) / 2.0, 0), lineas[k], HORIZONTAL_ALIGNMENT_LEFT, -1, tam, color)
 
 
 ## Espiral de retardo: una espiral dentro de su círculo y, al lado, cuántos tics retrasa («+4»).
@@ -718,7 +738,7 @@ func _espiral_etiqueta(e: Array) -> void:
 	var r := Sim.RADIO_ESPIRAL * _k
 	draw_arc(c, r, 0, TAU, 32, Color(DORADA, 0.9), maxf(1.5, 0.45 * _k), true)
 	var fuente := get_theme_default_font()
-	var tam := int(3.6 * _k)
+	var tam := _tam_etiqueta(3.6)
 	var texto := "+%d" % int(e[1])
 	var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
 	var base := c + Vector2(-medida.x / 2, -r - 1.0 * _k)     # encima del aro, centrado
@@ -777,7 +797,7 @@ func _muelle_etiqueta(m: Array) -> void:
 	draw_arc(b, r, 0, TAU, 32, Color(aro, 0.95), maxf(1.5, 0.45 * _k), true)
 	draw_circle(b, r * 0.3, aro)
 	var fuente := get_theme_default_font()
-	var tam := int(3.6 * _k)
+	var tam := _tam_etiqueta(3.6)
 	var texto := ("cada %d" % int(m[2])) if es_noria else ("+%d" % int(m[2]))
 	var medida := fuente.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam)
 	var normal := (b - a).orthogonal().normalized()

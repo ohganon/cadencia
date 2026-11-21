@@ -14,15 +14,31 @@ var activa := false
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	focus_mode = Control.FOCUS_ACCESSIBILITY
+	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	mouse_exited.connect(func(): _soltar())
 
 
+## Al pulsar, la pestaña se hunde un poco (se ve que se ha tocado); al soltar, vuelve.
 func _gui_input(e: InputEvent) -> void:
-	if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT and not e.pressed:
-		pulsado.emit()
+	if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT:
+		if e.pressed:
+			pivot_offset = size / 2.0
+			scale = Vector2(0.94, 0.94)
+			modulate.a = 0.75
+		else:
+			var dentro := Rect2(Vector2.ZERO, size).has_point(e.position)
+			_soltar()
+			if dentro:
+				pulsado.emit()
 		accept_event()
 	elif e.is_action_pressed("ui_accept"):
 		pulsado.emit()
 		accept_event()
+
+
+func _soltar() -> void:
+	scale = Vector2.ONE
+	modulate.a = 1.0
 
 
 func _notification(que: int) -> void:

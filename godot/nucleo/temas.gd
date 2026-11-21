@@ -41,6 +41,10 @@ static func usar(id) -> void:
 	# Los iconos se dibujan con funciones estáticas: se les da la tinta y la estrella del tema
 	Iconos.tinta = ui("marco")
 	Iconos.estrella = ui("estrella")
+	# La estrella no conseguida: el papel de la ventana con un velo de su tinta (no un azul fijo)
+	var papel := ui("ventana")
+	papel.a = 1.0
+	Iconos.apagada = papel.lerp(ui("ventana_t"), 0.12)
 
 
 ## Aplica los ajustes de accesibilidad que afectan a toda la interfaz y vuelve a preparar el tema.

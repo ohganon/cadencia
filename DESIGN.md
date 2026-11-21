@@ -205,7 +205,13 @@ Depth is a small cartoon offset: **a solid ink shadow 3 px straight down** under
   - green for the primary action;
   - ivory for everything else.
 
-  On press the button moves down 3 px and its lip narrows, over 140 ms with `cubic-bezier(.22,1,.36,1)` (no spring overshoot). Disabled is grey-blue and does not move.
+  On press the button moves down 3 px and its lip narrows, over 140 ms with `cubic-bezier(.22,1,.36,1)` (no spring overshoot). Disabled is grey-blue and does not move: the button's own colour loses its saturation and blends 40 % into what is behind it, the shadow goes and the text dims but stays legible. With a mouse (web and desktop) the button lightens slightly on hover and shows a hand cursor; on touch screens there is no hover. A theme with transparent secondary buttons and a solid shadow (Risografía) paints the body in the colour behind it, so the offset shadow never covers the label.
+- **Setting row** (Ajustes, Juego responsable). Rows are grouped in a card with a very soft ink tint and 2 px hairlines between rows. Each row is at least 76 px tall and the whole row is the target. There are three kinds:
+  - switch: name on the left, a 76 × 44 sliding switch on the right (track in the theme's primary colour when on, with a check inside the knob, so the state never depends on colour alone);
+  - value: name, current value in the soft ink and a chevron; tapping moves to the next value and the value lights up briefly;
+  - link: name and a chevron; it opens another window, whose button reads «Volver a Ajustes».
+
+  Group titles are small headline type with more space above than below.
 - **HUD pill.** A small coloured icon and a Nunito 800 number on translucent ink.
 - **Result window.** An ivory window with:
   - a Lilita title;

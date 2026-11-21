@@ -46,6 +46,7 @@ const NOMBRES_ICONO := {"volver": "Volver", "adelante": "Siguiente", "deshacer":
 @export var desactivado := false:
 	set(v):
 		desactivado = v
+		mouse_default_cursor_shape = Control.CURSOR_ARROW if v else Control.CURSOR_POINTING_HAND
 		queue_redraw()
 		queue_accessibility_update()
 ## Colores propios (para los nodos de nivel: amarillo, verde o bloqueado)
@@ -59,6 +60,7 @@ var resaltado := false:
 		queue_redraw()
 
 var _hundido := false
+var _encima := false              # el ratón está encima (solo con ratón: en el móvil no hay «encima»)
 var _h := 0.0                     # cuánto está hundido, de 0 a 1 (animado; ver _process)
 var _en_ventana = null            # se averigua al dibujar: ¿está dentro de una ventana?
 var _tiempo_pulsado := -1.0
@@ -68,6 +70,12 @@ func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	# Con el dedo no se queda «seleccionado»; el lector de pantalla sí puede llegar a él
 	focus_mode = Control.FOCUS_ACCESSIBILITY
+	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+
+
+## ¿Se juega con ratón? En el móvil el dedo también genera «entrar», y el resalte se quedaría puesto.
+static func con_raton() -> bool:
+	return not DisplayServer.is_touchscreen_available()
 
 
 func nombre_para_lector() -> String:
@@ -148,9 +156,14 @@ func _notification(que: int) -> void:
 			DisplayServer.accessibility_update_set_flag(ae, DisplayServer.FLAG_DISABLED, desactivado)
 			DisplayServer.accessibility_update_add_action(ae, DisplayServer.ACTION_CLICK, _pulsado_por_lector)
 		return
-	if que == NOTIFICATION_MOUSE_EXIT and _hundido:
-		_hundido = false
-		_tiempo_pulsado = -1.0
+	if que == NOTIFICATION_MOUSE_ENTER and con_raton():
+		_encima = true
+		queue_redraw()
+	if que == NOTIFICATION_MOUSE_EXIT:
+		_encima = false
+		if _hundido:
+			_hundido = false
+			_tiempo_pulsado = -1.0
 		queue_redraw()
 
 
@@ -178,16 +191,34 @@ func _draw() -> void:
 		color_texto = Temas.tinta_sobre(fondo)
 	if fondo.a < 0.5 and _dentro_de_ventana():
 		color_texto = Temas.ui("ventana_t")
-	if desactivado:
-		# Apagado: el mismo botón, mezclado con el fondo de la pantalla (vale para todos los temas)
-		var pantalla := Temas.ui("pantalla")
-		fondo = fondo.lerp(pantalla, 0.55) if fondo.a >= 0.5 else fondo
-		labio = labio.lerp(pantalla, 0.55) if labio.a >= 0.5 else labio
-		color_texto = Color(color_texto, 0.45)
-	# Botón sin fondo (algunos temas): solo el contorno, del color del texto
+	# Lo que hay detrás del botón: la ventana o la pantalla
+	var detras: Color = Temas.ui("ventana") if _dentro_de_ventana() else Temas.ui("pantalla")
+	detras.a = 1.0
 	var borde := TINTA if fondo.a >= 0.5 else color_texto
-	# Temas planos: sin sombra sólida ni labio; al pulsar, el fondo se oscurece un poco
 	var sombra := SOMBRA if SOMBRA_SOLIDA else 0.0
+	if fondo.a < 0.5 and sombra > 0:
+		# Sin fondo pero con sombra sólida (Risografía): el cuerpo se pinta del color de detrás para
+		# que la sombra quede debajo, desplazada, y no tape el texto
+		fondo = detras
+		labio = detras
+		borde = color_texto
+	if desactivado:
+		# Apagado (DESIGN.md › Pressable button): el mismo botón sin color, fundido con lo de detrás,
+		# sin sombra y con el texto apagado pero legible. No se mueve.
+		if fondo.a >= 0.5:
+			var gris := Color.from_hsv(fondo.h, fondo.s * 0.2, fondo.v)
+			fondo = gris.lerp(detras, 0.4)
+			labio = fondo
+		color_texto = color_texto.lerp(fondo if fondo.a >= 0.5 else detras, 0.5)
+		borde = borde.lerp(fondo if fondo.a >= 0.5 else detras, 0.55)
+		sombra = 0.0
+	elif _encima and not _hundido:
+		# Con ratón: un poco más claro al pasar por encima (los temas oscuros, un poco más luminoso)
+		if fondo.a >= 0.5:
+			fondo = fondo.lightened(0.08) if fondo.get_luminance() < 0.85 else fondo.darkened(0.04)
+		else:
+			fondo = Color(color_texto, 0.08)
+	# Temas planos: sin sombra sólida ni labio; al pulsar, el fondo se oscurece un poco
 	if _hundido and not SOMBRA_SOLIDA:
 		fondo = fondo.darkened(0.12) if fondo.a >= 0.5 else Color(color_texto, 0.12)
 	if not SOMBRA_SOLIDA:
