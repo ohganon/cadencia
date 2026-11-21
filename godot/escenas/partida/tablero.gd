@@ -79,6 +79,20 @@ var _tiempo := 0.0
 var _ultimo_tic := 0
 var _k := 1.0                 # píxeles por unidad lógica
 var _origen := Vector2.ZERO
+## Cámara que sigue la caída (pasada estética): durante la caída se acerca al frente de fichas que
+## caen y lo sigue con suavidad; al terminar vuelve a la vista completa antes del resultado. Nunca
+## enseña fuera del tablero y nunca deja fuera nada de lo que está cayendo. Con «reducir
+## movimiento», no se mueve. Va dentro de _medir(): todo lo que se dibuja (y la X de la parada)
+## pasa por a_pantalla() y _k, así que queda siempre en su sitio.
+const CAMARA_FICHA := 40.0     # tamaño en px al que se acerca una ficha de pie, como mucho
+const CAMARA_ZOOM_MAX := 1.6
+const CAMARA_MARGEN := 16.0    # unidades lógicas alrededor de lo que cae
+const CAMARA_SIGUE := 3.0      # rapidez con que sigue el frente (1/s)
+const CAMARA_VUELVE := 6.0     # rapidez con que vuelve a la vista completa
+var _cam_z := 1.0
+var _cam_c := Vector2(-1, -1)  # centro de la vista, en unidades lógicas (-1: el centro del tablero)
+var _cam_objetivo_z := 1.0
+var _cam_objetivo_c := Vector2(-1, -1)
 
 
 func _init() -> void:
@@ -123,6 +137,7 @@ func preparar(nueva_partida) -> void:
 	modo = Modo.EDITAR
 	pista = []
 	_detalle = {}
+	_camara_en_reposo()
 	set_process(false)
 	queue_redraw()
 
@@ -159,6 +174,7 @@ func resultado() -> Dictionary:
 func editar() -> void:
 	modo = Modo.EDITAR
 	_detalle = {}
+	_camara_en_reposo()
 	set_process(false)
 	queue_redraw()
 
@@ -174,8 +190,12 @@ func _process(delta: float) -> void:
 				cae.emit(e["fichas"])
 			for c in e.get("campanas", []):
 				suena.emit(c)
+	if modo == Modo.CAYENDO and not reducir_movimiento:
+		_apuntar_camara(_tic_actual())
+		_mover_camara(delta)
 	if modo == Modo.CAYENDO and _tic_actual() > _ultimo_tic + 1 and _tiempo > (_ultimo_tic + 1) * DURACION_TIC + PAUSA_FINAL:
 		modo = Modo.RESULTADO
+		_camara_en_reposo()         # el resultado (y la X de la parada) se ven con el tablero entero
 		caida_terminada.emit()
 	if modo == Modo.RESULTADO and _tiempo > (_ultimo_tic + 1) * DURACION_TIC + 2.0:
 		set_process(false)    # ya no hay nada que animar
@@ -193,6 +213,82 @@ func _medir() -> void:
 	var h: float = partida.nivel["h"]
 	_k = minf(size.x / w, size.y / h)
 	_origen = (size - Vector2(w, h) * _k) / 2.0
+	if _cam_z > 1.0001:
+		# La cámara: más px por unidad y la vista centrada en _cam_c
+		var c := _cam_c if _cam_c.x >= 0.0 else Vector2(w, h) / 2.0
+		_k *= _cam_z
+		_origen = size / 2.0 - c * _k
+
+
+## Cuánto puede acercarse la cámara en este tablero: hasta que una ficha de pie mida CAMARA_FICHA px.
+func _zoom_maximo(k_base: float) -> float:
+	return clampf(CAMARA_FICHA / (FICHA_ALTO * k_base), 1.0, CAMARA_ZOOM_MAX)
+
+
+## A dónde quiere ir la cámara en este momento de la caída: lo que cae ahora (y lo que acaba de caer
+## o está a punto) dentro de la vista, lo más cerca posible.
+func _apuntar_camara(tic: int) -> void:
+	var w: float = partida.nivel["w"]
+	var h: float = partida.nivel["h"]
+	var k_base := minf(size.x / w, size.y / h)
+	var centro := Vector2(w, h) / 2.0
+	if tic > _ultimo_tic:
+		_cam_objetivo_z = 1.0
+		_cam_objetivo_c = centro
+		return
+	var caja := Rect2()
+	var hay := false
+	var tics: Array = _detalle.get("tics", [])
+	var caidas: Array = _detalle.get("caidas", [])
+	var fichas: Array = _detalle.get("fichas", [])
+	for i in mini(tics.size(), fichas.size()):
+		if i >= caidas.size() or caidas[i] < 0:
+			continue
+		for j in range(0, mini(int(caidas[i]) + 1, fichas[i].size())):
+			var tj: int = tics[i][j]
+			if tj < tic - 3 or tj > tic + 1:
+				continue
+			var q := Vector2(fichas[i][j][0], fichas[i][j][1])
+			if hay:
+				caja = caja.expand(q)
+			else:
+				caja = Rect2(q, Vector2.ZERO)
+				hay = true
+	if not hay:
+		return                       # entre dos tramos: la cámara se queda donde está
+	caja = caja.grow(CAMARA_MARGEN)
+	var z := minf(_zoom_maximo(k_base), minf(size.x / (k_base * caja.size.x), size.y / (k_base * caja.size.y)))
+	z = maxf(z, 1.0)
+	# Centro de la vista, sin enseñar fuera del tablero
+	var media := size / (2.0 * k_base * z)
+	var c := caja.get_center()
+	c.x = clampf(c.x, media.x, w - media.x) if w > 2.0 * media.x else w / 2.0
+	c.y = clampf(c.y, media.y, h - media.y) if h > 2.0 * media.y else h / 2.0
+	_cam_objetivo_z = z
+	_cam_objetivo_c = c
+
+
+func _mover_camara(delta: float) -> void:
+	var w: float = partida.nivel["w"]
+	var h: float = partida.nivel["h"]
+	if _cam_c.x < 0.0:
+		_cam_c = Vector2(w, h) / 2.0
+	if _cam_objetivo_c.x < 0.0:
+		_cam_objetivo_c = Vector2(w, h) / 2.0
+	var rapidez := CAMARA_VUELVE if _cam_objetivo_z <= 1.0 else CAMARA_SIGUE
+	var a := 1.0 - exp(-delta * rapidez)
+	_cam_z = lerpf(_cam_z, _cam_objetivo_z, a)
+	_cam_c = _cam_c.lerp(_cam_objetivo_c, a)
+	clip_contents = _cam_z > 1.001
+
+
+## Vista completa del tablero, al momento (al empezar a dibujar, al ver el resultado).
+func _camara_en_reposo() -> void:
+	_cam_z = 1.0
+	_cam_c = Vector2(-1, -1)
+	_cam_objetivo_z = 1.0
+	_cam_objetivo_c = Vector2(-1, -1)
+	clip_contents = false
 
 
 func a_pantalla(p: Array) -> Vector2:
@@ -238,7 +334,7 @@ func _draw() -> void:
 	_medir()
 	var nivel: Dictionary = partida.nivel
 	var tablero := Rect2(_origen, Vector2(nivel["w"], nivel["h"]) * _k)
-	dibujar_marco(self, tablero, HIELO, PUNTO, _contraste)
+	dibujar_marco(self, tablero, HIELO, PUNTO, _contraste, _cam_z)
 
 	for m in nivel["mu"]:
 		draw_line(a_pantalla(m[0]), a_pantalla(m[1]), TINTA, 2.2 * _k, true)
@@ -939,7 +1035,7 @@ func _guia(desde: Array, hasta: Array) -> void:
 ## Marco del tablero como en la maqueta (.tablero y su lienzo): el color del tablero, el borde, el radio y
 ## la sombra del tema (viñeta del tapete en Mesa, sombra suave en Calma, sombra dura en Brutalista) y la
 ## rejilla de puntos (cada 24 px de la maqueta, de 1,4 px de radio). Lo usa también el editor del Taller.
-static func dibujar_marco(ci: CanvasItem, rect: Rect2, hielo: Color, punto: Color, contraste: bool) -> void:
+static func dibujar_marco(ci: CanvasItem, rect: Rect2, hielo: Color, punto: Color, contraste: bool, zoom := 1.0) -> void:
 	var c := Temas.caja("tablero")
 	# Un tablero translúcido (Calma) se compone sobre la pantalla: así su sombra no se ve por debajo
 	var pantalla := Temas.ui("pantalla")
@@ -949,12 +1045,12 @@ static func dibujar_marco(ci: CanvasItem, rect: Rect2, hielo: Color, punto: Colo
 		c["borde_color"] = Color.BLACK
 		c["sombras"] = []
 	Caja.dibujar(ci, rect, c)
-	var paso := 24.0 * Temas.ESCALA
+	var paso := 24.0 * Temas.ESCALA * zoom
 	var y := rect.position.y + paso / 2
 	while y < rect.end.y - 4.0:      # sin pisar el borde del tablero
 		var x := rect.position.x + paso / 2
 		while x < rect.end.x - 4.0:
-			ci.draw_circle(Vector2(x, y), 1.4 * Temas.ESCALA, punto)
+			ci.draw_circle(Vector2(x, y), 1.4 * Temas.ESCALA * zoom, punto)
 			x += paso
 		y += paso
 

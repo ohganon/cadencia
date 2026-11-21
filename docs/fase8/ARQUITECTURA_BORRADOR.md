@@ -142,7 +142,9 @@ godot/
 
 **Fondos animados (21/11/2026, elegidos por el cliente entre las propuestas):** uno por tema, lento y suave, solo en el mapa, Ajustes y Apariencia; quietos en la partida y el Taller, con «reducir movimiento» y con alto contraste (DESIGN.md › Background animations).
 
-**Pendiente:** Pío (necesita arte), la cámara que sigue la caída en niveles grandes (ahora todos caben en pantalla) y una ilustración de fondo por barrio.
+**Cámara que sigue la caída (21/11/2026):** como todos los niveles miden 100 × 160 y en el móvil las fichas se ven pequeñas, durante la caída la cámara se acerca (hasta que una ficha mide unos 40 px, como mucho 1,6 veces) a lo que está cayendo en ese momento y lo sigue con suavidad, sin enseñar nunca fuera del tablero y alejándose si hay ramas lejos unas de otras. Al caer la última ficha vuelve a la vista completa, y el resultado y la X de la parada se ven con el tablero entero. Va dentro de `_medir()` del tablero, así que todo lo dibujado queda en su sitio. Con «reducir movimiento», quieta.
+
+**Pendiente:** Pío (necesita arte) y una ilustración de fondo por barrio (necesita arte).
 
 Lista original:
 

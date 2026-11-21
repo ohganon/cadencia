@@ -196,7 +196,8 @@ Las 4 skills pedidas por el cliente el 16/11/2026 ya están **activadas en su cu
 - [x] Pasada estética, primera parte (20/11/2026): animaciones de interfaz, caída con vuelco y rebote, sombras, brillos y luz, campanas que se balancean con destellos, confeti al superar un nivel y al terminar un barrio, Taller en dos filas. Todo respeta «reducir movimiento». Detalle en fase8/ARQUITECTURA_BORRADOR.md, sección 6 bis
 - [x] Fase 8: los 11 temas idénticos a la maqueta del catálogo (botones, sombras, nodos, ventanas, fondos con textura, Apariencia a pantalla entera) y un fondo animado por tema, elegido por el cliente (21/11/2026)
 - [x] Fase 8: prueba de la puerta 0 a distancia: «Ajustes › Resumen › Copiar resumen» y guía adaptada al enlace de la web (21/11/2026)
-- [ ] Pasada estética, pendiente: Pío animado (necesita arte), ilustración de fondo por barrio y cámara que sigue la caída
+- [x] Fase 8: cámara que sigue la caída: se acerca hasta 1,6 veces al frente de fichas que caen sin dejar nada de lo que cae fuera de la vista, y vuelve a la vista completa para el resultado; quieta con «reducir movimiento» (21/11/2026)
+- [ ] Pasada estética, pendiente: Pío animado (necesita arte) e ilustración de fondo por barrio (necesita arte)
 - [x] Nunes y Drèze (2006) y McIntosh y Schmeichel (2004) verificadas con DOI (17/11/2026). Quedan sin confirmar los porcentajes 34 %/19 % (texto de pago)
 - [ ] Leer íntegro el texto oficial de la propuesta de DFA y ajustar el marco legal
 - [ ] Antes de monetizar: consulta fiscal con un gestor (alta, IVA intracomunitario, W-8BEN)
