@@ -14,6 +14,7 @@ var ajustes := {"sonido": true, "vibracion": true, "alto_contraste": false, "red
 var cuerda := {"n": Cuerda.MAXIMO, "t": 0}
 var en_curso := 0        # nivel nuevo ya pagado y aún sin superar (no se vuelve a cobrar)
 var tema := "pop"        # tema elegido en Ajustes › Apariencia (nucleo/temas.gd)
+var piezas_vistas: Array = []   # piezas ya presentadas al jugador (nucleo/piezas.gd)
 var ruta := RUTA
 
 
@@ -28,6 +29,7 @@ func cargar() -> void:
 	cuerda = {"n": Cuerda.MAXIMO, "t": 0}
 	en_curso = 0
 	tema = "pop"
+	piezas_vistas = []
 	if not FileAccess.file_exists(ruta):
 		return
 	var json := JSON.new()
@@ -51,6 +53,10 @@ func cargar() -> void:
 	en_curso = int(datos.get("en_curso", 0))
 	if typeof(datos.get("tema")) == TYPE_STRING:
 		tema = datos["tema"]
+	if typeof(datos.get("piezas_vistas")) == TYPE_ARRAY:
+		for x in datos["piezas_vistas"]:
+			if typeof(x) == TYPE_STRING and not (x in piezas_vistas):
+				piezas_vistas.append(x)
 
 
 func guardar() -> void:
@@ -61,7 +67,8 @@ func guardar() -> void:
 		push_warning("No se pudo guardar el progreso en %s" % ruta)
 		return
 	f.store_string(JSON.stringify({"version": VERSION, "estrellas": estrellas, "ajustes": ajustes,
-		"cuerda": cuerda, "en_curso": en_curso, "tema": tema}, " "))
+		"cuerda": cuerda, "en_curso": en_curso, "tema": tema,
+		"piezas_vistas": piezas_vistas}, " "))
 
 
 ## Guarda las estrellas de un nivel solo si mejoran las que ya tenía. `id` es el número del nivel o
@@ -76,6 +83,13 @@ func registrar(id, n: int) -> void:
 		en_curso = 0
 		cambia = true
 	if cambia:
+		guardar()
+
+
+## Apunta que ya se ha presentado una pieza (no vuelve a salir su ventana).
+func ver_pieza(id: String) -> void:
+	if not (id in piezas_vistas):
+		piezas_vistas.append(id)
 		guardar()
 
 

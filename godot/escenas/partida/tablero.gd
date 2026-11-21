@@ -54,6 +54,8 @@ var PUERTA := Color("#c98a4b")     # madera de la puerta de vaivén
 ## Accesibilidad (Ajustes): sin efectos decorativos que se mueven. La información (la puerta que se
 ## abre y se cierra, la caída) se mantiene.
 var reducir_movimiento := false
+## Dedo que enseña a dibujar (nivel 1): va del botón verde a la primera campana hasta que se dibuja algo
+var guia := false
 var _contraste := false       # con alto contraste no hay sombras, brillos ni luz en el tablero
 
 # Medidas de la maqueta, en unidades lógicas (allí 1 unidad = 2,8 px)
@@ -294,6 +296,8 @@ func _draw() -> void:
 			for j in range(1, regalo.size()):
 				_ficha(regalo, j, 0, 0.0)
 	_empujador(nivel["i"])
+	if guia and modo == Modo.EDITAR and partida.tramos.is_empty() and not nivel["c"].is_empty():
+		_guia(nivel["i"], nivel["c"][0][1])
 	# Las campanas van encima de las fichas para que siempre se vean
 	for c in nivel["c"]:
 		_campana(c)
@@ -888,6 +892,40 @@ func _globo(g: Array, k: int) -> void:
 	draw_circle(centro + Vector2(-1.0, -1.1) * _k, 0.8 * _k, Color(1, 1, 1, 0.6))
 	draw_colored_polygon(PackedVector2Array([centro + Vector2(-0.7, r / _k) * _k, centro + Vector2(0.7, r / _k) * _k,
 		centro + Vector2(0, r / _k + 1.0) * _k]), color)
+
+
+## El dedo de la guía: aparece en el botón verde, arrastra hasta la campana dejando un rastro y vuelve
+## a empezar. Con «reducir movimiento», una flecha quieta del botón a la campana.
+func _guia(desde: Array, hasta: Array) -> void:
+	var a := a_pantalla(desde)
+	var b := a_pantalla(hasta)
+	var color := Color(TINTA, 0.55)
+	if reducir_movimiento:
+		var eje := (b - a).normalized()
+		var largo := a.distance_to(b)
+		var d := 6.0 * _k
+		while d < largo - 8.0 * _k:
+			draw_line(a + eje * d, a + eje * minf(d + 2.0 * _k, largo), color, 0.8 * _k, true)
+			d += 4.0 * _k
+		var punta := b - eje * 7.0 * _k
+		var n := Vector2(-eje.y, eje.x)
+		draw_colored_polygon(PackedVector2Array([punta + eje * 2.5 * _k, punta - eje * 1.5 * _k + n * 2.0 * _k,
+			punta - eje * 1.5 * _k - n * 2.0 * _k]), color)
+		return
+	var t := fposmod(Time.get_ticks_msec() / 1000.0, 2.4) / 2.4
+	var u := clampf((t - 0.12) / 0.7, 0.0, 1.0)
+	u = u * u * (3.0 - 2.0 * u)
+	var p := a.lerp(b, u)
+	for k in 8:
+		var q := a.lerp(b, maxf(u - 0.04 * k, 0.0))
+		if u > 0.0:
+			draw_circle(q, (1.9 - 0.15 * k) * _k, Color(TINTA, 0.25 - 0.03 * k))
+	var alfa := 1.0 - clampf((t - 0.85) / 0.15, 0.0, 1.0)
+	draw_circle(p + Vector2(0.5, 0.8) * _k, 4.6 * _k, Color(0, 0, 0, 0.15 * alfa))
+	draw_circle(p, 4.6 * _k, Color(1, 1, 1, 0.9 * alfa))
+	draw_arc(p, 4.6 * _k, 0, TAU, 28, Color(TINTA, alfa), maxf(1.2, 0.4 * _k), true)
+	draw_circle(p, 1.7 * _k, Color(TINTA, 0.5 * alfa))
+	queue_redraw()
 
 
 ## Posición en pantalla (global) de la X donde se paró la cadena, o null si no se paró.

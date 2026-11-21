@@ -19,6 +19,7 @@ const Partida = preload("res://nucleo/partida.gd")
 const Temas = preload("res://nucleo/temas.gd")
 const Animar = preload("res://escenas/comun/animar.gd")
 const Confeti = preload("res://escenas/comun/confeti.gd")
+const Piezas = preload("res://nucleo/piezas.gd")
 const Fuentes = preload("res://escenas/comun/fuentes.gd")
 const Progreso = preload("res://nucleo/progreso.gd")
 const Registro = preload("res://nucleo/registro.gd")
@@ -91,6 +92,13 @@ var velo: ColorRect
 var ventana: PanelContainer
 ## Aviso de juego responsable (descanso o límite diario que eligió el jugador)
 var ventana_aviso: PanelContainer
+## Presentación de una pieza la primera vez que sale (nucleo/piezas.gd)
+var ventana_pieza: PanelContainer
+var pieza_titulo: Label
+var pieza_texto: Label
+var pieza_icono: Control
+var _icono_pieza := ""
+var _por_presentar: Array = []
 var aviso_titulo: Label
 var aviso_texto: Label
 var aviso_seguir: Control
@@ -227,6 +235,45 @@ func _abrir(n: Dictionary, texto_titulo: String) -> void:
 		objetivo.text += " [b]Extra:[/b] la campana dorada da la tercera estrella."
 	_cerrar_ventanas()
 	_actualizar()
+	# El dedo que enseña a dibujar, en el nivel 1 hasta que se supera
+	tablero.guia = modo_taller == "" and not modo_diario and int(n["id"]) == 1 and progreso.de(1) == 0
+	# Las piezas que el jugador aún no conoce se presentan antes de jugar (menos al probar su propio nivel)
+	_por_presentar = Piezas.nuevas(n["nivel"], progreso.piezas_vistas) if modo_taller != "prueba" and not _es_demo() else []
+	if not _por_presentar.is_empty():
+		_presentar_pieza()
+	elif modo_taller == "":
+		_comprobar_aviso()
+
+
+func _es_demo() -> bool:
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--demo"):
+			return not "--presentar" in OS.get_cmdline_user_args()
+	return false
+
+
+## Ventana «Pieza nueva»: su dibujo, su nombre y qué hace. Si hay varias, una detrás de otra.
+func _presentar_pieza() -> void:
+	var id: String = _por_presentar.pop_front()
+	var p: Dictionary = Piezas.de(id)
+	progreso.ver_pieza(id)
+	_icono_pieza = p["icono"]
+	pieza_titulo.text = "Pieza nueva: " + p["nombre"]
+	pieza_texto.text = p["texto"]
+	pieza_icono.queue_redraw()
+	velo.visible = true
+	ventana_pieza.visible = true
+	ventana_pieza.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
+	Animar.entrar(ventana_pieza)
+	Animar.aparecer(velo)
+
+
+func _al_entendido() -> void:
+	ventana_pieza.visible = false
+	if not _por_presentar.is_empty():
+		_presentar_pieza()
+		return
+	velo.visible = false
 	if modo_taller == "":
 		_comprobar_aviso()
 
@@ -537,6 +584,8 @@ func _cerrar_ventanas() -> void:
 	ventana.visible = false
 	if ventana_aviso != null:
 		ventana_aviso.visible = false
+	if ventana_pieza != null:
+		ventana_pieza.visible = false
 
 
 # ---------------------------------------------------------------- construcción de la interfaz
@@ -681,6 +730,7 @@ func _construir() -> void:
 
 	_construir_resultado()
 	_construir_aviso()
+	_construir_pieza()
 
 
 func _construir_resultado() -> void:
@@ -721,6 +771,32 @@ func _construir_resultado() -> void:
 	var aire := Control.new()
 	aire.custom_minimum_size = Vector2(0, 8)
 	for h in [ventana_titulo, ventana_estrellas, ventana_dato, ventana_detalle, ventana_premio, aire, fila]:
+		caja.add_child(h)
+
+
+func _construir_pieza() -> void:
+	ventana_pieza = _ventana()
+	ventana_pieza.custom_minimum_size = Vector2(600, 0)
+	var caja := VBoxContainer.new()
+	caja.add_theme_constant_override("separation", 14)
+	ventana_pieza.add_child(caja)
+	pieza_icono = Control.new()
+	pieza_icono.custom_minimum_size = Vector2(0, 120)
+	pieza_icono.draw.connect(func():
+		if _icono_pieza != "":
+			var lado := 110.0
+			Iconos.dibujar(pieza_icono, _icono_pieza, Rect2(Vector2((pieza_icono.size.x - lado) / 2, 5), Vector2(lado, lado)), Color(0, 0, 0, 0), TINTA))
+	pieza_titulo = _etiqueta(40, TINTA, true)
+	pieza_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	pieza_titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	pieza_titulo.custom_minimum_size = Vector2(530, 0)
+	pieza_texto = _etiqueta(29, TINTA_SUAVE)
+	pieza_texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	pieza_texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	pieza_texto.custom_minimum_size = Vector2(530, 0)
+	var vale := _boton("¡Entendido!", true, 36)
+	vale.pulsado.connect(_al_entendido)
+	for h in [pieza_icono, pieza_titulo, pieza_texto, vale]:
 		caja.add_child(h)
 
 
@@ -825,6 +901,18 @@ func _demo_si_toca() -> void:
 		return
 	var prefijo: String = args.get("captura", "user://captura")
 	await get_tree().process_frame
+	if args.has("presentar"):
+		_por_presentar = [args["presentar"]]
+		_presentar_pieza()
+		await get_tree().create_timer(0.4).timeout
+		await _capturar(prefijo + "_pieza.png")
+		get_tree().quit()
+		return
+	if args.has("guia"):
+		await get_tree().create_timer(0.9).timeout
+		await _capturar(prefijo + "_guia.png")
+		get_tree().quit()
+		return
 	if args.has("aviso"):
 		# Solo el aviso de juego responsable («descanso» o «limite»), con su captura
 		_comprobar_aviso(args["aviso"])

@@ -18,6 +18,7 @@ const Animar = preload("res://escenas/comun/animar.gd")
 const Fuentes = preload("res://escenas/comun/fuentes.gd")
 const Pestana = preload("res://escenas/comun/pestana.gd")
 const JuegoResponsable = preload("res://nucleo/juego_responsable.gd")
+const Piezas = preload("res://nucleo/piezas.gd")
 const Registro = preload("res://nucleo/registro.gd")
 const Cuerda = preload("res://nucleo/cuerda.gd")
 const BotonPop = preload("res://escenas/comun/boton_pop.gd")
@@ -65,6 +66,7 @@ var texto_espera: Label
 var ventana_ajustes: PanelContainer
 var ventana_apariencia: PanelContainer
 var ventana_responsable: PanelContainer
+var ventana_piezas: PanelContainer
 var texto_tiempo: Label
 var boton_descanso: Control
 var boton_limite: Control
@@ -179,6 +181,7 @@ func _cerrar_ventanas() -> void:
 	ventana_ajustes.visible = false
 	ventana_apariencia.visible = false
 	ventana_responsable.visible = false
+	ventana_piezas.visible = false
 
 
 func _abrir_apariencia() -> void:
@@ -442,6 +445,7 @@ func _construir() -> void:
 	_construir_ajustes()
 	_construir_apariencia()
 	_construir_responsable()
+	_construir_piezas()
 
 
 ## Barra de abajo (DESIGN.md: la pestaña activa se marca con una pastilla marfil y no se eleva).
@@ -531,6 +535,9 @@ func _construir_ajustes() -> void:
 	var b_responsable := _boton("Juego responsable", false, 32)
 	b_responsable.pulsado.connect(_abrir_responsable)
 	caja.add_child(b_responsable)
+	var b_piezas := _boton("Guía de piezas", false, 32)
+	b_piezas.pulsado.connect(_abrir_piezas)
+	caja.add_child(b_piezas)
 	boton_sonido = _boton("Sonido: sí", false, 32)
 	boton_sonido.pulsado.connect(func():
 		progreso.ajustar("sonido", not progreso.ajustes["sonido"])
@@ -546,8 +553,13 @@ func _construir_ajustes() -> void:
 	resumen_prueba.visible = false
 	var cerrar := _boton("Volver al mapa", true, 36)
 	cerrar.pulsado.connect(_cerrar_ventanas)
+	# Sonido y vibración, uno al lado del otro (así cabe todo en la ventana)
+	var fila_sonido := HBoxContainer.new()
+	fila_sonido.add_theme_constant_override("separation", 12)
 	for h in [boton_sonido, boton_vibracion]:
-		caja.add_child(h)
+		h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		fila_sonido.add_child(h)
+	caja.add_child(fila_sonido)
 	var titulo_acc := _etiqueta(34, TINTA, true)
 	titulo_acc.text = "Accesibilidad"
 	caja.add_child(titulo_acc)
@@ -621,6 +633,59 @@ func _construir_responsable() -> void:
 		ventana_responsable.visible = false
 		_abrir_ajustes())
 	caja.add_child(volver)
+
+
+## Ajustes › Guía de piezas: cada pieza con su dibujo, su nombre y qué hace, en una lista que se
+## desliza con el dedo.
+func _construir_piezas() -> void:
+	ventana_piezas = _ventana()
+	var caja := VBoxContainer.new()
+	caja.add_theme_constant_override("separation", 14)
+	ventana_piezas.add_child(caja)
+	var t := _etiqueta(48, TINTA, true)
+	t.text = "Guía de piezas"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caja.add_child(t)
+	var desliza := ScrollContainer.new()
+	desliza.custom_minimum_size = Vector2(580, 820)
+	desliza.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	caja.add_child(desliza)
+	var lista := VBoxContainer.new()
+	lista.add_theme_constant_override("separation", 16)
+	lista.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	desliza.add_child(lista)
+	for p in Piezas.PIEZAS:
+		var fila := HBoxContainer.new()
+		fila.add_theme_constant_override("separation", 14)
+		var icono := Control.new()
+		icono.custom_minimum_size = Vector2(76, 76)
+		var nombre_icono: String = p["icono"]
+		icono.draw.connect(func(): Iconos.dibujar(icono, nombre_icono, Rect2(Vector2(4, 4), Vector2(68, 68)), Color(0, 0, 0, 0), TINTA))
+		fila.add_child(icono)
+		var textos := VBoxContainer.new()
+		textos.add_theme_constant_override("separation", 2)
+		var nombre := _etiqueta(30, TINTA, true)
+		nombre.text = p["nombre"]
+		var texto := _etiqueta(23, TINTA_SUAVE)
+		texto.text = p["texto"]
+		texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		texto.custom_minimum_size = Vector2(470, 0)
+		textos.add_child(nombre)
+		textos.add_child(texto)
+		fila.add_child(textos)
+		lista.add_child(fila)
+	var volver := _boton("Volver a Ajustes", true, 34)
+	volver.pulsado.connect(func():
+		ventana_piezas.visible = false
+		_abrir_ajustes())
+	caja.add_child(volver)
+
+
+func _abrir_piezas() -> void:
+	ventana_ajustes.visible = false
+	velo.visible = true
+	ventana_piezas.visible = true
+	_centrar(ventana_piezas)
 
 
 func _abrir_responsable() -> void:
@@ -838,6 +903,12 @@ func _demo_si_toca() -> void:
 		await get_tree().create_timer(0.3).timeout
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png(prefijo + "_3_ajustes.png")
+	if args.has("piezas"):
+		_cerrar_ventanas()
+		_abrir_piezas()
+		await get_tree().create_timer(0.4).timeout
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_png(prefijo + "_6_piezas.png")
 	if args.has("responsable"):
 		_cerrar_ventanas()
 		_abrir_responsable()

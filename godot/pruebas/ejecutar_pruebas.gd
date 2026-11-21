@@ -12,7 +12,7 @@
 ## Es un ejecutor mínimo sin dependencias. GUT se añadirá cuando haga falta probar escenas.
 extends SceneTree
 
-const SCRIPTS := ["res://nucleo/temas.gd", "res://autoload/tema.gd", "res://nucleo/juego_responsable.gd", "res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
+const SCRIPTS := ["res://nucleo/temas.gd", "res://autoload/tema.gd", "res://nucleo/juego_responsable.gd", "res://nucleo/piezas.gd", "res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
 	"res://escenas/comun/iconos.gd", "res://escenas/comun/fuentes.gd", "res://escenas/comun/pestana.gd", "res://escenas/comun/animar.gd", "res://escenas/comun/confeti.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd",
 	"res://autoload/estado.gd", "res://escenas/taller/tablero_editor.gd", "res://escenas/taller/taller.gd",
@@ -46,6 +46,7 @@ func _init() -> void:
 	pruebas_barrio(sim)
 	pruebas_temas(load("res://nucleo/temas.gd"))
 	pruebas_responsable(load("res://nucleo/juego_responsable.gd"))
+	pruebas_piezas(load("res://nucleo/piezas.gd"), progreso)
 	terminar()
 
 
@@ -331,6 +332,41 @@ func pruebas_responsable(JR: GDScript) -> void:
 	var m = JR.new(ruta)
 	comprobar(m.dias.is_empty() and m.descanso == 0, "un archivo dañado no rompe nada")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
+
+
+## Guía de piezas: cada pieza tiene nombre, texto e icono, se detectan en los niveles y se presentan una vez.
+func pruebas_piezas(Piezas: GDScript, Progreso: GDScript) -> void:
+	var BotonPop: GDScript = load("res://escenas/comun/boton_pop.gd")
+	var incompletas := []
+	for p in Piezas.PIEZAS:
+		if p["nombre"] == "" or p["texto"] == "" or not BotonPop.NOMBRES_ICONO.has(p["icono"]):
+			incompletas.append(p["id"])
+	comprobar(incompletas.is_empty(), "cada pieza de la guía tiene nombre, texto e icono", str(incompletas))
+	var nivel := {"c": [["a", [1, 1], "simple", 0], ["d", [2, 2], "doble", 0]], "mu": [[[0, 0], [1, 1]]], "p": [], "e": [[[5, 5], 4]],
+		"cr": [[[0, 9], [9, 9]]]}
+	comprobar(Piezas.de_nivel(nivel) == ["campana", "muro", "doble", "espiral", "cristal"], "se detectan las piezas de un nivel",
+		str(Piezas.de_nivel(nivel)))
+	comprobar(Piezas.nuevas(nivel, ["espiral"]) == ["doble", "cristal"], "se presentan solo las nuevas (ni la campana ni el muro)",
+		str(Piezas.nuevas(nivel, ["espiral"])))
+	# En toda la campaña, cada pieza que aparece está en la guía
+	var desconocidas := []
+	for k in range(1, 10):
+		var b = leer_json("res://datos/barrio_%d.json" % k)
+		for n in b["niveles"]:
+			for id in Piezas.de_nivel(n["nivel"]):
+				if Piezas.de(id).is_empty() and not (id in desconocidas):
+					desconocidas.append(id)
+	comprobar(desconocidas.is_empty(), "todas las piezas de la campaña están en la guía", str(desconocidas))
+	var ruta := "user://prueba_piezas.json"
+	if FileAccess.file_exists(ruta):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta))
+	var pr = Progreso.new(ruta)
+	pr.ver_pieza("espiral")
+	pr.ver_pieza("espiral")
+	comprobar(Progreso.new(ruta).piezas_vistas == ["espiral"], "las piezas ya presentadas se guardan (una vez)")
+	for r in [ruta, "user://prueba_piezas.anterior.json"]:
+		if FileAccess.file_exists(r):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(r))
 
 
 func terminar() -> void:
