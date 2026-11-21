@@ -27,6 +27,8 @@ const Pastilla = preload("res://escenas/comun/pastilla.gd")
 const FilaAjuste = preload("res://escenas/comun/fila_ajuste.gd")
 const Iconos = preload("res://escenas/comun/iconos.gd")
 const Camino = preload("res://escenas/mapa/camino.gd")
+const Fondo = preload("res://escenas/comun/fondo.gd")
+const Caja = preload("res://escenas/comun/caja.gd")
 
 const ESCENA_PARTIDA := "res://escenas/partida/partida.tscn"
 const ESCENA_TALLER := "res://escenas/taller/taller.tscn"
@@ -37,10 +39,6 @@ var TINTA_SUAVE: Color = Temas.ui("ventana_s")
 var TEXTO_CLARO: Color = Temas.ui("suave")
 var MARFIL: Color = Temas.ui("ventana")
 var VERDE: Color = Temas.ui("prim")
-var LABIO_VERDE: Color = Temas.ui("prim_labio")
-var AMARILLO: Color = Temas.ui("nodo_h")
-var LABIO_AMARILLO: Color = Temas.ui("nodo_h").darkened(0.15)
-var BLOQUEADO: Color = Temas.ui("nodo_c")
 var VELO: Color = Temas.ui("velo")
 var TEXTO: Color = Temas.ui("texto")          # texto sobre la pantalla
 var MARCO: Color = Temas.ui("marco")          # borde y sombra de las ventanas
@@ -66,7 +64,7 @@ var velo: ColorRect
 var ventana_cuerda: PanelContainer
 var texto_espera: Label
 var ventana_ajustes: PanelContainer
-var ventana_apariencia: PanelContainer
+var ventana_apariencia: Control       # pantalla completa (maqueta › Apariencia)
 var ventana_responsable: PanelContainer
 var ventana_piezas: PanelContainer
 var ventana_creditos: PanelContainer
@@ -144,7 +142,7 @@ func _refrescar() -> void:
 	_colocar_nodos()
 	_hud_cuerda()
 	pastilla_estrellas.texto = str(progreso.total())
-	boton_jugar.texto = "Jugar · nivel %d" % int(niveles[_actual]["id"])
+	boton_jugar.texto = Temas.texto_jugar(int(niveles[_actual]["id"]))
 	boton_jugar.queue_redraw()
 
 
@@ -192,9 +190,10 @@ func _cerrar_ventanas() -> void:
 
 func _abrir_apariencia() -> void:
 	ventana_ajustes.visible = false
-	velo.visible = true
+	velo.visible = false
+	_velo_abierto = false
 	ventana_apariencia.visible = true
-	_centrar(ventana_apariencia)
+	Animar.fundido_entrada(ventana_apariencia)
 
 
 ## Cambia de tema y vuelve a construir el mapa con sus colores (con la ventana de Apariencia abierta).
@@ -283,7 +282,7 @@ func _colocar_nodos() -> void:
 		h.queue_free()
 	var rango := _rango_visible()
 	var abierto := _barrio_abierto(_visible)
-	etiqueta_barrio.text = "Barrio %d" % int(barrios[_visible]["barrio"])
+	etiqueta_barrio.text = Temas.texto_barrio(int(barrios[_visible]["barrio"])).to_upper()
 	etiqueta_nombre.text = barrios[_visible]["nombre"]
 	flecha_izq.desactivado = _visible == 0
 	flecha_der.desactivado = _visible == barrios.size() - 1
@@ -312,22 +311,14 @@ func _colocar_nodos() -> void:
 		var es_actual: bool = i == _actual and abierto
 		var lado := 120.0 if es_actual else 96.0
 		var b := _boton(str(id), false, 46 if es_actual else 40)
-		b.circular = true
-		b.custom_minimum_size = Vector2(lado, lado)
-		b.size = Vector2(lado, lado)
+		# Forma, borde, sombra y anillo de cada nodo: los del tema (maqueta › .nodo.h / .a / .c)
+		b.estilo_caja = "nodo_a" if es_actual else ("nodo_h" if hecho else "nodo_c")
+		var hueco: Vector2 = Caja.hueco_sombra(Temas.caja(b.estilo_caja))
+		b.custom_minimum_size = Vector2(lado, lado) + hueco
+		b.size = b.custom_minimum_size
 		b.position = centros[k] - Vector2(lado, lado) / 2
-		if hecho and not es_actual:
-			b.color_fondo = AMARILLO
-			b.color_labio = LABIO_AMARILLO
-		elif es_actual:
-			b.color_fondo = VERDE
-			b.color_labio = LABIO_VERDE
-			b.resaltado = true
+		if es_actual:
 			b.ready.connect(func(): Animar.respirar.call_deferred(b))
-		else:
-			b.color_fondo = BLOQUEADO
-			b.color_labio = BLOQUEADO
-			b.sin_sombra = true
 		var e: int = progreso.de(id)
 		if es_actual:
 			b.nombre_accesible = "Nivel %d, el que toca" % id + (", %d de 3 estrellas" % e if hecho else "")
@@ -362,11 +353,8 @@ func _fuentes() -> void:
 
 func _construir() -> void:
 	_fuentes()
-	var fondo := ColorRect.new()
-	fondo.color = AZUL
-	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(fondo)
-	Animar.luz_de_fondo(fondo)
+	# Fondo del tema: color o degradado y, en algunos, su textura (escenas/comun/fondo.gd)
+	add_child(Fondo.new())
 	var margen := MarginContainer.new()
 	margen.set_anchors_preset(Control.PRESET_FULL_RECT)
 	for lado in ["left", "right"]:
@@ -403,7 +391,8 @@ func _construir() -> void:
 	cinta.add_theme_constant_override("separation", 0)
 	cinta.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	fila_cinta.add_child(cinta)
-	etiqueta_barrio = _etiqueta(24, TEXTO_CLARO)
+	etiqueta_barrio = _etiqueta(22, TEXTO_CLARO)
+	etiqueta_barrio.add_theme_font_override("font", _espaciada(fuente_negrita, 0.08 * 22))
 	cinta.add_child(etiqueta_barrio)
 	etiqueta_nombre = _etiqueta(56, TEXTO, true)
 	cinta.add_child(etiqueta_nombre)
@@ -786,58 +775,98 @@ func _textos_responsable() -> void:
 	boton_limite.valor = JuegoResponsable.texto_tiempo(l * 60) if l > 0 else "no"
 
 
-## Ajustes › Apariencia: los 11 temas en dos columnas. Dominó Pop es gratis; los demás son del
-## Dingclub. Como el Club aún no existe, se pueden usar gratis, y el aviso lo dice tal cual: sin
-## cuentas atrás ni precios de algo que no se puede comprar.
+## Ajustes › Apariencia, como en la maqueta (docs/fase6/temas/index.html): una pantalla entera con
+## volver, el título, la nota y los 11 temas en dos columnas. Cada tema es una tarjeta con una franja de
+## muestra (su pantalla, «Aa» con su letra de títulos, una ficha y una barra de su color principal), su
+## nombre y la etiqueta «Club». El elegido lleva un anillo del color de acento y una marca en la
+## esquina. Dominó Pop es gratis; los demás son del Dingclub. Como el Club aún no existe, se pueden usar
+## gratis, y el aviso lo dice tal cual: sin cuentas atrás ni precios de algo que no se puede comprar.
 func _construir_apariencia() -> void:
-	ventana_apariencia = _ventana()
-	var caja := VBoxContainer.new()
-	caja.add_theme_constant_override("separation", 14)
-	ventana_apariencia.add_child(caja)
-	var t := _etiqueta(48, TINTA, true)
-	t.text = "Apariencia"
+	ventana_apariencia = Control.new()
+	ventana_apariencia.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ventana_apariencia.mouse_filter = Control.MOUSE_FILTER_STOP
+	ventana_apariencia.visible = false
+	add_child(ventana_apariencia)
+	ventana_apariencia.add_child(Fondo.new())
+	var margen := MarginContainer.new()
+	margen.set_anchors_preset(Control.PRESET_FULL_RECT)
+	for lado in ["left", "right"]:
+		margen.add_theme_constant_override("margin_" + lado, 28)
+	margen.add_theme_constant_override("margin_top", 32)
+	margen.add_theme_constant_override("margin_bottom", 24)
+	ventana_apariencia.add_child(margen)
+	var columna := VBoxContainer.new()
+	columna.add_theme_constant_override("separation", 14)
+	margen.add_child(columna)
+	# Cabecera: volver a Ajustes, el título centrado y un contrapeso del mismo ancho
+	var cabeza := HBoxContainer.new()
+	columna.add_child(cabeza)
+	var volver := _boton("", false)
+	volver.icono = "volver"
+	volver.redondo = true
+	volver.nombre_accesible = "Volver a Ajustes"
+	volver.custom_minimum_size = Vector2(84, 84)
+	volver.pulsado.connect(func():
+		ventana_apariencia.visible = false
+		_abrir_ajustes())
+	cabeza.add_child(volver)
+	var t := _etiqueta(44, TEXTO, true)
+	t.text = Temas.texto("apTitulo", "Apariencia")
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	caja.add_child(t)
-	var nota := _etiqueta(24, TINTA_SUAVE)
-	nota.text = "Solo cambia el aspecto: tus niveles y estrellas se quedan."
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cabeza.add_child(t)
+	var contrapeso := Control.new()
+	contrapeso.custom_minimum_size = Vector2(84, 0)
+	cabeza.add_child(contrapeso)
+	var nota := _etiqueta(25, TEXTO_CLARO)
+	nota.text = "Dominó Pop es gratis. Los demás temas serán del Club; mientras tanto, tócalos para usarlos. Tus niveles y estrellas no cambian."
 	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	nota.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	nota.custom_minimum_size = Vector2(560, 0)
-	caja.add_child(nota)
+	columna.add_child(nota)
+	var desliza := ScrollContainer.new()
+	desliza.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	desliza.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	desliza.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	columna.add_child(desliza)
 	var rejilla := GridContainer.new()
 	rejilla.columns = 2
-	rejilla.add_theme_constant_override("h_separation", 12)
-	rejilla.add_theme_constant_override("v_separation", 8)
-	caja.add_child(rejilla)
+	rejilla.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rejilla.add_theme_constant_override("h_separation", 18)
+	rejilla.add_theme_constant_override("v_separation", 18)
+	var aire := MarginContainer.new()       # sitio para el anillo y la marca del elegido
+	aire.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for lado in ["left", "right", "top", "bottom"]:
+		aire.add_theme_constant_override("margin_" + lado, 14)
+	aire.add_child(rejilla)
+	desliza.add_child(aire)
 	for datos in Temas.todos():
 		rejilla.add_child(_muestra_tema(Temas.de(datos["id"])))
 	if Temas.activo.get("club", false):
 		aviso_prueba = _aviso_prueba()
-		caja.add_child(aviso_prueba)
-	var cerrar := _boton("Volver a Ajustes", true, 34)
-	cerrar.pulsado.connect(func():
-		ventana_apariencia.visible = false
-		_abrir_ajustes())
-	caja.add_child(cerrar)
+		columna.add_child(aviso_prueba)
 
 
-## Botón de un tema: una miniatura con su pantalla, su tablero y tres fichas, el nombre y si es
-## gratis o del Club. El tema en uso lleva un anillo y una marca.
+## Tarjeta de un tema (maqueta › .ap): franja de muestra con su pantalla, «Aa», una ficha y una barra
+## del color principal; debajo, el nombre. «Club» en la esquina de los del Club.
 func _muestra_tema(tema: Dictionary) -> Control:
+	var e := Temas.ESCALA
 	var c := Control.new()
-	c.custom_minimum_size = Vector2(284, 88)
+	c.custom_minimum_size = Vector2(0, 176)
+	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	c.mouse_filter = Control.MOUSE_FILTER_STOP
 	c.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	c.focus_mode = Control.FOCUS_ACCESSIBILITY
 	var id: String = tema["id"]
 	var elegido := id == Temas.id_activo()
-	var letra_titulos: Font = Fuentes.de(tema.get("letras", {}))["titulos"]
+	var letras: Dictionary = Fuentes.de(tema.get("letras", {}))
+	var letra_titulos: Font = letras["titulos"]
+	var muestra_pantalla: Array = tema.get("estilo", {}).get("pantalla", {}).get("degradado", [])
 	c.set_meta("pulsada", false)
 	c.set_meta("encima", false)
-	c.gui_input.connect(func(e: InputEvent):
-		if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT:
-			c.set_meta("pulsada", e.pressed)
+	c.gui_input.connect(func(ev: InputEvent):
+		if ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT:
+			c.set_meta("pulsada", ev.pressed)
 			c.queue_redraw()
-			if not e.pressed and Rect2(Vector2.ZERO, c.size).has_point(e.position):
+			if not ev.pressed and Rect2(Vector2.ZERO, c.size).has_point(ev.position):
 				_elegir_tema(id))
 	c.mouse_entered.connect(func():
 		c.set_meta("encima", BotonPop.con_raton())
@@ -849,69 +878,81 @@ func _muestra_tema(tema: Dictionary) -> Control:
 	c.draw.connect(func():
 		var ui: Dictionary = tema["ui"]
 		var tab: Dictionary = tema["tablero"]
-		var caja := StyleBoxFlat.new()
-		caja.bg_color = Color(TINTA, 0.13 if c.get_meta("pulsada") else (0.09 if c.get_meta("encima") else 0.05))
-		caja.set_corner_radius_all(14)
-		caja.border_color = TINTA if elegido else Color(TINTA, 0.18)
-		caja.set_border_width_all(4 if elegido else 2)
-		c.draw_style_box(caja, Rect2(Vector2.ZERO, c.size))
-		# Miniatura: pantalla, tablero y tres fichas de pie (la del medio, cayendo)
-		var mini := Rect2(Vector2(9, 9), Vector2(70, 70))
-		var fondo := StyleBoxFlat.new()
-		fondo.bg_color = ui["pantalla"]
-		fondo.set_corner_radius_all(10)
-		c.draw_style_box(fondo, mini)
-		var tablero := StyleBoxFlat.new()
-		tablero.bg_color = tab["tablero"]
-		tablero.set_corner_radius_all(6)
-		c.draw_style_box(tablero, mini.grow(-9))
-		for k in 3:
-			var ficha := Rect2(mini.position + Vector2(19 + k * 12, 22), Vector2(8, 22))
-			var cuerpo := StyleBoxFlat.new()
-			cuerpo.bg_color = tab["cae"] if k == 1 else tab["ficha"]
-			cuerpo.set_corner_radius_all(3)
-			if tab["borde_ficha"].a > 0.3:
-				cuerpo.border_color = tab["borde_ficha"]
-				cuerpo.set_border_width_all(1)
-			c.draw_style_box(cuerpo, ficha)
-		c.draw_circle(mini.position + Vector2(15, 54), 5, tab["inicio"])
-		c.draw_circle(mini.position + Vector2(55, 54), 5, tab["campana"])
-		var f: Font = letra_titulos         # el nombre, con la letra de títulos de ese tema
-		c.draw_string(f, Vector2(90, 40), tema["nombre"], HORIZONTAL_ALIGNMENT_LEFT, c.size.x - 94, 23, TINTA)
-		var etiqueta := "Gratis · por defecto" if not tema["club"] else "Dingclub"
-		c.draw_string(fuente_texto, Vector2(90, 70), etiqueta, HORIZONTAL_ALIGNMENT_LEFT, c.size.x - 96, 19, TINTA_SUAVE)
+		var tarjeta := Temas.caja("panel")
+		tarjeta["radio"] = maxf(tarjeta["radio"] - 2.0 * e, 0.0) if tarjeta["radio"] >= 0.0 else tarjeta["radio"]
+		var rect := Rect2(Vector2(0, 2.0 * e if c.get_meta("pulsada") else 0.0), c.size)
 		if elegido:
-			# La marca, en la esquina de la miniatura: así no le quita sitio al texto
-			var m := mini.end - Vector2(3, 3)
-			var papel := MARFIL
-			papel.a = 1.0
-			c.draw_circle(m, 14, papel)
-			c.draw_circle(m, 12, TINTA)
-			c.draw_polyline(PackedVector2Array([m + Vector2(-6, 0), m + Vector2(-2, 5), m + Vector2(6, -5)]), papel, 3.0, true))
+			# Anillo de 2 px del color de acento (box-shadow: 0 0 0 2px var(--acento))
+			var aro := StyleBoxFlat.new()
+			aro.draw_center = false
+			aro.border_color = Temas.ui("acento")
+			aro.set_border_width_all(int(round(2.0 * e)))
+			aro.set_corner_radius_all(int(Caja.radio_de(tarjeta, rect) + 2.0 * e))
+			aro.anti_aliasing = true
+			c.draw_style_box(aro, rect.grow(2.0 * e))
+		Caja.dibujar(c, rect, tarjeta, 1.0)
+		if c.get_meta("encima"):
+			Caja.draw_redondeado(c, rect, Color(1, 1, 1, 0.05), Caja.radio_de(tarjeta, rect))
+		# Franja de muestra
+		var vista := Rect2(rect.position + Vector2(5, 5) * e, Vector2(rect.size.x - 10 * e, 38 * e))
+		var radio_vista := maxf(Caja.radio_de(tarjeta, rect) - 3.0 * e, 0.0)
+		var pantalla: Color = Color(muestra_pantalla[muestra_pantalla.size() / 2][1]) if not muestra_pantalla.is_empty() else ui["pantalla"]
+		Caja.draw_redondeado(c, vista, pantalla, radio_vista)
+		var aa_tam := int(1.05 * 16 * e)
+		var base := vista.get_center().y + (letra_titulos.get_ascent(aa_tam) - letra_titulos.get_descent(aa_tam)) / 2
+		c.draw_string(letra_titulos, Vector2(vista.position.x + 8 * e, base), "Aa", HORIZONTAL_ALIGNMENT_LEFT, -1, aa_tam, ui["texto"])
+		# La barra del color principal y, a su izquierda, una ficha de pie
+		var barra := Rect2(Vector2(vista.end.x - 8 * e - 14 * e, vista.get_center().y - 3 * e), Vector2(14, 6) * e)
+		Caja.draw_redondeado(c, barra, ui["prim"], 3 * e)
+		var ficha := Rect2(Vector2(barra.position.x - 7 * e - 9 * e, vista.get_center().y - 8.5 * e), Vector2(9, 17) * e)
+		Caja.draw_redondeado(c, ficha, tab["ficha"], 2 * e)
+		if tab["borde_ficha"].a > 0.0:
+			var borde := StyleBoxFlat.new()
+			borde.draw_center = false
+			borde.border_color = tab["borde_ficha"]
+			borde.set_border_width_all(maxi(1, int(e)))
+			borde.set_corner_radius_all(int(2 * e))
+			c.draw_style_box(borde, ficha.grow(e))
+		for py in [ficha.position.y + 4 * e, ficha.end.y - 4 * e]:
+			c.draw_circle(Vector2(ficha.get_center().x, py), 1.1 * e, tab["pip"])
+		# Nombre (y «Gratis · por defecto» en Dominó Pop)
+		var tinta_tarjeta: Color = tarjeta["texto"] if tarjeta["texto"].a > 0.0 else TEXTO
+		var y := vista.end.y + 5 * e + fuente_negrita.get_ascent(Temas.tam(24))
+		c.draw_string(fuente_negrita, Vector2(rect.position.x + 8 * e, y), tema["nombre"], HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 16 * e, Temas.tam(24), tinta_tarjeta)
+		if not tema["club"]:
+			c.draw_string(fuente_texto, Vector2(rect.position.x + 8 * e, y + 28), "Gratis · por defecto", HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 16 * e, Temas.tam(21), Color(tinta_tarjeta, 0.75))
+		else:
+			# Etiqueta «Club»: abajo a la derecha, blanca sobre negro translúcido
+			var tam_club := 15
+			var ancho := fuente_negrita.get_string_size("Club", HORIZONTAL_ALIGNMENT_LEFT, -1, tam_club).x
+			var tam_etiqueta := Vector2(ancho + 10 * e, tam_club + 6 * e)
+			var etiqueta := Rect2(rect.end - Vector2(7, 8) * e - tam_etiqueta, tam_etiqueta)
+			Caja.draw_redondeado(c, etiqueta, Color(0, 0, 0, 0.62), 4 * e)
+			c.draw_string(fuente_negrita, Vector2(etiqueta.position.x + 5 * e, etiqueta.get_center().y + (fuente_negrita.get_ascent(tam_club) - fuente_negrita.get_descent(tam_club)) / 2), "Club", HORIZONTAL_ALIGNMENT_LEFT, -1, tam_club, Color.WHITE)
+		if elegido:
+			# Marca en la esquina de arriba a la derecha (18 px, del color de acento, con la «v» blanca)
+			var m := Vector2(rect.end.x - 3 * e, rect.position.y + 3 * e)
+			c.draw_circle(m, 9 * e, Temas.ui("acento"))
+			c.draw_polyline(PackedVector2Array([m + Vector2(-3.5, 0.5) * e, m + Vector2(-1, 3) * e, m + Vector2(3.5, -2.5) * e]), Color.WHITE, 1.6 * e, true))
 	return c
 
 
-## Aviso de la prueba: el tema es del Club, que aún no está abierto, así que se puede usar gratis.
+## Aviso de la prueba (maqueta › .prueba): el tema es del Club, que aún no está abierto, así que se puede
+## usar gratis. Una hoja con el estilo de las ventanas, abajo.
 func _aviso_prueba() -> Control:
 	var panel := PanelContainer.new()
-	var s := StyleBoxFlat.new()
-	s.bg_color = Color(TINTA, 0.06)
-	s.set_corner_radius_all(14)
-	s.content_margin_left = 20
-	s.content_margin_right = 20
-	s.content_margin_top = 14
-	s.content_margin_bottom = 14
-	panel.add_theme_stylebox_override("panel", s)
+	panel.set_meta("ventana", true)
+	panel.add_theme_stylebox_override("panel", Temas.stylebox("ventana", Vector4(28, 24, 28, 24)))
 	var caja := VBoxContainer.new()
 	caja.add_theme_constant_override("separation", 10)
 	panel.add_child(caja)
-	var titulo := _etiqueta(30, TINTA, true)
+	var titulo := _etiqueta(32, TINTA, true)
 	titulo.text = "Probando «%s»" % Temas.activo.get("nombre", "")
 	caja.add_child(titulo)
 	var texto := _etiqueta(23, TINTA_SUAVE)
 	texto.text = "Este tema será del Dingclub, que todavía no está abierto. Mientras tanto, úsalo gratis todo lo que quieras."
 	texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	texto.custom_minimum_size = Vector2(540, 0)
+	texto.custom_minimum_size = Vector2(560, 0)
 	caja.add_child(texto)
 	var volver := _boton("Volver a Dominó Pop", false, 28)
 	volver.pulsado.connect(func(): _elegir_tema(Temas.POR_DEFECTO))
@@ -922,19 +963,8 @@ func _aviso_prueba() -> Control:
 func _ventana() -> PanelContainer:
 	var v := PanelContainer.new()
 	v.set_meta("ventana", true)
-	var s := StyleBoxFlat.new()
-	s.bg_color = MARFIL
-	s.set_corner_radius_all(Temas.numero("radio_ventana", 22))
-	s.set_border_width_all(2)
-	s.border_color = MARCO
-	s.shadow_color = MARCO
-	s.shadow_offset = Vector2(0, 4)
-	s.shadow_size = 1
-	s.content_margin_left = 32
-	s.content_margin_right = 32
-	s.content_margin_top = 40
-	s.content_margin_bottom = 32
-	v.add_theme_stylebox_override("panel", s)
+	# La ventana de la maqueta: fondo, borde, radio y sombra del tema
+	v.add_theme_stylebox_override("panel", Temas.stylebox("ventana", Vector4(32, 40, 32, 32)))
 	v.custom_minimum_size = Vector2(640, 0)
 	v.visible = false
 	add_child(v)
@@ -945,9 +975,18 @@ func _etiqueta(tam: int, color: Color, titular := false) -> Label:
 	var l := Label.new()
 	if titular:
 		l.add_theme_font_override("font", fuente_titulos)
+		l.uppercase = Temas.mayus("titulos")        # Mesa y Cine negro: títulos en mayúsculas
 	l.add_theme_font_size_override("font_size", Temas.tam(tam))
 	l.add_theme_color_override("font_color", color)
 	return l
+
+
+## La misma fuente con más espacio entre letras (letter-spacing de la maqueta).
+func _espaciada(f: Font, px: float) -> Font:
+	var v := FontVariation.new()
+	v.base_font = f
+	v.spacing_glyph = int(round(px))
+	return v
 
 
 func _boton(texto: String, principal: bool, tam := 36) -> Control:

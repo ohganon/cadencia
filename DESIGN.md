@@ -205,7 +205,9 @@ Depth is a small cartoon offset: **a solid ink shadow 3 px straight down** under
   - green for the primary action;
   - ivory for everything else.
 
-  On press the button moves down 3 px and its lip narrows, over 140 ms with `cubic-bezier(.22,1,.36,1)` (no spring overshoot). Disabled is grey-blue and does not move: the button's own colour loses its saturation and blends 40 % into what is behind it, the shadow goes and the text dims but stays legible. With a mouse (web and desktop) the button lightens slightly on hover and shows a hand cursor; on touch screens there is no hover. A theme with transparent secondary buttons and a solid shadow (Risografía) paints the body in the colour behind it, so the offset shadow never covers the label.
+  On press the button moves down 3 px and its lip narrows, over 140 ms with `cubic-bezier(.22,1,.36,1)` (no spring overshoot). Disabled is grey-blue and does not move: background #B7C4DF, lip #97A7C8 and text #43557F, keeping its border and shadow (`docs/fase6/tablero/index.html`). With a mouse (web and desktop) it brightens by 4 % on hover and shows a hand cursor; on touch screens there is no hover.
+
+  The other ten themes follow `docs/fase6/temas/index.html` exactly: every button lowers by 2 px when pressed (its shadow moves with it) and brightens by 5 % on hover. A disabled button is the same button at 60 % opacity, composed like CSS opacity, so its shadow never shows through.
 - **Setting row** (Ajustes, Juego responsable). Rows are grouped in a card with a very soft ink tint and 2 px hairlines between rows. Each row is at least 76 px tall and the whole row is the target. There are three kinds:
   - switch: name on the left, a 76 × 44 sliding switch on the right (track in the theme's primary colour when on, with a check inside the knob, so the state never depends on colour alone);
   - value: name, current value in the soft ink and a chevron; tapping moves to the next value and the value lights up briefly;
@@ -250,7 +252,24 @@ Every theme is one data file holding the same keys:
 - **Canvas palette (`L`):** board, dot, tile, pip, falling, fallen, outline, shadow, bell, clapper, halo, start, count marker.
 - **Copy overrides:** a small set, such as the primary button, the success title, the failure line and the no-cord title.
 
-Components read only these keys, so adding a theme never touches layout. Textures are allowed per theme only as screen background layers:
+Components read only these keys, so adding a theme never touches layout.
+
+**How the game copies the mockup.** `prototipos/generador/temas.py` also exports each theme's `estilo` from the mockup CSS:
+- every box (primary and secondary button, the outlined secondary inside windows, the three map node states, window, objective card, HUD chip, board) with its background, border, radius and full `box-shadow` list: hard offset shadows, soft shadows, rings and the inset lip;
+- uppercase and letter spacing for titles and buttons;
+- the screen gradient and texture;
+- the hover brightness, the press distance and the disabled look.
+
+The game multiplies every mockup pixel by `Temas.ESCALA` = 2.2, because its type is about 2.2–2.4× the mockup's. Borders, shadows and radii therefore keep the catalogue's proportions.
+
+The screens are drawn this way:
+- shared painter: `escenas/comun/caja.gd`;
+- background: `escenas/comun/fondo.gd`;
+- Ajustes › Apariencia: a full screen of theme cards, as in the mockup.
+
+There are **no background animations** in the agreed designs: backgrounds are flat colours, gradients or fixed textures.
+
+Textures are allowed per theme only as screen background layers:
 
 - Gráfico: grid paper.
 - Risografía: halftone.

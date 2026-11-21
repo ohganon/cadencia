@@ -10,6 +10,7 @@ extends Control
 const Taller = preload("res://nucleo/taller.gd")
 const Temas = preload("res://nucleo/temas.gd")
 const Animar = preload("res://escenas/comun/animar.gd")
+const Fondo = preload("res://escenas/comun/fondo.gd")
 const Fuentes = preload("res://escenas/comun/fuentes.gd")
 const Progreso = preload("res://nucleo/progreso.gd")
 const TableroEditor = preload("res://escenas/taller/tablero_editor.gd")
@@ -214,11 +215,8 @@ func _fuentes() -> void:
 
 func _construir() -> void:
 	_fuentes()
-	var fondo := ColorRect.new()
-	fondo.color = AZUL
-	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(fondo)
-	Animar.luz_de_fondo(fondo)
+	# Fondo del tema: color o degradado y, en algunos, su textura (escenas/comun/fondo.gd)
+	add_child(Fondo.new())
 	var margen := MarginContainer.new()
 	margen.set_anchors_preset(Control.PRESET_FULL_RECT)
 	for lado in ["left", "right"]:
@@ -305,19 +303,7 @@ func _construir() -> void:
 func _construir_codigos() -> void:
 	ventana = PanelContainer.new()
 	ventana.set_meta("ventana", true)
-	var s := StyleBoxFlat.new()
-	s.bg_color = MARFIL
-	s.set_corner_radius_all(Temas.numero("radio_ventana", 22))
-	s.set_border_width_all(2)
-	s.border_color = MARCO
-	s.shadow_color = MARCO
-	s.shadow_offset = Vector2(0, 4)
-	s.shadow_size = 1
-	s.content_margin_left = 32
-	s.content_margin_right = 32
-	s.content_margin_top = 36
-	s.content_margin_bottom = 32
-	ventana.add_theme_stylebox_override("panel", s)
+	ventana.add_theme_stylebox_override("panel", Temas.stylebox("ventana", Vector4(32, 36, 32, 32)))
 	ventana.custom_minimum_size = Vector2(640, 0)
 	ventana.visible = false
 	add_child(ventana)
@@ -378,6 +364,7 @@ func _etiqueta(tam: int, color: Color, titular := false) -> Label:
 	var l := Label.new()
 	if titular:
 		l.add_theme_font_override("font", fuente_titulos)
+		l.uppercase = Temas.mayus("titulos")        # Mesa y Cine negro: títulos en mayúsculas
 	l.add_theme_font_size_override("font_size", Temas.tam(tam))
 	l.add_theme_color_override("font_color", color)
 	return l

@@ -18,6 +18,7 @@ extends Control
 const Partida = preload("res://nucleo/partida.gd")
 const Temas = preload("res://nucleo/temas.gd")
 const Animar = preload("res://escenas/comun/animar.gd")
+const Fondo = preload("res://escenas/comun/fondo.gd")
 const Confeti = preload("res://escenas/comun/confeti.gd")
 const Piezas = preload("res://nucleo/piezas.gd")
 const Fuentes = preload("res://escenas/comun/fuentes.gd")
@@ -106,6 +107,7 @@ var aviso_parar: Control
 var ventana_titulo: Label
 var ventana_estrellas: Control
 var ventana_dato: Label
+var ventana_cifra: Label             # la cifra grande del resultado (maqueta › .cifra)
 var ventana_detalle: Label
 var ventana_premio: HBoxContainer
 var ventana_premio_texto: Label
@@ -206,7 +208,6 @@ func aplicar_accesibilidad() -> void:
 	tablero.aplicar_accesibilidad(progreso.ajustes)
 	for clave in ["normal_font_size", "bold_font_size"]:
 		objetivo.add_theme_font_size_override(clave, Temas.tam(29))
-	ventana_dato.add_theme_font_size_override("font_size", Temas.tam(36))
 	ventana_detalle.add_theme_font_size_override("font_size", Temas.tam(27))
 	ventana_premio_texto.add_theme_font_size_override("font_size", Temas.tam(28))
 
@@ -345,7 +346,10 @@ func _al_terminar_caida() -> void:
 		ventana_titulo.text = Temas.texto("superado", "¡Nivel superado!")
 		ventana_estrellas.maximo = Partida.maximo_estrellas(n["nivel"])
 		ventana_estrellas.conseguidas = e
-		ventana_dato.text = "%d fichas" % int(r["fichas_usadas"])
+		# Como en la maqueta: la cifra grande con la letra de títulos y, debajo, «fichas»
+		_modo_cifra(true)
+		ventana_cifra.text = str(int(r["fichas_usadas"]))
+		ventana_dato.text = "fichas"
 		var de_que := "del día" if modo_diario else "del nivel"
 		if int(r["fichas_usadas"]) <= marca:
 			ventana_detalle.text = "Sin pasarte de la marca %s (%d)." % [de_que, marca]
@@ -387,18 +391,20 @@ func _al_terminar_caida() -> void:
 			_tipo_boton(boton_siguiente, "Copiar resultado", true)
 			boton_siguiente.visible = true
 		else:
-			_tipo_boton(boton_siguiente, "Siguiente", true)
+			_tipo_boton(boton_siguiente, Temas.texto("siguiente", "Siguiente"), true)
 			boton_siguiente.visible = indice < niveles.size() - 1
-		_tipo_boton(boton_repetir, "Repetir", false)
+		_tipo_boton(boton_repetir, Temas.texto("repetir", "Repetir"), false)
 		velo.visible = true
 		ventana.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 	else:
 		_fallos_nivel += 1
 		# Tras 5 fallos se destaca la cámara lenta, sin cambiar el nivel (P-05)
 		boton_lento.resaltado = _fallos_nivel >= 5 and tablero.velocidad == 1.0
-		ventana_titulo.text = "¡Casi!"
+		var casi := _casi()
+		ventana_titulo.text = casi[0]
+		_modo_cifra(false)
 		ventana_dato.text = _explicacion(r)
-		ventana_detalle.text = "Prueba otra vez, es gratis."
+		ventana_detalle.text = casi[1]
 		ventana_premio.visible = false
 		boton_siguiente.visible = false
 		_tipo_boton(boton_repetir, "Corregir", true)
@@ -479,6 +485,7 @@ func _publicar() -> void:
 	_copiar(codigo)
 	modo_taller = "publicado"
 	ventana_titulo.text = "¡Código copiado!"
+	_modo_cifra(false)
 	ventana_dato.text = "%d caracteres" % codigo.length()
 	ventana_detalle.text = "Pégalo en un mensaje para retar a quien quieras. También lo tienes en Taller › Códigos."
 	_tipo_boton(boton_siguiente, "Volver al Taller", true)
@@ -604,11 +611,8 @@ func _fuentes() -> void:
 
 func _construir() -> void:
 	_fuentes()
-	var fondo := ColorRect.new()
-	fondo.color = AZUL
-	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(fondo)
-	Animar.luz_de_fondo(fondo)
+	# Fondo del tema: color o degradado y, en algunos, su textura (escenas/comun/fondo.gd)
+	add_child(Fondo.new())
 
 	var margen := MarginContainer.new()
 	margen.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -648,7 +652,8 @@ func _construir() -> void:
 
 	# Tarjeta del objetivo
 	var tarjeta := PanelContainer.new()
-	tarjeta.add_theme_stylebox_override("panel", _caja(MARFIL, 14, 2, Vector4(24, 16, 24, 16)))
+	# La tarjeta del objetivo es el «panel» de la maqueta (en Mesa o Nocturno, translúcido y oscuro)
+	tarjeta.add_theme_stylebox_override("panel", Temas.stylebox("panel", Vector4(24, 16, 24, 16)))
 	columna.add_child(tarjeta)
 	var fila_obj := HBoxContainer.new()
 	fila_obj.add_theme_constant_override("separation", 20)
@@ -664,7 +669,7 @@ func _construir() -> void:
 	objetivo.add_theme_font_override("bold_font", fuente_negrita)
 	objetivo.add_theme_font_size_override("normal_font_size", Temas.tam(29))
 	objetivo.add_theme_font_size_override("bold_font_size", Temas.tam(29))
-	objetivo.add_theme_color_override("default_color", TINTA)
+	objetivo.add_theme_color_override("default_color", _texto_panel())
 	objetivo.add_theme_constant_override("line_separation", 4)
 	objetivo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fila_obj.add_child(objetivo)
@@ -682,8 +687,6 @@ func _construir() -> void:
 	tablero.suena.connect(_al_sonar_campana)
 	zona.add_child(tablero)
 	boton_lento = _boton("Lento", false, 28)
-	boton_lento.color_fondo = MARFIL
-	boton_lento.color_labio = MARFIL.darkened(0.12)
 	boton_lento.icono = "lento"
 	boton_lento.custom_minimum_size = Vector2(0, 76)
 	boton_lento.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 16)
@@ -743,6 +746,9 @@ func _construir_resultado() -> void:
 	ventana_titulo = _etiqueta(54, TINTA, true)
 	ventana_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ventana_estrellas = Estrellas.new()
+	ventana_cifra = _etiqueta(96, TINTA, true)
+	ventana_cifra.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ventana_cifra.visible = false
 	ventana_dato = _etiqueta(36, TINTA)
 	ventana_dato.add_theme_font_override("font", fuente_negrita)
 	ventana_dato.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -760,17 +766,17 @@ func _construir_resultado() -> void:
 	ventana_premio.add_child(ventana_premio_texto)
 	var fila := HBoxContainer.new()
 	fila.add_theme_constant_override("separation", 20)
-	boton_repetir = _boton("Repetir", false, 34)
+	boton_repetir = _boton(Temas.texto("repetir", "Repetir"), false, 34)
 	boton_repetir.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	boton_repetir.pulsado.connect(_al_repetir)
-	boton_siguiente = _boton("Siguiente", true, 38)
+	boton_siguiente = _boton(Temas.texto("siguiente", "Siguiente"), true, 38)
 	boton_siguiente.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	boton_siguiente.pulsado.connect(_al_siguiente)
 	fila.add_child(boton_repetir)
 	fila.add_child(boton_siguiente)
 	var aire := Control.new()
 	aire.custom_minimum_size = Vector2(0, 8)
-	for h in [ventana_titulo, ventana_estrellas, ventana_dato, ventana_detalle, ventana_premio, aire, fila]:
+	for h in [ventana_titulo, ventana_estrellas, ventana_cifra, ventana_dato, ventana_detalle, ventana_premio, aire, fila]:
 		caja.add_child(h)
 
 
@@ -839,11 +845,7 @@ func _caja(color: Color, radio: int, borde: int, margenes := Vector4.ZERO) -> St
 func _ventana() -> PanelContainer:
 	var v := PanelContainer.new()
 	v.set_meta("ventana", true)
-	var s := _caja(MARFIL, Temas.numero("radio_ventana", 22), 2, Vector4(32, 40, 32, 32))
-	s.shadow_color = MARCO
-	s.shadow_offset = Vector2(0, 4)
-	s.shadow_size = 1
-	v.add_theme_stylebox_override("panel", s)
+	v.add_theme_stylebox_override("panel", Temas.stylebox("ventana", Vector4(32, 40, 32, 32)))
 	v.set_anchors_preset(Control.PRESET_CENTER)
 	v.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	v.grow_vertical = Control.GROW_DIRECTION_BOTH
@@ -852,10 +854,36 @@ func _ventana() -> PanelContainer:
 	return v
 
 
+## Color del texto sobre la tarjeta del objetivo (el del panel del tema; con alto contraste, la tinta).
+## Título y frase del fallo con el tono del tema (maqueta › casi): «¡Casi! Prueba otra vez, es gratis.»
+## se parte en «¡Casi!» y «Prueba otra vez, es gratis.».
+func _casi() -> Array:
+	var t := Temas.texto("casi", "¡Casi! Prueba otra vez, es gratis.")
+	for corte in ["! ", ". ", ": "]:
+		var k := t.find(corte)
+		if k > 0:
+			return [t.substr(0, k + 1).trim_suffix("."), t.substr(k + 2)]
+	return [t, ""]
+
+
+## Resultado con cifra grande (superado) o con una frase en negrita (fallo, código copiado).
+func _modo_cifra(cifra: bool) -> void:
+	ventana_cifra.visible = cifra
+	ventana_dato.add_theme_font_override("font", fuente_texto if cifra else fuente_negrita)
+	ventana_dato.add_theme_font_size_override("font_size", Temas.tam(27 if cifra else 36))
+	ventana_dato.add_theme_color_override("font_color", TINTA_SUAVE if cifra else TINTA)
+
+
+func _texto_panel() -> Color:
+	var c: Color = Temas.caja("panel")["texto"]
+	return c if c.a > 0.0 and not Temas.alto_contraste else TINTA
+
+
 func _etiqueta(tam: int, color: Color, titular := false) -> Label:
 	var l := Label.new()
 	if titular:
 		l.add_theme_font_override("font", fuente_titulos)
+		l.uppercase = Temas.mayus("titulos")        # Mesa y Cine negro: títulos en mayúsculas
 	l.add_theme_font_size_override("font_size", Temas.tam(tam))
 	l.add_theme_color_override("font_color", color)
 	return l

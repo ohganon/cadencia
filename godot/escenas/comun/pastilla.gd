@@ -4,6 +4,7 @@ extends Control
 
 const Iconos = preload("res://escenas/comun/iconos.gd")
 const Temas = preload("res://nucleo/temas.gd")
+const Caja = preload("res://escenas/comun/caja.gd")
 const Animar = preload("res://escenas/comun/animar.gd")
 
 # Colores del tema activo (nucleo/temas.gd)
@@ -64,18 +65,26 @@ func _get_minimum_size() -> Vector2:
 
 
 func _draw() -> void:
-	var s := StyleBoxFlat.new()
-	s.bg_color = FONDO
-	s.set_corner_radius_all(999)
-	s.anti_aliasing = true
-	draw_style_box(s, Rect2(Vector2.ZERO, size))
+	# La «chip» de la maqueta: fondo, borde y radio del tema
+	var caja := Temas.caja("chip")
+	var texto_chip: Color = caja["texto"] if caja["texto"].a > 0.0 and not Temas.alto_contraste else TEXTO
+	Caja.dibujar(self, Rect2(Vector2.ZERO, size), caja)
 	var c := Vector2(8 + 24, size.y / 2)
-	draw_circle(c, 24, color_icono)
-	Iconos.dibujar(self, icono, Rect2(c - Vector2(15, 15), Vector2(30, 30)), Color(0, 0, 0, 0), Temas.tinta_sobre(color_icono))
+	if Temas.id_activo() == "pop" or Temas.alto_contraste:
+		# Dominó Pop (tablero completo): el icono dentro de un círculo de color
+		draw_circle(c, 24, color_icono)
+		Iconos.dibujar(self, icono, Rect2(c - Vector2(15, 15), Vector2(30, 30)), Color(0, 0, 0, 0), Temas.tinta_sobre(color_icono))
+	else:
+		# Resto de temas: el icono suelto, del color del texto (la estrella, del color de las estrellas)
+		# (la estrella de la maqueta no lleva contorno: relleno y contorno del mismo color)
+		if icono == "estrella":
+			Iconos.dibujar(self, icono, Rect2(c - Vector2(19, 19), Vector2(38, 38)), color_icono, color_icono)
+		else:
+			Iconos.dibujar(self, icono, Rect2(c - Vector2(19, 19), Vector2(38, 38)), Color(0, 0, 0, 0), texto_chip)
 	var f := _fuente()
 	var base := size.y / 2 + (f.get_ascent(_tam()) - f.get_descent(_tam())) / 2
 	var x := c.x + 24 + 12
-	draw_string(f, Vector2(x, base), texto, HORIZONTAL_ALIGNMENT_LEFT, -1, _tam(), TEXTO)
+	draw_string(f, Vector2(x, base), texto, HORIZONTAL_ALIGNMENT_LEFT, -1, _tam(), texto_chip)
 	if subtexto != "":
 		x += f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, _tam()).x + 8
-		draw_string(f, Vector2(x, base), subtexto, HORIZONTAL_ALIGNMENT_LEFT, -1, int(_tam() * 0.75), Color(TEXTO, 0.85))
+		draw_string(f, Vector2(x, base), subtexto, HORIZONTAL_ALIGNMENT_LEFT, -1, int(_tam() * 0.75), Color(texto_chip, 0.85))

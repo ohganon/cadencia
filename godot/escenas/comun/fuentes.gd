@@ -17,7 +17,14 @@ static var _archivos := {}       # nombre de archivo -> FontFile (se cargan una 
 
 ## Fuentes del tema activo.
 static func del_tema() -> Dictionary:
-	return de(Temas.activo.get("letras", POR_DEFECTO) if not Temas.activo.is_empty() else POR_DEFECTO)
+	var r := de(Temas.activo.get("letras", POR_DEFECTO) if not Temas.activo.is_empty() else POR_DEFECTO)
+	# Espaciado entre letras de la maqueta (letter-spacing en em), en px para el tamaño habitual de
+	# cada uso: títulos unos 44 px y botones unos 34 px
+	for par in [["titulos", 44.0], ["botones", 34.0]]:
+		var em := Temas.espaciado(par[0])
+		if em != 0.0:
+			(r[par[0]] as FontVariation).spacing_glyph = int(round(em * par[1]))
+	return r
 
 
 ## Fuentes de unas letras concretas: {"titulos", "botones", "texto", "negrita"} -> Font.

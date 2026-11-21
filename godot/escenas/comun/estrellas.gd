@@ -61,7 +61,9 @@ func _draw() -> void:
 		if k < conseguidas and p > 0.0:
 			# Sale con un pequeño rebote: crece un poco más de la cuenta y vuelve a su tamaño
 			var s := _rebote(p)
-			Iconos.dibujar(self, "estrella", Rect2(caja.get_center() - caja.size * s / 2.0, caja.size * s))
+			# Solo Dominó Pop perfila las estrellas con tinta (maqueta › --estrella-borde)
+			var perfil := Color(0, 0, 0, 0) if Temas.id_activo() == "pop" or Temas.alto_contraste else Iconos.estrella
+			Iconos.dibujar(self, "estrella", Rect2(caja.get_center() - caja.size * s / 2.0, caja.size * s), Color(0, 0, 0, 0), perfil)
 		x += l + HUECO
 
 

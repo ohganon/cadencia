@@ -47,29 +47,6 @@ static func latido(c: Control, cuanto := 1.12) -> void:
 	t.tween_property(c, "scale", Vector2.ONE, 0.22)
 
 
-## Luz suave sobre el fondo de una pantalla: un poco más clara arriba y más oscura abajo, para dar
-## profundidad sin perder la calma del color plano. Con alto contraste, el fondo se queda plano.
-static func luz_de_fondo(fondo: Control) -> void:
-	if Temas.alto_contraste:
-		return
-	var g := Gradient.new()
-	g.set_color(0, Color(1, 1, 1, 0.09))
-	g.set_color(1, Color(0, 0, 0, 0.10))
-	g.add_point(0.45, Color(1, 1, 1, 0.0))
-	var tex := GradientTexture2D.new()
-	tex.gradient = g
-	tex.fill_from = Vector2(0.5, 0.0)
-	tex.fill_to = Vector2(0.5, 1.0)
-	tex.width = 8
-	tex.height = 256
-	var capa := TextureRect.new()
-	capa.texture = tex
-	capa.stretch_mode = TextureRect.STRETCH_SCALE
-	capa.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	capa.set_anchors_preset(Control.PRESET_FULL_RECT)
-	fondo.add_child(capa)
-
-
 ## El nodo del nivel que toca «respira» despacio para que se vea dónde seguir.
 static func respirar(c: Control) -> void:
 	if Temas.reducir_movimiento or not c.is_inside_tree():

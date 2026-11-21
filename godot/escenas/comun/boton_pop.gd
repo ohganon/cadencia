@@ -13,15 +13,7 @@ const Iconos = preload("res://escenas/comun/iconos.gd")
 const Temas = preload("res://nucleo/temas.gd")
 const Animar = preload("res://escenas/comun/animar.gd")
 
-# Colores y forma del tema activo (nucleo/temas.gd)
-var TINTA: Color = Temas.ui("marco")
-var VERDE: Color = Temas.ui("prim")
-var LABIO_VERDE: Color = Temas.ui("prim_labio")
-var MARFIL: Color = Temas.ui("sec")
-var LABIO_MARFIL: Color = Temas.ui("sec_labio")
-var RADIO: int = Temas.numero("radio_boton", 16)
-var SOMBRA_SOLIDA: bool = Temas.sombra_solida()
-const SOMBRA := 3.0
+const Caja = preload("res://escenas/comun/caja.gd")
 const MANTENER := 0.6
 
 @export var texto := "":
@@ -54,6 +46,8 @@ var color_fondo := Color(0, 0, 0, 0)
 var color_labio := Color(0, 0, 0, 0)
 var fuente: Font
 var sin_sombra := false      # los nodos cerrados del mapa no tienen sombra (DESIGN.md)
+## Caja de la maqueta que usa en vez de la de botón: "nodo_h", "nodo_a" o "nodo_c" (nodos del mapa)
+var estilo_caja := ""
 var resaltado := false:
 	set(v):
 		resaltado = v
@@ -90,7 +84,7 @@ func _get_minimum_size() -> Vector2:
 	var f := _fuente()
 	var ancho := 0.0
 	if texto != "":
-		ancho = f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, _tf()).x + 48
+		ancho = f.get_string_size(_texto_visible(), HORIZONTAL_ALIGNMENT_LEFT, -1, _tf()).x + 48
 	if icono != "":
 		ancho += 52
 	if texto == "":
@@ -182,91 +176,111 @@ func _dentro_de_ventana() -> bool:
 
 
 func _draw() -> void:
-	var fondo := VERDE if principal else MARFIL
-	var labio := LABIO_VERDE if principal else LABIO_MARFIL
-	var color_texto: Color = Temas.ui("prim_t") if principal else Temas.ui("sec_t")
-	if color_fondo.a > 0:
-		fondo = color_fondo
-		labio = color_labio
-		color_texto = Temas.tinta_sobre(fondo)
-	if fondo.a < 0.5 and _dentro_de_ventana():
-		color_texto = Temas.ui("ventana_t")
-	# Lo que hay detrás del botón: la ventana o la pantalla
+	var c := _caja_del_boton()
+	var texto_color: Color = c["texto"]
+	# Lo que el tema dice para este momento (maqueta): brillo con el ratón encima, gris o 60 % apagado
+	var opacidad := 1.0
+	var apagado: Dictionary = Temas.estilo("desactivado", {})
+	if desactivado:
+		if apagado.has("fondo") and not Temas.alto_contraste:
+			c["fondo"] = Color(apagado["fondo"])
+			for s in c["sombras"]:
+				if s["dentro"]:
+					s["color"] = Color(apagado["labio"])
+			texto_color = Color(apagado["texto"])
+		else:
+			opacidad = float(apagado.get("opacidad", 0.6))
+	elif _encima and not _hundido:
+		var brillo := float(Temas.estilo("brillo", 1.05))
+		c["fondo"] = _brillar(c["fondo"], brillo)
+		c["borde_color"] = _brillar(c["borde_color"], brillo)
+		texto_color = _brillar(texto_color, brillo)
+	if sin_sombra:
+		c["sombras"] = c["sombras"].filter(func(s): return s["dentro"])
+	# El hueco del botón deja sitio a su sombra dura (abajo o en diagonal)
+	var hueco := Caja.hueco_sombra(c)
+	var cuerpo := Rect2(Vector2.ZERO, size - hueco)
+	# Al pulsar: baja 2 px (maqueta); en Dominó Pop baja 3 px y la sombra se recoge, con el labio a la mitad
+	var h := 0.0 if desactivado else (Animar.suave(_h) if _hundido else 1.0 - Animar.suave(1.0 - _h))
+	var baja := float(Temas.estilo("pulsar", 2)) * Temas.ESCALA * h
+	var recoge := int(Temas.estilo("pulsar", 2)) == 3
+	if recoge:
+		cuerpo.position.y += minf(baja, hueco.y)
+		for s in c["sombras"]:
+			if s["dentro"]:
+				s["pos"] = s["pos"] * (1.0 - 0.5 * h)
+			elif s["desenfoque"] <= 0.0:
+				s["pos"] = s["pos"] * (1.0 - h)
+	else:
+		cuerpo.position.y += baja
 	var detras: Color = Temas.ui("ventana") if _dentro_de_ventana() else Temas.ui("pantalla")
 	detras.a = 1.0
-	var borde := TINTA if fondo.a >= 0.5 else color_texto
-	var sombra := SOMBRA if SOMBRA_SOLIDA else 0.0
-	if fondo.a < 0.5 and sombra > 0:
-		# Sin fondo pero con sombra sólida (Risografía): el cuerpo se pinta del color de detrás para
-		# que la sombra quede debajo, desplazada, y no tape el texto
-		fondo = detras
-		labio = detras
-		borde = color_texto
-	if desactivado:
-		# Apagado (DESIGN.md › Pressable button): el mismo botón sin color, fundido con lo de detrás,
-		# sin sombra y con el texto apagado pero legible. No se mueve.
-		if fondo.a >= 0.5:
-			var gris := Color.from_hsv(fondo.h, fondo.s * 0.2, fondo.v)
-			fondo = gris.lerp(detras, 0.4)
-			labio = fondo
-		color_texto = color_texto.lerp(fondo if fondo.a >= 0.5 else detras, 0.5)
-		borde = borde.lerp(fondo if fondo.a >= 0.5 else detras, 0.55)
-		sombra = 0.0
-	elif _encima and not _hundido:
-		# Con ratón: un poco más claro al pasar por encima (los temas oscuros, un poco más luminoso)
-		if fondo.a >= 0.5:
-			fondo = fondo.lightened(0.08) if fondo.get_luminance() < 0.85 else fondo.darkened(0.04)
-		else:
-			fondo = Color(color_texto, 0.08)
-	# Temas planos: sin sombra sólida ni labio; al pulsar, el fondo se oscurece un poco
-	if _hundido and not SOMBRA_SOLIDA:
-		fondo = fondo.darkened(0.12) if fondo.a >= 0.5 else Color(color_texto, 0.12)
-	if not SOMBRA_SOLIDA:
-		labio = fondo
-	var h := Animar.suave(_h) if _hundido else 1.0 - Animar.suave(1.0 - _h)
-	var baja := sombra * h
-	var cuerpo := Rect2(Vector2(0, baja), size - Vector2(0, sombra))
-	var mitad := int(minf(cuerpo.size.x, cuerpo.size.y) / 2)
-	var radio := mitad if circular else mini(RADIO, mitad)
-	if h < 1.0 and not sin_sombra and sombra > 0:
-		draw_style_box(_caja(TINTA, radio), Rect2(Vector2(0, sombra), cuerpo.size))
-	var dentro := cuerpo.grow(-2)
-	var alto_labio := lerpf(4.0, 2.0, h) if SOMBRA_SOLIDA else 0.0
-	if fondo.a >= 0.5:
-		draw_style_box(_caja(borde, radio), cuerpo)                     # borde de 2 px
-		draw_style_box(_caja(labio, radio - 2), dentro)                  # labio
-		draw_style_box(_caja(fondo, radio - 2), Rect2(dentro.position, dentro.size - Vector2(0, alto_labio)))
-	else:
-		# Sin fondo (o casi): solo el contorno, con lo que haya detrás a la vista
-		var s := _caja(fondo, radio)
-		s.border_color = borde
-		s.set_border_width_all(2)
-		draw_style_box(s, cuerpo)
+	Caja.dibujar(self, cuerpo, c, opacidad, detras)
+	if opacidad < 1.0:
+		texto_color = detras.lerp(Color(texto_color, 1.0), opacidad * texto_color.a)
+		opacidad = 1.0
+	var radio := Caja.radio_de(c, cuerpo)
 	if resaltado:
-		draw_style_box(_anillo(radio + 4), cuerpo.grow(5))
+		draw_style_box(_anillo(int(radio) + 4), cuerpo.grow(5))
 
-	var centro := Rect2(dentro.position, dentro.size - Vector2(0, alto_labio))
+	# Contenido: centrado en la cara del botón (sin el labio)
+	var labio := 0.0
+	for s in c["sombras"]:
+		if s["dentro"] and s["desenfoque"] <= 0.0:
+			labio = maxf(labio, -s["pos"].y)
+	var centro := Rect2(cuerpo.position + Vector2(c["borde"], c["borde"]), cuerpo.size - Vector2(c["borde"], c["borde"]) * 2 - Vector2(0, labio))
+	texto_color.a *= opacidad
 	var f := _fuente()
-	var ancho_texto := f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, _tf()).x if texto != "" else 0.0
+	var visible := _texto_visible()
+	var ancho_texto := f.get_string_size(visible, HORIZONTAL_ALIGNMENT_LEFT, -1, _tf()).x if visible != "" else 0.0
 	var lado_icono := minf(centro.size.y * 0.5, 48.0)
-	var hueco := 12.0 if texto != "" and icono != "" else 0.0
-	var total := ancho_texto + (lado_icono if icono != "" else 0.0) + hueco
+	var separacion := 12.0 if visible != "" and icono != "" else 0.0
+	var total := ancho_texto + (lado_icono if icono != "" else 0.0) + separacion
 	var x := centro.position.x + (centro.size.x - total) / 2
 	if icono != "":
 		var r := Rect2(Vector2(x, centro.get_center().y - lado_icono / 2), Vector2(lado_icono, lado_icono))
-		Iconos.dibujar(self, icono, r, Color(0, 0, 0, 0), color_texto)
-		x += lado_icono + hueco
-	if texto != "":
+		Iconos.dibujar(self, icono, r, Color(0, 0, 0, 0), texto_color)
+		x += lado_icono + separacion
+	if visible != "":
 		var base := centro.get_center().y + (f.get_ascent(_tf()) - f.get_descent(_tf())) / 2
-		draw_string(f, Vector2(x, base), texto, HORIZONTAL_ALIGNMENT_LEFT, -1, _tf(), color_texto)
+		draw_string(f, Vector2(x, base), visible, HORIZONTAL_ALIGNMENT_LEFT, -1, _tf(), texto_color)
 
 
-func _caja(color: Color, radio: int) -> StyleBoxFlat:
-	var s := StyleBoxFlat.new()
-	s.bg_color = color
-	s.set_corner_radius_all(maxi(radio, 0))
-	s.anti_aliasing = true
-	return s
+## La caja de la maqueta que le toca a este botón (Temas.caja), con sus ajustes: principal o
+## secundario (dentro de una ventana, el secundario es un contorno), el estilo propio de los nodos del
+## mapa, la forma (redondo, círculo) y los colores propios si se le han dado.
+func _caja_del_boton() -> Dictionary:
+	var nombre := estilo_caja
+	if nombre == "":
+		nombre = "boton_p" if principal else ("boton_s_ventana" if _dentro_de_ventana() else "boton_s")
+	var c := Temas.caja(nombre)
+	if c["texto"].a <= 0.0:
+		c["texto"] = Temas.ui("prim_t") if principal else Temas.ui("sec_t")
+	if redondo and estilo_caja == "":
+		var rr := float(Temas.estilo("radio_redondo", 10))
+		c["radio"] = -1.0 if rr < 0.0 or rr >= 999.0 else rr * Temas.ESCALA
+	if circular:
+		c["radio"] = -1.0
+	if color_fondo.a > 0.0:
+		c["fondo"] = color_fondo
+		for s in c["sombras"]:
+			if s["dentro"]:
+				s["color"] = color_labio
+		c["texto"] = Temas.tinta_sobre(color_fondo)
+	# Un secundario sin fondo fuera de una ventana: el texto, del color de la pantalla
+	if c["fondo"].a < 0.5 and c["texto"].a <= 0.0:
+		c["texto"] = Temas.ui("sec_t")
+	return c
+
+
+## Texto tal como se ve: en mayúsculas si el tema las usa en los botones (Mesa, Cine negro, Bauhaus…).
+func _texto_visible() -> String:
+	return texto.to_upper() if Temas.mayus("botones") else texto
+
+
+## filter: brightness(b) de CSS.
+static func _brillar(c: Color, b: float) -> Color:
+	return Color(minf(c.r * b, 1.0), minf(c.g * b, 1.0), minf(c.b * b, 1.0), c.a)
 
 
 func _anillo(radio: int) -> StyleBoxFlat:

@@ -13,6 +13,7 @@ signal suena(campana: Array)  # una campana acaba de sonar: [id, pos, tipo, nume
 const Sim = preload("res://nucleo/simulacion.gd")
 const Iconos = preload("res://escenas/comun/iconos.gd")
 const Temas = preload("res://nucleo/temas.gd")
+const Caja = preload("res://escenas/comun/caja.gd")
 
 const DURACION_TIC := 0.075   # segundos que tarda en caer cada ficha
 const PAUSA_FINAL := 0.5
@@ -237,20 +238,7 @@ func _draw() -> void:
 	_medir()
 	var nivel: Dictionary = partida.nivel
 	var tablero := Rect2(_origen, Vector2(nivel["w"], nivel["h"]) * _k)
-	draw_style_box(_caja(HIELO, RADIO_TABLERO, BORDE_TABLERO, GROSOR_BORDE), tablero)
-	if not _contraste:
-		var dentro := tablero.grow(-maxf(RADIO_TABLERO * 0.3, float(GROSOR_BORDE)))
-		draw_polygon(PackedVector2Array([dentro.position, Vector2(dentro.end.x, dentro.position.y), dentro.end,
-			Vector2(dentro.position.x, dentro.end.y)]),
-			PackedColorArray([Color(1, 1, 1, 0.10), Color(1, 1, 1, 0.10), Color(0, 0, 0, 0.035), Color(0, 0, 0, 0.035)]))
-	var paso := 24.0
-	var y := tablero.position.y + paso / 2
-	while y < tablero.end.y - 4.0:      # sin pisar el borde del tablero
-		var x := tablero.position.x + paso / 2
-		while x < tablero.end.x - 4.0:
-			draw_circle(Vector2(x, y), 1.6, PUNTO)
-			x += paso
-		y += paso
+	dibujar_marco(self, tablero, HIELO, PUNTO, _contraste)
 
 	for m in nivel["mu"]:
 		draw_line(a_pantalla(m[0]), a_pantalla(m[1]), TINTA, 2.2 * _k, true)
@@ -946,6 +934,29 @@ func _guia(desde: Array, hasta: Array) -> void:
 	draw_arc(p, 4.6 * _k, 0, TAU, 28, Color(TINTA, alfa), maxf(1.2, 0.4 * _k), true)
 	draw_circle(p, 1.7 * _k, Color(TINTA, 0.5 * alfa))
 	queue_redraw()
+
+
+## Marco del tablero como en la maqueta (.tablero y su lienzo): el color del tablero, el borde, el radio y
+## la sombra del tema (viñeta del tapete en Mesa, sombra suave en Calma, sombra dura en Brutalista) y la
+## rejilla de puntos (cada 24 px de la maqueta, de 1,4 px de radio). Lo usa también el editor del Taller.
+static func dibujar_marco(ci: CanvasItem, rect: Rect2, hielo: Color, punto: Color, contraste: bool) -> void:
+	var c := Temas.caja("tablero")
+	# Un tablero translúcido (Calma) se compone sobre la pantalla: así su sombra no se ve por debajo
+	var pantalla := Temas.ui("pantalla")
+	c["fondo"] = Color(Color(pantalla, 1.0).lerp(Color(hielo, 1.0), hielo.a), 1.0) if hielo.a < 1.0 else hielo
+	if contraste:
+		c["borde"] = 2.0
+		c["borde_color"] = Color.BLACK
+		c["sombras"] = []
+	Caja.dibujar(ci, rect, c)
+	var paso := 24.0 * Temas.ESCALA
+	var y := rect.position.y + paso / 2
+	while y < rect.end.y - 4.0:      # sin pisar el borde del tablero
+		var x := rect.position.x + paso / 2
+		while x < rect.end.x - 4.0:
+			ci.draw_circle(Vector2(x, y), 1.4 * Temas.ESCALA, punto)
+			x += paso
+		y += paso
 
 
 ## Posición en pantalla (global) de la X donde se paró la cadena, o null si no se paró.

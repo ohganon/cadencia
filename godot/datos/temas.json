@@ -34,7 +34,229 @@
    "textos": {
     "ya": "¡A tumbar!",
     "superado": "¡Nivel superado!",
-    "sinTitulo": "Sin cuerda"
+    "sinTitulo": "Sin cuerda",
+    "jugar": "Jugar · nivel %d",
+    "repetir": "Repetir",
+    "siguiente": "Siguiente",
+    "casi": "¡Casi! Prueba otra vez, es gratis.",
+    "apTitulo": "Apariencia",
+    "barrio": "numero"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": false,
+     "espaciado": 0.0
+    },
+    "botones": {
+     "mayus": false,
+     "espaciado": 0.01
+    },
+    "boton_p": {
+     "fondo": "#3ddc6bff",
+     "borde": [
+      2.0,
+      "#142554ff"
+     ],
+     "radio": 16,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": -4.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#22a552ff",
+       "dentro": true
+      },
+      {
+       "x": 0.0,
+       "y": 3.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#142554ff",
+       "dentro": false
+      }
+     ],
+     "texto": "#142554ff"
+    },
+    "boton_s": {
+     "fondo": "#fffdf6ff",
+     "borde": [
+      2.0,
+      "#142554ff"
+     ],
+     "radio": 16,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": -4.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#d9e2f2ff",
+       "dentro": true
+      },
+      {
+       "x": 0.0,
+       "y": 3.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#142554ff",
+       "dentro": false
+      }
+     ],
+     "texto": "#142554ff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#fffdf6ff",
+     "borde": [
+      2.0,
+      "#142554ff"
+     ],
+     "radio": 16,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": -4.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#d9e2f2ff",
+       "dentro": true
+      },
+      {
+       "x": 0.0,
+       "y": 3.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#142554ff",
+       "dentro": false
+      }
+     ],
+     "texto": "#142554ff"
+    },
+    "radio_redondo": 14,
+    "nodo_h": {
+     "fondo": "#ffc83dff",
+     "borde": [
+      2.0,
+      "#142554ff"
+     ],
+     "radio": -1,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 3.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#142554ff",
+       "dentro": false
+      }
+     ],
+     "texto": "#142554ff"
+    },
+    "nodo_a": {
+     "fondo": "#3ddc6bff",
+     "borde": [
+      2.0,
+      "#142554ff"
+     ],
+     "radio": -1,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 3.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#142554ff",
+       "dentro": false
+      },
+      {
+       "x": 0.0,
+       "y": 0.0,
+       "desenfoque": 0.0,
+       "extension": 7.0,
+       "color": "#ffffff2e",
+       "dentro": false
+      }
+     ],
+     "texto": "#142554ff"
+    },
+    "nodo_c": {
+     "fondo": "#9db4e6ff",
+     "borde": [
+      2.0,
+      "#142554ff"
+     ],
+     "radio": -1,
+     "sombras": [],
+     "texto": "#142554ff"
+    },
+    "ventana": {
+     "fondo": "#fffdf6ff",
+     "borde": [
+      2.0,
+      "#142554ff"
+     ],
+     "radio": 22,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 4.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#142554ff",
+       "dentro": false
+      }
+     ],
+     "texto": "#142554ff"
+    },
+    "panel": {
+     "fondo": "#fffdf6ff",
+     "borde": [
+      2.0,
+      "#142554ff"
+     ],
+     "radio": 16,
+     "sombras": [],
+     "texto": "#142554ff"
+    },
+    "chip": {
+     "fondo": "#14255461",
+     "borde": [
+      1.0,
+      "#00000000"
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#ffffffff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      2.0,
+      "#142554ff"
+     ],
+     "radio": 16,
+     "sombras": []
+    },
+    "aviso": {
+     "fondo": "#142554e6",
+     "texto": "#ffffffff",
+     "radio": 12
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#2462d6ff"
+      ]
+     ]
+    },
+    "brillo": 1.04,
+    "pulsar": 3,
+    "desactivado": {
+     "fondo": "#b7c4dfff",
+     "labio": "#97a7c8ff",
+     "texto": "#43557fff"
+    }
    },
    "ui": {
     "pantalla": "#2462d6ff",
@@ -57,6 +279,7 @@
     "ventana_s": "#3a4f86ff",
     "velo": "#0a1c508c",
     "estrella": "#ffc83dff",
+    "acento": "#ffc83dff",
     "camino": "#fffdf6ff",
     "camino_no": "#dce8ff59"
    },
@@ -113,7 +336,181 @@
    "textos": {
     "ya": "Tumbar",
     "superado": "Bien hecho",
-    "sinTitulo": "Sin cuerda por ahora"
+    "sinTitulo": "Sin cuerda por ahora",
+    "jugar": "Jugar nivel %d",
+    "repetir": "Repetir",
+    "siguiente": "Siguiente",
+    "casi": "No llegó. Inténtalo otra vez.",
+    "apTitulo": "Apariencia",
+    "barrio": "romano"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": true,
+     "espaciado": 0.08
+    },
+    "botones": {
+     "mayus": true,
+     "espaciado": 0.12
+    },
+    "boton_p": {
+     "fondo": "#c2a36bff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 12,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 6.0,
+       "desenfoque": 16.0,
+       "extension": -8.0,
+       "color": "#c2a36b8c",
+       "dentro": false
+      }
+     ],
+     "texto": "#18211fff"
+    },
+    "boton_s": {
+     "fondo": "#00000000",
+     "borde": [
+      1.0,
+      "#ece6da47"
+     ],
+     "radio": 12,
+     "sombras": [],
+     "texto": "#ece6daff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#18211fff"
+     ],
+     "radio": 12,
+     "sombras": [],
+     "texto": "#18211fff"
+    },
+    "radio_redondo": 12,
+    "nodo_h": {
+     "fondo": "#ece6daeb",
+     "borde": [
+      1.0,
+      "#ece6da2e"
+     ],
+     "radio": 10,
+     "sombras": [],
+     "texto": "#18211fff"
+    },
+    "nodo_a": {
+     "fondo": "#c2a36bff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 10,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 0.0,
+       "desenfoque": 0.0,
+       "extension": 6.0,
+       "color": "#c2a36b29",
+       "dentro": false
+      }
+     ],
+     "texto": "#18211fff"
+    },
+    "nodo_c": {
+     "fondo": "#ece6da12",
+     "borde": [
+      1.0,
+      "#ece6da2e"
+     ],
+     "radio": 10,
+     "sombras": [],
+     "texto": "#8a948fff"
+    },
+    "ventana": {
+     "fondo": "#f2ede4ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 18,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 24.0,
+       "desenfoque": 48.0,
+       "extension": -16.0,
+       "color": "#00000099",
+       "dentro": false
+      }
+     ],
+     "texto": "#18211fff"
+    },
+    "panel": {
+     "fondo": "#ece6da0f",
+     "borde": [
+      1.0,
+      "#ece6da1f"
+     ],
+     "radio": 14,
+     "sombras": [],
+     "texto": "#ece6daff"
+    },
+    "chip": {
+     "fondo": "#ece6da12",
+     "borde": [
+      1.0,
+      "#ece6da24"
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#ece6daff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      1.0,
+      "#ece6da1f"
+     ],
+     "radio": 14,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 0.0,
+       "desenfoque": 40.0,
+       "extension": 0.0,
+       "color": "#00000059",
+       "dentro": true
+      }
+     ]
+    },
+    "aviso": {
+     "fondo": "#0c1110c7",
+     "texto": "#ece6daff",
+     "radio": 10
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#1f2b29ff"
+      ],
+      [
+       1.0,
+       "#172120ff"
+      ]
+     ]
+    },
+    "brillo": 1.05,
+    "pulsar": 2,
+    "desactivado": {
+     "opacidad": 0.6
+    }
    },
    "ui": {
     "pantalla": "#172120ff",
@@ -136,6 +533,7 @@
     "ventana_s": "#55605bff",
     "velo": "#080c0ba3",
     "estrella": "#c2a36bff",
+    "acento": "#c2a36bff",
     "camino": "#f2ede4ff",
     "camino_no": "#ece6da2e"
    },
@@ -192,7 +590,185 @@
    "textos": {
     "ya": "Soltar",
     "superado": "Todo encaja",
-    "sinTitulo": "La cuerda descansa"
+    "sinTitulo": "La cuerda descansa",
+    "jugar": "Continuar",
+    "repetir": "Otra vez",
+    "siguiente": "Seguir",
+    "casi": "Casi. Otra vez, con calma.",
+    "apTitulo": "Apariencia",
+    "barrio": "ordinal"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": false,
+     "espaciado": 0.01
+    },
+    "botones": {
+     "mayus": false,
+     "espaciado": 0.04
+    },
+    "boton_p": {
+     "fondo": "#3a3550ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 999,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 10.0,
+       "desenfoque": 24.0,
+       "extension": -12.0,
+       "color": "#3a355099",
+       "dentro": false
+      }
+     ],
+     "texto": "#fbf6f2ff"
+    },
+    "boton_s": {
+     "fondo": "#ffffffb8",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#3a3550ff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#ece6f0ff",
+     "borde": [
+      1.5,
+      "#3a3550ff"
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#3a3550ff"
+    },
+    "radio_redondo": 999,
+    "nodo_h": {
+     "fondo": "#ffffffff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#3a3550ff"
+    },
+    "nodo_a": {
+     "fondo": "#3a3550ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 999,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 0.0,
+       "desenfoque": 0.0,
+       "extension": 10.0,
+       "color": "#ffffff59",
+       "dentro": false
+      }
+     ],
+     "texto": "#fbf6f2ff"
+    },
+    "nodo_c": {
+     "fondo": "#ffffff61",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#7a7594ff"
+    },
+    "ventana": {
+     "fondo": "#fffffff0",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 28,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 30.0,
+       "desenfoque": 60.0,
+       "extension": -24.0,
+       "color": "#3a355073",
+       "dentro": false
+      }
+     ],
+     "texto": "#3a3550ff"
+    },
+    "panel": {
+     "fondo": "#ffffff99",
+     "borde": [
+      1.0,
+      "#ffffffcc"
+     ],
+     "radio": 20,
+     "sombras": [],
+     "texto": "#3a3550ff"
+    },
+    "chip": {
+     "fondo": "#ffffff9e",
+     "borde": [
+      1.0,
+      "#00000000"
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#3a3550ff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      1.0,
+      "#ffffffcc"
+     ],
+     "radio": 20,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 18.0,
+       "desenfoque": 40.0,
+       "extension": -22.0,
+       "color": "#3a355073",
+       "dentro": false
+      }
+     ]
+    },
+    "aviso": {
+     "fondo": "#ffffffd1",
+     "texto": "#3a3550ff",
+     "radio": 16
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#f6dccdff"
+      ],
+      [
+       0.5,
+       "#e2d4e3ff"
+      ],
+      [
+       1.0,
+       "#cdd0e6ff"
+      ]
+     ]
+    },
+    "brillo": 1.05,
+    "pulsar": 2,
+    "desactivado": {
+     "opacidad": 0.6
+    }
    },
    "ui": {
     "pantalla": "#e2d4e3ff",
@@ -215,6 +791,7 @@
     "ventana_s": "#5c5775ff",
     "velo": "#cdc8e18c",
     "estrella": "#e0775aff",
+    "acento": "#d0603fff",
     "camino": "#ffffffff",
     "camino_no": "#ffffff73"
    },
@@ -248,13 +825,15 @@
      "archivo": "Archivo-wdth-wght.ttf",
      "peso": 900,
      "ejes": {
-      "wdth": 75
+      "wdth": 78
      }
     },
     "botones": {
      "archivo": "Archivo-wdth-wght.ttf",
      "peso": 800,
-     "ejes": {}
+     "ejes": {
+      "wdth": 88
+     }
     },
     "texto": {
      "archivo": "Archivo-wdth-wght.ttf",
@@ -273,7 +852,146 @@
    "textos": {
     "ya": "Tumbar",
     "superado": "Resuelto",
-    "sinTitulo": "Sin cuerda"
+    "sinTitulo": "Sin cuerda",
+    "jugar": "Jugar · nivel %d",
+    "repetir": "Repetir",
+    "siguiente": "Siguiente",
+    "casi": "No llegó. Reintentar.",
+    "apTitulo": "Apariencia",
+    "barrio": "numero"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": false,
+     "espaciado": -0.02
+    },
+    "botones": {
+     "mayus": false,
+     "espaciado": 0.02
+    },
+    "boton_p": {
+     "fondo": "#111111ff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 4,
+     "sombras": [],
+     "texto": "#f2f2efff"
+    },
+    "boton_s": {
+     "fondo": "#f2f2efff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 4,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#111111ff"
+     ],
+     "radio": 4,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "radio_redondo": 4,
+    "nodo_h": {
+     "fondo": "#f2b705ff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 4,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "nodo_a": {
+     "fondo": "#111111ff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 4,
+     "sombras": [],
+     "texto": "#f2f2efff"
+    },
+    "nodo_c": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 4,
+     "sombras": [],
+     "texto": "#8a857bff"
+    },
+    "ventana": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 6,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "panel": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 4,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "chip": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 4,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 4,
+     "sombras": []
+    },
+    "aviso": {
+     "fondo": "#111111ff",
+     "texto": "#f2f2efff",
+     "radio": 0
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#f2f2efff"
+      ]
+     ],
+     "textura": {
+      "textura": "rejilla",
+      "color": "#e2e2ddff",
+      "paso": 24
+     }
+    },
+    "brillo": 1.05,
+    "pulsar": 2,
+    "desactivado": {
+     "opacidad": 0.6
+    }
    },
    "ui": {
     "pantalla": "#f2f2efff",
@@ -296,6 +1014,7 @@
     "ventana_s": "#4f4c46ff",
     "velo": "#f7f5f0d1",
     "estrella": "#f2b705ff",
+    "acento": "#1f4fd1ff",
     "camino": "#111111ff",
     "camino_no": "#cfcabfff"
    },
@@ -352,7 +1071,160 @@
    "textos": {
     "ya": "Acción",
     "superado": "Caso cerrado",
-    "sinTitulo": "Sin cuerda"
+    "sinTitulo": "Sin cuerda",
+    "jugar": "Rodar nivel %d",
+    "repetir": "Repetir",
+    "siguiente": "Siguiente",
+    "casi": "Se cortó. Otra toma.",
+    "apTitulo": "Apariencia",
+    "barrio": "numero"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": true,
+     "espaciado": 0.04
+    },
+    "botones": {
+     "mayus": true,
+     "espaciado": 0.14
+    },
+    "boton_p": {
+     "fondo": "#d7263dff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 2,
+     "sombras": [],
+     "texto": "#ffffffff"
+    },
+    "boton_s": {
+     "fondo": "#00000000",
+     "borde": [
+      1.0,
+      "#ffffff29"
+     ],
+     "radio": 2,
+     "sombras": [],
+     "texto": "#f2f2f2ff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#0e0e0eff"
+     ],
+     "radio": 2,
+     "sombras": [],
+     "texto": "#0e0e0eff"
+    },
+    "radio_redondo": 2,
+    "nodo_h": {
+     "fondo": "#f2f2f2ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 2,
+     "sombras": [],
+     "texto": "#0e0e0eff"
+    },
+    "nodo_a": {
+     "fondo": "#d7263dff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 2,
+     "sombras": [],
+     "texto": "#ffffffff"
+    },
+    "nodo_c": {
+     "fondo": "#1d1d1dff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 2,
+     "sombras": [],
+     "texto": "#777777ff"
+    },
+    "ventana": {
+     "fondo": "#f2f2f2ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 4,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 20.0,
+       "desenfoque": 40.0,
+       "extension": -18.0,
+       "color": "#00000073",
+       "dentro": false
+      }
+     ],
+     "texto": "#0e0e0eff"
+    },
+    "panel": {
+     "fondo": "#ffffff0f",
+     "borde": [
+      1.0,
+      "#ffffff29"
+     ],
+     "radio": 4,
+     "sombras": [],
+     "texto": "#f2f2f2ff"
+    },
+    "chip": {
+     "fondo": "#ffffff12",
+     "borde": [
+      1.0,
+      "#00000000"
+     ],
+     "radio": 2,
+     "sombras": [],
+     "texto": "#f2f2f2ff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      1.0,
+      "#ffffff29"
+     ],
+     "radio": 4,
+     "sombras": []
+    },
+    "aviso": {
+     "fondo": "#000000d1",
+     "texto": "#f2f2f2ff",
+     "radio": 0
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#151515ff"
+      ],
+      [
+       1.0,
+       "#0b0b0bff"
+      ]
+     ],
+     "textura": {
+      "textura": "grano",
+      "color": "#ffffff09",
+      "paso": 3,
+      "radio": 1
+     }
+    },
+    "brillo": 1.05,
+    "pulsar": 2,
+    "desactivado": {
+     "opacidad": 0.6
+    }
    },
    "ui": {
     "pantalla": "#121212ff",
@@ -375,6 +1247,7 @@
     "ventana_s": "#4d4d4dff",
     "velo": "#000000b8",
     "estrella": "#d7263dff",
+    "acento": "#e0283fff",
     "camino": "#f2f2f2ff",
     "camino_no": "#333333ff"
    },
@@ -431,7 +1304,150 @@
    "textos": {
     "ya": "Soltar",
     "superado": "Armonía",
-    "sinTitulo": "La cuerda reposa"
+    "sinTitulo": "La cuerda reposa",
+    "jugar": "Continuar",
+    "repetir": "Repetir",
+    "siguiente": "Siguiente",
+    "casi": "Aún no. Respira y vuelve.",
+    "apTitulo": "Apariencia",
+    "barrio": "numero"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": false,
+     "espaciado": 0.0
+    },
+    "botones": {
+     "mayus": false,
+     "espaciado": 0.02
+    },
+    "boton_p": {
+     "fondo": "#1c1c1cff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#edece7ff"
+    },
+    "boton_s": {
+     "fondo": "#00000000",
+     "borde": [
+      1.0,
+      "#1c1c1c29"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#1c1c1cff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#1c1c1cff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#1c1c1cff"
+    },
+    "radio_redondo": 0,
+    "nodo_h": {
+     "fondo": "#1c1c1cff",
+     "borde": [
+      1.0,
+      "#1c1c1c4d"
+     ],
+     "radio": -1,
+     "sombras": [],
+     "texto": "#edece7ff"
+    },
+    "nodo_a": {
+     "fondo": "#1c1c1cff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": -1,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 0.0,
+       "desenfoque": 0.0,
+       "extension": 6.0,
+       "color": "#c8372d26",
+       "dentro": false
+      }
+     ],
+     "texto": "#edece7ff"
+    },
+    "nodo_c": {
+     "fondo": "#00000000",
+     "borde": [
+      1.0,
+      "#1c1c1c4d"
+     ],
+     "radio": -1,
+     "sombras": [],
+     "texto": "#8a8983ff"
+    },
+    "ventana": {
+     "fondo": "#f6f5f1ff",
+     "borde": [
+      1.0,
+      "#1c1c1c33"
+     ],
+     "radio": 2,
+     "sombras": [],
+     "texto": "#1c1c1cff"
+    },
+    "panel": {
+     "fondo": "#ffffff8c",
+     "borde": [
+      1.0,
+      "#1c1c1c29"
+     ],
+     "radio": 2,
+     "sombras": [],
+     "texto": "#1c1c1cff"
+    },
+    "chip": {
+     "fondo": "#1c1c1c0f",
+     "borde": [
+      1.0,
+      "#00000000"
+     ],
+     "radio": 2,
+     "sombras": [],
+     "texto": "#1c1c1cff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      1.0,
+      "#1c1c1c29"
+     ],
+     "radio": 2,
+     "sombras": []
+    },
+    "aviso": {
+     "fondo": "#edece7eb",
+     "texto": "#1c1c1cff",
+     "radio": 0
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#edece7ff"
+      ]
+     ]
+    },
+    "brillo": 1.05,
+    "pulsar": 2,
+    "desactivado": {
+     "opacidad": 0.6
+    }
    },
    "ui": {
     "pantalla": "#edece7ff",
@@ -454,6 +1470,7 @@
     "ventana_s": "#55544fff",
     "velo": "#e9e8e3b8",
     "estrella": "#c8372dff",
+    "acento": "#c8372dff",
     "camino": "#1c1c1cff",
     "camino_no": "#1c1c1c33"
    },
@@ -510,7 +1527,141 @@
    "textos": {
     "ya": "Tumbar",
     "superado": "Forma completa",
-    "sinTitulo": "Sin cuerda"
+    "sinTitulo": "Sin cuerda",
+    "jugar": "Jugar nivel %d",
+    "repetir": "Repetir",
+    "siguiente": "Siguiente",
+    "casi": "Falta una pieza. Otra vez.",
+    "apTitulo": "Apariencia",
+    "barrio": "numero"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": false,
+     "espaciado": -0.01
+    },
+    "botones": {
+     "mayus": true,
+     "espaciado": 0.06
+    },
+    "boton_p": {
+     "fondo": "#1b4fbfff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#ffffffff"
+    },
+    "boton_s": {
+     "fondo": "#f4f3eeff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#111111ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "radio_redondo": -1,
+    "nodo_h": {
+     "fondo": "#f7c600ff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": -1,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "nodo_a": {
+     "fondo": "#1b4fbfff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": -1,
+     "sombras": [],
+     "texto": "#ffffffff"
+    },
+    "nodo_c": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": -1,
+     "sombras": [],
+     "texto": "#8a8a8aff"
+    },
+    "ventana": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "panel": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "chip": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#111111ff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      2.0,
+      "#111111ff"
+     ],
+     "radio": 0,
+     "sombras": []
+    },
+    "aviso": {
+     "fondo": "#111111ff",
+     "texto": "#ffffffff",
+     "radio": 0
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#f4f3eeff"
+      ]
+     ]
+    },
+    "brillo": 1.05,
+    "pulsar": 2,
+    "desactivado": {
+     "opacidad": 0.6
+    }
    },
    "ui": {
     "pantalla": "#f4f3eeff",
@@ -533,6 +1684,7 @@
     "ventana_s": "#4a4a4aff",
     "velo": "#f4f3eed9",
     "estrella": "#e1251bff",
+    "acento": "#e1251bff",
     "camino": "#111111ff",
     "camino_no": "#cfcec8ff"
    },
@@ -589,7 +1741,177 @@
    "textos": {
     "ya": "Tumbar",
     "superado": "Hecho.",
-    "sinTitulo": "Cuerda = 0"
+    "sinTitulo": "Cuerda = 0",
+    "jugar": "Nivel %d →",
+    "repetir": "Repetir",
+    "siguiente": "Siguiente",
+    "casi": "Error: no llegó. Reintentar.",
+    "apTitulo": "Tema",
+    "barrio": "numero"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": false,
+     "espaciado": -0.02
+    },
+    "botones": {
+     "mayus": true,
+     "espaciado": 0.02
+    },
+    "boton_p": {
+     "fondo": "#c6ff00ff",
+     "borde": [
+      2.0,
+      "#000000ff"
+     ],
+     "radio": 0,
+     "sombras": [
+      {
+       "x": 4.0,
+       "y": 4.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#000000ff",
+       "dentro": false
+      }
+     ],
+     "texto": "#000000ff"
+    },
+    "boton_s": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#000000ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#000000ff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#000000ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#000000ff"
+    },
+    "radio_redondo": 0,
+    "nodo_h": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#000000ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#000000ff"
+    },
+    "nodo_a": {
+     "fondo": "#c6ff00ff",
+     "borde": [
+      2.0,
+      "#000000ff"
+     ],
+     "radio": 0,
+     "sombras": [
+      {
+       "x": 4.0,
+       "y": 4.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#000000ff",
+       "dentro": false
+      }
+     ],
+     "texto": "#000000ff"
+    },
+    "nodo_c": {
+     "fondo": "#bdbdb8ff",
+     "borde": [
+      2.0,
+      "#000000ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#555555ff"
+    },
+    "ventana": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#000000ff"
+     ],
+     "radio": 0,
+     "sombras": [
+      {
+       "x": 8.0,
+       "y": 8.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#000000ff",
+       "dentro": false
+      }
+     ],
+     "texto": "#000000ff"
+    },
+    "panel": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#000000ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#000000ff"
+    },
+    "chip": {
+     "fondo": "#ffffffff",
+     "borde": [
+      2.0,
+      "#000000ff"
+     ],
+     "radio": 0,
+     "sombras": [],
+     "texto": "#000000ff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      2.0,
+      "#000000ff"
+     ],
+     "radio": 0,
+     "sombras": [
+      {
+       "x": 6.0,
+       "y": 6.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#000000ff",
+       "dentro": false
+      }
+     ]
+    },
+    "aviso": {
+     "fondo": "#000000ff",
+     "texto": "#c6ff00ff",
+     "radio": 0
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#d6d6d1ff"
+      ]
+     ]
+    },
+    "brillo": 1.05,
+    "pulsar": 2,
+    "desactivado": {
+     "opacidad": 0.6
+    }
    },
    "ui": {
     "pantalla": "#d6d6d1ff",
@@ -612,6 +1934,7 @@
     "ventana_s": "#2b2b2bff",
     "velo": "#c9c9c4cc",
     "estrella": "#000000ff",
+    "acento": "#000000ff",
     "camino": "#000000ff",
     "camino_no": "#9a9a95ff"
    },
@@ -668,7 +1991,174 @@
    "textos": {
     "ya": "¡Allá va!",
     "superado": "¡Impreso!",
-    "sinTitulo": "Sin cuerda"
+    "sinTitulo": "Sin cuerda",
+    "jugar": "Jugar nivel %d",
+    "repetir": "Repetir",
+    "siguiente": "Siguiente",
+    "casi": "Se movió el registro. Otra pasada.",
+    "apTitulo": "Apariencia",
+    "barrio": "numero"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": false,
+     "espaciado": -0.02
+    },
+    "botones": {
+     "mayus": false,
+     "espaciado": 0.02
+    },
+    "boton_p": {
+     "fondo": "#ff4fa3ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 14,
+     "sombras": [
+      {
+       "x": 3.0,
+       "y": 3.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#1e3b8aff",
+       "dentro": false
+      }
+     ],
+     "texto": "#1e3b8aff"
+    },
+    "boton_s": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#1e3b8aff"
+     ],
+     "radio": 14,
+     "sombras": [],
+     "texto": "#1e3b8aff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#1e3b8aff"
+     ],
+     "radio": 14,
+     "sombras": [],
+     "texto": "#1e3b8aff"
+    },
+    "radio_redondo": -1,
+    "nodo_h": {
+     "fondo": "#00a6a6ff",
+     "borde": [
+      1.5,
+      "#1e3b8aff"
+     ],
+     "radio": -1,
+     "sombras": [],
+     "texto": "#0d2257ff"
+    },
+    "nodo_a": {
+     "fondo": "#ff4fa3ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": -1,
+     "sombras": [
+      {
+       "x": 3.0,
+       "y": 3.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#1e3b8aff",
+       "dentro": false
+      }
+     ],
+     "texto": "#1e3b8aff"
+    },
+    "nodo_c": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#1e3b8aff"
+     ],
+     "radio": -1,
+     "sombras": [],
+     "texto": "#7d90c4ff"
+    },
+    "ventana": {
+     "fondo": "#f2ede6ff",
+     "borde": [
+      1.5,
+      "#1e3b8aff"
+     ],
+     "radio": 18,
+     "sombras": [
+      {
+       "x": 6.0,
+       "y": 6.0,
+       "desenfoque": 0.0,
+       "extension": 0.0,
+       "color": "#ff4fa3ff",
+       "dentro": false
+      }
+     ],
+     "texto": "#1e3b8aff"
+    },
+    "panel": {
+     "fondo": "#faf6f0ff",
+     "borde": [
+      1.5,
+      "#1e3b8aff"
+     ],
+     "radio": 14,
+     "sombras": [],
+     "texto": "#1e3b8aff"
+    },
+    "chip": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#1e3b8aff"
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#1e3b8aff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      1.5,
+      "#1e3b8aff"
+     ],
+     "radio": 14,
+     "sombras": []
+    },
+    "aviso": {
+     "fondo": "#1e3b8aff",
+     "texto": "#f2ede6ff",
+     "radio": 10
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#f2ede6ff"
+      ]
+     ],
+     "textura": {
+      "textura": "trama",
+      "color": "#1e3b8a12",
+      "paso": 5,
+      "radio": 1
+     }
+    },
+    "brillo": 1.05,
+    "pulsar": 2,
+    "desactivado": {
+     "opacidad": 0.6
+    }
    },
    "ui": {
     "pantalla": "#f2ede6ff",
@@ -691,6 +2181,7 @@
     "ventana_s": "#40548fff",
     "velo": "#efe9e2bf",
     "estrella": "#ff4fa3ff",
+    "acento": "#e23d8eff",
     "camino": "#1e3b8aff",
     "camino_no": "#1e3b8a40"
    },
@@ -747,7 +2238,192 @@
    "textos": {
     "ya": "Encender",
     "superado": "Constelación completa",
-    "sinTitulo": "La cuerda duerme"
+    "sinTitulo": "La cuerda duerme",
+    "jugar": "Jugar nivel %d",
+    "repetir": "Repetir",
+    "siguiente": "Siguiente",
+    "casi": "Se apagó a medio camino. Otra vez.",
+    "apTitulo": "Apariencia",
+    "barrio": "numero"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": false,
+     "espaciado": -0.01
+    },
+    "botones": {
+     "mayus": false,
+     "espaciado": 0.02
+    },
+    "boton_p": {
+     "fondo": "#f5c46bff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#0b1026ff"
+    },
+    "boton_s": {
+     "fondo": "#00000000",
+     "borde": [
+      1.0,
+      "#e8ecff29"
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#e8ecffff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#e8ecffff"
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#e8ecffff"
+    },
+    "radio_redondo": -1,
+    "nodo_h": {
+     "fondo": "#e8ecffff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": -1,
+     "sombras": [],
+     "texto": "#0b1026ff"
+    },
+    "nodo_a": {
+     "fondo": "#f5c46bff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": -1,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 0.0,
+       "desenfoque": 0.0,
+       "extension": 8.0,
+       "color": "#f5c46b24",
+       "dentro": false
+      }
+     ],
+     "texto": "#0b1026ff"
+    },
+    "nodo_c": {
+     "fondo": "#e8ecff14",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": -1,
+     "sombras": [],
+     "texto": "#6d77a8ff"
+    },
+    "ventana": {
+     "fondo": "#151d44ff",
+     "borde": [
+      1.0,
+      "#e8ecff24"
+     ],
+     "radio": 22,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 20.0,
+       "desenfoque": 40.0,
+       "extension": -18.0,
+       "color": "#00000073",
+       "dentro": false
+      }
+     ],
+     "texto": "#e8ecffff"
+    },
+    "panel": {
+     "fondo": "#e8ecff12",
+     "borde": [
+      1.0,
+      "#e8ecff29"
+     ],
+     "radio": 18,
+     "sombras": [],
+     "texto": "#e8ecffff"
+    },
+    "chip": {
+     "fondo": "#e8ecff14",
+     "borde": [
+      1.0,
+      "#00000000"
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#e8ecffff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      1.0,
+      "#e8ecff29"
+     ],
+     "radio": 18,
+     "sombras": []
+    },
+    "aviso": {
+     "fondo": "#05081ad1",
+     "texto": "#e8ecffff",
+     "radio": 14
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#121a3dff"
+      ],
+      [
+       1.0,
+       "#0a0f24ff"
+      ]
+     ],
+     "textura": {
+      "textura": "estrellas",
+      "capas": [
+       {
+        "tile": [
+         83,
+         97
+        ],
+        "desde": [
+         0,
+         0
+        ],
+        "radio": 0.7,
+        "color": "#ffffffff"
+       },
+       {
+        "tile": [
+         47,
+         61
+        ],
+        "desde": [
+         20,
+         30
+        ],
+        "radio": 0.5,
+        "color": "#ffffff99"
+       }
+      ]
+     }
+    },
+    "brillo": 1.05,
+    "pulsar": 2,
+    "desactivado": {
+     "opacidad": 0.6
+    }
    },
    "ui": {
     "pantalla": "#0e1430ff",
@@ -770,6 +2446,7 @@
     "ventana_s": "#a3aed8ff",
     "velo": "#05081ab3",
     "estrella": "#f5c46bff",
+    "acento": "#f5c46bff",
     "camino": "#cfd6f2ff",
     "camino_no": "#cfd6f22e"
    },
@@ -826,7 +2503,150 @@
    "textos": {
     "ya": "Tumbar",
     "superado": "Bien hecho",
-    "sinTitulo": "Pausa"
+    "sinTitulo": "Pausa",
+    "jugar": "Jugar nivel %d",
+    "repetir": "Repetir",
+    "siguiente": "Siguiente",
+    "casi": "Casi. Prueba de nuevo.",
+    "apTitulo": "Apariencia",
+    "barrio": "numero"
+   },
+   "estilo": {
+    "titulos": {
+     "mayus": false,
+     "espaciado": -0.02
+    },
+    "botones": {
+     "mayus": false,
+     "espaciado": 0.02
+    },
+    "boton_p": {
+     "fondo": "#2f5d50ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 14,
+     "sombras": [],
+     "texto": "#f4f6f2ff"
+    },
+    "boton_s": {
+     "fondo": "#f4f6f2ff",
+     "borde": [
+      1.0,
+      "#22302b24"
+     ],
+     "radio": 14,
+     "sombras": [],
+     "texto": "#22302bff"
+    },
+    "boton_s_ventana": {
+     "fondo": "#00000000",
+     "borde": [
+      1.5,
+      "#22302bff"
+     ],
+     "radio": 14,
+     "sombras": [],
+     "texto": "#22302bff"
+    },
+    "radio_redondo": 14,
+    "nodo_h": {
+     "fondo": "#d8b98eff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 14,
+     "sombras": [],
+     "texto": "#22302bff"
+    },
+    "nodo_a": {
+     "fondo": "#2f5d50ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 14,
+     "sombras": [],
+     "texto": "#f4f6f2ff"
+    },
+    "nodo_c": {
+     "fondo": "#f4f6f2ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 14,
+     "sombras": [],
+     "texto": "#8f9993ff"
+    },
+    "ventana": {
+     "fondo": "#f7f8f5ff",
+     "borde": [
+      0,
+      null
+     ],
+     "radio": 22,
+     "sombras": [
+      {
+       "x": 0.0,
+       "y": 20.0,
+       "desenfoque": 40.0,
+       "extension": -18.0,
+       "color": "#00000073",
+       "dentro": false
+      }
+     ],
+     "texto": "#22302bff"
+    },
+    "panel": {
+     "fondo": "#f4f6f2ff",
+     "borde": [
+      1.0,
+      "#22302b24"
+     ],
+     "radio": 16,
+     "sombras": [],
+     "texto": "#22302bff"
+    },
+    "chip": {
+     "fondo": "#f4f6f2ff",
+     "borde": [
+      1.0,
+      "#00000000"
+     ],
+     "radio": 999,
+     "sombras": [],
+     "texto": "#22302bff"
+    },
+    "tablero": {
+     "fondo": null,
+     "borde": [
+      1.0,
+      "#22302b24"
+     ],
+     "radio": 16,
+     "sombras": []
+    },
+    "aviso": {
+     "fondo": "#22302be0",
+     "texto": "#f4f6f2ff",
+     "radio": 12
+    },
+    "pantalla": {
+     "degradado": [
+      [
+       0.0,
+       "#e9ece6ff"
+      ]
+     ]
+    },
+    "brillo": 1.05,
+    "pulsar": 2,
+    "desactivado": {
+     "opacidad": 0.6
+    }
    },
    "ui": {
     "pantalla": "#e9ece6ff",
@@ -849,6 +2669,7 @@
     "ventana_s": "#56645eff",
     "velo": "#e3e7e1bf",
     "estrella": "#2f5d50ff",
+    "acento": "#2f5d50ff",
     "camino": "#d8b98eff",
     "camino_no": "#c3cbc5ff"
    },
