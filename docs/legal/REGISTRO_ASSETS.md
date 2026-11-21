@@ -21,10 +21,12 @@
 | ~~Bodoni Moda / Atkinson Hyperlegible~~ | Fuentes | — | SIL OFL 1.1 | — | — | **Retiradas** con la dirección «La Banda del Pueblo» (17/11/2026) |
 | Sonidos del prototipo (`ficha`, `campana`, `superado`, `fallo`) | Efectos de sonido | **Obra propia del equipo**: síntesis por código, sin muestras de terceros ([prototipos/sonido/generar_sonidos.py](../../prototipos/sonido/generar_sonidos.py)) | Propia | No aplica | — | Prototipo de la entrega 1 (18/11/2026). Se pueden sustituir más adelante por sonidos grabados con licencia |
 | Icono provisional del prototipo | Imagen | **Obra propia del equipo**: dibujado por código ([prototipos/icono/generar_icono.py](../../prototipos/icono/generar_icono.py)) | Propia | No aplica | — | APK de prueba (18/11/2026). El icono final con Pío llegará con el arte definitivo |
-| Godot Engine | Motor | Godot Foundation y colaboradores | MIT | **Sí**: el aviso de licencia en los créditos o la pantalla legal | [godotengine.org/license](https://godotengine.org/license/) | Motor del juego |
+| Godot Engine | Motor | Godot Foundation y colaboradores | MIT | **Sí**: el aviso de licencia en los créditos o la pantalla legal. **Hecho (21/11/2026):** Ajustes › Créditos y legal muestra la licencia de Godot y la de sus componentes de terceros, sacadas del propio motor (`nucleo/creditos.gd`) | [godotengine.org/license](https://godotengine.org/license/) | Motor del juego |
 | godot-iap (OpenIAP) | Plugin de compras (iOS y Android) | hyo.dev | MIT (verificado el 17/11/2026) | **Sí**: el aviso de licencia en los créditos | [LICENSE](https://raw.githubusercontent.com/hyodotdev/openiap/main/libraries/godot-iap/LICENSE) | Dingclub y packs de fichas (previsto, Fase 8) |
 | SwiftGodot (dependencia de godot-iap en iOS) | Biblioteca | Miguel de Icaza | Tipo MIT | **Sí**: el aviso de licencia en los créditos | [LICENSE](https://raw.githubusercontent.com/hyodotdev/openiap/main/libraries/godot-iap/third-party/SwiftGodot-LICENSE) | Previsto, Fase 8 |
 | Gráficos del tablero de estilo | Vectores | Hechos en código para este proyecto | Propios | — | docs/fase6/tablero/index.html | Referencia de diseño |
+
+**Avisos dentro del juego (21/11/2026):** Ajustes › Créditos y legal reúne el aviso de copyright de cada fuente y el texto de la OFL 1.1 (leídos de `godot/fuentes/OFL-*.txt`, que viajan dentro del juego), la licencia MIT de Godot con sus componentes de terceros y un aviso de privacidad (no se recogen datos; todo queda en el aparato). Una prueba comprueba que no falta ninguno.
 
 ## Fuentes candidatas (todavía no incorporadas)
 

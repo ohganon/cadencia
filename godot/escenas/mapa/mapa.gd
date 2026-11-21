@@ -19,6 +19,7 @@ const Fuentes = preload("res://escenas/comun/fuentes.gd")
 const Pestana = preload("res://escenas/comun/pestana.gd")
 const JuegoResponsable = preload("res://nucleo/juego_responsable.gd")
 const Piezas = preload("res://nucleo/piezas.gd")
+const Creditos = preload("res://nucleo/creditos.gd")
 const Registro = preload("res://nucleo/registro.gd")
 const Cuerda = preload("res://nucleo/cuerda.gd")
 const BotonPop = preload("res://escenas/comun/boton_pop.gd")
@@ -67,6 +68,7 @@ var ventana_ajustes: PanelContainer
 var ventana_apariencia: PanelContainer
 var ventana_responsable: PanelContainer
 var ventana_piezas: PanelContainer
+var ventana_creditos: PanelContainer
 var texto_tiempo: Label
 var boton_descanso: Control
 var boton_limite: Control
@@ -182,6 +184,7 @@ func _cerrar_ventanas() -> void:
 	ventana_apariencia.visible = false
 	ventana_responsable.visible = false
 	ventana_piezas.visible = false
+	ventana_creditos.visible = false
 
 
 func _abrir_apariencia() -> void:
@@ -446,6 +449,7 @@ func _construir() -> void:
 	_construir_apariencia()
 	_construir_responsable()
 	_construir_piezas()
+	_construir_creditos()
 
 
 ## Barra de abajo (DESIGN.md: la pestaña activa se marca con una pastilla marfil y no se eleva).
@@ -535,9 +539,17 @@ func _construir_ajustes() -> void:
 	var b_responsable := _boton("Juego responsable", false, 32)
 	b_responsable.pulsado.connect(_abrir_responsable)
 	caja.add_child(b_responsable)
-	var b_piezas := _boton("Guía de piezas", false, 32)
+	# Guía de piezas y créditos, uno al lado del otro
+	var fila_guia := HBoxContainer.new()
+	fila_guia.add_theme_constant_override("separation", 12)
+	var b_piezas := _boton("Guía de piezas", false, 30)
 	b_piezas.pulsado.connect(_abrir_piezas)
-	caja.add_child(b_piezas)
+	var b_creditos := _boton("Créditos y legal", false, 30)
+	b_creditos.pulsado.connect(_abrir_creditos)
+	for h in [b_piezas, b_creditos]:
+		h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		fila_guia.add_child(h)
+	caja.add_child(fila_guia)
 	boton_sonido = _boton("Sonido: sí", false, 32)
 	boton_sonido.pulsado.connect(func():
 		progreso.ajustar("sonido", not progreso.ajustes["sonido"])
@@ -679,6 +691,48 @@ func _construir_piezas() -> void:
 		ventana_piezas.visible = false
 		_abrir_ajustes())
 	caja.add_child(volver)
+
+
+## Ajustes › Créditos y avisos legales: quién lo hace, privacidad y las licencias de Godot y de las
+## fuentes (nucleo/creditos.gd), en un texto que se desliza.
+func _construir_creditos() -> void:
+	ventana_creditos = _ventana()
+	var caja := VBoxContainer.new()
+	caja.add_theme_constant_override("separation", 14)
+	ventana_creditos.add_child(caja)
+	var t := _etiqueta(44, TINTA, true)
+	t.text = "Créditos y avisos legales"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caja.add_child(t)
+	var desliza := ScrollContainer.new()
+	desliza.custom_minimum_size = Vector2(580, 840)
+	desliza.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	caja.add_child(desliza)
+	var texto := RichTextLabel.new()
+	texto.bbcode_enabled = true
+	texto.fit_content = true
+	texto.scroll_active = false
+	texto.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	texto.custom_minimum_size = Vector2(560, 0)
+	texto.add_theme_color_override("default_color", TINTA_SUAVE)
+	texto.add_theme_font_override("normal_font", fuente_texto)
+	texto.add_theme_font_override("bold_font", fuente_titulos)
+	texto.add_theme_font_size_override("normal_font_size", Temas.tam(21))
+	texto.add_theme_font_size_override("bold_font_size", Temas.tam(26))
+	texto.text = Creditos.texto()
+	desliza.add_child(texto)
+	var volver := _boton("Volver a Ajustes", true, 34)
+	volver.pulsado.connect(func():
+		ventana_creditos.visible = false
+		_abrir_ajustes())
+	caja.add_child(volver)
+
+
+func _abrir_creditos() -> void:
+	ventana_ajustes.visible = false
+	velo.visible = true
+	ventana_creditos.visible = true
+	_centrar(ventana_creditos)
 
 
 func _abrir_piezas() -> void:
@@ -903,6 +957,12 @@ func _demo_si_toca() -> void:
 		await get_tree().create_timer(0.3).timeout
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png(prefijo + "_3_ajustes.png")
+	if args.has("creditos"):
+		_cerrar_ventanas()
+		_abrir_creditos()
+		await get_tree().create_timer(0.4).timeout
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_png(prefijo + "_7_creditos.png")
 	if args.has("piezas"):
 		_cerrar_ventanas()
 		_abrir_piezas()

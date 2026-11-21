@@ -12,7 +12,7 @@
 ## Es un ejecutor mínimo sin dependencias. GUT se añadirá cuando haga falta probar escenas.
 extends SceneTree
 
-const SCRIPTS := ["res://nucleo/temas.gd", "res://autoload/tema.gd", "res://nucleo/juego_responsable.gd", "res://nucleo/piezas.gd", "res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
+const SCRIPTS := ["res://nucleo/temas.gd", "res://autoload/tema.gd", "res://nucleo/juego_responsable.gd", "res://nucleo/piezas.gd", "res://nucleo/creditos.gd", "res://nucleo/simulacion.gd", "res://nucleo/partida.gd", "res://nucleo/progreso.gd", "res://nucleo/registro.gd", "res://nucleo/reto_diario.gd", "res://nucleo/taller.gd",
 	"res://escenas/partida/tablero.gd", "res://escenas/partida/partida.gd",
 	"res://escenas/comun/iconos.gd", "res://escenas/comun/fuentes.gd", "res://escenas/comun/pestana.gd", "res://escenas/comun/animar.gd", "res://escenas/comun/confeti.gd", "res://escenas/comun/boton_pop.gd", "res://escenas/comun/pastilla.gd", "res://escenas/comun/estrellas.gd",
 	"res://autoload/estado.gd", "res://escenas/taller/tablero_editor.gd", "res://escenas/taller/taller.gd",
@@ -47,6 +47,7 @@ func _init() -> void:
 	pruebas_temas(load("res://nucleo/temas.gd"))
 	pruebas_responsable(load("res://nucleo/juego_responsable.gd"))
 	pruebas_piezas(load("res://nucleo/piezas.gd"), progreso)
+	pruebas_creditos(load("res://nucleo/creditos.gd"))
 	terminar()
 
 
@@ -367,6 +368,27 @@ func pruebas_piezas(Piezas: GDScript, Progreso: GDScript) -> void:
 	for r in [ruta, "user://prueba_piezas.anterior.json"]:
 		if FileAccess.file_exists(r):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(r))
+
+
+## Créditos: llevan lo que piden las licencias (Godot MIT con sus componentes y cada fuente OFL).
+func pruebas_creditos(Creditos: GDScript) -> void:
+	var texto: String = Creditos.texto()
+	comprobar(texto.contains("Permission is hereby granted") and texto.contains("Godot Engine"),
+		"los créditos llevan la licencia MIT de Godot")
+	comprobar(texto.contains("FreeType") or texto.contains("freetype"), "y los componentes de terceros del motor")
+	var faltan := []
+	for f in Creditos.FUENTES:
+		var c: String = Creditos.copyright_fuente(f[1])
+		if not c.begins_with("Copyright") or not texto.contains(Creditos.escapar(c)):
+			faltan.append(f[0])
+	comprobar(faltan.is_empty(), "cada fuente tiene su aviso de copyright en los créditos", str(faltan))
+	comprobar(texto.contains("SIL OPEN FONT LICENSE Version 1.1"), "y el texto de la licencia OFL")
+	comprobar(texto.contains("no recoge ni envía datos personales"), "los créditos explican la privacidad")
+	var rt := RichTextLabel.new()
+	rt.bbcode_enabled = true
+	rt.text = texto
+	comprobar(rt.get_parsed_text().contains("[") or not texto.contains("[lb]"), "los corchetes de las licencias no rompen el formato")
+	rt.free()
 
 
 func terminar() -> void:
